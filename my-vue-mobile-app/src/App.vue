@@ -20,5 +20,5 @@ export default {
   margin-top: 60px;
 }
 
-/* Add your styles here */
+
 </style>

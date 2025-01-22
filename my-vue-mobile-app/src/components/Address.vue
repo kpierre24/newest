@@ -4,20 +4,20 @@
       <h1>Address Page</h1>
       <form @submit.prevent="submitAddress">
         <div class="form-group">
-          <label for="street">Street:</label>
-          <input type="text" v-model="address.street" id="street" required />
+          <label for="addressLine1">Address Line 1:</label>
+          <input type="text" v-model="addressLine1" id="addressLine1" required />
+        </div>
+        <div class="form-group">
+          <label for="addressLine2">Address Line 2:</label>
+          <input type="text" v-model="addressLine2" id="addressLine2" />
         </div>
         <div class="form-group">
           <label for="city">City:</label>
-          <input type="text" v-model="address.city" id="city" required />
+          <input type="text" v-model="city" id="city" required />
         </div>
         <div class="form-group">
-          <label for="state">State:</label>
-          <input type="text" v-model="address.state" id="state" required />
-        </div>
-        <div class="form-group">
-          <label for="zip">Zip Code:</label>
-          <input type="text" v-model="address.zip" id="zip" required />
+          <label for="country">Country:</label>
+          <country-select v-model="country" id="country" required />
         </div>
         <div class="button-group">
           <button class="back-button" @click="$router.go(-1)">Back</button>
@@ -29,22 +29,24 @@
 </template>
 
 <script>
+import { CountrySelect } from 'vue-country-region-select';
+
 export default {
   name: 'Address',
+  components: {
+    CountrySelect
+  },
   data() {
     return {
-      address: {
-        street: '',
-        city: '',
-        state: '',
-        zip: ''
-      }
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      country: ''
     };
   },
   methods: {
     submitAddress() {
-      // Handle address submission logic here
-      console.log('Address submitted:', this.address);
+      // Handle form submission
     }
   }
 };
@@ -86,7 +88,7 @@ label {
   color: #555;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;

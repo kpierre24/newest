@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "vue": "^2.7.16",
+    "vue-country-region-select": "^2.0.16",
     "vue-router": "^3.6.5"
   },
   "devDependencies": {

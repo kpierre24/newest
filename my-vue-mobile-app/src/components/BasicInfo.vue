@@ -2,22 +2,46 @@
   <div class="container">
     <div class="form-container">
       <h1>Basic Information</h1>
-      <form @submit.prevent="submitForm">
+      <form @submit.prevent="submitSignup">
         <div class="form-group">
-          <label for="name">Name:</label>
-          <input type="text" v-model="name" id="name" required />
+          <label for="firstName">First Name:</label>
+          <input type="text" v-model="firstName" id="firstName" required />
         </div>
         <div class="form-group">
-          <label for="email">Email:</label>
+          <label for="lastName">Last Name:</label>
+          <input type="text" v-model="lastName" id="lastName" required />
+        </div>
+        <div class="form-group">
+          <label for="otherName">Other Name:</label>
+          <input type="text" v-model="otherName" id="otherName" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address:</label>
           <input type="email" v-model="email" id="email" required />
         </div>
         <div class="form-group">
-          <label for="phone">Phone:</label>
-          <input type="tel" v-model="phone" id="phone" required />
+          <label for="mobileNumber">Mobile Number:</label>
+          <input type="tel" v-model="mobileNumber" id="mobileNumber" required />
+        </div>
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select v-model="gender" id="gender" required>
+            <option value="" disabled>Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" v-model="password" id="password" required />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input type="password" v-model="confirmPassword" id="confirmPassword" required />
         </div>
         <div class="button-group">
           <button class="back-button" @click="$router.go(-1)">Back</button>
-          <button class="submit-button" type="submit">Save</button>
+          <button class="submit-button" type="submit">Next</button>
         </div>
       </form>
     </div>
@@ -29,14 +53,19 @@ export default {
   name: 'BasicInfo',
   data() {
     return {
-      name: '',
+      firstName: '',
+      lastName: '',
+      otherName: '',
       email: '',
-      phone: ''
+      mobileNumber: '',
+      gender: '',
+      password: '',
+      confirmPassword: ''
     };
   },
   methods: {
-    submitForm() {
-      // Handle form submission
+    submitSignup() {
+      // Handle signup submission
     }
   }
 };
@@ -51,15 +80,19 @@ export default {
   height: 100vh;
   background: linear-gradient(to right, #6a11cb, #2575fc);
   padding: 20px;
+  text-align: center;
 }
 
 .form-container {
   background-color: white;
   padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 h1 {
@@ -69,6 +102,7 @@ h1 {
 }
 
 .form-group {
+  width: 100%;
   margin-bottom: 15px;
 }
 
@@ -78,16 +112,25 @@ label {
   color: #555;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .button-group {
   display: flex;
   justify-content: space-between;
+  width: 100%;
   margin-top: 20px;
 }
 
@@ -97,6 +140,8 @@ input {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
@@ -104,8 +149,16 @@ input {
   color: white;
 }
 
+.back-button:hover {
+  background-color: #5a6268;
+}
+
 .submit-button {
   background-color: #007bff;
   color: white;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
 }
 </style>
