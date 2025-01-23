@@ -54,6 +54,20 @@
           </div>
         </div>
       </div>
+      <div class="id-box">
+        <div class="id-container">
+          <h2>Marital Status</h2>
+          <div class="input-container">
+            <select v-model="maritalStatus" id="maritalStatus" required>
+              <option value="" disabled>Select Marital Status</option>
+              <option value="Married">Married</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Single">Single</option>
+              <option value="Widowed">Widowed</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div class="button-group">
         <button class="back-button" @click="navigateToMembershipDeclaration">Back</button>
         <button class="next-button" @click="navigateToNext">Next</button>
@@ -75,7 +89,8 @@ export default {
       secondIdNumber: '',
       secondExpiryDate: '',
       secondIdDocument: null,
-      secondIdOptions: ['National ID', "Driver's Permit", 'Passport']
+      secondIdOptions: ['National ID', "Driver's Permit", 'Passport'],
+      maritalStatus: ''
     };
   },
   computed: {
@@ -192,7 +207,7 @@ input[type="text"], input[type="date"], select {
   border-radius: 5px;
   background-color: #6d63f7;
   cursor: pointer;
-  color:#fff;
+  color: #fff;
   font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
