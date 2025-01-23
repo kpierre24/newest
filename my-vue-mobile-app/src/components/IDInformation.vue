@@ -140,6 +140,7 @@ export default {
   background: linear-gradient(to right, #6a11cb, #2575fc);
   padding: 20px;
   text-align: center;
+  overflow: hidden; /* Prevent overflow */
 }
 
 .form-container {
@@ -149,6 +150,8 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 400px;
+  max-height: 90vh; /* Set max height */
+  overflow-y: auto; /* Enable vertical scrolling */
   display: flex;
   flex-direction: column;
   align-items: center;

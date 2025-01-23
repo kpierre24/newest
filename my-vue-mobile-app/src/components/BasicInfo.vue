@@ -39,6 +39,7 @@
             <i class="icon fas fa-calendar-alt"></i>
           </div>
           <div class="input-container">
+            <label for="password">Password</label>
             <input type="password" v-model="password" id="password" placeholder="Password" maxlength="50" required />
             <i class="icon fas fa-lock"></i>
           </div>
@@ -47,16 +48,51 @@
             Password must be at least 10 characters, include 1 capital letter, 1 number, and 1 special character.
           </div>
           <div class="input-container">
+            <label for="confirmPassword">Confirm Password</label>
             <input type="password" v-model="confirmPassword" id="confirmPassword" placeholder="Confirm Password" maxlength="50" required />
             <i class="icon fas fa-lock"></i>
           </div>
           <small v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</small>
         </div>
+        <div class="links">
+          <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
+          <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
+        </div>
         <div class="button-group">
           <button class="back-button" @click="navigateToPrevious">Back</button>
-          <button class="next-button" @click="navigateToNext">Next</button>
+          <button class="next-button" @click="navigateToNext" :disabled="!agreedToTerms || !agreedToFinancial">Next</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Terms and Conditions Modal -->
+  <div v-if="showTermsModal" class="modal">
+    <div class="modal-content">
+      <h2>Terms and Conditions</h2>
+      <textarea readonly>
+        <!-- Terms and Conditions text goes here -->
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </textarea>
+      <div class="button-group">
+        <button class="agree-button" @click="agreeTerms">Agree</button>
+        <button class="disagree-button" @click="disagreeTerms">Disagree</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Financial Declaration Agreement Modal -->
+  <div v-if="showFinancialModal" class="modal">
+    <div class="modal-content">
+      <h2>Financial Declaration Agreement</h2>
+      <textarea readonly>
+        <!-- Financial Declaration Agreement text goes here -->
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      </textarea>
+      <div class="button-group">
+        <button class="agree-button" @click="agreeFinancial">Agree</button>
+        <button class="disagree-button" @click="disagreeFinancial">Disagree</button>
+      </div>
     </div>
   </div>
 </template>
@@ -76,7 +112,11 @@ export default {
       password: '',
       confirmPassword: '',
       passwordError: '',
-      confirmPasswordError: ''
+      confirmPasswordError: '',
+      showTermsModal: false,
+      showFinancialModal: false,
+      agreedToTerms: false,
+      agreedToFinancial: false
     };
   },
   methods: {
@@ -102,6 +142,11 @@ export default {
       this.$router.go(-1);
     },
     navigateToNext() {
+      if (!this.agreedToTerms || !this.agreedToFinancial) {
+        alert('You must agree to the Terms and Conditions and the Financial Declaration Agreement before proceeding.');
+        return;
+      }
+
       const today = new Date();
       const birthDate = new Date(this.dob);
       let age = today.getFullYear() - birthDate.getFullYear();
@@ -120,6 +165,28 @@ export default {
         // Navigate to the address page after successful validation
         this.$router.push('/address');
       }
+    },
+    showTermsAndConditions() {
+      this.showTermsModal = true;
+    },
+    showFinancialDeclaration() {
+      this.showFinancialModal = true;
+    },
+    agreeTerms() {
+      this.showTermsModal = false;
+      this.agreedToTerms = true;
+    },
+    disagreeTerms() {
+      this.showTermsModal = false;
+      this.$router.push('/');
+    },
+    agreeFinancial() {
+      this.showFinancialModal = false;
+      this.agreedToFinancial = true;
+    },
+    disagreeFinancial() {
+      this.showFinancialModal = false;
+      this.$router.push('/');
     }
   }
 };
@@ -225,6 +292,17 @@ input:focus, select:focus {
   font-size: 12px;
 }
 
+.links {
+  margin: 15px 0;
+}
+
+.links a {
+  margin-right: 10px;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .button-group {
   display: flex;
   justify-content: space-between;
@@ -265,7 +343,71 @@ input:focus, select:focus {
   color: white;
 }
 
-.next-button:hover {
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:hover:enabled {
   background-color: #0056b3;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: left;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.agree-button, .disagree-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.agree-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.agree-button:hover {
+  background-color: #0056b3;
+}
+
+.disagree-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.disagree-button:hover {
+  background-color: #5a6268;
 }
 </style>
