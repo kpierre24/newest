@@ -1,16 +1,18 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view/>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App',
+  name: 'App'
 };
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600;700&display=swap');
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -20,5 +22,15 @@ export default {
   margin-top: 60px;
 }
 
+body {
+  font-family: 'Asap', sans-serif;
+}
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Asap', sans-serif;
+}
+
+button {
+  font-family: 'Asap', sans-serif;
+}
 </style>

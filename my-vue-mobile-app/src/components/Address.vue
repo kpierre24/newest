@@ -2,31 +2,36 @@
   <div class="container">
     <div class="form-container">
       <h1>Address Information</h1>
-      <form @submit.prevent="submitAddress">
-        <div class="input-group">
-          <div class="input-container">
-            <input type="text" v-model="AddressLine1" id="AddressLine1" placeholder="Address line 1" required />
-          </div>
-          <div class="input-container">
-            <input type="text" v-model="AddressLine2" id="AddressLine2" placeholder="Address Line 2" required />
-          </div>
-          <div class="input-container">
-            <input type="text" v-model="City" id="City" placeholder="City" required />
-          </div>
-          <div class="input-container">
-            <input type="text" v-model="Country" id="Country" placeholder="Country" required />
-          </div>
-        </div>
-        <div class="button-group">
-          <button class="back-button" @click="$router.go(-1)">Back</button>
-          <button class="submit-button" type="submit">Submit</button>
-        </div>
-      </form>
+      <div class="input-container">
+        <input type="text" v-model="AddressLine1" id="AddressLine1" placeholder="Address line 1" required />
+      </div>
+      <div class="input-container">
+        <input type="text" v-model="AddressLine2" id="AddressLine2" placeholder="Address line 2" />
+      </div>
+      <div class="input-container">
+        <input type="text" v-model="City" id="City" placeholder="City" required />
+      </div>
+      <div class="input-container">
+        <input type="text" v-model="State" id="State" placeholder="State" required />
+      </div>
+      <div class="input-container">
+        <label for="Country">Country</label>
+        <select v-model="Country" id="Country" required>
+          <option value="" disabled>Select Country</option>
+          <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
+        </select>
+      </div>
+      <div class="button-group">
+        <button class="back-button" @click="navigateToPrevious">Back</button>
+        <button class="next-button" @click="navigateToNext">Next</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { countries } from 'countries-list';
+
 export default {
   name: 'Address',
   data() {
@@ -34,13 +39,17 @@ export default {
       AddressLine1: '',
       AddressLine2: '',
       City: '',
-      Country: ''
+      State: '',
+      Country: '',
+      countries: Object.values(countries).map(country => country.name)
     };
   },
   methods: {
-    submitAddress() {
-      // Handle address submission
-      this.$router.push('/email-verification');
+    navigateToPrevious() {
+      this.$router.go(-1);
+    },
+    navigateToNext() {
+      this.$router.push('/id-information');
     }
   }
 };
@@ -60,10 +69,10 @@ export default {
 
 .form-container {
   background-color: white;
-  padding: 30px;
+  padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 90%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
@@ -76,33 +85,26 @@ h1 {
   color: #333;
 }
 
-.input-group {
-  width: 100%;
-  margin-bottom: 15px;
-}
-
 .input-container {
-  position: relative;
+  width: 100%;
   margin-bottom: 15px;
 }
 
-input {
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+input[type="text"], select {
   width: 100%;
-  padding: 15px;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
   box-sizing: border-box;
-}
-
-input::placeholder {
-  color: #aaa;
-}
-
-input:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .button-group {
@@ -112,8 +114,8 @@ input:focus {
   margin-top: 20px;
 }
 
-.back-button, .submit-button {
-  padding: 15px 20px;
+.back-button, .next-button {
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -131,12 +133,12 @@ input:focus {
   background-color: #5a6268;
 }
 
-.submit-button {
+.next-button {
   background-color: #007bff;
   color: white;
 }
 
-.submit-button:hover {
+.next-button:hover {
   background-color: #0056b3;
 }
 </style>

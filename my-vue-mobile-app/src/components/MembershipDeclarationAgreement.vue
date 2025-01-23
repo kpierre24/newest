@@ -56,8 +56,7 @@ export default {
       this.$router.push('/');
     },
     navigateToNext() {
-      // Handle navigation to the next screen
-      alert('Navigating to the next screen...');
+      this.$router.push('/id-information');
     }
   }
 };
