@@ -1,13 +1,12 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/Home.vue';
 import Login from '../components/Login.vue';
 import BasicInfo from '../components/BasicInfo.vue';
 import Address from '../components/Address.vue';
-import Home from '../views/Home.vue';
 import NewOrExistingCustomer from '../components/NewOrExistingCustomer.vue';
 import GettingReady from '../components/GettingReady.vue';
-
-Vue.use(VueRouter);
+import EmailVerification from '../components/EmailVerification.vue';
+import MembershipDeclarationAgreement from '../components/MembershipDeclarationAgreement.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -16,10 +15,12 @@ const routes = [
   { path: '/address', component: Address },
   { path: '/new-or-existing-customer', component: NewOrExistingCustomer },
   { path: '/getting-ready', component: GettingReady },
+  { path: '/email-verification', component: EmailVerification },
+  { path: '/membership-declaration-agreement', component: MembershipDeclarationAgreement },
 ];
 
-const router = new VueRouter({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   routes
 });
 

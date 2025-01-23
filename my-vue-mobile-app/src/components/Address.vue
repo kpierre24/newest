@@ -1,23 +1,21 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <h1>Address Page</h1>
+      <h1>Address Information</h1>
       <form @submit.prevent="submitAddress">
-        <div class="form-group">
-          <label for="addressLine1">Address Line 1:</label>
-          <input type="text" v-model="addressLine1" id="addressLine1" required />
-        </div>
-        <div class="form-group">
-          <label for="addressLine2">Address Line 2:</label>
-          <input type="text" v-model="addressLine2" id="addressLine2" />
-        </div>
-        <div class="form-group">
-          <label for="city">City:</label>
-          <input type="text" v-model="city" id="city" required />
-        </div>
-        <div class="form-group">
-          <label for="country">Country:</label>
-          <country-select v-model="country" id="country" required />
+        <div class="input-group">
+          <div class="input-container">
+            <input type="text" v-model="AddressLine1" id="AddressLine1" placeholder="Address line 1" required />
+          </div>
+          <div class="input-container">
+            <input type="text" v-model="AddressLine2" id="AddressLine2" placeholder="Address Line 2" required />
+          </div>
+          <div class="input-container">
+            <input type="text" v-model="City" id="City" placeholder="City" required />
+          </div>
+          <div class="input-container">
+            <input type="text" v-model="Country" id="Country" placeholder="Country" required />
+          </div>
         </div>
         <div class="button-group">
           <button class="back-button" @click="$router.go(-1)">Back</button>
@@ -29,24 +27,20 @@
 </template>
 
 <script>
-import { CountrySelect } from 'vue-country-region-select';
-
 export default {
   name: 'Address',
-  components: {
-    CountrySelect
-  },
   data() {
     return {
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      country: ''
+      AddressLine1: '',
+      AddressLine2: '',
+      City: '',
+      Country: ''
     };
   },
   methods: {
     submitAddress() {
-      // Handle form submission
+      // Handle address submission
+      this.$router.push('/email-verification');
     }
   }
 };
@@ -61,15 +55,19 @@ export default {
   height: 100vh;
   background: linear-gradient(to right, #6a11cb, #2575fc);
   padding: 20px;
+  text-align: center;
 }
 
 .form-container {
   background-color: white;
   padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 h1 {
@@ -78,35 +76,50 @@ h1 {
   color: #333;
 }
 
-.form-group {
+.input-group {
+  width: 100%;
   margin-bottom: 15px;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-  color: #555;
+.input-container {
+  position: relative;
+  margin-bottom: 15px;
 }
 
-input, select {
+input {
   width: 100%;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .button-group {
   display: flex;
   justify-content: space-between;
+  width: 100%;
   margin-top: 20px;
 }
 
 .back-button, .submit-button {
-  padding: 10px 20px;
+  padding: 15px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
@@ -114,8 +127,16 @@ input, select {
   color: white;
 }
 
+.back-button:hover {
+  background-color: #5a6268;
+}
+
 .submit-button {
   background-color: #007bff;
   color: white;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
 }
 </style>
