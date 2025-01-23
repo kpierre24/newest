@@ -8,6 +8,7 @@ import GettingReady from '../components/GettingReady.vue';
 import EmailVerification from '../components/EmailVerification.vue';
 import MembershipDeclarationAgreement from '../components/MembershipDeclarationAgreement.vue';
 import IDInformation from '../components/IDInformation.vue';
+import ChildIDInformation from '../components/ChildIDInformation.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -19,6 +20,7 @@ const routes = [
   { path: '/email-verification', component: EmailVerification },
   { path: '/membership-declaration-agreement', component: MembershipDeclarationAgreement },
   { path: '/id-information', component: IDInformation },
+  { path: '/child-id-information', component: ChildIDInformation },
 ];
 
 const router = createRouter({

@@ -34,6 +34,7 @@
             <i class="icon fas fa-venus-mars"></i>
           </div>
           <div class="input-container">
+            <label for="dob">Date of Birth</label>
             <input type="date" v-model="dob" id="dob" required class="date-picker" placeholder="Date of Birth" />
             <i class="icon fas fa-calendar-alt"></i>
           </div>
@@ -52,8 +53,8 @@
           <small v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</small>
         </div>
         <div class="button-group">
-          <button class="back-button" @click="$router.go(-1)">Back</button>
-          <button class="submit-button" type="submit">Next</button>
+          <button class="back-button" @click="navigateToPrevious">Back</button>
+          <button class="next-button" @click="navigateToNext">Next</button>
         </div>
       </form>
     </div>
@@ -96,6 +97,23 @@ export default {
       }
       this.confirmPasswordError = '';
       return true;
+    },
+    navigateToPrevious() {
+      this.$router.go(-1);
+    },
+    navigateToNext() {
+      const today = new Date();
+      const birthDate = new Date(this.dob);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      if (age <= 17) {
+        this.$router.push('/child-id-information');
+      } else {
+        this.$router.push('/id-information');
+      }
     },
     submitSignup() {
       if (this.validatePassword() && this.validateConfirmPassword()) {
@@ -214,7 +232,7 @@ input:focus, select:focus {
   margin-top: 20px;
 }
 
-.back-button, .submit-button {
+.back-button, .submit-button, .next-button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -239,6 +257,15 @@ input:focus, select:focus {
 }
 
 .submit-button:hover {
+  background-color: #0056b3;
+}
+
+.next-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.next-button:hover {
   background-color: #0056b3;
 }
 </style>

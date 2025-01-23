@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <h1>ID Information</h1>
+      <h1>Child ID Information</h1>
       <div class="id-box">
         <div class="id-container">
           <h2>First Form of ID</h2>
@@ -9,14 +9,14 @@
             <label for="firstIdType">Type of ID</label>
             <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
               <option value="" disabled>Select ID Type</option>
-              <option value="National ID">National ID</option>
-              <option value="Driver's Permit">Driver's Permit</option>
+              <option value="ID Card">ID Card</option>
               <option value="Passport">Passport</option>
+              <option value="Birthpaper">Birthpaper</option>
             </select>
           </div>
           <div class="input-container">
             <label for="firstIdNumber">ID Number</label>
-            <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
+            <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter ID number" />
           </div>
           <div class="input-container">
             <label for="firstExpiryDate">Expiry Date</label>
@@ -41,7 +41,7 @@
           </div>
           <div class="input-container">
             <label for="secondIdNumber">ID Number</label>
-            <input type="text" v-model="secondIdNumber" id="secondIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
+            <input type="text" v-model="secondIdNumber" id="secondIdNumber" placeholder="Enter ID number" />
           </div>
           <div class="input-container">
             <label for="secondExpiryDate">Expiry Date</label>
@@ -51,20 +51,6 @@
             <label for="secondIdDocument">Upload Document</label>
             <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
             <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
-          </div>
-        </div>
-      </div>
-      <div class="id-box">
-        <div class="id-container">
-          <h2>Marital Status</h2>
-          <div class="input-container">
-            <select v-model="maritalStatus" id="maritalStatus" required>
-              <option value="" disabled>Select Marital Status</option>
-              <option value="Married">Married</option>
-              <option value="Divorced">Divorced</option>
-              <option value="Single">Single</option>
-              <option value="Widowed">Widowed</option>
-            </select>
           </div>
         </div>
       </div>
@@ -78,7 +64,7 @@
 
 <script>
 export default {
-  name: 'IDInformation',
+  name: 'ChildIDInformation',
   data() {
     return {
       firstIdType: '',
@@ -89,8 +75,7 @@ export default {
       secondIdNumber: '',
       secondExpiryDate: '',
       secondIdDocument: null,
-      secondIdOptions: ['National ID', "Driver's Permit", 'Passport'],
-      maritalStatus: ''
+      secondIdOptions: ['ID Card', 'Passport', 'Birthpaper']
     };
   },
   computed: {
@@ -102,10 +87,10 @@ export default {
   },
   methods: {
     updateSecondIdOptions() {
-      if (this.firstIdType === 'National ID') {
-        this.secondIdOptions = ["Driver's Permit", 'Passport'];
+      if (this.firstIdType === 'ID Card') {
+        this.secondIdOptions = ['Passport', 'Birthpaper'];
       } else {
-        this.secondIdOptions = ['National ID', "Driver's Permit", 'Passport'];
+        this.secondIdOptions = ['ID Card', 'Passport', 'Birthpaper'];
       }
     },
     handleFileUpload(event, idType) {
