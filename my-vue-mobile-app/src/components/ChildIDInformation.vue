@@ -20,7 +20,7 @@
           </div>
           <div class="input-container">
             <label for="firstExpiryDate">Expiry Date</label>
-            <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" />
+            <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" :disabled="firstIdType === 'Birthpaper'" />
           </div>
           <div class="input-container">
             <label for="firstIdDocument">Upload Document</label>
@@ -45,12 +45,16 @@
           </div>
           <div class="input-container">
             <label for="secondExpiryDate">Expiry Date</label>
-            <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" />
+            <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" :disabled="secondIdType === 'Birthpaper'" />
           </div>
           <div class="input-container">
             <label for="secondIdDocument">Upload Document</label>
             <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
             <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
+          </div>
+          <div class="input-container">
+            <label for="schoolName">School Name</label>
+            <input type="text" v-model="schoolName" id="schoolName" placeholder="Enter school name" />
           </div>
         </div>
       </div>
@@ -75,7 +79,8 @@ export default {
       secondIdNumber: '',
       secondExpiryDate: '',
       secondIdDocument: null,
-      secondIdOptions: ['ID Card', 'Passport', 'Birthpaper']
+      secondIdOptions: ['ID Card', 'Passport', 'Birthpaper'],
+      schoolName: '',
     };
   },
   computed: {
@@ -87,10 +92,14 @@ export default {
   },
   methods: {
     updateSecondIdOptions() {
-      if (this.firstIdType === 'ID Card') {
-        this.secondIdOptions = ['Passport', 'Birthpaper'];
+      if (this.firstIdType === 'Birthpaper') {
+        this.secondIdOptions = ['ID Card', 'Passport'];
       } else {
         this.secondIdOptions = ['ID Card', 'Passport', 'Birthpaper'];
+      }
+      // Reset secondIdType if it is no longer a valid option
+      if (!this.secondIdOptions.includes(this.secondIdType)) {
+        this.secondIdType = '';
       }
     },
     handleFileUpload(event, idType) {
@@ -122,21 +131,19 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(to right, #6a11cb, #2575fc);
+  background: white;
   padding: 20px;
   text-align: center;
 }
 
 .form-container {
-  background-color: white;
-  padding: 20px;
+  background-color: rgb(255, 255, 255);
+  background: linear-gradient(to right, #bdbcbe, #7da4e7);
+  padding: 30px;
   border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
 }
 
 h1 {
@@ -188,18 +195,18 @@ input[type="text"], input[type="date"], select {
 
 .browse-button {
   padding: 10px 20px;
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 5px;
-  background-color: #6d63f7;
   cursor: pointer;
-  color: #fff;
   font-size: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
 .browse-button:hover {
-  background-color: #e2e6ea;
+  background-color: #0056b3;
 }
 
 .button-group {

@@ -3,20 +3,54 @@
     <div class="content">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Getting Ready</h1>
-      <div class="text-content">
-        <p>Welcome to the Cathedral Credit Union Online Banking service. We are excited to have you on board and look forward to providing you with a seamless banking experience.</p>
-        <p>Before you get started, please take a moment to review the following important information:</p>
-        <h3>1. Security</h3>
-        <p>Your security is our top priority. Ensure that your User ID and Password are kept confidential and not shared with anyone. If you suspect any unauthorized access, please contact us immediately.</p>
-        <h3>2. Account Information</h3>
-        <p>You can view your account balances, transaction history, and other account details through our Online Banking service. Make sure to regularly review your account activity to stay informed.</p>
-        <h3>3. Transfers and Payments</h3>
-        <p>Our Online Banking service allows you to transfer funds between eligible accounts and make bill payments. Please ensure that you have sufficient funds in your account before initiating any transfers or payments.</p>
-        <h3>4. Alerts</h3>
-        <p>Set up notifications for account activity to stay updated on any changes or transactions. This will help you monitor your account and detect any suspicious activity promptly.</p>
-        <h3>5. Privacy</h3>
-        <p>Your privacy is important to us. Our <a href="#">Privacy Policy</a> outlines how we collect, use, and protect your personal information. Please review it to understand your rights and our responsibilities.</p>
-        <p>Thank you for choosing Cathedral Credit Union. We are here to assist you with any questions or concerns you may have. Enjoy your Online Banking experience!</p>
+      <div class="text-container">
+        <div class="text-content">
+          <p>Welcome to the Cathedral Credit Union Online Banking service. We are excited to have you on board and look forward to providing you with a seamless banking experience.</p>
+          <p>Before you get started, please take a moment to review the following important information:</p>
+          <h3>1. Personal Identification</h3>
+          <p>
+            Government-issued ID (e.g., driver's license, passport, ID card, birth paper (Under 16))<br>
+            Social Security Number (SSN) or Taxpayer Identification Number (TIN) if you live in the United States of America
+          </p>
+          <h3>2. Foreign Bank Account Information (For non Trinidad and Tobago Citizens only)</h3>
+          <p>
+            Bank account number<br>
+            Address<br>
+            Swift code<br>
+            Routing Number<br>
+            Contact Number
+          </p>
+          <h3>3. Address</h3>
+          <p>
+            Utility Bill - Electricity, Phone, Water, Cable bill in your name. (Valid 3 months or less)<br>
+            If you do not have a utility bill for your abode in your name, an authorization letter for the current owner with a copy of their ID will suffice.
+          </p>
+          <h3>4. Employment/Source of Funds Information</h3>
+          <p>
+            Job letter<br>
+            Payslip<br>
+            Business Owners or Self Employed – Projected Income for 3 years (completed cash flow projection) or Audited Financials.<br>
+            Retirees – A letter from National Insurance Board (NIB) or the organization they worked with advising of the pension to be received.
+          </p>
+          <h3>5. Valid Email Address and Mobile Number</h3>
+          <h3>6. Saved Progress</h3>
+          <p>
+            Your progress will be saved as you proceed to signup. You will be asked to create a password and when completed a code sent to your email address to verify ownership.<br>
+            You have Fourteen Days to complete before signup must be restarted if not finished.
+          </p>
+          <h3>7. Guardian Information</h3>
+          <p>
+            If the parent/guardian of the child has a different last name, it may be necessary to prove this relationship by uploading one of the following:<br>
+            Deed Poll<br>
+            Marriage Certificate<br>
+            Adoption Certificate
+          </p>
+        </div>
+      </div>
+      <div class="placeholder-container">
+        <div class="placeholder-content">
+          <p>Placeholder text goes here. This is an additional container for any other information you might want to display.</p>
+        </div>
       </div>
       <div class="button-group">
         <button class="back-button" @click="navigateToPrevious">Back</button>
@@ -60,29 +94,47 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-  max-height: 80vh; 
-  overflow-y: auto; 
+  max-height: 80vh; /* Set max height */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .logo {
-  width: 165px; 
+  width: 165px; /* Slightly larger for better visibility */
   height: auto;
   margin-bottom: 20px;
 }
 
-.text-content {
-  text-align: left;
-  max-height: 60vh; /* Set max height for text content */
-  overflow-y: auto; /* Enable vertical scrolling */
-  padding-right: 10px; /* Add padding to avoid text being cut off */
+.text-container, .placeholder-container {
+  margin-bottom: 20px;
 }
 
-.text-content::-webkit-scrollbar {
-  width: 0; /* Remove scrollbar space */
+.text-content, .placeholder-content {
+  text-align: left;
+  max-height: 30vh; /* Set max height for text content */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px 20px; /* Add padding to avoid text being cut off */
+  font-size: 14px; /* Reduce text size */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.text-content::-webkit-scrollbar, .placeholder-content::-webkit-scrollbar {
+  width: 0;
   background: transparent; /* Optional: just make scrollbar invisible */
 }
 
-.text-content p, .text-content h3 {
+/* Hide scrollbar for IE, Edge and Firefox */
+.text-content {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.placeholder-content {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  background: rgb(226, 222, 222);
+}
+
+.text-content p, .text-content h3, .placeholder-content p {
   margin: 10px 0;
 }
 
