@@ -55,8 +55,8 @@
           <small v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</small>
         </div>
         <div class="links">
-          <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
-          <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
+          <a href="#" @click.prevent="validateForm('terms')">Terms and Conditions</a>
+          <a href="#" @click.prevent="validateForm('financial')">Financial Declaration Agreement</a>
         </div>
         <div class="button-group">
           <button class="back-button" @click="navigateToPrevious">Back</button>
@@ -67,39 +67,22 @@
   </div>
 
   <!-- Terms and Conditions Modal -->
-  <div v-if="showTermsModal" class="modal">
-    <div class="modal-content">
-      <h2>Terms and Conditions</h2>
-      <textarea readonly>
-        <!-- Terms and Conditions text goes here -->
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      </textarea>
-      <div class="button-group">
-        <button class="agree-button" @click="agreeTerms">Agree</button>
-        <button class="disagree-button" @click="disagreeTerms">Disagree</button>
-      </div>
-    </div>
-  </div>
+  <TermsAndConditions :visible="showTermsModal" @agree="agreeTerms" @disagree="disagreeTerms" />
 
   <!-- Financial Declaration Agreement Modal -->
-  <div v-if="showFinancialModal" class="modal">
-    <div class="modal-content">
-      <h2>Financial Declaration Agreement</h2>
-      <textarea readonly>
-        <!-- Financial Declaration Agreement text goes here -->
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-      </textarea>
-      <div class="button-group">
-        <button class="agree-button" @click="agreeFinancial">Agree</button>
-        <button class="disagree-button" @click="disagreeFinancial">Disagree</button>
-      </div>
-    </div>
-  </div>
+  <FinancialDeclaration :visible="showFinancialModal" @agree="agreeFinancial" @disagree="disagreeFinancial" />
 </template>
 
 <script>
+import TermsAndConditions from './TermsAndConditions.vue';
+import FinancialDeclaration from './FinancialDeclaration.vue';
+
 export default {
   name: 'BasicInfo',
+  components: {
+    TermsAndConditions,
+    FinancialDeclaration
+  },
   data() {
     return {
       firstName: '',
@@ -137,6 +120,17 @@ export default {
       }
       this.confirmPasswordError = '';
       return true;
+    },
+    validateForm(type) {
+      if (this.dob && this.validatePassword() && this.validateConfirmPassword()) {
+        if (type === 'terms') {
+          this.showTermsAndConditions();
+        } else if (type === 'financial') {
+          this.showFinancialDeclaration();
+        }
+      } else {
+        alert('Please fill out all form fields correctly before proceeding.');
+      }
     },
     navigateToPrevious() {
       this.$router.go(-1);
