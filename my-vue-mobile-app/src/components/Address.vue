@@ -12,9 +12,6 @@
         <input type="text" v-model="City" id="City" placeholder="City" required />
       </div>
       <div class="input-container">
-        <input type="text" v-model="State" id="State" placeholder="State" required />
-      </div>
-      <div class="input-container">
         <label for="Country">Country</label>
         <select v-model="Country" id="Country" required>
           <option value="" disabled>Select Country</option>
@@ -39,7 +36,6 @@ export default {
       AddressLine1: '',
       AddressLine2: '',
       City: '',
-      State: '',
       Country: '',
       countries: Object.values(countries).map(country => country.name)
     };

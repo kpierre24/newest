@@ -7,7 +7,7 @@
         <div class="input-group">
           <div class="input-container">
             <input type="text" v-model="firstName" id="firstName" placeholder="First Name" maxlength="50" required />
-            <i class="icon fas fa-user"></i>
+            <i class="icon fas fa-user"></i> 
           </div>
           <div class="input-container">
             <input type="text" v-model="lastName" id="lastName" placeholder="Last Name" maxlength="50" required />
