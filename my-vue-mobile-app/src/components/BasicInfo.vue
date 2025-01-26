@@ -201,16 +201,19 @@ export default {
 }
 
 .form-container {
-  background-color: rgb(255, 255, 255);
-  background: linear-gradient(to right, #bdbcbe, #7da4e7);
+  background-color: white;
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  height: 90vh;
+  max-height: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  border: 3px solid black;
 }
 
 h1 {
@@ -321,6 +324,12 @@ input:focus, select:focus {
 
 .back-button:hover {
   background-color: #5a6268;
+}
+
+.logo {
+  width: 157.5px; 
+  height: auto;
+  margin-bottom: 20px;
 }
 
 .submit-button {

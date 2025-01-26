@@ -143,7 +143,7 @@ export default {
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
 }
 
 h1 {

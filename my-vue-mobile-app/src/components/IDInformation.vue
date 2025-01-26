@@ -141,15 +141,18 @@ export default {
   padding: 20px;
   text-align: center;
   overflow: hidden; /* Prevent overflow */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .form-container {
   background-color: white;
-  padding: 20px;
-  border-radius: 20px;
+  padding: 30px;
+  border-radius: 30px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 90%;
+  width: 100%;
   max-width: 400px;
+  height: 90vh;
   max-height: 90vh; /* Set max height */
   overflow-y: auto; /* Enable vertical scrolling */
   display: flex;
