@@ -9,6 +9,7 @@ import EmailVerification from '../components/EmailVerification.vue';
 import MembershipDeclarationAgreement from '../components/MembershipDeclarationAgreement.vue';
 import IDInformation from '../components/IDInformation.vue';
 import ChildIDInformation from '../components/ChildIDInformation.vue';
+import MobileVerification from '../components/MobileVerification';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -21,6 +22,7 @@ const routes = [
   { path: '/membership-declaration-agreement', component: MembershipDeclarationAgreement },
   { path: '/id-information', component: IDInformation },
   { path: '/child-id-information', component: ChildIDInformation },
+  { path: '/mobile-verification', component: MobileVerification }
 ];
 
 const router = createRouter({

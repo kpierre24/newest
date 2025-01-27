@@ -32,7 +32,7 @@ export default {
     },
     verifyCode() {
       // Handle code verification
-      this.$router.push('/membership-declaration-agreement');
+      this.$router.push('/mobile-verification');
     }
   }
 };

@@ -49,7 +49,10 @@
       </div>
       <div class="placeholder-container">
         <div class="placeholder-content">
-          <p>Placeholder text goes here. This is an additional container for any other information you might want to display.</p>
+          <p>You will be asked to create a password. When <br>
+            completed a code will be sent to your email address<br>
+            for verification purposes. You have 14 days to complete<br>
+          the signup process before it will need to be restarted.</p>
         </div>
       </div>
       <div class="button-group">
@@ -106,9 +109,10 @@ export default {
 
 .text-container, .placeholder-container {
   margin-bottom: 20px;
+  border-radius: 20px;
 }
 
-.text-content, .placeholder-content {
+.text-content  {
   text-align: left;
   max-height: 30vh; /* Set max height for text content */
   overflow-y: auto; /* Enable vertical scrolling */
@@ -131,7 +135,13 @@ export default {
 .placeholder-content {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
-  background: rgb(226, 222, 222);
+  background: rgb(190, 189, 189);
+  text-align: center;
+  max-height: 30vh; /* Set max height for text content */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px 20px; /* Add padding to avoid text being cut off */
+  font-size: 12px; 
+  
 }
 
 .text-content p, .text-content h3, .placeholder-content p {

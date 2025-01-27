@@ -136,9 +136,11 @@ export default {
       this.$router.go(-1);
     },
     navigateToNext() {
-      if (!this.agreedToTerms || !this.agreedToFinancial) {
-        alert('You must agree to the Terms and Conditions and the Financial Declaration Agreement before proceeding.');
-        return;
+      if (this.agreedToTerms && this.agreedToFinancial) {
+      this.$router.push('/email-verification'); // Navigate to email verification page
+      console.log('User has agreed to terms and financial declaration. Navigating...');
+    } else {
+      alert('Please agree to both the terms and financial declaration.');
       }
 
       const today = new Date();
@@ -156,8 +158,8 @@ export default {
     },
     submitSignup() {
       if (this.validatePassword() && this.validateConfirmPassword()) {
-        // Navigate to the address page after successful validation
-        this.$router.push('/address');
+        // Navigate to the email verification page after successful validation
+        this.$router.push('/email-verification');
       }
     },
     showTermsAndConditions() {

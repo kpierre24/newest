@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     navigateToHome() {
-      this.$router.push('/');
+      this.$router.push('/Home');
     },
     navigateToNext() {
       this.$router.push('/id-information');

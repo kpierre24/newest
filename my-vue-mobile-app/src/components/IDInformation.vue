@@ -120,11 +120,11 @@ export default {
       document.getElementById(id).click();
     },
     navigateToBasicInformation() {
-      this.$router.push('/basic-info');
+      this.$router.push('/membership-declaration-agreement');
     },
     navigateToNext() {
       // Handle navigation to the next screen
-      alert('Navigating to the next screen...');
+      this.$router.push('/email-verification');
     }
   }
 };
