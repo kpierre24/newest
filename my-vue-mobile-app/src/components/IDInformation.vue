@@ -2,81 +2,85 @@
   <div class="container">
     <div class="form-container">
       <h1>ID Information</h1>
-      <div class="id-box">
-        <div class="id-container">
-          <h2>First Form of ID</h2>
-          <div class="input-container">
-            <label for="firstIdType">Type of ID</label>
-            <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
-              <option value="" disabled>Select ID Type</option>
-              <option value="National ID">National ID</option>
-              <option value="Driver's Permit">Driver's Permit</option>
-              <option value="Passport">Passport</option>
-            </select>
-          </div>
-          <div class="input-container">
-            <label for="firstIdNumber">ID Number</label>
-            <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
-          </div>
-          <div class="input-container">
-            <label for="firstExpiryDate">Expiry Date</label>
-            <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" />
-          </div>
-          <div class="input-container">
-            <label for="firstIdDocument">Upload Document</label>
-            <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
-            <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
-          </div>
-        </div>
-      </div>
-      <div class="id-box">
-        <div class="id-container">
-          <h2>Second Form of ID</h2>
-          <div class="input-container">
-            <label for="secondIdType">Type of ID</label>
-            <select v-model="secondIdType" id="secondIdType">
-              <option value="" disabled>Select ID Type</option>
-              <option v-for="option in secondIdOptions" :key="option" :value="option">{{ option }}</option>
-            </select>
-          </div>
-          <div class="input-container">
-            <label for="secondIdNumber">ID Number</label>
-            <input type="text" v-model="secondIdNumber" id="secondIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
-          </div>
-          <div class="input-container">
-            <label for="secondExpiryDate">Expiry Date</label>
-            <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" />
-          </div>
-          <div class="input-container">
-            <label for="secondIdDocument">Upload Document</label>
-            <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
-            <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
+      <form @submit.prevent="submitIDInformation">
+        <div class="id-box">
+          <div class="id-container">
+            <h2>First Form of ID</h2>
+            <div class="input-container">
+              <label for="firstIdType">Type of ID</label>
+              <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
+                <option value="" disabled>Select ID Type</option>
+                <option value="National ID">National ID</option>
+                <option value="Driver's Permit">Driver's Permit</option>
+                <option value="Passport">Passport</option>
+              </select>
+            </div>
+            <div class="input-container">
+              <label for="firstIdNumber">ID Number</label>
+              <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
+            </div>
+            <div class="input-container">
+              <label for="firstExpiryDate">Expiry Date</label>
+              <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" />
+            </div>
+            <div class="input-container">
+              <label for="firstIdDocument">Upload Document</label>
+              <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
+              <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="id-box">
-        <div class="id-container">
-          <h2>Marital Status</h2>
-          <div class="input-container">
-            <select v-model="maritalStatus" id="maritalStatus" required>
-              <option value="" disabled>Select Marital Status</option>
-              <option value="Married">Married</option>
-              <option value="Divorced">Divorced</option>
-              <option value="Single">Single</option>
-              <option value="Widowed">Widowed</option>
-            </select>
+        <div class="id-box">
+          <div class="id-container">
+            <h2>Second Form of ID</h2>
+            <div class="input-container">
+              <label for="secondIdType">Type of ID</label>
+              <select v-model="secondIdType" id="secondIdType">
+                <option value="" disabled>Select ID Type</option>
+                <option v-for="option in secondIdOptions" :key="option" :value="option">{{ option }}</option>
+              </select>
+            </div>
+            <div class="input-container">
+              <label for="secondIdNumber">ID Number</label>
+              <input type="text" v-model="secondIdNumber" id="secondIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
+            </div>
+            <div class="input-container">
+              <label for="secondExpiryDate">Expiry Date</label>
+              <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" />
+            </div>
+            <div class="input-container">
+              <label for="secondIdDocument">Upload Document</label>
+              <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
+              <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="button-group">
-        <button class="back-button" @click="navigateToBasicInformation">Back</button>
-        <button class="next-button" @click="navigateToNext">Next</button>
-      </div>
+        <div class="id-box">
+          <div class="id-container">
+            <h2>Marital Status</h2>
+            <div class="input-container">
+              <select v-model="maritalStatus" id="maritalStatus" required>
+                <option value="" disabled>Select Marital Status</option>
+                <option value="Married">Married</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Single">Single</option>
+                <option value="Widowed">Widowed</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="button-group">
+          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+          <button type="submit" class="submit-button">Next</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'IDInformation',
   data() {
@@ -119,12 +123,39 @@ export default {
     triggerFileInput(id) {
       document.getElementById(id).click();
     },
-    navigateToBasicInformation() {
-      this.$router.push('/membership-declaration-agreement');
+    navigateToPrevious() {
+      this.$router.go(-1);
     },
-    navigateToNext() {
-      // Handle navigation to the next screen
-      this.$router.push('/email-verification');
+    async submitIDInformation() {
+      try {
+        const idInfoData = {
+          firstIdType: this.firstIdType,
+          firstIdNumber: this.firstIdNumber,
+          firstExpiryDate: this.firstExpiryDate,
+          firstIdDocument: this.firstIdDocument,
+          secondIdType: this.secondIdType,
+          secondIdNumber: this.secondIdNumber,
+          secondExpiryDate: this.secondExpiryDate,
+          secondIdDocument: this.secondIdDocument,
+          maritalStatus: this.maritalStatus
+        };
+
+        // Debugging logs to check form data
+        console.log('ID Info Data:', idInfoData);
+
+        const response = await axios.post('http://localhost:3000/id-information', idInfoData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('ID info submitted:', response.data);
+
+        // Navigate to the next page after successful submission
+        this.$router.push('/due-diligence');
+      } catch (error) {
+        console.error('Error submitting ID info:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
+      }
     }
   }
 };
@@ -230,7 +261,7 @@ input[type="text"], input[type="date"], select {
   margin-top: 20px;
 }
 
-.back-button, .next-button {
+.back-button, .submit-button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -249,12 +280,12 @@ input[type="text"], input[type="date"], select {
   background-color: #5a6268;
 }
 
-.next-button {
+.submit-button {
   background-color: #007bff;
   color: white;
 }
 
-.next-button:hover {
+.submit-button:hover {
   background-color: #0056b3;
 }
 </style>

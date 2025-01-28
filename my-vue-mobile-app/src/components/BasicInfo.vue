@@ -3,7 +3,7 @@
     <div class="form-container">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Basic Information</h1>
-      <form @submit.prevent="submitSignup">
+      <form @submit.prevent="navigateToNext">
         <div class="input-group">
           <div class="input-container">
             <input type="text" v-model="firstName" id="firstName" placeholder="First Name" maxlength="50" required />
@@ -40,40 +40,43 @@
           </div>
           <div class="input-container">
             <label for="password">Password</label>
-            <input type="password" v-model="password" id="password" placeholder="Password" maxlength="50" required />
-            <i class="icon fas fa-lock"></i>
-          </div>
-          <small v-if="passwordError" class="error">{{ passwordError }}</small>
-          <div class="password-requirements">
-            Password must be at least 10 characters, include 1 capital letter, 1 number, and 1 special character.
+            <input type="password" v-model="password" id="password" placeholder="Password" maxlength="50" required @input="validatePassword" />
+            <small v-if="passwordError" class="error">{{ passwordError }}</small>
           </div>
           <div class="input-container">
             <label for="confirmPassword">Confirm Password</label>
             <input type="password" v-model="confirmPassword" id="confirmPassword" placeholder="Confirm Password" maxlength="50" required />
-            <i class="icon fas fa-lock"></i>
           </div>
-          <small v-if="confirmPasswordError" class="error">{{ confirmPasswordError }}</small>
-        </div>
-        <div class="links">
-          <a href="#" @click.prevent="validateForm('terms')">Terms and Conditions</a>
-          <a href="#" @click.prevent="validateForm('financial')">Financial Declaration Agreement</a>
-        </div>
-        <div class="button-group">
-          <button class="back-button" @click="navigateToPrevious">Back</button>
-          <button class="next-button" @click="navigateToNext" :disabled="!agreedToTerms || !agreedToFinancial">Next</button>
+          <div class="input-container">
+            <label>
+              <input type="checkbox" v-model="viewedTerms" disabled />
+              <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
+            </label>
+          </div>
+          <div class="input-container">
+            <label>
+              <input type="checkbox" v-model="viewedFinancial" disabled />
+              <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
+            </label>
+          </div>
+          <div class="button-group">
+            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+            <button type="submit" class="next-button">Next</button>
+          </div>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Terms and Conditions Modal -->
-  <TermsAndConditions :visible="showTermsModal" @agree="agreeTerms" @disagree="disagreeTerms" />
+  <TermsAndConditions :visible="showTermsModal" @close="agreeTerms" />
 
   <!-- Financial Declaration Agreement Modal -->
-  <FinancialDeclaration :visible="showFinancialModal" @agree="agreeFinancial" @disagree="disagreeFinancial" />
+  <FinancialDeclaration :visible="showFinancialModal" @close="agreeFinancial" />
 </template>
 
 <script>
+import axios from 'axios';
 import TermsAndConditions from './TermsAndConditions.vue';
 import FinancialDeclaration from './FinancialDeclaration.vue';
 
@@ -95,42 +98,57 @@ export default {
       password: '',
       confirmPassword: '',
       passwordError: '',
-      confirmPasswordError: '',
       showTermsModal: false,
       showFinancialModal: false,
-      agreedToTerms: false,
-      agreedToFinancial: false
+      viewedTerms: false,
+      viewedFinancial: false
     };
   },
   methods: {
     navigateToPrevious() {
       this.$router.go(-1);
     },
-    navigateToNext() {
-      if (this.agreedToTerms && this.agreedToFinancial) {
-      this.$router.push('/email-verification'); // Navigate to email verification page
-      console.log('User has agreed to terms and financial declaration. Navigating...');
-    } else {
-      alert('Please agree to both the terms and financial declaration.');
-      }
+    async navigateToNext() {
+      console.log('navigateToNext called');
+      if (!this.passwordError) {
+        console.log('User has viewed terms and financial declaration. Navigating...');
+        await this.submitBasicInfo(); // Call the API before navigating
 
-      const today = new Date();
-      const birthDate = new Date(this.dob);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      if (age <= 17) {
-        this.$router.push('/child-id-information');
+        // Navigate to email verification page
+        this.$router.push('/email-verification');
       } else {
-        this.$router.push('/id-information');
+        alert('Please view both the terms and financial declaration.');
       }
     },
-    submitSignup() {
-      if (this.validatePassword() && this.validateConfirmPassword()) {
-        // Navigate to the email verification page after successful validation
-        this.$router.push('/email-verification');
+    async submitBasicInfo() {
+      try {
+        const basicInfoData = {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          otherName: this.otherName,
+          gender: this.gender,
+          dob: this.dob,
+          email: this.email,
+          mobileNumber: this.mobileNumber,
+          password: this.password,
+          confirmPassword: this.confirmPassword,
+          viewedTerms: this.viewedTerms,
+          viewedFinancial: this.viewedFinancial,
+          // Include other necessary data properties
+        };
+
+        // Debugging logs to check form data
+        console.log('Basic Info Data:', basicInfoData);
+
+        const response = await axios.post('http://localhost:3000/basic-info', basicInfoData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Basic info submitted:', response.data);
+      } catch (error) {
+        console.error('Error submitting basic info:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
       }
     },
     showTermsAndConditions() {
@@ -141,24 +159,24 @@ export default {
     },
     agreeTerms() {
       this.showTermsModal = false;
-      this.agreedToTerms = true;
-    },
-    disagreeTerms() {
-      this.showTermsModal = false;
-      this.$router.push('/');
+      this.viewedTerms = true;
     },
     agreeFinancial() {
       this.showFinancialModal = false;
-      this.agreedToFinancial = true;
+      this.viewedFinancial = true;
     },
-    disagreeFinancial() {
-      this.showFinancialModal = false;
-      this.$router.push('/');
+    validatePassword() {
+      const password = this.password;
+      const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!regex.test(password)) {
+        this.passwordError = 'Password must be at least 8 characters long, contain one capital letter, one number, and one special character.';
+      } else {
+        this.passwordError = '';
+      }
     }
   }
 };
 </script>
-
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
