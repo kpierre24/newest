@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'EmailVerification',
   data() {
@@ -30,9 +32,28 @@ export default {
     navigateToBasicInfo() {
       this.$router.push('/basic-info');
     },
-    verifyCode() {
-      // Handle code verification
-      this.$router.push('/mobile-verification');
+    async verifyCode() {
+      try {
+        const verificationData = {
+          verificationCode: this.verificationCode
+        };
+
+        // Debugging logs to check form data
+        console.log('Verification Data:', verificationData);
+
+        const response = await axios.post('http://localhost:3000/verify-email', verificationData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Verification response:', response.data);
+
+        // Navigate to mobile verification page
+        this.$router.push('/mobile-verification');
+      } catch (error) {
+        console.error('Error verifying code:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
+      }
     }
   }
 };

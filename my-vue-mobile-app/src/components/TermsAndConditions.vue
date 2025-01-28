@@ -1,6 +1,7 @@
 <template>
-  <div class="modal" v-if="visible">
+  <div v-if="visible" class="modal">
     <div class="modal-content">
+      <span class="close-button" @click="$emit('close')">&times;</span>
       <h2>Terms and Conditions</h2>
       <div class="modal-text">
         <h3>1. Introduction</h3>
@@ -31,16 +32,13 @@
         <h3>5. Privacy</h3>
         <p>Your privacy is important to us. Our <a href="#">Privacy Policy</a> describes how we collect, use, and protect your personal information.</p>
       </div>
-      <div class="button-group">
-        <button class="agree-button" @click="agree">Agree</button>
-        <button class="disagree-button" @click="disagree">Disagree</button>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'TermsAndConditions',
   props: {
     visible: {
       type: Boolean,
@@ -60,26 +58,42 @@ export default {
 
 <style scoped>
 .modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
-  top: 0;
+  z-index: 1;
   left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-  background: linear-gradient(to right, #6a11cb, #2575fc);
+  background-color: #fefefe;
   padding: 20px;
-  border-radius: 10px;
+  border: 1px solid #888;
   width: 80%;
   max-width: 500px;
-  text-align: left;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  color: white;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .modal-content h2 {
