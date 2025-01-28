@@ -101,7 +101,11 @@ export default {
           console.log('Address info submitted:', response.data);
 
           // Navigate to the next page after successful submission
-          this.$router.push('/next-page');
+          if (this.sameAsMailingAddress) {
+            this.$router.push('/mailing-address');
+          } else {
+            this.$router.push('/next-page');
+          }
         } catch (error) {
           console.error('Error submitting address info:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);

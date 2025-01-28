@@ -15,6 +15,10 @@
     {
       "id": "937a",
       "verificationCode": "44444"
+    },
+    {
+      "id": "8463",
+      "verificationCode": "44444"
     }
   ],
   "verify-email": [
@@ -33,6 +37,10 @@
     {
       "id": "1ca5",
       "verificationCode": "34567"
+    },
+    {
+      "id": "59d3",
+      "verificationCode": "12234"
     }
   ],
   "addresses": [],
@@ -404,6 +412,20 @@
       "confirmPassword": "Rendell1234@",
       "viewedTerms": true,
       "viewedFinancial": true
+    },
+    {
+      "id": "ced1",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-09",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": true,
+      "viewedFinancial": true
     }
   ],
   "id-information": [
@@ -430,6 +452,18 @@
       "secondIdType": "Driver's Permit",
       "secondIdNumber": "154225",
       "secondExpiryDate": "2025-03-20",
+      "secondIdDocument": null,
+      "maritalStatus": "Married"
+    },
+    {
+      "id": "a61c",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15555555555",
+      "firstExpiryDate": "2025-02-07",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "1425578",
+      "secondExpiryDate": "2025-01-11",
       "secondIdDocument": null,
       "maritalStatus": "Married"
     }
