@@ -103,35 +103,6 @@ export default {
     };
   },
   methods: {
-    validatePassword() {
-      const password = this.password;
-      const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
-      if (!regex.test(password)) {
-        this.passwordError = 'Password must be at least 10 characters long, include 1 capital letter, 1 number, and 1 special character.';
-        return false;
-      }
-      this.passwordError = '';
-      return true;
-    },
-    validateConfirmPassword() {
-      if (this.password !== this.confirmPassword) {
-        this.confirmPasswordError = 'Passwords do not match.';
-        return false;
-      }
-      this.confirmPasswordError = '';
-      return true;
-    },
-    validateForm(type) {
-      if (this.dob && this.validatePassword() && this.validateConfirmPassword()) {
-        if (type === 'terms') {
-          this.showTermsAndConditions();
-        } else if (type === 'financial') {
-          this.showFinancialDeclaration();
-        }
-      } else {
-        alert('Please fill out all form fields correctly before proceeding.');
-      }
-    },
     navigateToPrevious() {
       this.$router.go(-1);
     },
