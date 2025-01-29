@@ -1,4 +1,13 @@
 {
+  "mailing-address": [
+    {
+      "id": "eb90",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Armenia"
+    }
+  ],
   "verify-mobile": [
     {
       "id": "a818",
@@ -19,6 +28,22 @@
     {
       "id": "8463",
       "verificationCode": "44444"
+    },
+    {
+      "id": "f85b",
+      "verificationCode": "22222"
+    },
+    {
+      "id": "cf06",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "a43b",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "4374",
+      "verificationCode": "33333"
     }
   ],
   "verify-email": [
@@ -41,9 +66,39 @@
     {
       "id": "59d3",
       "verificationCode": "12234"
+    },
+    {
+      "id": "5255",
+      "verificationCode": "22222"
+    },
+    {
+      "id": "7232",
+      "verificationCode": "22222"
+    },
+    {
+      "id": "b300",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "84e2",
+      "verificationCode": "22222"
     }
   ],
-  "addresses": [],
+  "address": [
+    {
+      "id": "3e54"
+    },
+    {
+      "id": "1614",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Armenia",
+      "Nationality": "Albania",
+      "DwellingStatus": "rented",
+      "ProofOfAddress": {}
+    }
+  ],
   "basic-info": [
     {
       "id": "eb5f",
@@ -426,6 +481,62 @@
       "confirmPassword": "Rendell1234@",
       "viewedTerms": true,
       "viewedFinancial": true
+    },
+    {
+      "id": "b3bb",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-17",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": true,
+      "viewedFinancial": true
+    },
+    {
+      "id": "5cb9",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2024-07-09",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Bl@zer1234",
+      "confirmPassword": "Bl@zer1234",
+      "viewedTerms": true,
+      "viewedFinancial": true
+    },
+    {
+      "id": "1b8d",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-14",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": true,
+      "viewedFinancial": true
+    },
+    {
+      "id": "e9e9",
+      "firstName": "Diomenes",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-07",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Bl@zer1234",
+      "confirmPassword": "Bl@zer1234",
+      "viewedTerms": true,
+      "viewedFinancial": true
     }
   ],
   "id-information": [
@@ -460,6 +571,54 @@
       "firstIdType": "National ID",
       "firstIdNumber": "15555555555",
       "firstExpiryDate": "2025-02-07",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "1425578",
+      "secondExpiryDate": "2025-01-11",
+      "secondIdDocument": null,
+      "maritalStatus": "Married"
+    },
+    {
+      "id": "84e8",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15555555555",
+      "firstExpiryDate": "2025-01-24",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "1425578",
+      "secondExpiryDate": "2025-02-07",
+      "secondIdDocument": null,
+      "maritalStatus": "Married"
+    },
+    {
+      "id": "ac77",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15555555555",
+      "firstExpiryDate": "2025-02-07",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "1425578",
+      "secondExpiryDate": "2025-03-04",
+      "secondIdDocument": null,
+      "maritalStatus": "Married"
+    },
+    {
+      "id": "a62b",
+      "firstIdType": "National ID",
+      "firstIdNumber": "0000000000",
+      "firstExpiryDate": "2025-02-18",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "154225",
+      "secondExpiryDate": "2025-03-11",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "de23",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15151515151",
+      "firstExpiryDate": "2025-02-06",
       "firstIdDocument": null,
       "secondIdType": "Driver's Permit",
       "secondIdNumber": "1425578",

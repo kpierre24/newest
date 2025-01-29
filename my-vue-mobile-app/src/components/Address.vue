@@ -40,11 +40,6 @@
           <label for="ProofOfAddress">Proof of Address</label>
           <input type="file" id="ProofOfAddress" @change="handleFileUpload" required />
         </div>
-        <div class="input-container">
-          <label>
-            <input type="checkbox" v-model="sameAsMailingAddress" /> Same as Mailing Address
-          </label>
-        </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="next-button">Next</button>
@@ -68,9 +63,8 @@ export default {
       Country: '',
       Nationality: '',
       DwellingStatus: '',
-      sameAsMailingAddress: false,
       proofOfAddressFile: null,
-      countries: Object.values(countries).map(country => country.name)
+      countries: Object.keys(countries).map(code => countries[code].name)
     };
   },
   methods: {
@@ -87,25 +81,22 @@ export default {
           formData.append('Country', this.Country);
           formData.append('Nationality', this.Nationality);
           formData.append('DwellingStatus', this.DwellingStatus);
-          formData.append('sameAsMailingAddress', this.sameAsMailingAddress);
           formData.append('ProofOfAddress', this.proofOfAddressFile);
 
           // Debugging logs to check form data
-          console.log('Address Data:', formData);
+          for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+          }
 
           const response = await axios.post('http://localhost:3000/address', formData, {
             headers: {
-              'Content-Type': 'multipart/form-data'
+              'Content-Type': 'application/json'
             }
           });
           console.log('Address info submitted:', response.data);
 
-          // Navigate to the next page after successful submission
-          if (this.sameAsMailingAddress) {
-            this.$router.push('/mailing-address');
-          } else {
-            this.$router.push('/next-page');
-          }
+          // Navigate to the mailing address page after successful submission
+          this.$router.push('/mailing-address');
         } catch (error) {
           console.error('Error submitting address info:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);
@@ -171,10 +162,6 @@ input[type="text"], input[type="file"], select {
   font-size: 16px;
   box-sizing: border-box;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-input[type="checkbox"] {
-  margin-right: 10px;
 }
 
 .button-group {
