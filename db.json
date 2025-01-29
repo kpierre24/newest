@@ -1,4 +1,79 @@
 {
+  "politically-exposed-persons": [
+    {
+      "id": "e660",
+      "personName": "rfffff",
+      "selectedOption": ""
+    },
+    {
+      "id": "3ddd",
+      "personName": "drre",
+      "selectedOption": ""
+    },
+    {
+      "id": "3825",
+      "personName": "",
+      "selectedOption": ""
+    },
+    {
+      "id": "041e",
+      "personName": "fff"
+    },
+    {
+      "id": "db50",
+      "personName": "",
+      "selections": {
+        "button1": "Domestic PEP",
+        "button2": "Head of an International Organization",
+        "button3": "Sibling"
+      }
+    },
+    {
+      "id": "916f",
+      "personName": "dfree",
+      "selections": {
+        "button1": "Military Official",
+        "button2": "Caribbean Financial Action Task Force",
+        "button3": "Half-Sibling"
+      }
+    },
+    {
+      "id": "6066",
+      "personName": "it",
+      "selections": {
+        "button1": "",
+        "button2": "",
+        "button3": "",
+        "Domestic Pep or Foreign PEP": "Senior Government Official",
+        "Interntional Organization PEP": "Caribbean Financial Action Task Force",
+        "Immediate Family member of a PEP": "Sibling"
+      }
+    },
+    {
+      "id": "568b",
+      "personName": "dfdf",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Senior Government Official",
+        "Interntional Organization PEP": "InterAmerican Development Bank",
+        "Immediate Family member of a PEP": "Other Child of PEP Spouse"
+      }
+    },
+    {
+      "id": "7b8b"
+    },
+    {
+      "id": "a152"
+    },
+    {
+      "id": "78dd",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Senior Executive of State-Owned Corporation",
+        "Interntional Organization PEP": "InterAmerican Development Bank",
+        "Immediate Family member of a PEP": "Sibling"
+      }
+    }
+  ],
   "employment-information": [],
   "foreign-national-bank-information": [
     {
@@ -99,6 +174,27 @@
       "AddressLine2": "trr",
       "City": "sssss",
       "Country": "Armenia"
+    },
+    {
+      "id": "8311",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "3e1e",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "46cb",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
     }
   ],
   "verify-mobile": [
@@ -149,6 +245,14 @@
     {
       "id": "011d",
       "verificationCode": "33333"
+    },
+    {
+      "id": "9eda",
+      "verificationCode": "33333"
+    },
+    {
+      "id": "9504",
+      "verificationCode": "22222"
     }
   ],
   "verify-email": [
@@ -199,6 +303,14 @@
     {
       "id": "aa51",
       "verificationCode": "33333"
+    },
+    {
+      "id": "a57a",
+      "verificationCode": "33333"
+    },
+    {
+      "id": "4008",
+      "verificationCode": "12345"
     }
   ],
   "address": [
@@ -283,6 +395,36 @@
       "Country": "Antigua and Barbuda",
       "Nationality": "Antarctica",
       "DwellingStatus": "rented",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "e368",
+      "AddressLine1": "ind",
+      "AddressLine2": "ssss",
+      "City": "yhh",
+      "Country": "Antigua and Barbuda",
+      "Nationality": "American Samoa",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "231a",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Albania",
+      "Nationality": "Egypt",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "b855",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Trinidad and Tobago",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "subletting",
       "ProofOfAddress": {}
     }
   ],
@@ -766,6 +908,34 @@
       "confirmPassword": "Kendell1234@",
       "viewedTerms": true,
       "viewedFinancial": true
+    },
+    {
+      "id": "666c",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-02-06",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "2345678895",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": false,
+      "viewedFinancial": false
+    },
+    {
+      "id": "477e",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-17",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Kendell1234@",
+      "confirmPassword": "Kendell1234@",
+      "viewedTerms": true,
+      "viewedFinancial": true
     }
   ],
   "id-information": [
@@ -890,6 +1060,18 @@
       "secondExpiryDate": "2025-01-18",
       "secondIdDocument": null,
       "maritalStatus": "Single"
+    },
+    {
+      "id": "4c52",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15555555555",
+      "firstExpiryDate": "2025-01-17",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "154225",
+      "secondExpiryDate": "2025-01-31",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
     }
   ]
 }

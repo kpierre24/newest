@@ -14,6 +14,7 @@ import DueDiligence from '@/components/DueDiligence.vue';
 import MailingAddress from '@/components/MailingAddress.vue';
 import ForeignNationalBankInformation from '@/components/ForeignNationalBankInformation.vue';
 import EmploymentInformation from '@/components/EmploymentInformation.vue';
+import PoliticallyExposedPersons from '@/components/PoliticallyExposedPersons.vue';
 
 
 const routes = [
@@ -31,7 +32,8 @@ const routes = [
   { path: '/due-diligence', name: 'DueDiligence', component: DueDiligence },
   { path: '/mailing-address', name: 'MailingAddress', component: MailingAddress },
   { path: '/foreign-national-bank-information', name: 'ForeignNationalBankInformation', component: ForeignNationalBankInformation},
-  { path: '/employment-information', name: 'EmploymentInformation', component: EmploymentInformation}
+  { path: '/employment-information', name: 'EmploymentInformation', component: EmploymentInformation},
+  { path: '/politically-exposed-persons', name: 'PoliticallyExposedPersons', component: PoliticallyExposedPersons}
 ];
 
 const router = createRouter({

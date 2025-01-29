@@ -39,29 +39,33 @@
             <i class="icon fas fa-calendar-alt"></i>
           </div>
           <div class="input-container">
-            <label for="password">Password</label>
             <input type="password" v-model="password" id="password" placeholder="Password" maxlength="50" required @input="validatePassword" />
             <small v-if="passwordError" class="error">{{ passwordError }}</small>
           </div>
           <div class="input-container">
-            <label for="confirmPassword">Confirm Password</label>
             <input type="password" v-model="confirmPassword" id="confirmPassword" placeholder="Confirm Password" maxlength="50" required />
           </div>
           <div class="input-container">
             <label>
-              <input type="checkbox" v-model="viewedTerms" disabled />
               <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
             </label>
           </div>
           <div class="input-container">
             <label>
-              <input type="checkbox" v-model="viewedFinancial" disabled />
               <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
             </label>
           </div>
+          <div class="checkbox-container">
+            <input type="checkbox" v-model="termsViewed" id="termsViewed" />
+            <label for="termsViewed">I have viewed the Terms and Conditions</label>
+          </div>
+          <div class="checkbox-container">
+            <input type="checkbox" v-model="financialAgreementViewed" id="financialAgreementViewed" />
+            <label for="financialAgreementViewed">I have viewed the Financial Agreement</label>
+          </div>
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-            <button type="submit" class="next-button">Next</button>
+            <button type="submit" class="submit-button">Submit</button>
           </div>
         </div>
       </form>
@@ -101,7 +105,9 @@ export default {
       showTermsModal: false,
       showFinancialModal: false,
       viewedTerms: false,
-      viewedFinancial: false
+      viewedFinancial: false,
+      termsViewed: false,
+      financialAgreementViewed: false
     };
   },
   methods: {
@@ -110,7 +116,7 @@ export default {
     },
     async navigateToNext() {
       console.log('navigateToNext called');
-      if (!this.passwordError) {
+      if (!this.passwordError && this.termsViewed && this.financialAgreementViewed) {
         console.log('User has viewed terms and financial declaration. Navigating...');
         await this.submitBasicInfo(); // Call the API before navigating
 
@@ -185,26 +191,33 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 150vh;
   background: white;
   padding: 20px;
   text-align: center;
+  overflow: hidden;
 }
 
 .form-container {
   background-color: white;
-  padding: 30px;
+  padding: 20px;
   border-radius: 30px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-  height: 90vh;
-  max-height: 800px;
+  height: 150vh;
+  max-height: 150vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border: 3px solid black;
+  overflow-y: auto;
+}
+
+.form-container .links {
+  align-self: flex-start; /* Moves links to the left */
+  width: 100%; /* Ensures it spans the full width */
 }
 
 h1 {
@@ -221,6 +234,7 @@ h1 {
 .input-container {
   position: relative;
   margin-bottom: 15px;
+  align-items: left;
 }
 
 input, select {
@@ -280,16 +294,6 @@ input:focus, select:focus {
   font-size: 12px;
 }
 
-.links {
-  margin: 15px 0;
-}
-
-.links a {
-  margin-right: 10px;
-  color: #007bff;
-  cursor: pointer;
-  text-decoration: underline;
-}
 
 .button-group {
   display: flex;
@@ -387,6 +391,25 @@ input:focus, select:focus {
   transition: background-color 0.3s ease;
 }
 
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 0px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 14px; /* Adjust checkbox size if needed */
+  height: 14px;
+  gap: 3px;
+  margin-right: 10px;
+}
+.checkbox {
+  width: 14px;
+  height: 14px;
+  margin-right: 10px;
+}
 .agree-button {
   background-color: #007bff;
   color: white;

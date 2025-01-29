@@ -52,11 +52,11 @@ export default {
     };
   },
   methods: {
-    navigateToHome() {
-      this.$router.push('/Home');
+    navigateToPrevious() {
+      this.$router.go(-1);
     },
     navigateToNext() {
-      this.$router.push('/id-information');
+      this.$router.push('/politically-exposed-persons');
     }
   }
 };
