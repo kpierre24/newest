@@ -64,7 +64,7 @@ export default {
       Nationality: '',
       DwellingStatus: '',
       proofOfAddressFile: null,
-      countries: Object.keys(countries).map(code => countries[code].name)
+      countries: Object.values(countries).map(country => country.name)
     };
   },
   methods: {
@@ -96,7 +96,7 @@ export default {
           console.log('Address info submitted:', response.data);
 
           // Navigate to the mailing address page after successful submission
-          this.$router.push('/mailing-address');
+          this.$router.push({ path: '/mailing-address', query: { nationality: this.Nationality } });
         } catch (error) {
           console.error('Error submitting address info:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);

@@ -22,6 +22,7 @@
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="submit-button">Submit</button>
+          <button type="button" class="skip-button" @click="skipMailingAddress">Same as Home Address</button>
         </div>
       </form>
     </div>
@@ -67,8 +68,13 @@ export default {
           });
           console.log('Mailing address info submitted:', response.data);
 
-          // Navigate to the next page after successful submission
-          this.$router.push('/id-information');
+          // Navigate to the appropriate page based on nationality
+          const nationality = this.$route.query.nationality;
+          if (nationality !== 'Trinidad and Tobago') {
+            this.$router.push('/foreign-national-bank-information');
+          } else {
+            this.$router.push('/employment-information');
+          }
         } catch (error) {
           console.error('Error submitting mailing address info:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);
@@ -79,6 +85,15 @@ export default {
     },
     validateForm() {
       return this.AddressLine1 && this.City && this.Country;
+    },
+    skipMailingAddress() {
+      // Navigate to the next page without submitting the form
+      const nationality = this.$route.query.nationality;
+      if (nationality !== 'Trinidad and Tobago') {
+        this.$router.push('/foreign-national-bank-information');
+      } else {
+        this.$router.push('/employment-information');
+      }
     }
   }
 };
@@ -139,7 +154,7 @@ input[type="text"], select {
   margin-top: 20px;
 }
 
-.back-button, .submit-button {
+.back-button, .submit-button, .skip-button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -165,5 +180,14 @@ input[type="text"], select {
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+.skip-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.skip-button:hover {
+  background-color: #218838;
 }
 </style>

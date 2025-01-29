@@ -1,6 +1,17 @@
 {
-  
-  "foreign-national-bank-information": [],
+  "foreign-national-bank-information": [
+    {
+      "id": "82f3",
+      "bankName": "scotia",
+      "addressLine1": "ind",
+      "addressLine2": "ssss",
+      "city": "sssss",
+      "country": "Curacao",
+      "accountNumber": "45555",
+      "swiftCode": "5555555",
+      "bankTelephoneNumber": "555555"
+    }
+  ],
   "mailing-address": [
     {
       "id": "eb90",
@@ -8,6 +19,20 @@
       "AddressLine2": "trr",
       "City": "yhh",
       "Country": "Armenia"
+    },
+    {
+      "id": "bf34",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Trinidad and Tobago"
+    },
+    {
+      "id": "bb65",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Trinidad and Tobago"
     }
   ],
   "verify-mobile": [
@@ -98,6 +123,46 @@
       "Country": "Armenia",
       "Nationality": "Albania",
       "DwellingStatus": "rented",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "fd2e",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Albania",
+      "Nationality": "American Samoa",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "b766",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Antigua and Barbuda",
+      "Nationality": "Armenia",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "8415",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Anguilla",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "rented",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "6fb8",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Anguilla",
+      "Nationality": "Angola",
+      "DwellingStatus": "subletting",
       "ProofOfAddress": {}
     }
   ],
