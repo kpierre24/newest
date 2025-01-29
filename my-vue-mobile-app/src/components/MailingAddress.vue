@@ -4,25 +4,28 @@
       <h1>Mailing Address</h1>
       <form @submit.prevent="submitMailingAddress">
         <div class="input-container">
-          <input type="text" v-model="AddressLine1" id="AddressLine1" placeholder="Mailing Address line 1" required />
+          <input type="text" v-model="AddressLine1" id="AddressLine1" placeholder="Mailing Address line 1" :required="!sameAsHomeAddress" />
         </div>
         <div class="input-container">
           <input type="text" v-model="AddressLine2" id="AddressLine2" placeholder="Mailing Address line 2" />
         </div>
         <div class="input-container">
-          <input type="text" v-model="City" id="City" placeholder="Mailing City" required />
+          <input type="text" v-model="City" id="City" placeholder="Mailing City" :required="!sameAsHomeAddress" />
         </div>
         <div class="input-container">
           <label for="Country">Mailing Country</label>
-          <select v-model="Country" id="Country" required>
+          <select v-model="Country" id="Country" :required="!sameAsHomeAddress">
             <option value="" disabled>Select Country</option>
             <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
           </select>
         </div>
+        <div class="checkbox-container">
+          <input type="checkbox" v-model="sameAsHomeAddress" id="sameAsHomeAddress" />
+          <label for="sameAsHomeAddress">Same as Home Address</label>
+        </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="submit-button">Submit</button>
-          <button type="button" class="skip-button" @click="skipMailingAddress">Same as Home Address</button>
         </div>
       </form>
     </div>
@@ -41,6 +44,7 @@ export default {
       AddressLine2: '',
       City: '',
       Country: '',
+      sameAsHomeAddress: false,
       countries: Object.values(countries).map(country => country.name)
     };
   },
@@ -49,7 +53,7 @@ export default {
       this.$router.go(-1);
     },
     async submitMailingAddress() {
-      if (this.validateForm()) {
+      if (this.validateForm() || this.sameAsHomeAddress) {
         try {
           const formData = {
             AddressLine1: this.AddressLine1,
@@ -85,15 +89,6 @@ export default {
     },
     validateForm() {
       return this.AddressLine1 && this.City && this.Country;
-    },
-    skipMailingAddress() {
-      // Navigate to the next page without submitting the form
-      const nationality = this.$route.query.nationality;
-      if (nationality !== 'Trinidad and Tobago') {
-        this.$router.push('/foreign-national-bank-information');
-      } else {
-        this.$router.push('/employment-information');
-      }
     }
   }
 };
@@ -130,6 +125,14 @@ export default {
   margin-bottom: 15px;
 }
 
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  text-align: left;
+}
+
 label {
   display: block;
   margin-bottom: 5px;
@@ -154,7 +157,7 @@ input[type="text"], select {
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .skip-button {
+.back-button, .submit-button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -180,14 +183,5 @@ input[type="text"], select {
 
 .submit-button:hover {
   background-color: #0056b3;
-}
-
-.skip-button {
-  background-color: #28a745;
-  color: white;
-}
-
-.skip-button:hover {
-  background-color: #218838;
 }
 </style>

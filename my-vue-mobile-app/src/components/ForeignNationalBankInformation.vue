@@ -88,8 +88,8 @@ export default {
           });
           console.log('Bank information submitted:', response.data);
 
-          // Navigate to the next page after successful submission
-          this.$router.push('/next-page');
+          // Navigate to the employment information page after successful submission
+          this.$router.push('/employment-information');
         } catch (error) {
           console.error('Error submitting bank information:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);
