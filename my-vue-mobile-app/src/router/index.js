@@ -12,6 +12,8 @@ import MobileVerification from '../components/MobileVerification';
 import MembershipDeclarationAgreement from '@/components/MembershipDeclarationAgreement.vue';
 import DueDiligence from '@/components/DueDiligence.vue';
 import MailingAddress from '@/components/MailingAddress.vue';
+import ForeignNationalBankInformation from '@/components/ForeignNationalBankInformation.vue';
+
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -27,6 +29,7 @@ const routes = [
   { path: '/membership-declaration-agreement', name: 'MembershipDeclarationAgreement', component: MembershipDeclarationAgreement },
   { path: '/due-diligence', name: 'DueDiligence', component: DueDiligence },
   { path: '/mailing-address', name: 'MailingAddress', component: MailingAddress },
+  { path: '/foreign-national-bank-information', name: 'ForeignNationalBankInformation', component: ForeignNationalBankInformation},
 ];
 
 const router = createRouter({
