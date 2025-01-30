@@ -66,6 +66,7 @@
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
             <button type="submit" class="submit-button">Submit</button>
+            <button type="button" @click="navigateToPEP">Next</button>
           </div>
         </div>
       </form>
@@ -179,6 +180,9 @@ export default {
       } else {
         this.passwordError = '';
       }
+    },
+    navigateToPEP() {
+      this.$router.push({ name: 'PoliticallyExposedPersons2', params: { dob: this.dob } });
     }
   }
 };

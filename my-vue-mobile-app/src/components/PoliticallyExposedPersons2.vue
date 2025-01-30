@@ -1,39 +1,41 @@
 <template>
-  <div class="pep-screen">
-    <h1>Politically Exposed Person</h1>
-    <form @submit.prevent="handleSubmit">
-      <p>Are you a close associate of a PEP?</p>
-      <div>
-        <input type="radio" id="pep-yes" name="pep-associate" value="yes" v-model="pepAssociate">
-        <label for="pep-yes">Yes</label>
-        <input type="radio" id="pep-no" name="pep-associate" value="no" v-model="pepAssociate">
-        <label for="pep-no">No</label>
-      </div>
-      <p v-if="errors.pepAssociate" class="error">{{ errors.pepAssociate }}</p>
+  <div class="container">
+    <div class="form-container">
+      <h1>Politically Exposed Person</h1>
+      <form @submit.prevent="handleSubmit">
+        <p>Are you a close associate of a PEP?</p>
+        <div>
+          <input type="radio" id="pep-yes" name="pep-associate" value="yes" v-model="pepAssociate">
+          <label for="pep-yes">Yes</label>
+          <input type="radio" id="pep-no" name="pep-associate" value="no" v-model="pepAssociate">
+          <label for="pep-no">No</label>
+        </div>
+        <p v-if="errors.pepAssociate" class="error">{{ errors.pepAssociate }}</p>
 
-      <p>Indicate the type of relationship to PEP</p>
-      <input type="text" placeholder="Relationship to PEP" v-model="relationshipToPep">
-      <p v-if="errors.relationshipToPep" class="error">{{ errors.relationshipToPep }}</p>
+        <p>Indicate the type of relationship to PEP</p>
+        <input type="text" placeholder="Relationship to PEP" v-model="relationshipToPep">
+        <p v-if="errors.relationshipToPep" class="error">{{ errors.relationshipToPep }}</p>
 
-      <p>Name of PEP</p>
-      <input type="text" placeholder="Name of PEP" v-model="nameOfPep">
-      <p v-if="errors.nameOfPep" class="error">{{ errors.nameOfPep }}</p>
+        <p>Name of PEP</p>
+        <input type="text" placeholder="Name of PEP" v-model="nameOfPep">
+        <p v-if="errors.nameOfPep" class="error">{{ errors.nameOfPep }}</p>
 
-      <hr>
-      <p>Based on my responses</p>
-      <div>
-        <input type="radio" id="i-am-pep" name="pep-status" value="i-am-pep" v-model="pepStatus">
-        <label for="i-am-pep">I am a politically exposed person</label>
-        <input type="radio" id="i-am-not-pep" name="pep-status" value="i-am-not-pep" v-model="pepStatus">
-        <label for="i-am-not-pep">I am not a politically exposed person</label>
-      </div>
-      <p v-if="errors.pepStatus" class="error">{{ errors.pepStatus }}</p>
+        <hr>
+        <p>Based on my responses</p>
+        <div>
+          <input type="radio" id="i-am-pep" name="pep-status" value="i-am-pep" v-model="pepStatus">
+          <label for="i-am-pep">I am a politically exposed person</label>
+          <input type="radio" id="i-am-not-pep" name="pep-status" value="i-am-not-pep" v-model="pepStatus">
+          <label for="i-am-not-pep">I am not a politically exposed person</label>
+        </div>
+        <p v-if="errors.pepStatus" class="error">{{ errors.pepStatus }}</p>
 
-      <div class="buttons">
-        <button type="button" class="back-button" @click="goBack">Back</button>
-        <button type="submit" class="next-button">Next</button>
-      </div>
-    </form>
+        <div class="buttons">
+          <button type="button" class="back-button" @click="goBack">Back</button>
+          <button type="submit" class="next-button">Next</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -41,15 +43,13 @@
 import axios from 'axios';
 
 export default {
-  name: 'PoliticallyExposedPersons2',
   data() {
     return {
       pepAssociate: '',
       relationshipToPep: '',
       nameOfPep: '',
       pepStatus: '',
-      errors: {},
-      dateOfBirth: '' // Assuming you have a way to get this from BasicInfo screen
+      errors: {}
     };
   },
   methods: {
@@ -90,43 +90,18 @@ export default {
           });
       }
     },
-navigateBasedOnAge() {
-  if (!this.dateOfBirth) {
-    console.error("Date of birth is required!");
-    return;
-  }
-
-  const age = this.calculateAge(this.dateOfBirth);
-  if (age < 17) {
-    this.$router.push('/child-id-information');
-  } else {
-    this.$router.push('/id-information');
-  }
-},
-    calculateAge(dob) {
-      const birthDate = new Date(dob);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age;
+    navigateBasedOnAge() {
+      // Navigate to IDInformation regardless of age
+      this.$router.push('/id-information');
     },
     goBack() {
       this.$router.go(-1);
     }
-  },
-  created() {
-    // Assuming you have a way to get the date of birth from the BasicInfo screen
-    // For example, you might use Vuex or pass it as a prop
-    this.dateOfBirth = '2005-01-01'; // Replace with actual date of birth
   }
 };
 </script>
 
 <style scoped>
-
 
 .container {
   display: flex;

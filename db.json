@@ -1,4 +1,68 @@
 {
+  "success": [
+    {
+      "id": "3cba",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    },
+    {
+      "id": "e4ab",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    }
+  ],
+  "branch": [
+    {
+      "id": "74db",
+      "preferredContactMethod": "phone",
+      "bestContactTime": "12:00pm to 4:00pm"
+    },
+    {
+      "id": "7cf0",
+      "preferredContactMethod": "phone",
+      "bestContactTime": "8:00am to 12:00pm"
+    },
+    {
+      "id": "3fdc",
+      "preferredContactMethod": "email",
+      "bestContactTime": "8:00am to 12:00pm"
+    }
+  ],
+  "power-of-attorney": [],
+  "designation-of-beneficiary": [
+    {
+      "id": "c991",
+      "firstName": "gff",
+      "lastName": "fgf",
+      "otherName": "wrw",
+      "addressLine1": "errr",
+      "addressLine2": "erer",
+      "city": "erre",
+      "country": "ghgh",
+      "dob": "2024-12-30",
+      "gender": "male",
+      "relationshipToBeneficiary": "fsfs",
+      "typeOfId": "id card",
+      "idNumber": "152244755666",
+      "percentageOfInterest": 30
+    },
+    {
+      "id": "2d75",
+      "firstName": "gff",
+      "lastName": "fgf",
+      "otherName": "wrw",
+      "addressLine1": "errr",
+      "addressLine2": "erer",
+      "city": "erre",
+      "country": "ghgh",
+      "dob": "2025-01-13",
+      "gender": "male",
+      "relationshipToBeneficiary": "fsfs",
+      "typeOfId": "driver's permit",
+      "idNumber": "152244755666",
+      "percentageOfInterest": 30
+    }
+  ],
   "child-id-information": [],
   "politically-exposed-persons-2": [
     {
@@ -48,6 +112,132 @@
       "pepAssociate": "no",
       "relationshipToPep": "sddsd",
       "nameOfPep": "sdsdsd",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "d86f",
+      "pepAssociate": "no",
+      "relationshipToPep": "fhf",
+      "nameOfPep": "hf",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "c1a5",
+      "pepAssociate": "yes",
+      "relationshipToPep": "sdds",
+      "nameOfPep": "hghg",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "d625",
+      "pepAssociate": "no",
+      "relationshipToPep": "fwfwf",
+      "nameOfPep": "sfssf",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "b926",
+      "pepAssociate": "no",
+      "relationshipToPep": "fwfwf",
+      "nameOfPep": "sfssf",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "426f",
+      "pepAssociate": "no",
+      "relationshipToPep": "fwfwf",
+      "nameOfPep": "wfw",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "1138",
+      "pepAssociate": "no",
+      "relationshipToPep": "etetet",
+      "nameOfPep": "etete",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "c0ac",
+      "pepAssociate": "no",
+      "relationshipToPep": "dfdfd",
+      "nameOfPep": "fdf",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "a1b4",
+      "pepAssociate": "no",
+      "relationshipToPep": "dfdfd",
+      "nameOfPep": "fdf",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "cbcc",
+      "pepAssociate": "no",
+      "relationshipToPep": "ghhg",
+      "nameOfPep": "ghgh",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "077d",
+      "pepAssociate": "no",
+      "relationshipToPep": "ghhg",
+      "nameOfPep": "ghgh",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "d63a",
+      "pepAssociate": "no",
+      "relationshipToPep": "ghhg",
+      "nameOfPep": "ghgh",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "a68b",
+      "pepAssociate": "no",
+      "relationshipToPep": "rrgrrr",
+      "nameOfPep": "dfdfd",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "3346",
+      "pepAssociate": "no",
+      "relationshipToPep": "rrg",
+      "nameOfPep": "gf",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "f31b",
+      "pepAssociate": "no",
+      "relationshipToPep": "ffff",
+      "nameOfPep": "fff",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "a48a",
+      "pepAssociate": "no",
+      "relationshipToPep": "ffff",
+      "nameOfPep": "fff",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "05e3",
+      "pepAssociate": "no",
+      "relationshipToPep": "fef",
+      "nameOfPep": "efe",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "0f07",
+      "pepAssociate": "no",
+      "relationshipToPep": "adada",
+      "nameOfPep": "fsfsd",
+      "pepStatus": "i-am-not-pep"
+    },
+    {
+      "id": "7986",
+      "pepAssociate": "no",
+      "relationshipToPep": "sds",
+      "nameOfPep": "sdsd",
       "pepStatus": "i-am-not-pep"
     }
   ],
@@ -196,9 +386,127 @@
         "Interntional Organization PEP": "",
         "Immediate Family member of a PEP": ""
       }
+    },
+    {
+      "id": "e768",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Senior Government Official",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "95ab",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "c6d7",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "f5f9",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "e0e9",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "0bbe",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "c473",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "4750",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "d89c",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
     }
   ],
-  "employment-information": [],
+  "employment-information": [
+    {
+      "id": "3688",
+      "employerName": "dd",
+      "employerAddressLine1": "dd",
+      "employerAddressLine2": "dd",
+      "employerCity": "dd",
+      "employerCountry": "Hungary",
+      "workNumber": "44444444",
+      "employmentStatus": "permanent",
+      "employmentType": "employment-letter",
+      "proofOfEmployment": {}
+    },
+    {
+      "id": "ec2e",
+      "employerName": "dd",
+      "employerAddressLine1": "dd",
+      "employerAddressLine2": "dd",
+      "employerCity": "dd",
+      "employerCountry": "Hungary",
+      "workNumber": "44444444",
+      "employmentStatus": "part-time",
+      "employmentType": "bank-statement",
+      "proofOfEmployment": {}
+    },
+    {
+      "id": "ee28",
+      "employerName": "dd",
+      "employerAddressLine1": "dd",
+      "employerAddressLine2": "dd",
+      "employerCity": "dd",
+      "employerCountry": "Hungary",
+      "workNumber": "44444444",
+      "employmentStatus": "contract",
+      "employmentType": "bank-statement",
+      "proofOfEmployment": {}
+    }
+  ],
   "foreign-national-bank-information": [
     {
       "id": "82f3",
@@ -337,6 +645,27 @@
       "AddressLine2": "",
       "City": "",
       "Country": ""
+    },
+    {
+      "id": "efbf",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "7cf3",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "6f78",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
     }
   ],
   "verify-mobile": [
@@ -419,6 +748,38 @@
     {
       "id": "cc90",
       "verificationCode": "44444"
+    },
+    {
+      "id": "7b0a",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "4e28",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "9d06",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "aa6f",
+      "verificationCode": "34343"
+    },
+    {
+      "id": "04a5",
+      "verificationCode": "etett"
+    },
+    {
+      "id": "3577",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "2d25",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "47f0",
+      "verificationCode": "33333"
     }
   ],
   "verify-email": [
@@ -508,6 +869,38 @@
     },
     {
       "id": "52a5",
+      "verificationCode": "22222"
+    },
+    {
+      "id": "2b74",
+      "verificationCode": "33333"
+    },
+    {
+      "id": "9525",
+      "verificationCode": "33333"
+    },
+    {
+      "id": "b9bb",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "adab",
+      "verificationCode": "56555"
+    },
+    {
+      "id": "e88f",
+      "verificationCode": "fdfdf"
+    },
+    {
+      "id": "a36f",
+      "verificationCode": "33333"
+    },
+    {
+      "id": "c6f0",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "6b49",
       "verificationCode": "22222"
     }
   ],
@@ -643,6 +1036,36 @@
       "Country": "Armenia",
       "Nationality": "Aland",
       "DwellingStatus": "rented",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "9c95",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Trinidad and Tobago",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "a3ab",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Antarctica",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "25b9",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Antarctica",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "subletting",
       "ProofOfAddress": {}
     }
   ],
@@ -1224,6 +1647,104 @@
       "confirmPassword": "Rendell1234@",
       "viewedTerms": true,
       "viewedFinancial": true
+    },
+    {
+      "id": "74fd",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-14",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": true,
+      "viewedFinancial": true
+    },
+    {
+      "id": "02ec",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2024-12-31",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": true,
+      "viewedFinancial": true
+    },
+    {
+      "id": "8b85",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2023-06-22",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": false,
+      "viewedFinancial": false
+    },
+    {
+      "id": "eee9",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-13",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": false,
+      "viewedFinancial": false
+    },
+    {
+      "id": "1568",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-13",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "kpierre24@g",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": false,
+      "viewedFinancial": false
+    },
+    {
+      "id": "f072",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-21",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": true,
+      "viewedFinancial": true
+    },
+    {
+      "id": "5d7c",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "wrw",
+      "gender": "male",
+      "dob": "2025-01-16",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell12345@",
+      "confirmPassword": "Rendell12345@",
+      "viewedTerms": false,
+      "viewedFinancial": false
     }
   ],
   "id-information": [
@@ -1384,6 +1905,42 @@
       "secondExpiryDate": "2025-01-11",
       "secondIdDocument": null,
       "maritalStatus": "Married"
+    },
+    {
+      "id": "dc5c",
+      "firstIdType": "National ID",
+      "firstIdNumber": "152244755666",
+      "firstExpiryDate": "2025-01-10",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "154225",
+      "secondExpiryDate": "2025-01-11",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "6752",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15151515151",
+      "firstExpiryDate": "2025-01-14",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "1425578",
+      "secondExpiryDate": "2024-12-31",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "0963",
+      "firstIdType": "National ID",
+      "firstIdNumber": "5353",
+      "firstExpiryDate": "2025-01-15",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "798621",
+      "secondExpiryDate": "2025-01-16",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
     }
   ]
 }

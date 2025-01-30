@@ -2,7 +2,7 @@
   <div class="container">
     <div class="form-container">
       <h1>Employment Information</h1>
-      <form @submit.prevent="submitEmploymentInformation">
+      <form @submit.prevent="handleSubmit">
         <div class="input-container">
           <input type="text" v-model="employerName" id="employerName" placeholder="Employer Name" required />
         </div>
@@ -50,8 +50,8 @@
           <label for="proofOfEmployment">Proof of Employment</label>
           <input type="file" id="proofOfEmployment" @change="handleFileUpload" required />
         </div>
-        <div class="button-group">
-          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+        <div class="buttons">
+          <button type="button" class="back-button" @click="goBack">Back</button>
           <button type="submit" class="submit-button">Submit</button>
         </div>
       </form>
@@ -80,10 +80,10 @@ export default {
     };
   },
   methods: {
-    navigateToPrevious() {
+    goBack() {
       this.$router.go(-1);
     },
-    async submitEmploymentInformation() {
+    async handleSubmit() {
       if (this.validateForm()) {
         try {
           const formData = new FormData();
@@ -104,13 +104,13 @@ export default {
 
           const response = await axios.post('http://localhost:3000/employment-information', formData, {
             headers: {
-              'Content-Type': 'multipart/form-data'
+              'Content-Type': 'application/json'
             }
           });
           console.log('Employment information submitted:', response.data);
 
           // Navigate to the next page after successful submission
-          this.$router.push('/next-page');
+          this.$router.push('/designation-of-beneficiary');
         } catch (error) {
           console.error('Error submitting employment information:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);

@@ -16,6 +16,10 @@ import ForeignNationalBankInformation from '@/components/ForeignNationalBankInfo
 import EmploymentInformation from '@/components/EmploymentInformation.vue';
 import PoliticallyExposedPersons from '@/components/PoliticallyExposedPersons.vue';
 import PoliticallyExposedPersons2 from '@/components/PoliticallyExposedPersons2.vue';
+import DesignationOfBeneficiary from '@/components/DesignationOfBeneficiary.vue';
+import PowerofAttorney from '@/components/PowerofAttorney.vue';
+import Branch from '@/components/Branch.vue';
+import Success from '@/components/Success.vue';
 
 
 const routes = [
@@ -35,7 +39,12 @@ const routes = [
   { path: '/foreign-national-bank-information', name: 'ForeignNationalBankInformation', component: ForeignNationalBankInformation},
   { path: '/employment-information', name: 'EmploymentInformation', component: EmploymentInformation},
   { path: '/politically-exposed-persons', name: 'PoliticallyExposedPersons', component: PoliticallyExposedPersons},
-  {path: '/politically-exposed-persons-2', name: 'PoliticallyExposedPersons2', component: PoliticallyExposedPersons2}
+  {path: '/politically-exposed-persons-2', name: 'PoliticallyExposedPersons2', component: PoliticallyExposedPersons2},
+  {path: '/designation-of-beneficiary', name: 'DesignationOfBeneficiary', component: DesignationOfBeneficiary},
+  {path: '/power-of-attorney', name: 'PowerofAttorney', component: PowerofAttorney},
+  {path: '/branch', name: 'Branch', component: Branch},
+  {path: '/success', name: 'Success', component: Success}
+  
 ];
 
 const router = createRouter({
