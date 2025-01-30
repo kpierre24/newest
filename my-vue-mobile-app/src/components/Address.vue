@@ -119,49 +119,58 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: white;
+  min-height: 100vh;
+  background: #f4f4f4;
   padding: 20px;
-  text-align: center;
 }
 
 .form-container {
-  background-color: white;
-  padding: 30px;
-  border-radius: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid black;
+  max-width: 420px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 .input-container {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
   font-size: 14px;
   color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 input[type="text"], input[type="file"], select {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .button-group {
@@ -172,18 +181,20 @@ input[type="text"], input[type="file"], select {
 }
 
 .back-button, .next-button {
-  padding: 10px 20px;
+  flex: 1;
+  padding: 12px 0;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
 .back-button {
   background-color: #6c757d;
   color: white;
+  margin-right: 10px;
 }
 
 .back-button:hover {
@@ -193,6 +204,7 @@ input[type="text"], input[type="file"], select {
 .next-button {
   background-color: #007bff;
   color: white;
+  margin-left: 10px;
 }
 
 .next-button:hover {

@@ -57,73 +57,137 @@ export default {
 </script>
 
 <style scoped>
-.modal {
+.container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f4f4f4;
+  padding: 20px;
+}
+
+.form-container {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+h1 {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.input-group, .input-container {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.back-button, .submit-button, .next-button {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.back-button {
+  background-color: #6c757d;
+  color: white;
+  margin-right: 10px;
+}
+
+.back-button:hover {
+  background-color: #5a6268;
+}
+
+.submit-button, .next-button {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
+}
+
+.submit-button:hover, .next-button:hover {
+  background-color: #0056b3;
+}
+
+.logo {
+  width: 157.5px; 
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.modal {
   position: fixed;
-  z-index: 1;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-content {
-  background-color: #fefefe;
+  background: white;
   padding: 20px;
-  border: 1px solid #888;
+  border-radius: 10px;
   width: 80%;
   max-width: 500px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.close-button {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close-button:hover,
-.close-button:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+  text-align: left;
 }
 
 .modal-content h2 {
   margin-top: 0;
 }
 
-.modal-text {
-  max-height: 200px;
-  overflow-y: auto;
-  padding-right: 10px; /* Add padding to avoid text being cut off */
-}
-
-.modal-text::-webkit-scrollbar {
-  width: 0; /* Remove scrollbar space */
-  background: transparent; /* Optional: just make scrollbar invisible */
-}
-
-.modal-text p {
-  margin: 10px 0;
-}
-
-.modal-text a {
-  color: #ffcc00;
-  text-decoration: underline;
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+.modal-content textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
 }
 
 .agree-button, .disagree-button {
@@ -136,10 +200,22 @@ export default {
   transition: background-color 0.3s ease;
 }
 
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 5px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+
 .agree-button {
   background-color: #007bff;
   color: white;
-  margin-right: 10px; /* Add margin to separate buttons */
 }
 
 .agree-button:hover {
@@ -153,5 +229,20 @@ export default {
 
 .disagree-button:hover {
   background-color: #5a6268;
+}
+
+.common-icon {
+  /* Add your CSS adjustments here */
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+.icon fas fa-user {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  transform: translateY(-10px);
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>

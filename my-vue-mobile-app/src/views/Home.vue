@@ -23,29 +23,98 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: linear-gradient(to right, #6a11cb, #2575fc);
+  min-height: 100vh;
+  background: #f4f4f4;
   padding: 20px;
-  text-align: center;
 }
 
 .form-container {
-  background-color: white;
-  padding: 30px;
-  border-radius: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  height: 90vh;
-  max-height: 800px;
+  max-width: 420px;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+h1 {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.input-group, .input-container {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.button-group {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid black;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.back-button, .submit-button, .next-button {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.back-button {
+  background-color: #6c757d;
+  color: white;
+  margin-right: 10px;
+}
+
+.back-button:hover {
+  background-color: #5a6268;
+}
+
+.submit-button, .next-button {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
+}
+
+.submit-button:hover, .next-button:hover {
+  background-color: #0056b3;
 }
 
 .logo {
@@ -54,48 +123,78 @@ export default {
   margin-bottom: 20px;
 }
 
-h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
-}
-
-.welcome-image {
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: auto;
-  margin-bottom: 20px;
-}
-
-h6 {
-  margin-bottom: 20px;
-  color: #555;
-}
-
-.button-group {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  justify-content: center;
 }
 
-.button {
-  display: inline-block;
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: left;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.agree-button, .disagree-button {
   padding: 10px 20px;
-  margin: 10px 0;
-  background-color: #007bff;
-  color: white;
   border: none;
   border-radius: 5px;
-  text-decoration: none;
-  text-align: center;
-  font-size: 16px;
   cursor: pointer;
+  font-size: 16px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
-.button:hover {
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 5px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+
+.agree-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.agree-button:hover {
   background-color: #0056b3;
 }
+
+.disagree-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.disagree-button:hover {
+  background-color: #5a6268;
+}
+
 
 .signup-button {
   background-color: white;

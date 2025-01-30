@@ -130,26 +130,29 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: white;
+  min-height: 100vh;
+  background: #f4f4f4;
   padding: 20px;
   text-align: center;
 }
 
 .form-container {
-  background-color: rgb(255, 255, 255);
+  background-color: #ffffff;
   background: linear-gradient(to right, #bdbcbe, #7da4e7);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
 h1 {
-  margin-bottom: 20px;
   font-size: 24px;
   color: #333;
+  margin-bottom: 20px;
 }
 
 .id-box {
@@ -171,26 +174,36 @@ h2 {
   width: 100%;
 }
 
-.input-container {
+.input-group, .input-container {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
   font-size: 14px;
   color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 input[type="text"], input[type="date"], select {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
+  background: #f9f9f9;
+  transition: 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .browse-button {
@@ -216,7 +229,75 @@ input[type="text"], input[type="date"], select {
   margin-top: 20px;
 }
 
-.back-button, .next-button {
+.back-button, .submit-button, .next-button {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.back-button {
+  background-color: #6c757d;
+  color: white;
+  margin-right: 10px;
+}
+
+.back-button:hover {
+  background-color: #5a6268;
+}
+
+.submit-button, .next-button {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
+}
+
+.submit-button:hover, .next-button:hover {
+  background-color: #0056b3;
+}
+
+.logo {
+  width: 157.5px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: left;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.agree-button, .disagree-button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -226,21 +307,34 @@ input[type="text"], input[type="date"], select {
   transition: background-color 0.3s ease;
 }
 
-.back-button {
-  background-color: #6c757d;
-  color: white;
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 5px;
 }
 
-.back-button:hover {
-  background-color: #5a6268;
+.checkbox-container input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
 }
 
-.next-button {
+.agree-button {
   background-color: #007bff;
   color: white;
 }
 
-.next-button:hover {
+.agree-button:hover {
   background-color: #0056b3;
+}
+
+.disagree-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.disagree-button:hover {
+  background-color: #5a6268;
 }
 </style>

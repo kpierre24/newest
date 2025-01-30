@@ -40,19 +40,15 @@ export default {
 }
 
 .form-container {
-  background-color: white;
-  padding: 30px;
-  border-radius: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  height: 90vh;
-  max-height: 800px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid black;
+  max-width: 420px;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
 .logo {

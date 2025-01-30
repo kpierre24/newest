@@ -72,6 +72,24 @@
         "Interntional Organization PEP": "InterAmerican Development Bank",
         "Immediate Family member of a PEP": "Sibling"
       }
+    },
+    {
+      "id": "5625",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Senior Government Official",
+        "Interntional Organization PEP": "Caribbean Financial Action Task Force",
+        "Immediate Family member of a PEP": "Sibling"
+      }
+    },
+    {
+      "id": "267c",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Military Official",
+        "Interntional Organization PEP": "Caribbean Financial Action Task Force",
+        "Immediate Family member of a PEP": "Other Child of PEP Spouse"
+      }
     }
   ],
   "employment-information": [],
@@ -130,6 +148,17 @@
       "accountNumber": "45555",
       "swiftCode": "5555555",
       "bankTelephoneNumber": "555555"
+    },
+    {
+      "id": "9080",
+      "bankName": "scotia",
+      "addressLine1": "hhhu",
+      "addressLine2": "trr",
+      "city": "sssss",
+      "country": "Armenia",
+      "accountNumber": "45555",
+      "swiftCode": "5555555",
+      "bankTelephoneNumber": "8687621154"
     }
   ],
   "mailing-address": [
@@ -195,6 +224,13 @@
       "AddressLine2": "",
       "City": "",
       "Country": ""
+    },
+    {
+      "id": "afc9",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
     }
   ],
   "verify-mobile": [
@@ -253,6 +289,14 @@
     {
       "id": "9504",
       "verificationCode": "22222"
+    },
+    {
+      "id": "c70f",
+      "verificationCode": "33333"
+    },
+    {
+      "id": "09b9",
+      "verificationCode": "33333"
     }
   ],
   "verify-email": [
@@ -311,6 +355,22 @@
     {
       "id": "4008",
       "verificationCode": "12345"
+    },
+    {
+      "id": "9d32",
+      "verificationCode": "22222"
+    },
+    {
+      "id": "004e",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "215d",
+      "verificationCode": "22222"
+    },
+    {
+      "id": "1452",
+      "verificationCode": "44444"
     }
   ],
   "address": [
@@ -425,6 +485,26 @@
       "Country": "Trinidad and Tobago",
       "Nationality": "Trinidad and Tobago",
       "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "a6b8",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Albania",
+      "Nationality": "Antarctica",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "c025",
+      "AddressLine1": "jjj",
+      "AddressLine2": "trr",
+      "City": "sssss",
+      "Country": "Armenia",
+      "Nationality": "Aland",
+      "DwellingStatus": "rented",
       "ProofOfAddress": {}
     }
   ],
@@ -936,6 +1016,34 @@
       "confirmPassword": "Kendell1234@",
       "viewedTerms": true,
       "viewedFinancial": true
+    },
+    {
+      "id": "c957",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-14",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": false,
+      "viewedFinancial": false
+    },
+    {
+      "id": "db36",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "gender": "male",
+      "dob": "2025-01-14",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687621154",
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "viewedTerms": false,
+      "viewedFinancial": false
     }
   ],
   "id-information": [
@@ -1072,6 +1180,30 @@
       "secondExpiryDate": "2025-01-31",
       "secondIdDocument": null,
       "maritalStatus": "Divorced"
+    },
+    {
+      "id": "3741",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15555555555",
+      "firstExpiryDate": "2025-01-17",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "1425578",
+      "secondExpiryDate": "2025-02-08",
+      "secondIdDocument": null,
+      "maritalStatus": "Married"
+    },
+    {
+      "id": "1eb4",
+      "firstIdType": "National ID",
+      "firstIdNumber": "15151515151",
+      "firstExpiryDate": "2025-01-15",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "154225",
+      "secondExpiryDate": "2025-01-11",
+      "secondIdDocument": null,
+      "maritalStatus": "Married"
     }
   ]
 }

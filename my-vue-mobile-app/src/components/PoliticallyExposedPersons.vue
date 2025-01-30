@@ -112,29 +112,23 @@ export default {
 <style scoped>
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: white;
+  background: #f4f4f4;
   padding: 20px;
-  text-align: center;
 }
 
 .form-container {
-  background-color: white;
-  padding: 20px;
+  background-color: #ffffff;
+  padding: 40px;
   border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  max-height: 90vh; /* Ensures the form container fits within the viewport */
-  overflow-y: auto; /* Adds vertical scroll if content exceeds the container height */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid black;
+  max-width: 420px;
+  text-align: center;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
 h1 {

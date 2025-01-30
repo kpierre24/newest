@@ -188,112 +188,61 @@ export default {
 
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 150vh;
-  background: white;
+  min-height: 100vh;
+  background: #f4f4f4;
   padding: 20px;
-  text-align: center;
-  overflow: hidden;
 }
 
 .form-container {
-  background-color: white;
-  padding: 20px;
-  border-radius: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  height: 150vh;
-  max-height: 150vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid black;
+  max-width: 420px;
+  text-align: center;
   overflow-y: auto;
-}
-
-.form-container .links {
-  align-self: flex-start; /* Moves links to the left */
-  width: 100%; /* Ensures it spans the full width */
+  max-height: 90vh;
 }
 
 h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
+  font-size: 22px;
   color: #333;
+  margin-bottom: 20px;
 }
 
-.input-group {
+.input-group, .input-container {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
-.input-container {
-  position: relative;
-  margin-bottom: 15px;
-  align-items: left;
+label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 input, select {
   width: 100%;
-  padding: 10px 40px; /* Adjust padding to make space for the icon */
+  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
-}
-
-input::placeholder, select::placeholder {
-  color: #aaa;
-  padding: 20px;
+  background: #f9f9f9;
+  transition: 0.3s ease;
 }
 
 input:focus, select:focus {
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
-
-.gender-select {
-  background-color: #f8f9fa;
-  color: #333;
-  font-weight: bold;
-  padding-left: 45px; /* Adjust padding to move text to the right */
-}
-
-.icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
-}
-
-.date-picker {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-color: #fff;
-  background-image: none; /* Remove default calendar icon */
-}
-
-.password-requirements {
-  background-color: #f8f9fa;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 14px;
-  color: #555;
-  margin-top: 10px;
-}
-
-.error {
-  color: red;
-  font-size: 12px;
-}
-
 
 .button-group {
   display: flex;
@@ -303,51 +252,40 @@ input:focus, select:focus {
 }
 
 .back-button, .submit-button, .next-button {
-  padding: 10px 20px;
+  flex: 1;
+  padding: 12px 0;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
 .back-button {
   background-color: #6c757d;
   color: white;
+  margin-right: 10px;
 }
 
 .back-button:hover {
   background-color: #5a6268;
 }
 
+.submit-button, .next-button {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
+}
+
+.submit-button:hover, .next-button:hover {
+  background-color: #0056b3;
+}
+
 .logo {
   width: 157.5px; 
   height: auto;
   margin-bottom: 20px;
-}
-
-.submit-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
-
-.next-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.next-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.next-button:hover:enabled {
-  background-color: #0056b3;
 }
 
 .modal {
@@ -396,20 +334,14 @@ input:focus, select:focus {
   align-items: center;
   margin-bottom: 15px;
   width: 100%;
-  gap: 0px;
+  gap: 5px;
 }
 
 .checkbox-container input[type="checkbox"] {
-  width: 14px; /* Adjust checkbox size if needed */
-  height: 14px;
-  gap: 3px;
-  margin-right: 10px;
-}
-.checkbox {
   width: 14px;
   height: 14px;
-  margin-right: 10px;
 }
+
 .agree-button {
   background-color: #007bff;
   color: white;
@@ -426,5 +358,20 @@ input:focus, select:focus {
 
 .disagree-button:hover {
   background-color: #5a6268;
+}
+
+.common-icon {
+  /* Add your CSS adjustments here */
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+.icon fas fa-user {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  transform: translateY(-10px);
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>
