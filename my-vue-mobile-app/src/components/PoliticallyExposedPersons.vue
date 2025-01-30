@@ -99,7 +99,7 @@ export default {
         console.log('Form submitted:', response.data);
 
         // Navigate to the next page
-        this.$router.push('/id-information');
+        this.$router.push('/politically-exposed-persons-2');
       } catch (error) {
         console.error('Error submitting form:', error);
         console.error('Error details:', error.response ? error.response.data : error.message);
