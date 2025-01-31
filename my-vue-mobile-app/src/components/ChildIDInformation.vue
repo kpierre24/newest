@@ -116,9 +116,9 @@ export default {
     navigateToBasicInformation() {
       this.$router.push('/basic-info');
     },
-    navigateToNext() {
-      // Handle navigation to the next screen
-      alert('Navigating to the next screen...');
+    navigateToNext() 
+    {
+      this.$router.push('/parent-guardian-information');
     }
   }
 };

@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
-import Login from '../components/Login.vue';
+import Login from '@/components/Login.vue';
 import BasicInfo from '@/components/BasicInfo.vue';
 import Address from '../components/Address.vue';
 import NewOrExistingCustomer from '../components/NewOrExistingCustomer.vue';
 import GettingReady from '../components/GettingReady.vue';
-import EmailVerification from '../components/EmailVerification.vue';
+import EmailVerification from '@/components/EmailVerification.vue';
 import IDInformation from '../components/IDInformation.vue';
-import ChildIDInformation from '../components/ChildIDInformation.vue';
+import ChildIDInformation from '@/components/ChildIDInformation.vue';
 import MobileVerification from '../components/MobileVerification';
 import MembershipDeclarationAgreement from '@/components/MembershipDeclarationAgreement.vue';
 import DueDiligence from '@/components/DueDiligence.vue';
@@ -20,18 +20,18 @@ import DesignationOfBeneficiary from '@/components/DesignationOfBeneficiary.vue'
 import PowerofAttorney from '@/components/PowerofAttorney.vue';
 import Branch from '@/components/Branch.vue';
 import Success from '@/components/Success.vue';
-
+import ParentGuardianInformation from '@/components/ParentGuardianInformation.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
-  { path: '/login', component: Login },
+  { path: '/login', name: 'Login', component: Login },
   { path: '/basic-info', name: 'BasicInfo', component: BasicInfo },
   { path: '/address', component: Address },
   { path: '/new-or-existing-customer', component: NewOrExistingCustomer },
   { path: '/getting-ready', component: GettingReady },
-  { path: '/email-verification', component: EmailVerification },
-  { path: '/id-information', component: IDInformation },
-  { path: '/child-id-information', component: ChildIDInformation },
+  { path: '/email-verification', name: 'EmailVerification', component: EmailVerification },
+  { path: '/id-information', name: 'IdInformation', component: IDInformation },
+  { path: '/child-id-information', name: 'ChildIdInformation', component: ChildIDInformation },
   { path: '/mobile-verification', component: MobileVerification },
   { path: '/membership-declaration-agreement', name: 'MembershipDeclarationAgreement', component: MembershipDeclarationAgreement },
   { path: '/due-diligence', name: 'DueDiligence', component: DueDiligence },
@@ -43,7 +43,8 @@ const routes = [
   {path: '/designation-of-beneficiary', name: 'DesignationOfBeneficiary', component: DesignationOfBeneficiary},
   {path: '/power-of-attorney', name: 'PowerofAttorney', component: PowerofAttorney},
   {path: '/branch', name: 'Branch', component: Branch},
-  {path: '/success', name: 'Success', component: Success}
+  {path: '/success', name: 'Success', component: Success},
+  { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation }
   
 ];
 

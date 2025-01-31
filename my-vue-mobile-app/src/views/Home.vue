@@ -7,16 +7,34 @@
       <h6>If you don't have an online account,
        <br>click "Don't have an account?" to begin</h6>
       <div class="button-group">
-        <router-link to="/login" class="button login-button">Login</router-link>
-        <router-link to="/new-or-existing-customer" class="button signup-button">Don't have an account</router-link>
+        <button @click="navigateToLogin" class="button login-button">Login</button>
+        <button @click="navigateToSignup" class="button signup-button">Don't have an account?</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'Home',
+  setup() {
+    const router = useRouter();
+
+    const navigateToLogin = () => {
+      router.push("/login");
+    };
+
+    const navigateToSignup = () => {
+      router.push("/new-or-existing-customer");
+    };
+
+    return {
+      navigateToLogin,
+      navigateToSignup
+    };
+  }
 };
 </script>
 
@@ -81,9 +99,34 @@ input:focus, select:focus {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.login-button {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+.signup-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.signup-button:hover {
+  background-color: #218838;
 }
 
 .back-button, .submit-button, .next-button {

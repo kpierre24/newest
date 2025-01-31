@@ -7,7 +7,7 @@
         <div class="input-group">
           <div class="input-container">
             <input type="text" v-model="firstName" id="firstName" placeholder="First Name" maxlength="50" required />
-            <i class="icon fas fa-user"></i> 
+             <i class="icon fas fa-user"></i>
           </div>
           <div class="input-container">
             <input type="text" v-model="lastName" id="lastName" placeholder="Last Name" maxlength="50" required />
@@ -34,7 +34,6 @@
             <i class="icon fas fa-venus-mars"></i>
           </div>
           <div class="input-container">
-            <label for="dob">Date of Birth</label>
             <input type="date" v-model="dob" id="dob" required class="date-picker" placeholder="Date of Birth" />
             <i class="icon fas fa-calendar-alt"></i>
           </div>
@@ -66,130 +65,132 @@
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
             <button type="submit" class="submit-button">Submit</button>
-            <button type="button" @click="navigateToPEP">Next</button>
           </div>
         </div>
       </form>
     </div>
   </div>
-
-  <!-- Terms and Conditions Modal -->
-  <TermsAndConditions :visible="showTermsModal" @close="agreeTerms" />
-
-  <!-- Financial Declaration Agreement Modal -->
-  <FinancialDeclaration :visible="showFinancialModal" @close="agreeFinancial" />
 </template>
 
 <script>
-import axios from 'axios';
-import TermsAndConditions from './TermsAndConditions.vue';
-import FinancialDeclaration from './FinancialDeclaration.vue';
+import { useDemoStore } from '@/store/demoStore';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
-  name: 'BasicInfo',
-  components: {
-    TermsAndConditions,
-    FinancialDeclaration
-  },
-  data() {
-    return {
-      firstName: '',
-      lastName: '',
-      otherName: '',
-      email: '',
-      mobileNumber: '',
-      gender: '',
-      dob: '',
-      password: '',
-      confirmPassword: '',
-      passwordError: '',
-      showTermsModal: false,
-      showFinancialModal: false,
-      viewedTerms: false,
-      viewedFinancial: false,
-      termsViewed: false,
-      financialAgreementViewed: false
-    };
-  },
-  methods: {
-    navigateToPrevious() {
-      this.$router.go(-1);
-    },
-    async navigateToNext() {
-      console.log('navigateToNext called');
-      if (!this.passwordError && this.termsViewed && this.financialAgreementViewed) {
-        console.log('User has viewed terms and financial declaration. Navigating...');
-        await this.submitBasicInfo(); // Call the API before navigating
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
 
-        // Navigate to email verification page
-        this.$router.push('/email-verification');
-      } else {
-        alert('Please view both the terms and financial declaration.');
-      }
-    },
-    async submitBasicInfo() {
-      try {
-        const basicInfoData = {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          otherName: this.otherName,
-          gender: this.gender,
-          dob: this.dob,
-          email: this.email,
-          mobileNumber: this.mobileNumber,
-          password: this.password,
-          confirmPassword: this.confirmPassword,
-          viewedTerms: this.viewedTerms,
-          viewedFinancial: this.viewedFinancial,
-          // Include other necessary data properties
-        };
+    const firstName = ref('');
+    const lastName = ref('');
+    const otherName = ref('');
+    const email = ref('');
+    const mobileNumber = ref('');
+    const gender = ref('');
+    const dob = ref('');
+    const password = ref('');
+    const confirmPassword = ref('');
+    const termsViewed = ref(false);
+    const financialAgreementViewed = ref(false);
+    const passwordError = ref('');
 
-        // Debugging logs to check form data
-        console.log('Basic Info Data:', basicInfoData);
+    onMounted(() => {
+      firstName.value = store.firstName;
+      lastName.value = store.lastName;
+      otherName.value = store.otherName;
+      email.value = store.email;
+      mobileNumber.value = store.mobileNumber;
+      gender.value = store.gender;
+      dob.value = store.dob;
+      password.value = store.password;
+      confirmPassword.value = store.confirmPassword;
+      termsViewed.value = store.termsViewed;
+      financialAgreementViewed.value = store.financialAgreementViewed;
+    });
 
-        const response = await axios.post('http://localhost:3000/basic-info', basicInfoData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log('Basic info submitted:', response.data);
-      } catch (error) {
-        console.error('Error submitting basic info:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
-      }
-    },
-    showTermsAndConditions() {
-      this.showTermsModal = true;
-    },
-    showFinancialDeclaration() {
-      this.showFinancialModal = true;
-    },
-    agreeTerms() {
-      this.showTermsModal = false;
-      this.viewedTerms = true;
-    },
-    agreeFinancial() {
-      this.showFinancialModal = false;
-      this.viewedFinancial = true;
-    },
-    validatePassword() {
-      const password = this.password;
+    const validatePassword = () => {
       const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!regex.test(password)) {
-        this.passwordError = 'Password must be at least 8 characters long, contain one capital letter, one number, and one special character.';
+      if (!regex.test(password.value)) {
+        passwordError.value = 'Password must be at least 8 characters long, contain one capital letter, one number, and one special character.';
       } else {
-        this.passwordError = '';
+        passwordError.value = '';
       }
-    },
-    navigateToPEP() {
-      this.$router.push({ name: 'PoliticallyExposedPersons2', params: { dob: this.dob } });
-    }
+    };
+
+    const navigateToNext = () => {
+      store.setBasicInfo({
+        firstName: firstName.value,
+        lastName: lastName.value,
+        otherName: otherName.value,
+        email: email.value,
+        mobileNumber: mobileNumber.value,
+        gender: gender.value,
+        dob: dob.value,
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+        termsViewed: termsViewed.value,
+        financialAgreementViewed: financialAgreementViewed.value
+      });
+
+      router.push("/email-verification");
+    };
+
+    const navigateToPrevious = () => {
+      router.push("/new-or-existing");
+    };
+
+    const navigateToPEP = () => {
+      store.setBasicInfo({
+        firstName: firstName.value,
+        lastName: lastName.value,
+        otherName: otherName.value,
+        email: email.value,
+        mobileNumber: mobileNumber.value,
+        gender: gender.value,
+        dob: dob.value,
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+        termsViewed: termsViewed.value,
+        financialAgreementViewed: financialAgreementViewed.value
+      });
+
+      router.push({ name: 'PoliticallyExposedPersons2' });
+    };
+
+    const showTermsAndConditions = () => {
+      // Show terms and conditions
+    };
+
+    const showFinancialDeclaration = () => {
+      // Show financial declaration
+    };
+
+    return {
+      firstName,
+      lastName,
+      otherName,
+      email,
+      mobileNumber,
+      gender,
+      dob,
+      password,
+      confirmPassword,
+      termsViewed,
+      financialAgreementViewed,
+      passwordError,
+      validatePassword,
+      navigateToNext,
+      navigateToPrevious,
+      navigateToPEP,
+      showTermsAndConditions,
+      showFinancialDeclaration
+    };
   }
 };
 </script>
-<style scoped>
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
+<style scoped>
 .container {
   display: flex;
   align-items: center;
@@ -221,6 +222,7 @@ h1 {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
+  
 }
 
 label {
@@ -231,22 +233,7 @@ label {
   font-weight: 600;
 }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
 
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
 
 .button-group {
   display: flex;
@@ -364,18 +351,38 @@ input:focus, select:focus {
   background-color: #5a6268;
 }
 
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
+.input-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
 }
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
+
+.input-container .icon {
+  position: absolute;
+  left: 15px;  /* Align icon to the left */
+  color: #666;
+  font-size: 16px;
 }
+
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 12px;
+  padding-left: 40px; /* Add space on the left for the icon */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+.input-container input:focus,
+.input-container select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}/* Adds space between the icons */
 </style>

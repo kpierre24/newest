@@ -66,7 +66,7 @@ export default {
         .then(response => {
           console.log('Success:', response.data);
           // Navigate to the next screen
-          this.$router.push('/next-destination'); // Replace with actual route
+          this.$router.push('/success'); // Replace with actual route
         })
         .catch(error => {
           console.error('Error:', error);
