@@ -10,12 +10,50 @@
       "accountNumber": "54545",
       "swiftCode": "45454",
       "bankTelephoneNumber": "8687621154"
+    },
+    {
+      "id": "c3d8",
+      "bankName": "kendell pierre",
+      "addressLine1": "errr",
+      "addressLine2": "erer",
+      "city": "erre",
+      "country": "Aruba",
+      "accountNumber": "154522",
+      "swiftCode": "15422222",
+      "bankTelephoneNumber": "8687621154"
+    },
+    {
+      "id": "c3dd",
+      "bankName": "kendell pierre",
+      "addressLine1": "errr",
+      "addressLine2": "erer",
+      "city": "erre",
+      "country": "Aruba",
+      "accountNumber": "154522",
+      "swiftCode": "15422222",
+      "bankTelephoneNumber": "8687621154"
+    },
+    {
+      "id": "21a7",
+      "bankName": "kendell pierre",
+      "addressLine1": "errr",
+      "addressLine2": "erer",
+      "city": "erre",
+      "country": "Australia",
+      "accountNumber": "154522",
+      "swiftCode": "15422222",
+      "bankTelephoneNumber": "8687621154"
     }
   ],
   "parent-guardian-information": [],
   "success": [
     {
       "id": "50c8",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    },
+    {
+      "id": "0e91",
       "userId": "12345",
       "message": "User has successfully signed up"
     }
@@ -32,15 +70,164 @@
       "selectedBranch": "",
       "preferredContactMethod": "email",
       "bestContactTime": "8:00am to 12:00pm"
+    },
+    {
+      "id": "0360",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "email",
+      "bestContactTime": "12:00pm to 4:00pm"
     }
   ],
   "power-of-attorney": [],
-  "designation-of-beneficiary": [],
+  "designation-of-beneficiary": [
+    {
+      "id": "e41d",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "addressLine1": "errr",
+      "addressLine2": "erer",
+      "city": "erre",
+      "country": "Antarctica",
+      "dob": "2025-01-31",
+      "gender": "male",
+      "relationshipToBeneficiary": "gdgf",
+      "typeOfId": "id card",
+      "idNumber": "1425578",
+      "percentageOfInterest": 10
+    }
+  ],
   "child-id-information": [],
   "politically-exposed-persons-2": [],
   "politically-exposed-persons": [
     {
       "id": "0fa4",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "6c8a",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "62f5",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Head of State",
+        "Interntional Organization PEP": "Caribbean Financial Action Task Force",
+        "Immediate Family member of a PEP": "Other Child of PEP Spouse"
+      }
+    },
+    {
+      "id": "964f",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Senior Member of the Legislature",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "2281",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Senior Politician",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "8a95",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "4f64",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "Senior Executive of State-Owned Corporation",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "a8e0",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "0dbe",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "7cce",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "b147",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "783a",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "e4d7",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "9b5d",
+      "jobTitle": "",
+      "selections": {
+        "Domestic Pep or Foreign PEP": "",
+        "Interntional Organization PEP": "",
+        "Immediate Family member of a PEP": ""
+      }
+    },
+    {
+      "id": "5ade",
       "jobTitle": "",
       "selections": {
         "Domestic Pep or Foreign PEP": "",
@@ -61,6 +248,66 @@
       "employmentStatus": "part-time",
       "employmentType": "bank-statement",
       "proofOfEmployment": {}
+    },
+    {
+      "id": "1e1e",
+      "employerName": "dd",
+      "employerAddressLine1": "errr",
+      "employerAddressLine2": "erer",
+      "employerCity": "erre",
+      "employerCountry": "Sierra Leone",
+      "workNumber": "44444444",
+      "employmentStatus": "contract",
+      "employmentType": "bank-statement",
+      "proofOfEmployment": {}
+    },
+    {
+      "id": "9342",
+      "employerName": "dd",
+      "employerAddressLine1": "errr",
+      "employerAddressLine2": "erer",
+      "employerCity": "yhh",
+      "employerCountry": "American Samoa",
+      "workNumber": "44444444",
+      "employmentStatus": "part-time",
+      "employmentType": "bank-statement",
+      "proofOfEmployment": {}
+    },
+    {
+      "id": "edcd",
+      "employerName": "dd",
+      "employerAddressLine1": "errr",
+      "employerAddressLine2": "erer",
+      "employerCity": "yhh",
+      "employerCountry": "American Samoa",
+      "workNumber": "44444444",
+      "employmentStatus": "contract",
+      "employmentType": "employment-letter",
+      "proofOfEmployment": {}
+    },
+    {
+      "id": "7c64",
+      "employerName": "dd",
+      "employerAddressLine1": "errr",
+      "employerAddressLine2": "erer",
+      "employerCity": "yhh",
+      "employerCountry": "American Samoa",
+      "workNumber": "44444444",
+      "employmentStatus": "contract",
+      "employmentType": "bank-statement",
+      "proofOfEmployment": {}
+    },
+    {
+      "id": "7dc6",
+      "employerName": "dd",
+      "employerAddressLine1": "errr",
+      "employerAddressLine2": "erer",
+      "employerCity": "yhh",
+      "employerCountry": "American Samoa",
+      "workNumber": "44444444",
+      "employmentStatus": "contract",
+      "employmentType": "bank-statement",
+      "proofOfEmployment": {}
     }
   ],
   "mailing-address": [
@@ -70,18 +317,277 @@
       "AddressLine2": "",
       "City": "",
       "Country": ""
+    },
+    {
+      "id": "4234",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "baa8",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "6d5a",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "d85f",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "01e3",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "2860",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "ed62",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "af30",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "5c42",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": ""
+    },
+    {
+      "id": "df77",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Trinidad and Tobago"
+    },
+    {
+      "id": "b5c9",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Trinidad and Tobago"
+    },
+    {
+      "id": "47d4",
+      "AddressLine1": "sdsds",
+      "AddressLine2": "dsdsd",
+      "City": "sddsds",
+      "Country": "Trinidad and Tobago"
+    },
+    {
+      "id": "82cd",
+      "AddressLine1": "eee",
+      "AddressLine2": "eee",
+      "City": "eee",
+      "Country": "Albania"
+    },
+    {
+      "id": "dad1",
+      "AddressLine1": "fsfds",
+      "AddressLine2": "sdfd",
+      "City": "dfdf",
+      "Country": "Albania"
+    },
+    {
+      "id": "cd2e",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Albania"
+    },
+    {
+      "id": "d4a4",
+      "AddressLine1": "weewe",
+      "AddressLine2": "wewe",
+      "City": "ewew",
+      "Country": "American Samoa"
+    },
+    {
+      "id": "b6df",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "American Samoa"
+    },
+    {
+      "id": "cb3b",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Antarctica"
+    },
+    {
+      "id": "afd0",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Barbados"
+    },
+    {
+      "id": "797a",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Barbados"
+    },
+    {
+      "id": "da59",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Barbados"
     }
   ],
   "verify-mobile": [
     {
       "id": "02df",
       "verificationCode": "22222"
+    },
+    {
+      "id": "9f7b",
+      "verificationCode": "24232"
+    },
+    {
+      "id": "fb66",
+      "verificationCode": "15444"
+    },
+    {
+      "id": "3518",
+      "verificationCode": "54545"
+    },
+    {
+      "id": "dd1e",
+      "verificationCode": "23232"
+    },
+    {
+      "id": "2c8d",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "ae46",
+      "verificationCode": "43434"
+    },
+    {
+      "id": "52bb",
+      "verificationCode": "54545"
+    },
+    {
+      "id": "a477",
+      "verificationCode": "75453"
+    },
+    {
+      "id": "b901",
+      "verificationCode": "23444"
+    },
+    {
+      "id": "635f",
+      "verificationCode": "23322"
+    },
+    {
+      "id": "e387",
+      "verificationCode": "34222"
+    },
+    {
+      "id": "da3f",
+      "verificationCode": "7676"
+    },
+    {
+      "id": "e5e5",
+      "verificationCode": "56565"
+    },
+    {
+      "id": "d3a6",
+      "verificationCode": "dfdfd"
     }
   ],
   "verify-email": [
     {
       "id": "23be",
       "verificationCode": "44444"
+    },
+    {
+      "id": "e18e",
+      "verificationCode": "22442"
+    },
+    {
+      "id": "d79d",
+      "verificationCode": "15151"
+    },
+    {
+      "id": "a161",
+      "verificationCode": "23232"
+    },
+    {
+      "id": "7b73",
+      "verificationCode": "23233"
+    },
+    {
+      "id": "d40d",
+      "verificationCode": "2344"
+    },
+    {
+      "id": "4cb9",
+      "verificationCode": "23232"
+    },
+    {
+      "id": "5b90",
+      "verificationCode": "45455"
+    },
+    {
+      "id": "3379",
+      "verificationCode": "23445"
+    },
+    {
+      "id": "c807",
+      "verificationCode": "23444"
+    },
+    {
+      "id": "a046",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "1810",
+      "verificationCode": "23244"
+    },
+    {
+      "id": "ce8c",
+      "verificationCode": "34344"
+    },
+    {
+      "id": "14c3",
+      "verificationCode": "45466"
+    },
+    {
+      "id": "8543",
+      "verificationCode": "sfdfd"
     }
   ],
   "address": [
@@ -92,6 +598,16 @@
       "City": "erre",
       "Country": "Angola",
       "Nationality": "Barbados",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "d7b5",
+      "AddressLine1": "hhhu",
+      "AddressLine2": "trr",
+      "City": "yhh",
+      "Country": "Trinidad and Tobago",
+      "Nationality": "Trinidad and Tobago",
       "DwellingStatus": "subletting",
       "ProofOfAddress": {}
     }
@@ -107,6 +623,18 @@
       "secondIdType": "Driver's Permit",
       "secondIdNumber": "454454",
       "secondExpiryDate": "2025-02-11",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "804d",
+      "firstIdType": "Driver's Permit",
+      "firstIdNumber": "15151515151",
+      "firstExpiryDate": "2025-02-13",
+      "firstIdDocument": null,
+      "secondIdType": "National ID",
+      "secondIdNumber": "1425578",
+      "secondExpiryDate": "",
       "secondIdDocument": null,
       "maritalStatus": "Divorced"
     }

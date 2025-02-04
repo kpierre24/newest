@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Email Verification</h1>
       <i class="icon fas fa-envelope email-icon"></i>
       <form @submit.prevent="verifyCode">

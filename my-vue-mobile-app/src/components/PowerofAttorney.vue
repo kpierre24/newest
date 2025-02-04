@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Power of Attorney</h1>
       <div class="text-content">
         <p>"Authorize a trusted individual to manage your banking activities 

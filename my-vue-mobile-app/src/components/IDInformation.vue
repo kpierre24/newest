@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>ID Information</h1>
       <form @submit.prevent="submitIDInformation">
         <div class="id-box">
@@ -80,6 +81,7 @@
 
 <script>
 import axios from 'axios';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
   name: 'IDInformation',
@@ -157,6 +159,21 @@ export default {
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
     }
+  },
+  setup() {
+    const store = useDemoStore();
+
+    const navigateToNext = () => {
+      if (store.isExistingCustomer) {
+        this.$router.push('/account-number');
+      } else {
+        this.$router.push('/basic-info');
+      }
+    };
+
+    return {
+      navigateToNext
+    };
   }
 };
 </script>

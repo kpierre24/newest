@@ -34,48 +34,70 @@
           <input type="radio" id="afternoon" value="12:00pm to 4:00pm" v-model="bestContactTime" />
           <label for="afternoon">12:00pm to 4:00pm</label>
         </div>
+        <div class="radio-container">
+          <input type="radio" id="evening" value="4:00pm to 8:00pm" v-model="bestContactTime" />
+          <label for="evening">4:00pm to 8:00pm</label>
+        </div>
       </div>
-      <div class="buttons">
-        <button type="button" class="back-button" @click="goBack">Back</button>
-        <button type="button" class="next-button" @click="handleSubmit">Next</button>
+      <div class="button-group">
+        <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+        <button type="submit" class="submit-button" @click="saveBranchState">Next</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import { useDemoStore } from '@/store/demoStore';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
-  name: 'Branch',
-  data() {
-    return {
-      selectedBranch: '',
-      preferredContactMethod: '',
-      bestContactTime: ''
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+
+    const branchName = ref('');
+    const branchCode = ref('');
+    const branchLocation = ref('');
+    const bestContactTime = ref('');
+    const selectedBranch = ref('');
+    const preferredContactMethod = ref('');
+
+    onMounted(() => {
+      branchName.value = store.branchName;
+      branchCode.value = store.branchCode;
+      branchLocation.value = store.branchLocation;
+      bestContactTime.value = store.bestContactTime;
+      selectedBranch.value = store.selectedBranch;
+      preferredContactMethod.value = store.preferredContactMethod || '';
+    });
+
+    const submitBranch = () => {
+      store.setBranchInfo({
+        branchName: branchName.value,
+        branchCode: branchCode.value,
+        branchLocation: branchLocation.value,
+        bestContactTime: bestContactTime.value,
+        selectedBranch: selectedBranch.value,
+        preferredContactMethod: preferredContactMethod.value, 
+      });
+      router.push('/success');
     };
-  },
-  methods: {
-    handleSubmit() {
-      const payload = {
-        selectedBranch: this.selectedBranch,
-        preferredContactMethod: this.preferredContactMethod,
-        bestContactTime: this.bestContactTime
-      };
-      axios.post('http://localhost:3000/branch', payload)
-        .then(response => {
-          console.log('Success:', response.data);
-          // Navigate to the next screen
-          this.$router.push('/success'); // Replace with actual route
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          // Handle error response
-        });
-    },
-    goBack() {
-      this.$router.go(-1);
-    }
+
+    const navigateToPrevious = () => {
+      router.go(-1);
+    };
+
+    return {
+      branchName,
+      branchCode,
+      branchLocation,
+      bestContactTime,
+      selectedBranch,
+      submitBranch,
+      navigateToPrevious
+    };
   }
 };
 </script>
@@ -167,7 +189,7 @@ hr {
 }
 
 .back-button,
-.next-button {
+.next-button, .submit-button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;

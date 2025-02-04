@@ -3,7 +3,7 @@ import Home from '@/views/Home.vue';
 import Login from '@/components/Login.vue';
 import BasicInfo from '@/components/BasicInfo.vue';
 import Address from '../components/Address.vue';
-import NewOrExistingCustomer from '../components/NewOrExistingCustomer.vue';
+import NewOrExistingCustomer from '@/components/NewOrExistingCustomer.vue';
 import GettingReady from '../components/GettingReady.vue';
 import EmailVerification from '@/components/EmailVerification.vue';
 import IDInformation from '../components/IDInformation.vue';
@@ -21,6 +21,7 @@ import PowerofAttorney from '@/components/PowerofAttorney.vue';
 import Branch from '@/components/Branch.vue';
 import Success from '@/components/Success.vue';
 import ParentGuardianInformation from '@/components/ParentGuardianInformation.vue';
+import AccountNumber from '@/components/AccountNumber.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -44,8 +45,8 @@ const routes = [
   {path: '/power-of-attorney', name: 'PowerofAttorney', component: PowerofAttorney},
   {path: '/branch', name: 'Branch', component: Branch},
   {path: '/success', name: 'Success', component: Success},
-  { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation }
-  
+  { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
+  { path: '/account-number', name: 'AccountNumber', component: AccountNumber }
 ];
 
 const router = createRouter({

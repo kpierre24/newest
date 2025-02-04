@@ -1,19 +1,19 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Politically Exposed Persons</h1>
       <div class="text-container">
         <div class="text-content">
           <p>In accordance with the Proceeds of Crime Act 2000 (as amended) and the Financial Obligations (Amendment) Regulations 2014, Regulation 20(3), there is an obligation for Financial Institutions to undertake Enhanced Customer Due Diligence on clients who are classified as a PEP. 
              As defined by these Acts and adopted within the Cathedral Credit Union, a PEP shall be considered as an individual 
             who is or has been entrusted with a prominent function either locally or in a foreign country.</p>
+          <div class="button-group">
+            <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button">Select Domestic Pep or Foreign PEP</button>
+            <button @click="showModal('Interntional Organization PEP')" class="stretch-button">Select Interntional Organization PEP</button>
+            <button @click="showModal('Immediate Family member of a PEP')" class="stretch-button">Select Immediate Family member of a PEP</button>
+          </div>
         </div>
-        <input type="text" v-model="personName" placeholder="Enter Job Title" />
-      </div>
-      <div class="button-group">
-        <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button">Select Domestic Pep or Foreign PEP</button>
-        <button @click="showModal('Interntional Organization PEP')" class="stretch-button">Select Interntional Organization PEP</button>
-        <button @click="showModal('Immediate Family member of a PEP')" class="stretch-button">Select Immediate Family member of a PEP</button>
       </div>
       <div class="navigation-buttons">
         <button type="button" class="back-button" @click="navigateToPrevious">Back</button>

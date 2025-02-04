@@ -1,12 +1,11 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <div class="content">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>New or Existing Customer</h1>
-      <h3>Choose whether you are a new or existing customer.</h3>
+      <h1>Are you a new or existing customer?</h1>
       <div class="button-group">
-        <button class="button" @click="navigateToGettingReady">New Customer</button>
-        <button class="button" @click="navigateToGettingReady">Existing Customer</button>
+        <button class="button" @click="setExistingCustomer(true)">Existing Customer</button>
+        <button class="button" @click="setExistingCustomer(false)">New Customer</button>
       </div>
       <button class="back-button" @click="navigateToHome">Back</button>
     </div>
@@ -14,15 +13,32 @@
 </template>
 
 <script>
+import { useDemoStore } from '@/store/demoStore';
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'NewOrExistingCustomer',
-  methods: {
-    navigateToGettingReady() {
-      this.$router.push('/getting-ready');
-    },
-    navigateToHome() {
-      this.$router.push('/');
-    }
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+
+    const setExistingCustomer = (isExisting) => {
+      store.isExistingCustomer = isExisting;
+      navigateToGettingReady();
+    };
+
+    const navigateToGettingReady = () => {
+      router.push('/getting-ready');
+    };
+
+    const navigateToHome = () => {
+      router.push('/');
+    };
+
+    return {
+      setExistingCustomer,
+      navigateToHome
+    };
   }
 };
 </script>
@@ -35,78 +51,37 @@ export default {
   justify-content: center;
   height: 100vh;
   background: linear-gradient(to right, #6a11cb, #2575fc);
-  padding: 20px;
-  text-align: center;
 }
 
-.form-container {
+.content {
   background-color: #ffffff;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  overflow-y: auto;
-  max-height: 90vh;
-}
-
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
-}
-
-h3 {
-  margin-bottom: 20px;
-  color: #555;
 }
 
 .button-group {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.button,
+.back-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .button {
-  display: inline-block;
-  padding: 10px 20px;
-  margin: 10px 0;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-decoration: none;
-  text-align: center;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.button:hover {
-  background-color: #0056b3;
+  background-color: #6a11cb;
+  color: #ffffff;
 }
 
 .back-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.back-button:hover {
-  background-color: #5a6268;
+  background-color: #cccccc;
+  color: #333333;
 }
 </style>

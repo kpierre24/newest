@@ -84,7 +84,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(to right, #6a11cb, #2575fc);
+  background: white;
   padding: 20px;
   text-align: center;
 }

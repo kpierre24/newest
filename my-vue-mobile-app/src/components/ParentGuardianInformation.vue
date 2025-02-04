@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Parent/Guardian Information</h1>
       <form @submit.prevent="submitForm">
         <div class="input-container">

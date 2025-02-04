@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Mailing Address</h1>
       <form @submit.prevent="submitMailingAddress">
         <div class="input-container">
@@ -35,32 +36,41 @@
 <script>
 import { countries } from 'countries-list';
 import axios from 'axios';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
-  name: 'MailingAddress',
-  data() {
-    return {
-      AddressLine1: '',
-      AddressLine2: '',
-      City: '',
-      Country: '',
-      sameAsHomeAddress: false,
-      countries: Object.values(countries).map(country => country.name)
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+    const AddressLine1 = ref('');
+    const AddressLine2 = ref('');
+    const City = ref('');
+    const Country = ref('');
+    const sameAsHomeAddress = ref(false);
+    const countriesList = ref(Object.values(countries).map(country => country.name));
+
+    onMounted(() => {
+      Country.value = store.Country;
+    });
+
+    const validateForm = () => {
+      return AddressLine1.value && City.value && Country.value;
     };
-  },
-  methods: {
-    navigateToPrevious() {
-      this.$router.go(-1);
-    },
-    async submitMailingAddress() {
-      if (this.validateForm() || this.sameAsHomeAddress) {
+
+    const submitMailingAddress = async () => {
+      if (validateForm() || sameAsHomeAddress.value) {
         try {
           const formData = {
-            AddressLine1: this.AddressLine1,
-            AddressLine2: this.AddressLine2,
-            City: this.City,
-            Country: this.Country
+            AddressLine1: AddressLine1.value,
+            AddressLine2: AddressLine2.value,
+            City: City.value,
+            Country: Country.value
           };
+
+          // Save mailing address info to the store
+          store.setMailingAddressInfo(formData);
 
           // Debugging logs to check form data
           console.log('Mailing Address Data:', formData);
@@ -71,13 +81,13 @@ export default {
             }
           });
           console.log('Mailing address info submitted:', response.data);
+          console.log('Store State:', store.$state);
 
           // Navigate to the appropriate page based on nationality
-          const nationality = this.$route.query.nationality;
-          if (nationality !== 'Trinidad and Tobago') {
-            this.$router.push('/foreign-national-bank-information');
+          if (store.Nationality === 'Trinidad and Tobago') {
+            router.push('/employment-information');
           } else {
-            this.$router.push('/employment-information');
+            router.push('/foreign-national-bank-information');
           }
         } catch (error) {
           console.error('Error submitting mailing address info:', error);
@@ -86,10 +96,23 @@ export default {
       } else {
         alert('Please fill in all required fields.');
       }
-    },
-    validateForm() {
-      return this.AddressLine1 && this.City && this.Country;
-    }
+    };
+
+    const navigateToPrevious = () => {
+      router.go(-1);
+    };
+
+    return {
+      AddressLine1,
+      AddressLine2,
+      City,
+      Country,
+      sameAsHomeAddress,
+      countries: countriesList,
+      validateForm,
+      submitMailingAddress,
+      navigateToPrevious
+    };
   }
 };
 </script>

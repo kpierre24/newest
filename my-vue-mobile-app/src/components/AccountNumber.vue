@@ -1,20 +1,14 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>Login Page</h1>
-      <form @submit.prevent="submitLogin">
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" v-model="email" id="email" required />
-        </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" v-model="password" id="password" required />
+      <h1>Account Number</h1>
+      <form @submit.prevent="submitAccountNumber">
+        <div class="input-container">
+          <input type="text" v-model="accountNumber" id="accountNumber" placeholder="Account Number" required />
         </div>
         <div class="button-group">
-          <button class="back-button" @click="$router.go(-1)">Back</button>
-          <button class="submit-button" type="submit">Login</button>
+          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+          <button type="submit" class="next-button">Next</button>
         </div>
       </form>
     </div>
@@ -22,18 +16,29 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 export default {
-  name: 'Login',
-  data() {
-    return {
-      email: '',
-      password: ''
+  setup() {
+    const accountNumber = ref('');
+    const router = useRouter();
+
+    const submitAccountNumber = () => {
+      // Save account number and navigate to the next page
+      router.push('/due-diligence');
     };
-  },
-  methods: {
-    submitLogin() {
-      // Handle login submission
-    }
+
+    const navigateToPrevious = () => {
+      // Implement navigation to the previous page
+      router.go(-1);
+    };
+
+    return {
+      accountNumber,
+      submitAccountNumber,
+      navigateToPrevious
+    };
   }
 };
 </script>

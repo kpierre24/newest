@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Employment Information</h1>
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
@@ -62,40 +63,55 @@
 <script>
 import { countries } from 'countries-list';
 import axios from 'axios';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
-  name: 'EmploymentInformation',
-  data() {
-    return {
-      employerName: '',
-      employerAddressLine1: '',
-      employerAddressLine2: '',
-      employerCity: '',
-      employerCountry: '',
-      workNumber: '',
-      employmentStatus: '',
-      employmentType: '',
-      proofOfEmploymentFile: null,
-      countries: Object.values(countries).map(country => country.name)
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+    const employerName = ref('');
+    const employerAddressLine1 = ref('');
+    const employerAddressLine2 = ref('');
+    const employerCity = ref('');
+    const employerCountry = ref('');
+    const workNumber = ref('');
+    const employmentStatus = ref('');
+    const employmentType = ref('');
+    const proofOfEmploymentFile = ref(null);
+    const countriesList = ref(Object.values(countries).map(country => country.name));
+
+    const validateForm = () => {
+      return employerName.value && employerAddressLine1.value && employerCity.value && employerCountry.value && workNumber.value && employmentStatus.value && employmentType.value && proofOfEmploymentFile.value;
     };
-  },
-  methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
-    async handleSubmit() {
-      if (this.validateForm()) {
+
+    const handleSubmit = async () => {
+      if (validateForm()) {
         try {
           const formData = new FormData();
-          formData.append('employerName', this.employerName);
-          formData.append('employerAddressLine1', this.employerAddressLine1);
-          formData.append('employerAddressLine2', this.employerAddressLine2);
-          formData.append('employerCity', this.employerCity);
-          formData.append('employerCountry', this.employerCountry);
-          formData.append('workNumber', this.workNumber);
-          formData.append('employmentStatus', this.employmentStatus);
-          formData.append('employmentType', this.employmentType);
-          formData.append('proofOfEmployment', this.proofOfEmploymentFile);
+          formData.append('employerName', employerName.value);
+          formData.append('employerAddressLine1', employerAddressLine1.value);
+          formData.append('employerAddressLine2', employerAddressLine2.value);
+          formData.append('employerCity', employerCity.value);
+          formData.append('employerCountry', employerCountry.value);
+          formData.append('workNumber', workNumber.value);
+          formData.append('employmentStatus', employmentStatus.value);
+          formData.append('employmentType', employmentType.value);
+          formData.append('proofOfEmployment', proofOfEmploymentFile.value);
+
+          // Save employment info to the store
+          store.setEmploymentInfo({
+            employerName: employerName.value,
+            employerAddressLine1: employerAddressLine1.value,
+            employerAddressLine2: employerAddressLine2.value,
+            employerCity: employerCity.value,
+            employerCountry: employerCountry.value,
+            workNumber: workNumber.value,
+            employmentStatus: employmentStatus.value,
+            employmentType: employmentType.value,
+            proofOfEmploymentFile: proofOfEmploymentFile.value
+          });
 
           // Debugging logs to check form data
           for (let [key, value] of formData.entries()) {
@@ -104,13 +120,13 @@ export default {
 
           const response = await axios.post('http://localhost:3000/employment-information', formData, {
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'multipart/form-data'
             }
           });
           console.log('Employment information submitted:', response.data);
 
-          // Navigate to the next page after successful submission
-          this.$router.push('/designation-of-beneficiary');
+          // Navigate to the next page
+          router.push('/designation-of-beneficiary'); // Replace with the actual next page route
         } catch (error) {
           console.error('Error submitting employment information:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);
@@ -118,14 +134,27 @@ export default {
       } else {
         alert('Please fill in all required fields.');
       }
-    },
-    validateForm() {
-      return this.employerName && this.employerAddressLine1 && this.employerCity && this.employerCountry && this.workNumber && this.employmentStatus && this.employmentType && this.proofOfEmploymentFile;
-    },
-    handleFileUpload(event) {
-      this.proofOfEmploymentFile = event.target.files[0];
-      console.log('Proof of Employment File:', this.proofOfEmploymentFile);
-    }
+    };
+
+    const goBack = () => {
+      router.go(-1);
+    };
+
+    return {
+      employerName,
+      employerAddressLine1,
+      employerAddressLine2,
+      employerCity,
+      employerCountry,
+      workNumber,
+      employmentStatus,
+      employmentType,
+      proofOfEmploymentFile,
+      countries: countriesList,
+      validateForm,
+      handleSubmit,
+      goBack
+    };
   }
 };
 </script>

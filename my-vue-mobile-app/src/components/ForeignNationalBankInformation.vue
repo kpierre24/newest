@@ -2,39 +2,59 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <h1>Foreign National Bank Information</h1>
-      <form @submit.prevent="submitBankInformation">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+      <h1>Employment Information</h1>
+      <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <input type="text" v-model="bankName" id="bankName" placeholder="Name of Bank" required />
+          <input type="text" v-model="employerName" id="employerName" placeholder="Employer Name" required />
         </div>
         <div class="input-container">
-          <input type="text" v-model="addressLine1" id="addressLine1" placeholder="Address Line 1" required />
+          <input type="text" v-model="employerAddressLine1" id="employerAddressLine1" placeholder="Employer Address Line 1" required />
         </div>
         <div class="input-container">
-          <input type="text" v-model="addressLine2" id="addressLine2" placeholder="Address Line 2" />
+          <input type="text" v-model="employerAddressLine2" id="employerAddressLine2" placeholder="Employer Address Line 2" />
         </div>
         <div class="input-container">
-          <input type="text" v-model="city" id="city" placeholder="City" required />
+          <input type="text" v-model="employerCity" id="employerCity" placeholder="City" required />
         </div>
         <div class="input-container">
-          <label for="country">Country</label>
-          <select v-model="country" id="country" required>
+          <label for="employerCountry">Country</label>
+          <select v-model="employerCountry" id="employerCountry" required>
             <option value="" disabled>Select Country</option>
             <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
           </select>
         </div>
         <div class="input-container">
-          <input type="text" v-model="accountNumber" id="accountNumber" placeholder="Account Number" required />
+          <input type="text" v-model="workNumber" id="workNumber" placeholder="Work Number" required />
         </div>
         <div class="input-container">
-          <input type="text" v-model="swiftCode" id="swiftCode" placeholder="SWIFT Code" required />
+          <label for="employmentStatus">Employment Status</label>
+          <select v-model="employmentStatus" id="employmentStatus" required>
+            <option value="" disabled>Select Employment Status</option>
+            <option value="permanent">Permanent</option>
+            <option value="contract">Contract</option>
+            <option value="part-time">Part-time</option>
+            <option value="consultant">Consultant</option>
+            <option value="self-employed">Self-employed</option>
+          </select>
         </div>
         <div class="input-container">
-          <input type="text" v-model="bankTelephoneNumber" id="bankTelephoneNumber" placeholder="Bank Telephone Number" required />
+          <label for="employmentType">Employment Type</label>
+          <select v-model="employmentType" id="employmentType" required>
+            <option value="" disabled>Select Employment Type</option>
+            <option value="payslip">Payslip</option>
+            <option value="bank-statement">Bank Statement</option>
+            <option value="employment-letter">Employment Letter</option>
+            <option value="self-employed">Self-employed</option>
+          </select>
         </div>
-        <div class="button-group">
-          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="next-button">Next</button>
+        <div class="input-container">
+          <label for="proofOfEmployment">Proof of Employment</label>
+          <input type="file" id="proofOfEmployment" @change="handleFileUpload" required />
+        </div>
+        <div class="buttons">
+          <button type="button" class="back-button" @click="goBack">Back</button>
+          <button type="submit" class="submit-button">Submit</button>
         </div>
       </form>
     </div>
@@ -46,52 +66,55 @@ import { countries } from 'countries-list';
 import axios from 'axios';
 
 export default {
-  name: 'ForeignNationalBankInformation',
+  name: 'EmploymentInformation',
   data() {
     return {
-      bankName: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      country: '',
-      accountNumber: '',
-      swiftCode: '',
-      bankTelephoneNumber: '',
+      employerName: '',
+      employerAddressLine1: '',
+      employerAddressLine2: '',
+      employerCity: '',
+      employerCountry: '',
+      workNumber: '',
+      employmentStatus: '',
+      employmentType: '',
+      proofOfEmploymentFile: null,
       countries: Object.values(countries).map(country => country.name)
     };
   },
   methods: {
-    navigateToPrevious() {
+    goBack() {
       this.$router.go(-1);
     },
-    async submitBankInformation() {
+    async handleSubmit() {
       if (this.validateForm()) {
         try {
-          const formData = {
-            bankName: this.bankName,
-            addressLine1: this.addressLine1,
-            addressLine2: this.addressLine2,
-            city: this.city,
-            country: this.country,
-            accountNumber: this.accountNumber,
-            swiftCode: this.swiftCode,
-            bankTelephoneNumber: this.bankTelephoneNumber
-          };
+          const formData = new FormData();
+          formData.append('employerName', this.employerName);
+          formData.append('employerAddressLine1', this.employerAddressLine1);
+          formData.append('employerAddressLine2', this.employerAddressLine2);
+          formData.append('employerCity', this.employerCity);
+          formData.append('employerCountry', this.employerCountry);
+          formData.append('workNumber', this.workNumber);
+          formData.append('employmentStatus', this.employmentStatus);
+          formData.append('employmentType', this.employmentType);
+          formData.append('proofOfEmployment', this.proofOfEmploymentFile);
 
           // Debugging logs to check form data
-          console.log('Bank Information Data:', formData);
+          for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+          }
 
-          const response = await axios.post('http://localhost:3000/foreign-national-bank-information', formData, {
+          const response = await axios.post('http://localhost:3000/employment-information', formData, {
             headers: {
               'Content-Type': 'application/json'
             }
           });
-          console.log('Bank information submitted:', response.data);
+          console.log('Employment information submitted:', response.data);
 
-          // Navigate to the employment information page after successful submission
-          this.$router.push('/employment-information');
+          // Navigate to the next page after successful submission
+          this.$router.push('/designation-of-beneficiary');
         } catch (error) {
-          console.error('Error submitting bank information:', error);
+          console.error('Error submitting employment information:', error);
           console.error('Error details:', error.response ? error.response.data : error.message);
         }
       } else {
@@ -99,7 +122,11 @@ export default {
       }
     },
     validateForm() {
-      return this.bankName && this.addressLine1 && this.city && this.country && this.accountNumber && this.swiftCode && this.bankTelephoneNumber;
+      return this.employerName && this.employerAddressLine1 && this.employerCity && this.employerCountry && this.workNumber && this.employmentStatus && this.employmentType && this.proofOfEmploymentFile;
+    },
+    handleFileUpload(event) {
+      this.proofOfEmploymentFile = event.target.files[0];
+      console.log('Proof of Employment File:', this.proofOfEmploymentFile);
     }
   }
 };

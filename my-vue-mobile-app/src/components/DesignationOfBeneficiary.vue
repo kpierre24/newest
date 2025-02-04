@@ -2,6 +2,7 @@
   <div class="container">
     <div class="form-container">
       <h1>Designation of Beneficiary</h1>
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <form @submit.prevent="handleSubmit('next')">
         <div class="input-container">
           <input type="text" v-model="firstName" placeholder="First Name" required />

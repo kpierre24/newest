@@ -81,7 +81,6 @@ export default {
   setup() {
     const store = useDemoStore();
     const router = useRouter();
-
     const firstName = ref('');
     const lastName = ref('');
     const otherName = ref('');
@@ -94,6 +93,7 @@ export default {
     const termsViewed = ref(false);
     const financialAgreementViewed = ref(false);
     const passwordError = ref('');
+    const dateOfBirth = ref('');
 
     onMounted(() => {
       firstName.value = store.firstName;
@@ -109,6 +109,17 @@ export default {
       financialAgreementViewed.value = store.financialAgreementViewed;
     });
 
+    const calculateAge = (dob) => {
+      const birthDate = new Date(dob);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    };
+
     const validatePassword = () => {
       const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       if (!regex.test(password.value)) {
@@ -118,7 +129,11 @@ export default {
       }
     };
 
+    
+
     const navigateToNext = () => {
+      const age = calculateAge(dateOfBirth.value);
+      store.setAge(age);
       store.setBasicInfo({
         firstName: firstName.value,
         lastName: lastName.value,
@@ -184,7 +199,8 @@ export default {
       navigateToPrevious,
       navigateToPEP,
       showTermsAndConditions,
-      showFinancialDeclaration
+      showFinancialDeclaration,
+      dateOfBirth
     };
   }
 };

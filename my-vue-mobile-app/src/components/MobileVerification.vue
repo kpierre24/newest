@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Mobile Verification</h1>
       <form @submit.prevent="verifyCode">
         <div class="input-group">
