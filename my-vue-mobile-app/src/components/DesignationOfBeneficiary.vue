@@ -146,7 +146,7 @@ export default {
           idNumber: this.idNumber,
           percentageOfInterest: this.percentageOfInterest
         };
-        axios.post('http://localhost:3000/designation-of-beneficiary', payload)
+        axios.post('http://localhost:4000/designation-of-beneficiary', payload)
           .then(response => {
             console.log('Success:', response.data);
             // Handle success response

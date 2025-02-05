@@ -8,18 +8,41 @@
           <p>In accordance with the Proceeds of Crime Act 2000 (as amended) and the Financial Obligations (Amendment) Regulations 2014, Regulation 20(3), there is an obligation for Financial Institutions to undertake Enhanced Customer Due Diligence on clients who are classified as a PEP. 
              As defined by these Acts and adopted within the Cathedral Credit Union, a PEP shall be considered as an individual 
             who is or has been entrusted with a prominent function either locally or in a foreign country.</p>
-          <div class="button-group">
-            <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button">Select Domestic Pep or Foreign PEP</button>
-            <button @click="showModal('Interntional Organization PEP')" class="stretch-button">Select Interntional Organization PEP</button>
-            <button @click="showModal('Immediate Family member of a PEP')" class="stretch-button">Select Immediate Family member of a PEP</button>
+         <div class="input-container">
+          <label for="pepAssociate">Are you a politically exposed person?</label>
+          <select v-model="pepAssociate" id="pepAssociate" required>
+            <option value="" disabled>Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="input-container">
+          <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship to PEP" :disabled="pepAssociate === 'no'" required />
+        </div>
+        <div class="input-container">
+          <input type="text" v-model="pepName" id="pepName" placeholder="Enter PEP name" :disabled="pepAssociate === 'no'" required />
+        </div>
+            <div class="button-group">
+            <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Domestic Pep or Foreign PEP</button>
+            <button @click="showModal('Interntional Organization PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Interntional Organization PEP</button>
+            <button @click="showModal('Immediate Family member of a PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Immediate Family member of a PEP</button>
           </div>
         </div>
       </div>
-      <div class="navigation-buttons">
-        <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-        <button type="button" class="next-button" @click="submitForm">Next</button>
-      </div>
-
+      <form @submit.prevent="handleSubmit">
+        
+       
+        <h3 v-if="pepAssociate === 'yes'">You are a politically exposed person.</h3>
+        <h3 v-else-if="pepAssociate === 'no'">You are not a politically exposed person.</h3>
+        <div class="input-container">
+          <label for="jobTitle">Job Title</label>
+          <input type="text" v-model="jobTitle" id="jobTitle" placeholder="Enter job title" :disabled="pepAssociate === 'no'" required />
+        </div>
+        <div class="navigation-buttons">
+          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+          <button type="submit" class="next-button">Next</button>
+        </div>
+      </form>
       <div v-if="modalVisible" class="modal">
         <div class="modal-content">
           <h2>Select an Option</h2>
@@ -40,71 +63,102 @@
 </template>
 
 <script>
+import { useDemoStore } from '@/store/demoStore';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default {
-  name: 'PoliticallyExposedPersons',
-  data() {
-    return {
-      jobtitle: '',
-      modalVisible: false,
-      selectedOption: '',
-      options: [],
-      currentButton: '',
-      selections: {
-        'Domestic Pep or Foreign PEP': '',
-        'Interntional Organization PEP': '',
-        'Immediate Family member of a PEP': ''}
-    };
-  },
-  methods: {
-    showModal(button) {
-      this.currentButton = button;
-      if (button === 'Domestic Pep or Foreign PEP') {
-        this.options = ['Head of State', 'Senior Member of the Legislature', 'Military Official', 'Senior Government Official', 'Senior Politician', 'Senior Executive of State-Owned Corporation', 'Head of Government'];
-      } else if (button === 'Interntional Organization PEP') {
-        this.options = ['United Nations and Affiliated International Organizations', 'InterAmerican Development Bank', 'Caribbean Financial Action Task Force','Organization of American States'];
-      } else if (button === 'Immediate Family member of a PEP') {
-        this.options = ['Spouse/Ex-Spouse', 'Child', 'Parent', 'Sibling', 'Half-Sibling', 'Other Child of PEP Spouse'];
-      }
-      this.modalVisible = true;
-    },
-    closeModal() {
-      this.modalVisible = false;
-      this.selectedOption = '';
-    },
-    confirmSelection() {
-      this.selections[this.currentButton] = this.selectedOption;
-      console.log(`Selected option for ${this.currentButton}: ${this.selectedOption}`);
-      this.closeModal();
-    },
-    navigateToPrevious() {
-      this.$router.go(-1);
-    },
-    async submitForm() {
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+
+    const pepAssociate = ref('');
+    const relationshipToPep = ref('');
+    const pepName = ref('');
+    const jobTitle = ref('');
+    const modalVisible = ref(false);
+    const selectedOption = ref('');
+    const options = ref([
+      'Domestic Pep or Foreign PEP',
+      'Interntional Organization PEP',
+      'Immediate Family member of a PEP'
+    ]);
+
+    onMounted(() => {
+      pepAssociate.value = store.pepAssociate;
+      relationshipToPep.value = store.relationshipToPep;
+      pepName.value = store.pepName;
+      jobTitle.value = store.jobTitle;
+    });
+
+    const handleSubmit = async () => {
       try {
         const formData = {
-          jobTitle: this.jobtitle,
-          selections: this.selections
+          pepAssociate: pepAssociate.value,
+          relationshipToPep: relationshipToPep.value,
+          pepName: pepName.value,
+          jobTitle: jobTitle.value
         };
 
-        // Debugging logs to check form data
-        console.log('Form Data:', formData);
+        // Save PEP info to the store
+        store.setPepInfo(formData);
 
-        const response = await axios.post('http://localhost:3000/politically-exposed-persons', formData, {
+        // Debugging logs to check form data
+        console.log('PEP Information Data:', formData);
+
+        const response = await axios.post('http://localhost:4000/politically-exposed-persons', formData, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
-        console.log('Form submitted:', response.data);
+        console.log('PEP information submitted:', response.data);
 
         // Navigate to the next page
-        this.$router.push('/politically-exposed-persons-2');
+        router.push('/politically-exposed-persons-2'); // Replace with the actual next page route
       } catch (error) {
-        console.error('Error submitting form:', error);
+        console.error('Error submitting PEP information:', error);
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
-    }
+    };
+
+    const skipScreen = () => {
+      router.push('/politically-exposed-persons-2'); // Replace with the actual next page route
+    };
+
+    const navigateToPrevious = () => {
+      router.go(-1);
+    };
+
+    const showModal = (option) => {
+      selectedOption.value = option;
+      modalVisible.value = true;
+    };
+
+    const closeModal = () => {
+      modalVisible.value = false;
+    };
+
+    const confirmSelection = () => {
+      // Handle the selection confirmation logic here
+      closeModal();
+    };
+
+    return {
+      pepAssociate,
+      relationshipToPep,
+      pepName,
+      jobTitle,
+      modalVisible,
+      selectedOption,
+      options,
+      handleSubmit,
+      skipScreen,
+      navigateToPrevious,
+      showModal,
+      closeModal,
+      confirmSelection
+    };
   }
 };
 </script>
@@ -120,7 +174,9 @@ export default {
 }
 
 .form-container {
-  background-color: #ffffff;
+  background: linear-gradient(45deg, #d4a5ff, #a5d4ff);
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -129,6 +185,18 @@ export default {
   text-align: center;
   overflow-y: auto;
   max-height: 90vh;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 h1 {
@@ -264,5 +332,10 @@ input[type="text"] {
 
 .modal-button:hover {
   background-color: #0056b3;
+}
+.logo {
+  width: 157.5px; 
+  height: auto;
+  margin-bottom: 20px;
 }
 </style>

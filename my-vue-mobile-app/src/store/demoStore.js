@@ -34,7 +34,34 @@ export const useDemoStore = defineStore('demo', {
     employerCity: '',
     employerCountry: '',
     workNumber: '',
-    employmentStatus: ''
+    employmentStatus: '',
+    pepAssociate: '',
+    relationshipToPep: '',
+    pepName: '',
+    firstIdType: '',
+    firstIdNumber: '',
+    firstExpiryDate: '',
+    firstIdDocument: null,
+    secondIdType: '',
+    secondIdNumber: '',
+    secondExpiryDate: '',
+    secondIdDocument: null,
+    bankName: '',
+    bankAddressLine1: '',
+    bankCity: '',
+    bankCountry: '',
+    bankAccountNumber: '',
+    swiftCode: '',
+    bankTelephoneNumber: '',
+    beneficiaryFirstName: '',
+    beneficiaryLastName: '',
+    beneficiaryOtherName: '',
+    beneficiaryAddressLine1: '',
+    beneficiaryAddressLine2: '',
+    beneficiaryCity: '',
+    beneficiaryCountry: '',
+    beneficiaryDateOfBirth: '',
+    beneficiaryGender: ''
   }),
   actions: {
     setBasicInfo(info) {
@@ -82,6 +109,43 @@ export const useDemoStore = defineStore('demo', {
       this.employerCountry = info.employerCountry;
       this.workNumber = info.workNumber;
       this.employmentStatus = info.employmentStatus;
+      this.employmentType = info.employmentType;
+      this.proofOfEmploymentFile = info.proofOfEmploymentFile;
+    },
+    setPepInfo(info) {
+      this.pepAssociate = info.pepAssociate;
+      this.relationshipToPep = info.relationshipToPep;
+      this.pepName = info.pepName;
+    },
+    setChildIdInfo(info) {
+      this.firstIdType = info.firstIdType;
+      this.firstIdNumber = info.firstIdNumber;
+      this.firstExpiryDate = info.firstExpiryDate;
+      this.firstIdDocument = info.firstIdDocument;
+      this.secondIdType = info.secondIdType;
+      this.secondIdNumber = info.secondIdNumber;
+      this.secondExpiryDate = info.secondExpiryDate;
+      this.secondIdDocument = info.secondIdDocument;
+    },
+    setBankInfo(info) {
+      this.bankName = info.bankName;
+      this.bankAddressLine1 = info.bankAddressLine1;
+      this.bankCity = info.bankCity;
+      this.bankCountry = info.bankCountry;
+      this.bankAccountNumber = info.bankAccountNumber;
+      this.swiftCode = info.swiftCode;
+      this.bankTelephoneNumber = info.bankTelephoneNumber;
+    },
+    setBeneficiaryInfo(info) {
+      this.beneficiaryFirstName = info.firstName;
+      this.beneficiaryLastName = info.lastName;
+      this.beneficiaryOtherName = info.otherName;
+      this.beneficiaryAddressLine1 = info.addressLine1;
+      this.beneficiaryAddressLine2 = info.addressLine2;
+      this.beneficiaryCity = info.city;
+      this.beneficiaryCountry = info.country;
+      this.beneficiaryDateOfBirth = info.dob;
+      this.beneficiaryGender = info.gender;
     }
   }
 });

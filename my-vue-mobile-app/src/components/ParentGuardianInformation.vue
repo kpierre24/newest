@@ -59,60 +59,56 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
-  name: 'ParentGuardianInformation',
   setup() {
+    const store = useDemoStore();
     const router = useRouter();
 
-    const ParentFirstName = ref('');
-    const ParentMiddleName = ref('');
-    const ParentLastName = ref('');
-    const ParentOccupation = ref('');
-    const ParentWorkplace = ref('');
-    const ParentEmail = ref('');
-    const ParentPhoneNumber = ref('');
-    const RelationshipToChild = ref('');
-    const RelationshipDocument = ref(null);
+    const parentName = ref('');
+    const parentEmail = ref('');
+    const parentPhone = ref('');
+    const relationship = ref('');
 
-    const handleFileUpload = (event) => {
-      RelationshipDocument.value = event.target.files[0];
-    };
+    const handleSubmit = async () => {
+      try {
+        const formData = {
+          parentName: parentName.value,
+          parentEmail: parentEmail.value,
+          parentPhone: parentPhone.value,
+          relationship: relationship.value
+        };
 
-    const submitForm = () => {
-      // Perform form validation and API call here
-      console.log('Form submitted', {
-        ParentFirstName: ParentFirstName.value,
-        ParentMiddleName: ParentMiddleName.value,
-        ParentLastName: ParentLastName.value,
-        ParentOccupation: ParentOccupation.value,
-        ParentWorkplace: ParentWorkplace.value,
-        ParentEmail: ParentEmail.value,
-        ParentPhoneNumber: ParentPhoneNumber.value,
-        RelationshipToChild: RelationshipToChild.value,
-        RelationshipDocument: RelationshipDocument.value
-      });
+        // Save parent/guardian info to the store
+        store.setParentGuardianInfo(formData);
 
-      // Navigate to the next page
-      router.push({ name: 'IdInformation' });
+        const response = await axios.post('http://localhost:4000/parent-guardian-information', formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Parent/Guardian information submitted:', response.data);
+
+        // Navigate to the next page
+        router.push('/next-page'); // Replace with the actual next page route
+      } catch (error) {
+        console.error('Error submitting parent/guardian information:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
+      }
     };
 
     const navigateToPrevious = () => {
-      router.push({ name: 'ChildIdInformation' });
+      router.go(-1);
     };
 
     return {
-      ParentFirstName,
-      ParentMiddleName,
-      ParentLastName,
-      ParentOccupation,
-      ParentWorkplace,
-      ParentEmail,
-      ParentPhoneNumber,
-      RelationshipToChild,
-      RelationshipDocument,
-      handleFileUpload,
-      submitForm,
+      parentName,
+      parentEmail,
+      parentPhone,
+      relationship,
+      handleSubmit,
       navigateToPrevious
     };
   }

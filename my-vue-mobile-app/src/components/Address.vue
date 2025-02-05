@@ -2,38 +2,41 @@
   <div class="container">
     <div class="form-container">
       <h1>Address Information</h1>
-      <form @submit.prevent="submitAddress">
+      <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <input type="text" v-model="AddressLine1" id="AddressLine1" placeholder="Address line 1" required />
+          <label for="addressLine1">Address Line 1</label>
+          <input type="text" v-model="AddressLine1" id="addressLine1" placeholder="Enter address line 1" required />
         </div>
         <div class="input-container">
-          <input type="text" v-model="AddressLine2" id="AddressLine2" placeholder="Address line 2" />
+          <label for="addressLine2">Address Line 2</label>
+          <input type="text" v-model="AddressLine2" id="addressLine2" placeholder="Enter address line 2" />
         </div>
         <div class="input-container">
-          <input type="text" v-model="City" id="City" placeholder="City" required />
+          <label for="city">City</label>
+          <input type="text" v-model="City" id="city" placeholder="Enter city" required />
         </div>
         <div class="input-container">
-          <label for="Country">Country</label>
-          <select v-model="Country" id="Country" required>
-            <option value="" disabled>Select Country</option>
-            <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
+          <label for="country">Country</label>
+          <select v-model="Country" id="country" required>
+            <option value="" disabled>Select country</option>
+            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
           </select>
         </div>
         <div class="input-container">
-          <label for="Nationality">Nationality</label>
-          <select v-model="Nationality" id="Nationality" required>
-            <option value="" disabled>Select Nationality</option>
-            <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
+          <label for="nationality">Nationality</label>
+          <select v-model="Nationality" id="nationality" required>
+            <option value="" disabled>Select nationality</option>
+            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
           </select>
         </div>
         <div class="input-container">
-          <label for="DwellingStatus">Dwelling Status</label>
-          <select v-model="DwellingStatus" id="DwellingStatus" required>
-            <option value="" disabled>Select Dwelling Status</option>
+          <label for="dwellingStatus">Dwelling Status</label>
+          <select v-model="DwellingStatus" id="dwellingStatus" required>
+            <option value="" disabled>Select dwelling status</option>
             <option value="rented">Rented</option>
-            <option value="subletting">Subletting</option>
             <option value="owned">Owned</option>
-            <option value="living_with_relative">Living with Relative</option>
+            <option value="subletting">Subletting</option>
+            <option value="living with relative">Living with relative</option>
           </select>
         </div>
         <div class="input-container">
@@ -53,6 +56,8 @@
 import { useDemoStore } from '@/store/demoStore';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { countries } from 'countries-list';
 
 export default {
   setup() {
@@ -65,7 +70,8 @@ export default {
     const Country = ref('');
     const Nationality = ref('');
     const DwellingStatus = ref('');
-    const countries = ref(Object.values(require('countries-list').countries).map(country => country.name));
+    const ProofOfAddress = ref(null);
+    const countryList = ref(Object.values(countries).map(country => country.name));
 
     onMounted(() => {
       AddressLine1.value = store.AddressLine1;
@@ -76,18 +82,45 @@ export default {
       DwellingStatus.value = store.DwellingStatus;
     });
 
-    const submitAddress = () => {
-      store.setAddressInfo({
-        AddressLine1: AddressLine1.value,
-        AddressLine2: AddressLine2.value,
-        City: City.value,
-        Country: Country.value,
-        Nationality: Nationality.value,
-        DwellingStatus: DwellingStatus.value
-      });
-      router.push('/mailing-address');
+    const handleFileUpload = (event) => {
+      ProofOfAddress.value = event.target.files[0];
     };
-    
+
+    const handleSubmit = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('AddressLine1', AddressLine1.value);
+        formData.append('AddressLine2', AddressLine2.value);
+        formData.append('City', City.value);
+        formData.append('Country', Country.value);
+        formData.append('Nationality', Nationality.value);
+        formData.append('DwellingStatus', DwellingStatus.value);
+        formData.append('ProofOfAddress', ProofOfAddress.value);
+
+        // Save address info to the store
+        store.setAddressInfo({
+          AddressLine1: AddressLine1.value,
+          AddressLine2: AddressLine2.value,
+          City: City.value,
+          Country: Country.value,
+          Nationality: Nationality.value,
+          DwellingStatus: DwellingStatus.value
+        });
+
+        const response = await axios.post('http://localhost:4000/address', formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Address information submitted:', response.data);
+
+        // Navigate to the next page
+        router.push('/mailing-address'); // Replace with the actual next page route
+      } catch (error) {
+        console.error('Error submitting address information:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
+      }
+    };
 
     const navigateToPrevious = () => {
       router.go(-1);
@@ -100,19 +133,12 @@ export default {
       Country,
       Nationality,
       DwellingStatus,
-      countries,
-      submitAddress,
+      ProofOfAddress,
+      countryList,
+      handleFileUpload,
+      handleSubmit,
       navigateToPrevious
     };
-  },
-  methods: {
-    validateForm() {
-      return this.AddressLine1 && this.City && this.Country && this.Nationality && this.DwellingStatus && this.proofOfAddressFile;
-    },
-    handleFileUpload(event) {
-      this.proofOfAddressFile = event.target.files[0];
-      console.log('Proof of Address File:', this.proofOfAddressFile);
-    }
   }
 };
 </script>

@@ -1,28 +1,22 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>Power of Attorney</h1>
-      <div class="text-content">
-        <p>"Authorize a trusted individual to manage your banking activities 
-        under a Power of Attorney (POA). You can revoke this authorization 
-        anytime through your account settings."</p>
-      </div>
-      <form @submit.prevent="handleSubmit('next')">
+      <h1>Power of Attorney Information</h1>
+      <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <input type="text" v-model="firstName" placeholder="First Name of Authorized Person" required />
+          <input type="text" v-model="firstName" placeholder="First Name" required />
         </div>
         <div class="input-container">
-          <input type="text" v-model="lastName" placeholder="Last Name of Authorized Person" required />
+          <input type="text" v-model="lastName" placeholder="Last Name" required />
         </div>
         <div class="input-container">
-          <input type="text" v-model="otherName" placeholder="Other Name of Authorized Person" />
+          <input type="text" v-model="otherName" placeholder="Other Name" />
         </div>
         <div class="input-container">
-          <input type="text" v-model="addressLine1" placeholder="Address Line 1 of Authorized Person" required />
+          <input type="text" v-model="addressLine1" placeholder="Address Line 1" required />
         </div>
         <div class="input-container">
-          <input type="text" v-model="addressLine2" placeholder="Address Line 2 of Authorized Person" />
+          <input type="text" v-model="addressLine2" placeholder="Address Line 2" />
         </div>
         <div class="input-container">
           <input type="text" v-model="city" placeholder="City" required />
@@ -39,6 +33,7 @@
             <option value="" disabled>Select Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
+            <option value="other">Other</option>
           </select>
         </div>
         <div class="input-container">
@@ -48,29 +43,25 @@
           <input type="email" v-model="email" placeholder="Email Address" required />
         </div>
         <div class="input-container">
-          <input type="tel" v-model="contactNumber" placeholder="Contact Number" required />
+          <input type="text" v-model="contactNumber" placeholder="Contact Number" required />
         </div>
         <div class="input-container">
           <select v-model="typeOfId" required>
             <option value="" disabled>Select Type of ID</option>
-            <option value="id card">ID Card</option>
-            <option value="driver's permit">Driver's Permit</option>
             <option value="passport">Passport</option>
-            <option value="birthpaper">Birthpaper</option>
+            <option value="nationalId">National ID</option>
+            <option value="driverLicense">Driver's License</option>
           </select>
         </div>
         <div class="input-container">
-          <label for="idDocument">Upload ID Document</label>
-          <input type="file" @change="handleFileUpload('idDocument', $event)" id="idDocument" />
+          <label for="idDocument">ID Document</label>
+          <input type="file" id="idDocument" @change="handleFileUpload('idDocument')" required />
         </div>
         <div class="input-container">
-          <label for="poaDocument">Upload Power of Attorney Document</label>
-          <input type="file" @change="handleFileUpload('poaDocument', $event)" id="poaDocument" />
+          <label for="poaDocument">Power of Attorney Document</label>
+          <input type="file" id="poaDocument" @change="handleFileUpload('poaDocument')" required />
         </div>
-        <div class="additional-actions">
-          <button type="button" class="add-button" @click="skipAddingPowerOfAttorney">Add Power of Attorney Later</button>
-        </div>
-        <div class="buttons">
+        <div class="button-group">
           <button type="button" class="back-button" @click="goBack">Back</button>
           <button type="submit" class="next-button">Next</button>
         </div>
@@ -80,122 +71,143 @@
 </template>
 
 <script>
+import { useDemoStore } from '@/store/demoStore';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default {
-  name: 'PowerOfAttorney',
-  data() {
-    return {
-      description: '',
-      firstName: '',
-      lastName: '',
-      otherName: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      country: '',
-      dob: '',
-      gender: '',
-      relationshipToPrincipal: '',
-      email: '',
-      contactNumber: '',
-      typeOfId: '',
-      idDocument: null,
-      poaDocument: null,
-      errors: {}
-    };
-  },
-  methods: {
-    validateForm() {
-      this.errors = {};
-      if (!this.firstName) {
-        this.errors.firstName = 'First Name is required.';
-      }
-      if (!this.lastName) {
-        this.errors.lastName = 'Last Name is required.';
-      }
-      if (!this.addressLine1) {
-        this.errors.addressLine1 = 'Address Line 1 is required.';
-      }
-      if (!this.city) {
-        this.errors.city = 'City is required.';
-      }
-      if (!this.country) {
-        this.errors.country = 'Country is required.';
-      }
-      if (!this.dob) {
-        this.errors.dob = 'Date of Birth is required.';
-      }
-      if (!this.gender) {
-        this.errors.gender = 'Gender is required.';
-      }
-      if (!this.relationshipToPrincipal) {
-        this.errors.relationshipToPrincipal = 'Relationship to Principal is required.';
-      }
-      if (!this.email) {
-        this.errors.email = 'Email Address is required.';
-      }
-      if (!this.contactNumber) {
-        this.errors.contactNumber = 'Contact Number is required.';
-      }
-      if (!this.typeOfId) {
-        this.errors.typeOfId = 'Type of ID is required.';
-      }
-      if (!this.idDocument) {
-        this.errors.idDocument = 'ID Document is required.';
-      }
-      if (!this.poaDocument) {
-        this.errors.poaDocument = 'Power of Attorney Document is required.';
-      }
-      return Object.keys(this.errors).length === 0;
-    },
-    handleSubmit(action) {
-      if (this.validateForm()) {
-        // Make API call using Axios
-        const formData = new FormData();
-        formData.append('firstName', this.firstName);
-        formData.append('lastName', this.lastName);
-        formData.append('otherName', this.otherName);
-        formData.append('addressLine1', this.addressLine1);
-        formData.append('addressLine2', this.addressLine2);
-        formData.append('city', this.city);
-        formData.append('country', this.country);
-        formData.append('dob', this.dob);
-        formData.append('gender', this.gender);
-        formData.append('relationshipToPrincipal', this.relationshipToPrincipal);
-        formData.append('email', this.email);
-        formData.append('contactNumber', this.contactNumber);
-        formData.append('typeOfId', this.typeOfId);
-        formData.append('idDocument', this.idDocument);
-        formData.append('poaDocument', this.poaDocument);
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
 
-        axios.post('http://localhost:3000/power-of-attorney', formData)
-          .then(response => {
-            console.log('Success:', response.data);
-            // Handle success response
-            if (action === 'next') {
-              this.$router.push('/branch'); // Navigate to Branch screen
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            // Handle error response
-          });
+    const firstName = ref('');
+    const lastName = ref('');
+    const otherName = ref('');
+    const addressLine1 = ref('');
+    const addressLine2 = ref('');
+    const city = ref('');
+    const country = ref('');
+    const dob = ref('');
+    const gender = ref('');
+    const relationshipToPrincipal = ref('');
+    const email = ref('');
+    const contactNumber = ref('');
+    const typeOfId = ref('');
+    const idDocument = ref(null);
+    const poaDocument = ref(null);
+    const errors = ref({});
+
+    onMounted(() => {
+      firstName.value = store.poaFirstName;
+      lastName.value = store.poaLastName;
+      otherName.value = store.poaOtherName;
+      addressLine1.value = store.poaAddressLine1;
+      addressLine2.value = store.poaAddressLine2;
+      city.value = store.poaCity;
+      country.value = store.poaCountry;
+      dob.value = store.poaDateOfBirth;
+      gender.value = store.poaGender;
+      relationshipToPrincipal.value = store.poaRelationshipToPrincipal;
+      email.value = store.poaEmail;
+      contactNumber.value = store.poaContactNumber;
+      typeOfId.value = store.poaTypeOfId;
+      idDocument.value = store.poaIdDocument;
+      poaDocument.value = store.poaDocument;
+    });
+
+    const handleFileUpload = (type) => (event) => {
+      const file = event.target.files[0];
+      if (type === 'idDocument') {
+        idDocument.value = file;
+      } else if (type === 'poaDocument') {
+        poaDocument.value = file;
       }
-    },
-    handleFileUpload(field, event) {
-      if (field === 'idDocument') {
-        this.idDocument = event.target.files[0];
-      } else if (field === 'poaDocument') {
-        this.poaDocument = event.target.files[0];
+    };
+
+    const handleSubmit = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('firstName', firstName.value);
+        formData.append('lastName', lastName.value);
+        formData.append('otherName', otherName.value);
+        formData.append('addressLine1', addressLine1.value);
+        formData.append('addressLine2', addressLine2.value);
+        formData.append('city', city.value);
+        formData.append('country', country.value);
+        formData.append('dob', dob.value);
+        formData.append('gender', gender.value);
+        formData.append('relationshipToPrincipal', relationshipToPrincipal.value);
+        formData.append('email', email.value);
+        formData.append('contactNumber', contactNumber.value);
+        formData.append('typeOfId', typeOfId.value);
+        formData.append('idDocument', idDocument.value);
+        formData.append('poaDocument', poaDocument.value);
+
+        // Save power of attorney info to the store
+        store.setPoaInfo({
+          firstName: firstName.value,
+          lastName: lastName.value,
+          otherName: otherName.value,
+          addressLine1: addressLine1.value,
+          addressLine2: addressLine2.value,
+          city: city.value,
+          country: country.value,
+          dob: dob.value,
+          gender: gender.value,
+          relationshipToPrincipal: relationshipToPrincipal.value,
+          email: email.value,
+          contactNumber: contactNumber.value,
+          typeOfId: typeOfId.value,
+          idDocument: idDocument.value,
+          poaDocument: poaDocument.value
+        });
+
+        // Debugging logs to check form data
+        for (let [key, value] of formData.entries()) {
+          console.log(`${key}: ${value}`);
+        }
+
+        const response = await axios.post('http://localhost:4000/power-of-attorney', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log('Power of Attorney information submitted:', response.data);
+
+        // Navigate to the next page
+        router.push('/branch'); // Replace with the actual next page route
+      } catch (error) {
+        console.error('Error submitting Power of Attorney information:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
       }
-    },
-    goBack() {
-      this.$router.go(-1);
-    },
-    skipAddingPowerOfAttorney() {
-      this.$router.push('/branch'); // Navigate to Branch screen
-    }
+    };
+
+    const goBack = () => {
+      router.go(-1);
+    };
+
+    return {
+      firstName,
+      lastName,
+      otherName,
+      addressLine1,
+      addressLine2,
+      city,
+      country,
+      dob,
+      gender,
+      relationshipToPrincipal,
+      email,
+      contactNumber,
+      typeOfId,
+      idDocument,
+      poaDocument,
+      errors,
+      handleFileUpload,
+      handleSubmit,
+      goBack
+    };
   }
 };
 </script>

@@ -27,7 +27,7 @@ export default {
   methods: {
     navigateToLogin() {
       // Make API call with form input data
-      axios.post('http://localhost:3000/success', this.formData)
+      axios.post('http://localhost:4000/success', this.formData)
         .then(response => {
           console.log('Success:', response.data);
           // Navigate to the login screen

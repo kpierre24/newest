@@ -41,7 +41,7 @@ export default {
         // Debugging logs to check form data
         console.log('Verification Data:', verificationData);
 
-        const response = await axios.post('http://localhost:3000/verify-mobile', verificationData, {
+        const response = await axios.post('http://localhost:4000/verify-mobile', verificationData, {
           headers: {
             'Content-Type': 'application/json'
           }

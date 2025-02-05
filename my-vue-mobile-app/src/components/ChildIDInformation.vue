@@ -3,17 +3,17 @@
     <div class="form-container">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Child ID Information</h1>
-      <form @submit.prevent="navigateToNext">
+      <form @submit.prevent="handleSubmit">
         <div class="id-box">
           <div class="id-container">
             <h2>First Form of ID</h2>
             <div class="input-container">
               <label for="firstIdType">Type of ID</label>
-              <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
+              <select v-model="firstIdType" id="firstIdType">
                 <option value="" disabled>Select ID Type</option>
                 <option value="National ID">National ID</option>
-                <option value="Driver's Permit">Driver's Permit</option>
                 <option value="Passport">Passport</option>
+                <option value="Birthpaper">Birthpaper</option>
               </select>
             </div>
             <div class="input-container">
@@ -38,9 +38,6 @@
               <label for="secondIdType">Type of ID</label>
               <select v-model="secondIdType" id="secondIdType">
                 <option value="" disabled>Select ID Type</option>
-                <option value="National ID">National ID</option>
-                <option value="Birthpaper">Birthpaper</option>
-                <option value="Passport">Passport</option>
                 <option v-for="option in secondIdOptions" :key="option" :value="option">{{ option }}</option>
               </select>
             </div>
@@ -60,7 +57,7 @@
           </div>
         </div>
         <div class="button-group">
-          <button class="back-button" @click="navigateToBasicInformation">Back</button>
+          <button class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="next-button">Next</button>
         </div>
       </form>
@@ -69,8 +66,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 
 export default {
@@ -87,7 +85,11 @@ export default {
     const secondExpiryDate = ref('');
     const secondIdDocument = ref(null);
     const maxExpiryDate = ref(new Date().toISOString().split('T')[0]);
-    const secondIdOptions = ref(['Driver\'s License', 'Voter ID']);
+
+    const secondIdOptions = computed(() => {
+      const options = ['National ID', 'Passport', 'Birthpaper'];
+      return options.filter(option => option !== firstIdType.value);
+    });
 
     const handleFileUpload = (event, idType) => {
       const file = event.target.files[0];
@@ -102,16 +104,51 @@ export default {
       document.getElementById(id).click();
     };
 
-    const navigateToNext = () => {
-      if (store.isExistingCustomer) {
-        router.push('/account-number');
-      } else {
-        router.push('/due-diligence');
+    const handleSubmit = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('firstIdType', firstIdType.value);
+        formData.append('firstIdNumber', firstIdNumber.value);
+        formData.append('firstExpiryDate', firstExpiryDate.value);
+        formData.append('firstIdDocument', firstIdDocument.value);
+        formData.append('secondIdType', secondIdType.value);
+        formData.append('secondIdNumber', secondIdNumber.value);
+        formData.append('secondExpiryDate', secondExpiryDate.value);
+        formData.append('secondIdDocument', secondIdDocument.value);
+
+        // Save child ID info to the store
+        store.setChildIdInfo({
+          firstIdType: firstIdType.value,
+          firstIdNumber: firstIdNumber.value,
+          firstExpiryDate: firstExpiryDate.value,
+          firstIdDocument: firstIdDocument.value,
+          secondIdType: secondIdType.value,
+          secondIdNumber: secondIdNumber.value,
+          secondExpiryDate: secondExpiryDate.value,
+          secondIdDocument: secondIdDocument.value
+        });
+
+        const response = await axios.post('http://localhost:4000/child-id-information', formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Child ID information submitted:', response.data);
+
+        // Navigate to the next page
+        if (store.isExistingCustomer) {
+          router.push('/account-number');
+        } else {
+          router.push('/due-diligence');
+        }
+      } catch (error) {
+        console.error('Error submitting child ID information:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
       }
     };
 
-    const navigateToBasicInformation = () => {
-      router.push('/basic-info');
+    const navigateToPrevious = () => {
+      router.go(-1);
     };
 
     return {
@@ -127,8 +164,8 @@ export default {
       secondIdOptions,
       handleFileUpload,
       triggerFileInput,
-      navigateToNext,
-      navigateToBasicInformation
+      handleSubmit,
+      navigateToPrevious
     };
   }
 };

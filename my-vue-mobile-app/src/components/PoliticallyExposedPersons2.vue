@@ -1,25 +1,30 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>Politically Exposed Person</h1>
+      <h1>Politically Exposed Persons - Part 2</h1>
       <form @submit.prevent="handleSubmit">
-        <p>Are you a close associate of a PEP?</p>
-        <div>
-          <input type="radio" id="pep-yes" name="pep-associate" value="yes" v-model="pepAssociate">
-          <label for="pep-yes">Yes</label>
-          <input type="radio" id="pep-no" name="pep-associate" value="no" v-model="pepAssociate">
-          <label for="pep-no">No</label>
+        <div class="input-container">
+          <label for="pepAssociate">Are you an associate of a politically exposed person?</label>
+          <select v-model="pepAssociate" id="pepAssociate">
+            <option value="" disabled>Select an option</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+          <span class="error">{{ errors.pepAssociate }}</span>
         </div>
-        <p v-if="errors.pepAssociate" class="error">{{ errors.pepAssociate }}</p>
-
-        <p>Indicate the type of relationship to PEP</p>
-        <input type="text" placeholder="Relationship to PEP" v-model="relationshipToPep">
-        <p v-if="errors.relationshipToPep" class="error">{{ errors.relationshipToPep }}</p>
-
+        <div class="input-container" v-if="pepAssociate === 'yes'">
+          <label for="relationshipToPep">Relationship to PEP</label>
+          <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship" />
+          <span class="error">{{ errors.relationshipToPep }}</span>
+        </div>
+        <div class="input-container" v-if="pepAssociate === 'yes'">
+          <label for="pepName">Name of PEP</label>
+          <input type="text" v-model="pepName" id="pepName" placeholder="Enter name of PEP" />
+          <span class="error">{{ errors.pepName }}</span>
+        </div>
         <div class="button-group">
-          <button type="button" class="back-button" @click="goBack">Back</button>
-          <button type="submit" class="submit-button">Next</button>
+          <button class="back-button" @click="goBack">Back</button>
+          <button type="submit" class="next-button">Next</button>
         </div>
       </form>
     </div>
@@ -30,6 +35,7 @@
 import { useDemoStore } from '@/store/demoStore';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
   setup() {
@@ -37,27 +43,57 @@ export default {
     store.setAge(17);
     const router = useRouter();
 
-    const pepAssociate = ref('');
-    const relationshipToPep = ref('');
+    const pepAssociate = ref(store.pepAssociate);
+    const relationshipToPep = ref(store.relationshipToPep);
+    const pepName = ref(store.pepName);
     const errors = ref({});
+
+   
 
     const validateForm = () => {
       errors.value = {};
       if (!pepAssociate.value) {
         errors.value.pepAssociate = 'Please select an option.';
       }
-      if (!relationshipToPep.value) {
-        errors.value.relationshipToPep = 'Please indicate the relationship.';
+      if (pepAssociate.value === 'yes') {
+        if (!relationshipToPep.value) {
+          errors.value.relationshipToPep = 'Please indicate the relationship.';
+        }
+        if (!pepName.value) {
+          errors.value.pepName = 'Please enter the name of the PEP.';
+        }
       }
       return Object.keys(errors.value).length === 0;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       if (validateForm()) {
-        if (store.age <= 17) {
-          router.push('/child-id-information');
-        } else {
-          router.push('/id-information');
+        try {
+          const formData = {
+            pepAssociate: pepAssociate.value,
+            relationshipToPep: relationshipToPep.value,
+            pepName: pepName.value
+          };
+
+          // Save PEP info to the store
+          store.setPepInfo(formData);
+
+          const response = await axios.post('http://localhost:4000/politically-exposed-persons-2', formData, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('PEP information submitted:', response.data);
+
+          // Navigate to the next page based on age
+          if (store.age <= 17) {
+            router.push('/child-id-information');
+          } else {
+            router.push('/id-information');
+          }
+        } catch (error) {
+          console.error('Error submitting PEP information:', error);
+          console.error('Error details:', error.response ? error.response.data : error.message);
         }
       }
     };
@@ -69,6 +105,7 @@ export default {
     return {
       pepAssociate,
       relationshipToPep,
+      pepName,
       errors,
       handleSubmit,
       goBack

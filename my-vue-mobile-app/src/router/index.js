@@ -2,13 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Login from '@/components/Login.vue';
 import BasicInfo from '@/components/BasicInfo.vue';
-import Address from '../components/Address.vue';
+import Address from '@/components/Address.vue';
 import NewOrExistingCustomer from '@/components/NewOrExistingCustomer.vue';
-import GettingReady from '../components/GettingReady.vue';
+import GettingReady from '@/components/GettingReady.vue';
 import EmailVerification from '@/components/EmailVerification.vue';
-import IDInformation from '../components/IDInformation.vue';
+import IDInformation from '@/components/IDInformation.vue';
 import ChildIDInformation from '@/components/ChildIDInformation.vue';
-import MobileVerification from '../components/MobileVerification';
+import MobileVerification from '@/components/MobileVerification.vue';
 import MembershipDeclarationAgreement from '@/components/MembershipDeclarationAgreement.vue';
 import DueDiligence from '@/components/DueDiligence.vue';
 import MailingAddress from '@/components/MailingAddress.vue';
@@ -37,20 +37,20 @@ const routes = [
   { path: '/membership-declaration-agreement', name: 'MembershipDeclarationAgreement', component: MembershipDeclarationAgreement },
   { path: '/due-diligence', name: 'DueDiligence', component: DueDiligence },
   { path: '/mailing-address', name: 'MailingAddress', component: MailingAddress },
-  { path: '/foreign-national-bank-information', name: 'ForeignNationalBankInformation', component: ForeignNationalBankInformation},
-  { path: '/employment-information', name: 'EmploymentInformation', component: EmploymentInformation},
-  { path: '/politically-exposed-persons', name: 'PoliticallyExposedPersons', component: PoliticallyExposedPersons},
-  {path: '/politically-exposed-persons-2', name: 'PoliticallyExposedPersons2', component: PoliticallyExposedPersons2},
-  {path: '/designation-of-beneficiary', name: 'DesignationOfBeneficiary', component: DesignationOfBeneficiary},
-  {path: '/power-of-attorney', name: 'PowerofAttorney', component: PowerofAttorney},
-  {path: '/branch', name: 'Branch', component: Branch},
-  {path: '/success', name: 'Success', component: Success},
+  { path: '/foreign-national-bank-information', name: 'ForeignNationalBankInformation', component: ForeignNationalBankInformation },
+  { path: '/employment-information', name: 'EmploymentInformation', component: EmploymentInformation },
+  { path: '/politically-exposed-persons', name: 'PoliticallyExposedPersons', component: PoliticallyExposedPersons },
+  { path: '/politically-exposed-persons-2', name: 'PoliticallyExposedPersons2', component: PoliticallyExposedPersons2 },
+  { path: '/designation-of-beneficiary', name: 'DesignationOfBeneficiary', component: DesignationOfBeneficiary },
+  { path: '/power-of-attorney', name: 'PowerofAttorney', component: PowerofAttorney },
+  { path: '/branch', name: 'Branch', component: Branch },
+  { path: '/success', name: 'Success', component: Success },
   { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
   { path: '/account-number', name: 'AccountNumber', component: AccountNumber }
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 });
 
