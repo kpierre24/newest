@@ -6,11 +6,18 @@
       <form @submit.prevent="submitLogin">
         <div class="form-group">
           <label for="email">Email:</label>
-          <input type="email" v-model="email" id="email" required />
+          <input type="email" 
+                 v-model="email" 
+                 :error="emailError" 
+                 id="email" 
+                 required />
         </div>
         <div class="form-group">
           <label for="password">Password:</label>
-          <input type="password" v-model="password" id="password" required />
+          <input type="password" 
+          v-model="password"
+          :error="passwordError" 
+          id="password" required />
         </div>
         <div class="button-group">
           <button class="back-button" @click="$router.go(-1)">Back</button>
@@ -22,18 +29,37 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useField, useForm } from 'vee-validate';
+import * as yup from 'yup';
+
 export default {
-  name: 'Login',
-  data() {
+  setup() {
+    const router = useRouter();
+
+    const { handleSubmit } = useForm({
+      validationSchema: yup.object({
+        email: yup.string().email('Please enter a valid email address').required('This field is required'),
+        password: yup.string().required('This field is required')
+      })
+    });
+
+    const { value: email, errorMessage: emailError } = useField('email');
+    const { value: password, errorMessage: passwordError } = useField('password');
+
+    const submitLogin = handleSubmit(() => {
+      // Add your login logic here
+      alert('Submitted');
+    });
+
     return {
-      email: '',
-      password: ''
+      email,
+      emailError,
+      password,
+      passwordError,
+      submitLogin
     };
-  },
-  methods: {
-    submitLogin() {
-      // Handle login submission
-    }
   }
 };
 </script>
