@@ -146,7 +146,7 @@ export default {
           idNumber: this.idNumber,
           percentageOfInterest: this.percentageOfInterest
         };
-        axios.post('http://localhost:4000/designation-of-beneficiary', payload)
+        axios.post('http://localhost:3000/designation-of-beneficiary', payload)
           .then(response => {
             console.log('Success:', response.data);
             // Handle success response
@@ -209,65 +209,105 @@ export default {
   max-height: 90vh;
 }
 
-.input-container {
+h1 {
+  font-size: 22px;
+  color: #333;
   margin-bottom: 20px;
 }
 
-input[type="text"],
-input[type="date"],
-input[type="number"],
-select {
+.input-group, .input-container {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  box-sizing: border-box;
+  margin-bottom: 20px;
+  text-align: left;
+  
 }
 
-.buttons {
+label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+
+
+.button-group {
   display: flex;
   justify-content: space-between;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button,
-.next-button {
-  padding: 10px 20px;
+.back-button, .submit-button, .next-button {
+  flex: 1;
+  padding: 12px 0;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-  width: 48%;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
 .back-button {
   background-color: #6c757d;
   color: white;
-}
-
-.next-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.next-button:hover {
-  background-color: #0056b3;
+  margin-right: 10px;
 }
 
 .back-button:hover {
   background-color: #5a6268;
 }
 
-.additional-actions {
-  margin-top: 20px;
-  text-align: center;
+.submit-button, .next-button {
+  background-color: #007bff;
+  color: white;
+  margin-left: 10px;
 }
 
-.add-button {
+.submit-button:hover, .next-button:hover {
+  background-color: #0056b3;
+}
+
+.logo {
+  width: 157.5px; 
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: left;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.agree-button, .disagree-button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -275,23 +315,72 @@ select {
   font-size: 16px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
-  background-color: #28a745;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 5px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+
+.agree-button {
+  background-color: #007bff;
   color: white;
-  margin-bottom: 10px;
 }
 
-.add-button:hover {
-  background-color: #218838;
+.agree-button:hover {
+  background-color: #0056b3;
 }
 
-a {
-  display: block;
-  margin-top: 10px;
-  color: #007bff;
-  text-decoration: none;
+.disagree-button {
+  background-color: #6c757d;
+  color: white;
 }
 
-a:hover {
-  text-decoration: underline;
+.disagree-button:hover {
+  background-color: #5a6268;
 }
+
+.input-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.input-container .icon {
+  position: absolute;
+  left: 15px;  /* Align icon to the left */
+  color: #666;
+  font-size: 16px;
+}
+
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 12px;
+  padding-left: 40px; /* Add space on the left for the icon */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+.input-container input:focus,
+.input-container select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}/* Adds space between the icons */
+
 </style>

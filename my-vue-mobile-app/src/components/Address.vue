@@ -107,7 +107,7 @@ export default {
           DwellingStatus: DwellingStatus.value
         });
 
-        const response = await axios.post('http://localhost:4000/address', formData, {
+        const response = await axios.post('http://localhost:3000/address', formData, {
           headers: {
             'Content-Type': 'application/json'
           }

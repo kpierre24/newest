@@ -94,7 +94,7 @@ export default {
           // Debugging logs to check form data
           console.log('Bank Information Data:', formData);
 
-          const response = await axios.post('http://localhost:4000/foreign-national-bank-information', formData, {
+          const response = await axios.post('http://localhost:3000/foreign-national-bank-information', formData, {
             headers: {
               'Content-Type': 'application/json'
             }

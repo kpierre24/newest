@@ -1,12 +1,21 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Account Number</h1>
-      <form @submit.prevent="submitAccountNumber">
+      <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <input type="text" v-model="accountNumber" id="accountNumber" placeholder="Account Number" required />
+          <label for="accountNumber">Account Number</label>
+          <Field
+            name="accountNumber"
+            id="accountNumber"
+            placeholder="Enter account number"
+            :class="{ 'is-invalid': errors.accountNumber }"
+            as="input"
+          />
+          <ErrorMessage name="accountNumber" class="error-message" />
         </div>
-        <div class="button-group">
+        <div class="navigation-buttons">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="next-button">Next</button>
         </div>
@@ -16,31 +25,47 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
+import { useForm, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
-export default {
+export default defineComponent({
+  components: {
+    Field,
+    ErrorMessage
+  },
   setup() {
-    const accountNumber = ref('');
     const router = useRouter();
 
-    const submitAccountNumber = () => {
-      // Save account number and navigate to the next page
-      router.push('/due-diligence');
+    const validationSchema = yup.object({
+      accountNumber: yup
+        .string()
+        .matches(/^\d{12}$/, 'Account number must be exactly 12 digits')
+        .required('Account number is required')
+    });
+
+    const { handleSubmit, errors } = useForm({
+      validationSchema
+    });
+
+    const onSubmit = (values) => {
+      console.log('Form submitted:', values);
+      // Navigate to the next page
+      router.push('/due-diligence'); // Replace with the actual next page route
     };
 
     const navigateToPrevious = () => {
-      // Implement navigation to the previous page
       router.go(-1);
     };
 
     return {
-      accountNumber,
-      submitAccountNumber,
+      handleSubmit: handleSubmit(onSubmit),
+      errors,
       navigateToPrevious
     };
   }
-};
+});
 </script>
 
 <style scoped>

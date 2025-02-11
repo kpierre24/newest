@@ -9,19 +9,14 @@
              As defined by these Acts and adopted within the Cathedral Credit Union, a PEP shall be considered as an individual 
             who is or has been entrusted with a prominent function either locally or in a foreign country.</p>
          <div class="input-container">
-          <label for="pepAssociate">Are you a politically exposed person?</label>
+          <label for="pepAssociate">Are you a politically exposed person (PEP) or associated with one?</label>
           <select v-model="pepAssociate" id="pepAssociate" required>
             <option value="" disabled>Select an option</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
           </select>
         </div>
-        <div class="input-container">
-          <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship to PEP" :disabled="pepAssociate === 'no'" required />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="pepName" id="pepName" placeholder="Enter PEP name" :disabled="pepAssociate === 'no'" required />
-        </div>
+        
             <div class="button-group">
             <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Domestic Pep or Foreign PEP</button>
             <button @click="showModal('Interntional Organization PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Interntional Organization PEP</button>
@@ -34,9 +29,17 @@
        
         <h3 v-if="pepAssociate === 'yes'">You are a politically exposed person.</h3>
         <h3 v-else-if="pepAssociate === 'no'">You are not a politically exposed person.</h3>
-        <div class="input-container">
-          <label for="jobTitle">Job Title</label>
-          <input type="text" v-model="jobTitle" id="jobTitle" placeholder="Enter job title" :disabled="pepAssociate === 'no'" required />
+        <div v-if="pepAssociate === 'yes'" class="input-container">
+          <label for="relationshipToPep">Relationship to PEP</label>
+          <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship" required />
+        </div>
+        <div v-if="pepAssociate === 'yes'" class="input-container">
+          <label for="pepName">Name of PEP</label>
+          <input type="text" v-model="pepName" id="pepName" placeholder="Enter name" required />
+        </div>
+        <div v-if="pepAssociate === 'yes'" class="input-container">
+          <label for="jobTitle">Job Title of PEP</label>
+          <input type="text" v-model="jobTitle" id="jobTitle" placeholder="Enter job title" required />
         </div>
         <div class="navigation-buttons">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -93,37 +96,33 @@ export default {
     });
 
     const handleSubmit = async () => {
-      try {
-        const formData = {
-          pepAssociate: pepAssociate.value,
-          relationshipToPep: relationshipToPep.value,
-          pepName: pepName.value,
-          jobTitle: jobTitle.value
-        };
+  if (pepAssociate.value === 'no') {
+    router.push({ name: 'PoliticallyExposedPersons2' });
+    return;
+  }
 
-        // Save PEP info to the store
-        store.setPepInfo(formData);
+  try {
+    const formData = {
+      pepAssociate: pepAssociate.value,
+      relationshipToPep: relationshipToPep.value,
+      pepName: pepName.value,
+      jobTitle: jobTitle.value
+    };
 
-        // Debugging logs to check form data
-        console.log('PEP Information Data:', formData);
+    const response = await axios.post('http://localhost:3000/politically-exposed-persons', formData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
-        const response = await axios.post('http://localhost:4000/politically-exposed-persons', formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
         console.log('PEP information submitted:', response.data);
 
         // Navigate to the next page
-        router.push('/politically-exposed-persons-2'); // Replace with the actual next page route
+        router.push({ name: 'PoliticallyExposedPersons2' }); // Replace with the actual next page route
       } catch (error) {
         console.error('Error submitting PEP information:', error);
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
-    };
-
-    const skipScreen = () => {
-      router.push('/politically-exposed-persons-2'); // Replace with the actual next page route
     };
 
     const navigateToPrevious = () => {
@@ -153,7 +152,6 @@ export default {
       selectedOption,
       options,
       handleSubmit,
-      skipScreen,
       navigateToPrevious,
       showModal,
       closeModal,
@@ -337,5 +335,33 @@ input[type="text"] {
   width: 157.5px; 
   height: auto;
   margin-bottom: 20px;
+}
+
+.shake {
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }
 </style>

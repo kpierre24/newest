@@ -66,142 +66,99 @@
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
             <button type="submit" class="submit-button">Submit</button>
           </div>
+          
         </div>
       </form>
     </div>
+    <TermsAndConditions :visible="isTermsVisible" @close="handleCloseTerms" />
+    <FinancialDeclaration :visible="isFinancialVisible" @close="handleCloseFinancial"  />
   </div>
 </template>
 
 <script>
 import { useDemoStore } from '@/store/demoStore';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import TermsAndConditions from './TermsAndConditions.vue';
+import FinancialDeclaration from './FinancialDeclaration.vue';
+
 
 export default {
-  setup() {
-    const store = useDemoStore();
-    const router = useRouter();
-    const firstName = ref('');
-    const lastName = ref('');
-    const otherName = ref('');
-    const email = ref('');
-    const mobileNumber = ref('');
-    const gender = ref('');
-    const dob = ref('');
-    const password = ref('');
-    const confirmPassword = ref('');
-    const termsViewed = ref(false);
-    const financialAgreementViewed = ref(false);
-    const passwordError = ref('');
-    const dateOfBirth = ref('');
-
-    onMounted(() => {
-      firstName.value = store.firstName;
-      lastName.value = store.lastName;
-      otherName.value = store.otherName;
-      email.value = store.email;
-      mobileNumber.value = store.mobileNumber;
-      gender.value = store.gender;
-      dob.value = store.dob;
-      password.value = store.password;
-      confirmPassword.value = store.confirmPassword;
-      termsViewed.value = store.termsViewed;
-      financialAgreementViewed.value = store.financialAgreementViewed;
-    });
-
-    const calculateAge = (dob) => {
-      const birthDate = new Date(dob);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age;
-    };
-
-    const validatePassword = () => {
-      const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!regex.test(password.value)) {
-        passwordError.value = 'Password must be at least 8 characters long, contain one capital letter, one number, and one special character.';
-      } else {
-        passwordError.value = '';
-      }
-    };
-
-    
-
-    const navigateToNext = () => {
-      const age = calculateAge(dateOfBirth.value);
-      store.setAge(age);
-      store.setBasicInfo({
-        firstName: firstName.value,
-        lastName: lastName.value,
-        otherName: otherName.value,
-        email: email.value,
-        mobileNumber: mobileNumber.value,
-        gender: gender.value,
-        dob: dob.value,
-        password: password.value,
-        confirmPassword: confirmPassword.value,
-        termsViewed: termsViewed.value,
-        financialAgreementViewed: financialAgreementViewed.value
-      });
-
-      router.push("/email-verification");
-    };
-
-    const navigateToPrevious = () => {
-      router.push("/new-or-existing");
-    };
-
-    const navigateToPEP = () => {
-      store.setBasicInfo({
-        firstName: firstName.value,
-        lastName: lastName.value,
-        otherName: otherName.value,
-        email: email.value,
-        mobileNumber: mobileNumber.value,
-        gender: gender.value,
-        dob: dob.value,
-        password: password.value,
-        confirmPassword: confirmPassword.value,
-        termsViewed: termsViewed.value,
-        financialAgreementViewed: financialAgreementViewed.value
-      });
-
-      router.push({ name: 'PoliticallyExposedPersons2' });
-    };
-
-    const showTermsAndConditions = () => {
-      // Show terms and conditions
-    };
-
-    const showFinancialDeclaration = () => {
-      // Show financial declaration
-    };
-
+  components: {
+    TermsAndConditions,
+    FinancialDeclaration
+  },
+  data() {
     return {
-      firstName,
-      lastName,
-      otherName,
-      email,
-      mobileNumber,
-      gender,
-      dob,
-      password,
-      confirmPassword,
-      termsViewed,
-      financialAgreementViewed,
-      passwordError,
-      validatePassword,
-      navigateToNext,
-      navigateToPrevious,
-      navigateToPEP,
-      showTermsAndConditions,
-      showFinancialDeclaration,
-      dateOfBirth
+      isTermsVisible: false,
+      isFinancialVisible: false,
+      firstName: '',
+      lastName: '',
+      otherName: '',
+      email: '',
+      mobileNumber: '',
+      gender: '',
+      dob: '',
+      password: '',
+      confirmPassword: '',
+      termsViewed: false,
+      financialAgreementViewed: false,
+      passwordError: '',
+      router: null
     };
+  },
+  created() {
+    this.router = useRouter();
+  },
+  methods: {
+    handleCloseTerms() {
+      this.isTermsVisible = false;
+    },
+    handleCloseFinancial() {
+      this.isFinancialVisible = false;
+    },
+    validatePassword() {
+      if (this.password !== this.confirmPassword) {
+        this.passwordError = 'Passwords do not match';
+      } else {
+        this.passwordError = '';
+      }
+    },
+    navigateToNext() {
+      // Ensure all required fields are filled
+      if (!this.firstName || !this.lastName || !this.email || !this.mobileNumber || !this.gender || !this.dob || !this.password || !this.confirmPassword || !this.termsViewed || !this.financialAgreementViewed) {
+        alert('Please fill all required fields and agree to the terms.');
+        return;
+      }
+
+      // Save data to the store
+      const store = useDemoStore();
+      store.setBasicInfo({
+        firstName: this.firstName,
+        lastName: this.lastName,
+        otherName: this.otherName,
+        email: this.email,
+        mobileNumber: this.mobileNumber,
+        gender: this.gender,
+        dob: this.dob,
+        password: this.password,
+        confirmPassword: this.confirmPassword,
+        termsViewed: this.termsViewed,
+        financialAgreementViewed: this.financialAgreementViewed
+      });
+
+      // Navigate to the next page
+      this.router.push({ name: 'EmailVerification' });
+    },
+    navigateToPrevious() {
+      this.router.go(-1);
+    },
+    showTermsAndConditions() {
+      this.isTermsVisible = true;
+    },
+    showFinancialDeclaration() {
+      this.isFinancialVisible = true;
+    }
   }
 };
 </script>
@@ -212,25 +169,25 @@ export default {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f4f4f4;
+  background: #f4f4f4; /* Light background for the page */
   padding: 20px;
 }
 
 .form-container {
-  background-color: #ffffff;
+  background: linear-gradient(to right, #a8c0ff, #3f2b96); /* Light purple gradient */
   padding: 40px;
-  border-radius: 15px;
+  border-radius: 20px; /* Rounded corners */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
+  max-width: 420px; /* Narrower width for consistency */
   text-align: center;
   overflow-y: auto;
   max-height: 90vh;
+  color: white; /* White text for contrast */
 }
 
 h1 {
-  font-size: 22px;
-  color: #333;
+  font-size: 24px;
   margin-bottom: 20px;
 }
 
@@ -238,18 +195,75 @@ h1 {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
-  
 }
 
-label {
-  display: block;
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container .icon {
+  position: absolute;
+  left: 15px; /* Align icon to the left */
+  color: #666;
+  font-size: 16px;
+}
+
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 12px;
+  padding-left: 40px; /* Add space on the left for the icon */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  transition: 0.3s ease;
+}
+
+.input-container input:focus,
+.input-container select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+/* Checkbox container styling */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 10px; /* Space between checkbox and label */
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #007bff; /* Custom checkbox color */
+}
+
+.checkbox-container label {
   font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
+  color: white; /* White text for contrast */
+  cursor: pointer;
 }
 
+/* Modal link styling */
+.input-container a {
+  color: #007bff; /* Blue for links */
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
 
+.input-container a:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: underline;
+}
 
 .button-group {
   display: flex;
@@ -266,7 +280,7 @@ label {
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .back-button {
@@ -290,115 +304,14 @@ label {
 }
 
 .logo {
-  width: 157.5px; 
+  width: 157.5px;
   height: auto;
   margin-bottom: 20px;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.error {
+  color: #ff4d4d; /* Red for error messages */
+  font-size: 12px;
+  margin-top: 5px;
 }
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.input-container {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-}
-
-.input-container .icon {
-  position: absolute;
-  left: 15px;  /* Align icon to the left */
-  color: #666;
-  font-size: 16px;
-}
-
-.input-container input,
-.input-container select {
-  width: 100%;
-  padding: 12px;
-  padding-left: 40px; /* Add space on the left for the icon */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-.input-container input:focus,
-.input-container select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}/* Adds space between the icons */
 </style>

@@ -10,18 +10,27 @@
             <option value="yes">Yes</option>
             <option value="no">No</option>
           </select>
-          <span class="error">{{ errors.pepAssociate }}</span>
+          <div class="error-container">
+            <span class="error">{{ errors.pepAssociate }}</span>
+          </div>
         </div>
+
         <div class="input-container" v-if="pepAssociate === 'yes'">
           <label for="relationshipToPep">Relationship to PEP</label>
           <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship" />
-          <span class="error">{{ errors.relationshipToPep }}</span>
+          <div class="error-container">
+            <span class="error">{{ errors.relationshipToPep }}</span>
+          </div>
         </div>
+
         <div class="input-container" v-if="pepAssociate === 'yes'">
           <label for="pepName">Name of PEP</label>
           <input type="text" v-model="pepName" id="pepName" placeholder="Enter name of PEP" />
-          <span class="error">{{ errors.pepName }}</span>
+          <div class="error-container">
+            <span class="error">{{ errors.pepName }}</span>
+          </div>
         </div>
+
         <div class="button-group">
           <button class="back-button" @click="goBack">Back</button>
           <button type="submit" class="next-button">Next</button>
@@ -40,16 +49,15 @@ import axios from 'axios';
 export default {
   setup() {
     const store = useDemoStore();
-    store.setAge(17);
     const router = useRouter();
 
+    // Reactive variables
     const pepAssociate = ref(store.pepAssociate);
     const relationshipToPep = ref(store.relationshipToPep);
     const pepName = ref(store.pepName);
     const errors = ref({});
 
-   
-
+    // Form validation
     const validateForm = () => {
       errors.value = {};
       if (!pepAssociate.value) {
@@ -66,6 +74,7 @@ export default {
       return Object.keys(errors.value).length === 0;
     };
 
+    // Handle form submission
     const handleSubmit = async () => {
       if (validateForm()) {
         try {
@@ -78,7 +87,7 @@ export default {
           // Save PEP info to the store
           store.setPepInfo(formData);
 
-          const response = await axios.post('http://localhost:4000/politically-exposed-persons-2', formData, {
+          const response = await axios.post('http://localhost:3000/politically-exposed-persons-2', formData, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -87,9 +96,9 @@ export default {
 
           // Navigate to the next page based on age
           if (store.age <= 17) {
-            router.push('/child-id-information');
+            router.push({ name: 'ChildIdInformation' });
           } else {
-            router.push('/id-information');
+            router.push({ name: 'IdInformation' });
           }
         } catch (error) {
           console.error('Error submitting PEP information:', error);
@@ -98,6 +107,7 @@ export default {
       }
     };
 
+    // Navigate back
     const goBack = () => {
       router.go(-1);
     };

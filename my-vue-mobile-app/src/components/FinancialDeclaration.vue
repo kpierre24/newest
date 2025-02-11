@@ -21,14 +21,6 @@ export default {
       required: true
     }
   },
-  methods: {
-    agree() {
-      this.$emit('agree');
-    },
-    disagree() {
-      this.$emit('disagree');
-    }
-  }
 };
 </script>
 

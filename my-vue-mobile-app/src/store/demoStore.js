@@ -61,7 +61,35 @@ export const useDemoStore = defineStore('demo', {
     beneficiaryCity: '',
     beneficiaryCountry: '',
     beneficiaryDateOfBirth: '',
-    beneficiaryGender: ''
+    beneficiaryGender: '',
+    parentFirstName: '',
+    parentMiddleName: '',
+    parentLastName: '',
+    parentOccupation: '',
+    parentWorkplace: '',
+    parentEmail: '',
+    parentPhoneNumber: '',
+    relationshipToChild: '',
+    relationshipDocument: null,
+    verificationCode: null,
+    membershipInfo: {
+      isMemberOfAnotherCreditUnion: null,
+      creditUnionName: null,
+      isServingOnBoard: null,
+      creditUnionBoardName: null,
+      poaFirstName: '',
+    poaLastName: '',
+    poaOtherName: '',
+    poaAddressLine1: '',
+    poaAddressLine2: '',
+    poaCity: '',
+    poaCountry: '',
+    poaDob: '',
+    poaIdDocument: null,
+    poaDocument: null
+    },
+   
+
   }),
   actions: {
     setBasicInfo(info) {
@@ -146,6 +174,40 @@ export const useDemoStore = defineStore('demo', {
       this.beneficiaryCountry = info.country;
       this.beneficiaryDateOfBirth = info.dob;
       this.beneficiaryGender = info.gender;
-    }
-  }
+    },
+    setParentGuardianInfo(info) {
+      this.parentFirstName = info.parentFirstName;
+      this.parentMiddleName = info.parentMiddleName;
+      this.parentLastName = info.parentLastName;
+      this.parentOccupation = info.parentOccupation;
+      this.parentWorkplace = info.parentWorkplace;
+      this.parentEmail = info.parentEmail;
+      this.parentPhoneNumber = info.parentPhoneNumber;
+      this.relationshipToChild = info.relationshipToChild;
+      this.relationshipDocument = info.relationshipDocument;
+    },
+    setVerificationCode(code) {
+      this.verificationCode = code;
+    },
+    setMembershipInfo(info) {
+      this.isMemberOfAnotherCreditUnion = info.isMemberOfAnotherCreditUnion;
+      this.creditUnionName = info.creditUnionName;
+      this.isServingOnBoard = info.isServingOnBoard;
+      this.creditUnionBoardName = info.creditUnionBoardName;
+      
+    },
+    setPowerOfAttorneyInfo(info) {
+      this.poaFirstName = info.poaFirstName;
+      this.poaLastName = info.poaLastName;
+      this.poaOtherName = info.poaOtherName;
+      this.poaAddressLine1 = info.poaAddressLine1;
+      this.poaAddressLine2 = info.poaAddressLine2;
+      this.poaCity = info.poaCity;
+      this.poaCountry = info.poaCountry;
+      this.poaDob = info.poaDob;
+      this.poaIdType = info.poaIdType;
+      this.poaIdDocument = info.poaIdDocument;
+      this.poaDocument = info.poaDocument;
+    },
+  },
 });

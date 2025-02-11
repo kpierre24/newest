@@ -1,7 +1,7 @@
 <template>
   <div v-if="visible" class="modal">
     <div class="modal-content">
-      <span class="close-button" @click="$emit('close')">&times;</span>
+      <button class="close-button" @click="$emit('close')">&times;</button>
       <h2>Terms and Conditions</h2>
       <div class="modal-text">
         <h3>1. Introduction</h3>
@@ -45,14 +45,7 @@ export default {
       required: true
     }
   },
-  methods: {
-    agree() {
-      this.$emit('agree');
-    },
-    disagree() {
-      this.$emit('disagree');
-    }
-  }
+  
 };
 </script>
 

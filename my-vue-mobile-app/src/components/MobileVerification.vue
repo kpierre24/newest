@@ -3,58 +3,97 @@
     <div class="form-container">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Mobile Verification</h1>
-      <form @submit.prevent="verifyCode">
-        <div class="input-group">
-          <div class="input-container">
-            <input type="text" v-model="verificationCode" id="verificationCode" placeholder="Enter 5-digit code" maxlength="5" required />
-          </div>
+      <form @submit.prevent="handleSubmit">
+        <div class="input-container">
+          <label for="verificationCode">Verification Code</label>
+          <Field
+            name="verificationCode"
+            id="verificationCode"
+            placeholder="Enter verification code"
+            maxlength="5"
+            :class="{ 'is-invalid': errors.verificationCode }"
+            as="input"
+          />
+          <ErrorMessage name="verificationCode" class="error-message" />
         </div>
         <div class="button-group">
-          <button class="back-button" @click="navigateToEmailVerification">Back</button>
-          <button class="submit-button" type="submit">Verify</button>
+          <button class="back-button" @click="navigateToPrevious">Back</button>
+          <button class="verify-button" type="submit">Verify</button>
         </div>
       </form>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { useDemoStore } from '@/store/demoStore';
+import { useField, useForm, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 export default {
   name: 'MobileVerification',
-  data() {
-    return {
-      verificationCode: ''
-    };
+  components: {
+    Field,
+    ErrorMessage
   },
-  methods: {
-    navigateToEmailVerification() {
-      this.$router.push('/email-verification');
-    },
-    async verifyCode() {
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+    const errorMessage = ref('');
+
+    const validationSchema = yup.object({
+      verificationCode: yup
+        .string()
+        .matches(/^\d{5}$/, 'Verification code must be exactly 5 digits')
+        .required('Verification code is required')
+    });
+
+    const { handleSubmit, errors } = useForm({
+      validationSchema
+    });
+
+    const onSubmit = async (values) => {
       try {
         const verificationData = {
-          verificationCode: this.verificationCode
+          verificationCode: values.verificationCode
         };
+
+        // Save verification code to the store
+        store.setVerificationCode(values.verificationCode);
 
         // Debugging logs to check form data
         console.log('Verification Data:', verificationData);
 
-        const response = await axios.post('http://localhost:4000/verify-mobile', verificationData, {
+        const response = await axios.post('http://localhost:3000/verify-mobile', verificationData, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
         console.log('Verification response:', response.data);
 
-        // Navigate to membership declaration agreement page
-        this.$router.push('/membership-declaration-agreement');
+        // Navigate to the next page
+        router.push('/membership-declaration-agreement'); // Replace with the actual next page route
       } catch (error) {
         console.error('Error verifying code:', error);
+        errorMessage.value = error.message;
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
-    }
+    };
+
+    const navigateToPrevious = () => {
+      router.go(-1);
+    };
+
+    return {
+      handleSubmit: handleSubmit(onSubmit),
+      errors,
+      errorMessage,
+      navigateToPrevious
+    };
   }
 };
 </script>

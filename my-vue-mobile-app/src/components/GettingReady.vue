@@ -78,27 +78,26 @@ export default {
 </script>
 
 <style scoped>
+
 .container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: white;
+  min-height: 100vh;
+  background: #f4f4f4; /* Light background for the page */
   padding: 20px;
-  text-align: center;
 }
 
 .content {
-  background-color: rgb(255, 255, 255);
-  background: linear-gradient(to right, #bdbcbe, #7da4e7);
+  background: linear-gradient(to right, #6e48aa, #9d50bb); /* Purple gradient */
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20px; /* Rounded corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 400px; /* Narrower width for consistency */
   max-height: 80vh; /* Set max height */
   overflow-y: auto; /* Enable vertical scrolling */
+  color: white; /* White text for contrast */
 }
 
 .logo {
@@ -107,41 +106,33 @@ export default {
   margin-bottom: 20px;
 }
 
-.text-container, .placeholder-container {
+h1 {
+  font-size: 24px;
   margin-bottom: 20px;
-  border-radius: 20px;
 }
 
-.text-content  {
+.text-container, .placeholder-container {
+  margin-bottom: 20px;
+  border-radius: 10px; /* Rounded corners */
+  background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+  padding: 15px;
+}
+
+.text-content {
   text-align: left;
   max-height: 30vh; /* Set max height for text content */
   overflow-y: auto; /* Enable vertical scrolling */
-  padding: 10px 20px; /* Add padding to avoid text being cut off */
   font-size: 14px; /* Reduce text size */
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.text-content::-webkit-scrollbar, .placeholder-content::-webkit-scrollbar {
-  width: 0;
-  background: transparent; /* Optional: just make scrollbar invisible */
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.text-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
 .placeholder-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-  background: rgb(190, 189, 189);
   text-align: center;
   max-height: 30vh; /* Set max height for text content */
   overflow-y: auto; /* Enable vertical scrolling */
-  padding: 10px 20px; /* Add padding to avoid text being cut off */
-  font-size: 12px; 
-  
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+  padding: 15px;
+  border-radius: 10px; /* Rounded corners */
 }
 
 .text-content p, .text-content h3, .placeholder-content p {
@@ -186,5 +177,22 @@ export default {
 
 .next-button:hover {
   background-color: #0056b3;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.text-content::-webkit-scrollbar, .placeholder-content::-webkit-scrollbar {
+  width: 0;
+  background: transparent; /* Optional: just make scrollbar invisible */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.text-content {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.placeholder-content {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 </style>

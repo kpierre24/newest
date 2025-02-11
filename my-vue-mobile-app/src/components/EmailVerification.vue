@@ -1,48 +1,73 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Email Verification</h1>
-      <i class="icon fas fa-envelope email-icon"></i>
-      <form @submit.prevent="verifyCode">
-        <div class="input-group">
-          <div class="input-container">
-            <input type="text" v-model="verificationCode" id="verificationCode" placeholder="Enter 5-digit code" maxlength="5" required />
-          </div>
+      <form @submit.prevent="handleSubmit">
+        <div class="input-container">
+          <label for="verificationCode">Verification Code</label>
+          <Field
+            name="verificationCode"
+            id="verificationCode"
+            placeholder="Enter verification code"
+            maxlength="5"
+            :class="{ 'is-invalid': errors.verificationCode }"
+            as="input"
+          />
+          <ErrorMessage name="verificationCode" class="error-message" />
         </div>
         <div class="button-group">
           <button class="back-button" @click="navigateToBasicInfo">Back</button>
-          <button class="submit-button" type="submit">Verify</button>
+          <button class="verify-button" type="submit">Verify</button>
         </div>
       </form>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { useDemoStore } from '@/store/demoStore';
+import { useField, useForm, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 export default {
   name: 'EmailVerification',
-  data() {
-    return {
-      verificationCode: ''
-    };
+  components: {
+    Field,
+    ErrorMessage
   },
-  methods: {
-    navigateToBasicInfo() {
-      this.$router.push('/basic-info');
-    },
-    async verifyCode() {
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+    const errorMessage = ref('');
+
+    const validationSchema = yup.object({
+      verificationCode: yup
+        .string()
+        .matches(/^\d{5}$/, 'Verification code must be exactly 5 digits')
+        .required('Verification code is required')
+    });
+
+    const { handleSubmit, errors } = useForm({
+      validationSchema
+    });
+
+    const onSubmit = async (values) => {
       try {
         const verificationData = {
-          verificationCode: this.verificationCode
+          verificationCode: values.verificationCode
         };
+
+        // Save verification code to the store
+        store.setVerificationCode(values.verificationCode);
 
         // Debugging logs to check form data
         console.log('Verification Data:', verificationData);
 
-        const response = await axios.post('http://localhost:4000/verify-email', verificationData, {
+        const response = await axios.post('http://localhost:3000/verify-email', verificationData, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -50,19 +75,29 @@ export default {
         console.log('Verification response:', response.data);
 
         // Navigate to mobile verification page
-        this.$router.push('/mobile-verification');
+        router.push('/mobile-verification');
       } catch (error) {
         console.error('Error verifying code:', error);
+        errorMessage.value = error.message;
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
-    }
+    };
+
+    const navigateToBasicInfo = () => {
+      router.push('/basic-info');
+    };
+
+    return {
+      handleSubmit: handleSubmit(onSubmit),
+      errors,
+      errorMessage,
+      navigateToBasicInfo
+    };
   }
 };
 </script>
 
 <style scoped>
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-
 .container {
   display: flex;
   align-items: center;
@@ -94,6 +129,7 @@ h1 {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
+  
 }
 
 label {
@@ -104,22 +140,7 @@ label {
   font-weight: 600;
 }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
 
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
 
 .button-group {
   display: flex;
@@ -237,18 +258,39 @@ input:focus, select:focus {
   background-color: #5a6268;
 }
 
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
+.input-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
 }
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
+
+.input-container .icon {
+  position: absolute;
+  left: 15px;  /* Align icon to the left */
+  color: #666;
+  font-size: 16px;
 }
+
+.input-container input,
+.input-container select {
+  width: 100%;
+  padding: 12px;
+  padding-left: 40px; /* Add space on the left for the icon */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+.input-container input:focus,
+.input-container select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}/* Adds space between the icons */
+
 </style>
