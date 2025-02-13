@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
+import axios from 'axios';
 
 export const useDemoStore = defineStore('demo', {
   state: () => ({
+    // Existing state
     firstName: '',
     lastName: '',
     otherName: '',
@@ -10,6 +12,8 @@ export const useDemoStore = defineStore('demo', {
     gender: '',
     dateOfBirth: '',
     age: null,
+    password: '',
+    confirmPassword: '',
     AddressLine1: '',
     AddressLine2: '',
     City: '',
@@ -78,20 +82,42 @@ export const useDemoStore = defineStore('demo', {
       isServingOnBoard: null,
       creditUnionBoardName: null,
       poaFirstName: '',
-    poaLastName: '',
-    poaOtherName: '',
-    poaAddressLine1: '',
-    poaAddressLine2: '',
-    poaCity: '',
-    poaCountry: '',
-    poaDob: '',
-    poaIdDocument: null,
-    poaDocument: null
+      poaLastName: '',
+      poaOtherName: '',
+      poaAddressLine1: '',
+      poaAddressLine2: '',
+      poaCity: '',
+      poaCountry: '',
+      poaDob: '',
+      poaIdDocument: null,
+      poaDocument: null,
     },
-   
 
+    // New authentication state
+    user: null,
+    token: localStorage.getItem('token') || null,
   }),
+  getters: {
+    // Existing getters (if any)
+    getBasicInfo() {
+      return {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        otherName: this.otherName,
+        email: this.email,
+        mobileNumber: this.mobileNumber,
+        gender: this.gender,
+        dateOfBirth: this.dateOfBirth,
+      };
+    },
+
+    // New authentication getters
+    isAuthenticated(state) {
+      return !!state.token;
+    },
+  },
   actions: {
+    // Existing actions
     setBasicInfo(info) {
       this.firstName = info.firstName;
       this.lastName = info.lastName;
@@ -194,7 +220,6 @@ export const useDemoStore = defineStore('demo', {
       this.creditUnionName = info.creditUnionName;
       this.isServingOnBoard = info.isServingOnBoard;
       this.creditUnionBoardName = info.creditUnionBoardName;
-      
     },
     setPowerOfAttorneyInfo(info) {
       this.poaFirstName = info.poaFirstName;
@@ -208,6 +233,59 @@ export const useDemoStore = defineStore('demo', {
       this.poaIdType = info.poaIdType;
       this.poaIdDocument = info.poaIdDocument;
       this.poaDocument = info.poaDocument;
+    },
+    setPassword(password) {
+      this.password = password;
+    },
+    setConfirmPassword(confirmPassword) {
+      this.confirmPassword = confirmPassword;
+    },
+    clearPassword() {
+      this.password = '';
+      this.confirmPassword = '';
+    },
+    
+
+    // New authentication actions
+    async login(credentials) {
+      try {
+        const response = await axios.post('/api/login', credentials);
+        this.token = response.data.token;
+        this.user = response.data.user;
+        localStorage.setItem('token', this.token); // Save token to localStorage
+        axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`; // Set Axios auth header
+      } catch (error) {
+        console.error('Login failed:', error);
+        throw error;
+      }
+    },
+    async register(userData) {
+      try {
+        const response = await axios.post('/api/register', userData);
+        this.token = response.data.token;
+        this.user = response.data.user;
+        localStorage.setItem('token', this.token); // Save token to localStorage
+        axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`; // Set Axios auth header
+      } catch (error) {
+        console.error('Registration failed:', error);
+        throw error;
+      }
+    },
+    logout() {
+      this.token = null;
+      this.user = null;
+      localStorage.removeItem('token'); // Remove token from localStorage
+      delete axios.defaults.headers.common['Authorization']; // Remove Axios auth header
+    },
+    async checkAuth() {
+      if (this.token) {
+        try {
+          const response = await axios.get('/api/me'); // Endpoint to verify token
+          this.user = response.data.user;
+        } catch (error) {
+          this.logout(); // Logout if token is invalid
+        }
+      }
     },
   },
 });

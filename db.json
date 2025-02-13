@@ -1,4 +1,15 @@
 {
+  
+    "api": {
+      "login": {
+        "success": {
+          "message": "Login successful!"
+        },
+        "failure": {
+          "message": "Login failed. Please check your email and password."
+        }
+      }
+  },
   "account-number": [],
   "foreign-national-bank-information": [
     {
@@ -205,6 +216,16 @@
       "bankAccountNumber": "232355",
       "swiftCode": "343434",
       "bankTelephoneNumber": "8682224706"
+    },
+    {
+      "id": "a1c0",
+      "bankName": "sdsd",
+      "bankAddressLine1": "O Connor Street",
+      "bankCity": "port of spain",
+      "bankCountry": "Albania",
+      "bankAccountNumber": "232355",
+      "swiftCode": "343434",
+      "bankTelephoneNumber": "8682224706"
     }
   ],
   "parent-guardian-information": [],
@@ -276,6 +297,16 @@
     },
     {
       "id": "011c",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    },
+    {
+      "id": "3881",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    },
+    {
+      "id": "5803",
       "userId": "12345",
       "message": "User has successfully signed up"
     }
@@ -355,6 +386,30 @@
       "selectedBranch": "Port of Spain",
       "preferredContactMethod": "phone",
       "bestContactTime": "12:00pm to 4:00pm"
+    },
+    {
+      "id": "0db0",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "phone",
+      "bestContactTime": "12:00pm to 4:00pm"
+    },
+    {
+      "id": "d35f",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "phone",
+      "bestContactTime": "8:00am to 12:00pm"
+    },
+    {
+      "id": "10fb",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "phone",
+      "bestContactTime": "8:00am to 12:00pm"
+    },
+    {
+      "id": "59da",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "phone",
+      "bestContactTime": "8:00am to 12:00pm"
     }
   ],
   "power-of-attorney": [
@@ -497,6 +552,62 @@
       "poaIdType": "drivers-permit",
       "poaIdDocument": {},
       "poaDocument": {}
+    },
+    {
+      "id": "c915",
+      "poaFirstName": "john michael",
+      "poaLastName": "aboud",
+      "poaOtherName": "undefined",
+      "poaAddressLine1": "O Connor Street",
+      "poaAddressLine2": "woodbrook",
+      "poaCity": "port of spain",
+      "poaCountry": "Trinidad & Tobago",
+      "poaDob": "2025-02-18",
+      "poaIdType": "national-id",
+      "poaIdDocument": {},
+      "poaDocument": {}
+    },
+    {
+      "id": "346f",
+      "poaFirstName": "john michael",
+      "poaLastName": "aboud",
+      "poaOtherName": "undefined",
+      "poaAddressLine1": "O Connor Street",
+      "poaAddressLine2": "woodbrook",
+      "poaCity": "port of spain",
+      "poaCountry": "Trinidad & Tobago",
+      "poaDob": "2025-03-05",
+      "poaIdType": "drivers-permit",
+      "poaIdDocument": {},
+      "poaDocument": {}
+    },
+    {
+      "id": "0da9",
+      "poaFirstName": "john michael",
+      "poaLastName": "aboud",
+      "poaOtherName": "undefined",
+      "poaAddressLine1": "O Connor Street",
+      "poaAddressLine2": "woodbrook",
+      "poaCity": "port of spain",
+      "poaCountry": "Trinidad & Tobago",
+      "poaDob": "2025-02-10",
+      "poaIdType": "drivers-permit",
+      "poaIdDocument": {},
+      "poaDocument": {}
+    },
+    {
+      "id": "f8ff",
+      "poaFirstName": "kendell",
+      "poaLastName": "pierre",
+      "poaOtherName": "undefined",
+      "poaAddressLine1": "Apartment 5",
+      "poaAddressLine2": "church st",
+      "poaCity": "cunupia",
+      "poaCountry": "Trinidad & Tobago",
+      "poaDob": "2025-02-04",
+      "poaIdType": "drivers-permit",
+      "poaIdDocument": {},
+      "poaDocument": {}
     }
   ],
   "designation-of-beneficiary": [
@@ -595,6 +706,22 @@
       "typeOfId": "driver's permit",
       "idNumber": "2455443",
       "percentageOfInterest": 32
+    },
+    {
+      "id": "5dfa",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "",
+      "addressLine1": "O Connor Street",
+      "addressLine2": "woodbrook",
+      "city": "port of spain",
+      "country": "Trinidad & Tobago",
+      "dob": "2025-02-18",
+      "gender": "male",
+      "relationshipToBeneficiary": "fgfgg",
+      "typeOfId": "birthpaper",
+      "idNumber": "233454334",
+      "percentageOfInterest": 20
     }
   ],
   "child-id-information": [
@@ -987,6 +1114,30 @@
       "pepAssociate": "yes",
       "relationshipToPep": "wdwd",
       "pepName": "dwdwdw"
+    },
+    {
+      "id": "d7e4",
+      "pepAssociate": "yes",
+      "relationshipToPep": "wdwd",
+      "pepName": "dgdgd"
+    },
+    {
+      "id": "0f92",
+      "pepAssociate": "yes",
+      "relationshipToPep": "wdwd",
+      "pepName": "dwdwdw"
+    },
+    {
+      "id": "a6d5",
+      "pepAssociate": "yes",
+      "relationshipToPep": "wdwd",
+      "pepName": "dwdwdw"
+    },
+    {
+      "id": "3ada",
+      "pepAssociate": "yes",
+      "relationshipToPep": "ghgh",
+      "pepName": "ghghgh"
     }
   ],
   "politically-exposed-persons": [
@@ -1560,6 +1711,50 @@
       "employmentStatus": "unemployed",
       "employmentType": "part-time",
       "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "cbaf",
+      "employerName": "ewewewe",
+      "employerAddressLine1": "Apartment 5",
+      "employerCity": "cunupia",
+      "employerCountry": "Antigua and Barbuda",
+      "workNumber": "3434434",
+      "employmentStatus": "unemployed",
+      "employmentType": "full-time",
+      "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "8cba",
+      "employerName": "ewewewe",
+      "employerAddressLine1": "O Connor Street",
+      "employerCity": "port of spain",
+      "employerCountry": "Anguilla",
+      "workNumber": "3434434",
+      "employmentStatus": "unemployed",
+      "employmentType": "part-time",
+      "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "77be",
+      "employerName": "ewewewe",
+      "employerAddressLine1": "O Connor Street",
+      "employerCity": "port of spain",
+      "employerCountry": "Albania",
+      "workNumber": "56666",
+      "employmentStatus": "unemployed",
+      "employmentType": "contract",
+      "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "5264",
+      "employerName": "sdsdsd",
+      "employerAddressLine1": "Apartment 5",
+      "employerCity": "cunupia",
+      "employerCountry": "Albania",
+      "workNumber": "3434434",
+      "employmentStatus": "self-employed",
+      "employmentType": "part-time",
+      "proofOfEmploymentFile": {}
     }
   ],
   "mailing-address": [
@@ -1863,6 +2058,34 @@
       "AddressLine2": "",
       "City": "",
       "Country": "Austria"
+    },
+    {
+      "id": "ba16",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Angola"
+    },
+    {
+      "id": "2088",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Albania"
+    },
+    {
+      "id": "1b1f",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Angola"
+    },
+    {
+      "id": "925d",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Albania"
     }
   ],
   "verify-mobile": [
@@ -2053,6 +2276,22 @@
     {
       "id": "ff25",
       "verificationCode": "34345"
+    },
+    {
+      "id": "a3f3",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "c509",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "cc52",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "6036",
+      "verificationCode": "76877"
     }
   ],
   "verify-email": [
@@ -2315,6 +2554,22 @@
     {
       "id": "edea",
       "verificationCode": "76877"
+    },
+    {
+      "id": "d28e",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "4fbd",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "9dcb",
+      "verificationCode": "76877"
+    },
+    {
+      "id": "5033",
+      "verificationCode": "44444"
     }
   ],
   "address": [
@@ -2567,6 +2822,46 @@
       "Nationality": "American Samoa",
       "DwellingStatus": "owned",
       "ProofOfAddress": {}
+    },
+    {
+      "id": "c231",
+      "AddressLine1": "O Connor Street",
+      "AddressLine2": "woodbrook",
+      "City": "port of spain",
+      "Country": "Angola",
+      "Nationality": "Armenia",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "8701",
+      "AddressLine1": "O Connor Street",
+      "AddressLine2": "woodbrook",
+      "City": "port of spain",
+      "Country": "Albania",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "2ff5",
+      "AddressLine1": "Apartment 5",
+      "AddressLine2": "Nam and Pony #3 , Hin Kin Road",
+      "City": "Chaguanas Borough Corporation",
+      "Country": "Angola",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "77d5",
+      "AddressLine1": "Apartment 5",
+      "AddressLine2": "Nam and Pony #3 , Hin Kin Road",
+      "City": "Chaguanas Borough Corporation",
+      "Country": "Albania",
+      "Nationality": "Trinidad and Tobago",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": {}
     }
   ],
   "basic-info": [
@@ -2578,6 +2873,22 @@
       "mobileNumber": "8687621154",
       "gender": "male",
       "dateOfBirth": "2024-12-10"
+    }
+  ],
+  "routes": [
+    {
+      "/api/login": "/users"
+    }
+  ],
+  "login": [
+    {
+      "email": "john.doe@example.com",
+      "password": "password123"
+    },
+    {
+      "id": "0871",
+      "userId": "12345",
+      "message": "User has successfully signed up"
     }
   ],
   "id-information": [
@@ -2736,6 +3047,54 @@
       "secondExpiryDate": "2025-04-23",
       "secondIdDocument": {},
       "maritalStatus": "Married"
+    },
+    {
+      "id": "88af",
+      "firstIdType": "National ID",
+      "firstIdNumber": "122222222222",
+      "firstExpiryDate": "2025-02-17",
+      "firstIdDocument": {},
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "233333444544",
+      "secondExpiryDate": "",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "9d76",
+      "firstIdType": "National ID",
+      "firstIdNumber": "646464",
+      "firstExpiryDate": "2025-03-04",
+      "firstIdDocument": {},
+      "secondIdType": "",
+      "secondIdNumber": "233333444544",
+      "secondExpiryDate": "2025-02-19",
+      "secondIdDocument": {},
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "aad4",
+      "firstIdType": "National ID",
+      "firstIdNumber": "wdwdwd",
+      "firstExpiryDate": "2025-02-24",
+      "firstIdDocument": null,
+      "secondIdType": "Passport",
+      "secondIdNumber": "233333444544",
+      "secondExpiryDate": "2025-02-17",
+      "secondIdDocument": null,
+      "maritalStatus": "Single"
+    },
+    {
+      "id": "48d4",
+      "firstIdType": "National ID",
+      "firstIdNumber": "122222222222",
+      "firstExpiryDate": "2025-02-17",
+      "firstIdDocument": {},
+      "secondIdType": "",
+      "secondIdNumber": "233333444544",
+      "secondExpiryDate": "2025-02-17",
+      "secondIdDocument": {},
+      "maritalStatus": "Divorced"
     }
   ]
 }

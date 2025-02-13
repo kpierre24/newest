@@ -22,10 +22,13 @@ import Branch from '@/components/Branch.vue';
 import Success from '@/components/Success.vue';
 import ParentGuardianInformation from '@/components/ParentGuardianInformation.vue';
 import AccountNumber from '@/components/AccountNumber.vue';
+import Dashboard from '@/views/Dashboard.vue';
+import { useDemoStore } from '../store/demoStore';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
-  { path: '/login', name: 'Login', component: Login },
+  { path: '/login', name: 'Login', component: () => import('@/components/Login.vue') },
+  { path: '/register', name: 'Register', component: Login },
   { path: '/basic-info', name: 'BasicInfo', component: BasicInfo },
   { path: '/address', component: Address },
   { path: '/new-or-existing-customer', component: NewOrExistingCustomer },
@@ -46,12 +49,22 @@ const routes = [
   { path: '/branch', name: 'Branch', component: Branch },
   { path: '/success', name: 'Success', component: Success },
   { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
-  { path: '/account-number', name: 'AccountNumber', component: AccountNumber }
+  { path: '/account-number', name: 'AccountNumber', component: AccountNumber },
+  { path: '/dashboard', component: () => import('@/views/Dashboard.vue'), meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  const store = useDemoStore();
+  if (to.meta.requiresAuth && !store.isAuthenticated) {
+    next('/login'); // Redirect to login if not authenticated
+  } else {
+    next();
+  }
 });
 
 export default router;
