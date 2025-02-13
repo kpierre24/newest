@@ -95,9 +95,9 @@ export default {
     const validationSchema = yup.object({
       poaFirstName: yup.string().required('First Name is required'),
       poaLastName: yup.string().required('Last Name is required'),
-      poaOtherName: yup.string().required('Other Name is required'),
+      poaOtherName: yup.string(),
       poaAddressLine1: yup.string().required('Address Line 1 is required'),
-      poaAddressLine2: yup.string().required('Address Line 2 is required'),
+      poaAddressLine2: yup.string(),
       poaCity: yup.string().required('City is required'),
       poaCountry: yup.string().required('Country is required'),
       poaDob: yup.string().required('Date of Birth is required'),

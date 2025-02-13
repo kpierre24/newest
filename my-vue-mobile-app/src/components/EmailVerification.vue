@@ -232,12 +232,19 @@ label {
   align-items: center;
   margin-bottom: 15px;
   width: 100%;
-  gap: 5px;
+  gap: 10px; /* Space between checkbox and label */
 }
 
 .checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+  accent-color: #007bff; /* Custom checkbox color */
+}
+
+.checkbox-container label {
+  font-size: 14px;
+  color: white; /* White text for contrast */
+  cursor: pointer;
 }
 
 .agree-button {

@@ -29,18 +29,7 @@
        
         <h3 v-if="pepAssociate === 'yes'">You are a politically exposed person.</h3>
         <h3 v-else-if="pepAssociate === 'no'">You are not a politically exposed person.</h3>
-        <div v-if="pepAssociate === 'yes'" class="input-container">
-          <label for="relationshipToPep">Relationship to PEP</label>
-          <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship" required />
-        </div>
-        <div v-if="pepAssociate === 'yes'" class="input-container">
-          <label for="pepName">Name of PEP</label>
-          <input type="text" v-model="pepName" id="pepName" placeholder="Enter name" required />
-        </div>
-        <div v-if="pepAssociate === 'yes'" class="input-container">
-          <label for="jobTitle">Job Title of PEP</label>
-          <input type="text" v-model="jobTitle" id="jobTitle" placeholder="Enter job title" required />
-        </div>
+        
         <div class="navigation-buttons">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="next-button">Next</button>

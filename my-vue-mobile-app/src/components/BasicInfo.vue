@@ -231,25 +231,7 @@ h1 {
 }
 
 /* Checkbox container styling */
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 10px; /* Space between checkbox and label */
-}
 
-.checkbox-container input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: #007bff; /* Custom checkbox color */
-}
-
-.checkbox-container label {
-  font-size: 14px;
-  color: white; /* White text for contrast */
-  cursor: pointer;
-}
 
 /* Modal link styling */
 .input-container a {
@@ -301,6 +283,26 @@ h1 {
 
 .submit-button:hover, .next-button:hover {
   background-color: #0056b3;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+  gap: 10px; /* Space between checkbox and label */
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #007bff; /* Custom checkbox color */
+}
+
+.checkbox-container label {
+  font-size: 14px;
+  color: white; /* White text for contrast */
+  cursor: pointer;
 }
 
 .logo {

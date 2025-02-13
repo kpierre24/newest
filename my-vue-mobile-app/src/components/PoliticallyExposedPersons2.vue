@@ -2,7 +2,7 @@
   <div class="container">
     <div class="form-container">
       <h1>Politically Exposed Persons - Part 2</h1>
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="submitPepInfo">
         <div class="input-container">
           <label for="pepAssociate">Are you an associate of a politically exposed person?</label>
           <select v-model="pepAssociate" id="pepAssociate">
@@ -11,7 +11,7 @@
             <option value="no">No</option>
           </select>
           <div class="error-container">
-            <span class="error">{{ errors.pepAssociate }}</span>
+            <span class="error">{{ errorMessage }}</span>
           </div>
         </div>
 
@@ -19,7 +19,7 @@
           <label for="relationshipToPep">Relationship to PEP</label>
           <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship" />
           <div class="error-container">
-            <span class="error">{{ errors.relationshipToPep }}</span>
+            <span class="error">{{ errorMessage }}</span>
           </div>
         </div>
 
@@ -27,12 +27,12 @@
           <label for="pepName">Name of PEP</label>
           <input type="text" v-model="pepName" id="pepName" placeholder="Enter name of PEP" />
           <div class="error-container">
-            <span class="error">{{ errors.pepName }}</span>
+            <span class="error">{{ errorMessage }}</span>
           </div>
         </div>
 
         <div class="button-group">
-          <button class="back-button" @click="goBack">Back</button>
+          <button class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="next-button">Next</button>
         </div>
       </form>
@@ -41,41 +41,48 @@
 </template>
 
 <script>
-import { useDemoStore } from '@/store/demoStore';
-import { ref } from 'vue';
+import { ref, computed } from 'vue'; // Import computed
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
+  name: 'PoliticallyExposedPersons2',
   setup() {
-    const store = useDemoStore();
     const router = useRouter();
+    const store = useDemoStore();
+    const pepAssociate = ref('');
+    const relationshipToPep = ref('');
+    const pepName = ref('');
+    const errorMessage = ref('');
 
-    // Reactive variables
-    const pepAssociate = ref(store.pepAssociate);
-    const relationshipToPep = ref(store.relationshipToPep);
-    const pepName = ref(store.pepName);
-    const errors = ref({});
+    const dob = computed(() => store.dob); // Get dob from the store
 
-    // Form validation
-    const validateForm = () => {
-      errors.value = {};
-      if (!pepAssociate.value) {
-        errors.value.pepAssociate = 'Please select an option.';
+    const calculateAge = (dob) => {
+      if (!dob) return null;
+      const birthDate = new Date(dob);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
       }
-      if (pepAssociate.value === 'yes') {
-        if (!relationshipToPep.value) {
-          errors.value.relationshipToPep = 'Please indicate the relationship.';
-        }
-        if (!pepName.value) {
-          errors.value.pepName = 'Please enter the name of the PEP.';
-        }
-      }
-      return Object.keys(errors.value).length === 0;
+      return age;
     };
 
-    // Handle form submission
-    const handleSubmit = async () => {
+    const age = computed(() => {
+      return calculateAge(dob.value);
+    });
+
+    const validateForm = () => {
+      if (!pepAssociate.value || !relationshipToPep.value || !pepName.value) {
+        errorMessage.value = 'Please fill all required fields.';
+        return false;
+      }
+      return true;
+    };
+
+    const submitPepInfo = async () => {
       if (validateForm()) {
         try {
           const formData = {
@@ -95,20 +102,20 @@ export default {
           console.log('PEP information submitted:', response.data);
 
           // Navigate to the next page based on age
-          if (store.age <= 17) {
+          if (age.value !== null && age.value < 17) {
             router.push({ name: 'ChildIdInformation' });
           } else {
             router.push({ name: 'IdInformation' });
           }
         } catch (error) {
           console.error('Error submitting PEP information:', error);
+          errorMessage.value = error.message;
           console.error('Error details:', error.response ? error.response.data : error.message);
         }
       }
     };
 
-    // Navigate back
-    const goBack = () => {
+    const navigateToPrevious = () => {
       router.go(-1);
     };
 
@@ -116,9 +123,11 @@ export default {
       pepAssociate,
       relationshipToPep,
       pepName,
-      errors,
-      handleSubmit,
-      goBack
+      errorMessage,
+      submitPepInfo,
+      navigateToPrevious,
+      dob, // Expose the computed dob
+      age  // Expose the computed age
     };
   }
 };

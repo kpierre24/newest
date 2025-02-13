@@ -1,191 +1,126 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Child ID Information</h1>
-      <form @submit.prevent="handleSubmit">
-        <div class="input-container">
-          <label for="firstIdType">First ID Type</label>
-          <Field name="firstIdType" id="firstIdType" as="select" :class="{ 'is-invalid': errors.firstIdType }" v-model="firstIdType">
-            <option value="">Select ID Type</option>
-            <option value="national-id">National ID</option>
-            <option value="passport">Passport</option>
-            <option value="birthpaper">Birthpaper</option>
-          </Field>
-          <ErrorMessage name="firstIdType" class="error-message" />
+      <div class="id-box">
+        <div class="id-container">
+          <h2>First Form of ID</h2>
+          <div class="input-container">
+            <label for="firstIdType">Type of ID</label>
+            <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
+              <option value="" disabled>Select ID Type</option>
+              <option value="ID Card">ID Card</option>
+              <option value="Passport">Passport</option>
+              <option value="Birthpaper">Birthpaper</option>
+            </select>
+          </div>
+          <div class="input-container">
+            <label for="firstIdNumber">ID Number</label>
+            <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter ID number" />
+          </div>
+          <div class="input-container">
+            <label for="firstExpiryDate">Expiry Date</label>
+            <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" :disabled="firstIdType === 'Birthpaper'" />
+          </div>
+          <div class="input-container">
+            <label for="firstIdDocument">Upload Document</label>
+            <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
+            <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
+          </div>
         </div>
-        <div class="input-container">
-          <label for="firstIdNumber">First ID Number</label>
-          <Field name="firstIdNumber" id="firstIdNumber" placeholder="Enter first ID number" :class="{ 'is-invalid': errors.firstIdNumber }" as="input" />
-          <ErrorMessage name="firstIdNumber" class="error-message" />
+      </div>
+      <div class="id-box">
+        <div class="id-container">
+          <h2>Second Form of ID</h2>
+          <div class="input-container">
+            <label for="secondIdType">Type of ID</label>
+            <select v-model="secondIdType" id="secondIdType">
+              <option value="" disabled>Select ID Type</option>
+              <option v-for="option in secondIdOptions" :key="option" :value="option">{{ option }}</option>
+            </select>
+          </div>
+          <div class="input-container">
+            <label for="secondIdNumber">ID Number</label>
+            <input type="text" v-model="secondIdNumber" id="secondIdNumber" placeholder="Enter ID number" />
+          </div>
+          <div class="input-container">
+            <label for="secondExpiryDate">Expiry Date</label>
+            <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" :disabled="secondIdType === 'Birthpaper'" />
+          </div>
+          <div class="input-container">
+            <label for="secondIdDocument">Upload Document</label>
+            <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
+            <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
+          </div>
+          <div class="input-container">
+            <label for="schoolName">School Name</label>
+            <input type="text" v-model="schoolName" id="schoolName" placeholder="Enter school name" />
+          </div>
         </div>
-        <div class="input-container">
-          <label for="firstExpiryDate">First ID Expiry Date</label>
-          <Field name="firstExpiryDate" id="firstExpiryDate" type="date" :class="{ 'is-invalid': errors.firstExpiryDate }" as="input" :disabled="isFirstExpiryDateDisabled" />
-          <ErrorMessage name="firstExpiryDate" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="firstIdDocument">First ID Document</label>
-          <input type="file" id="firstIdDocument" @change="handleFirstIdFileUpload" required />
-        </div>
-        <div class="input-container">
-          <label for="secondIdType">Second ID Type</label>
-          <Field name="secondIdType" id="secondIdType" as="select" :class="{ 'is-invalid': errors.secondIdType }" v-model="secondIdType">
-            <option value="">Select ID Type</option>
-            <option v-if="firstIdType !== 'national-id'" value="national-id">National ID</option>
-            <option v-if="firstIdType !== 'passport'" value="passport">Passport</option>
-            <option v-if="firstIdType !== 'birthpaper'" value="birthpaper">Birthpaper</option>
-          </Field>
-          <ErrorMessage name="secondIdType" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="secondIdNumber">Second ID Number</label>
-          <Field name="secondIdNumber" id="secondIdNumber" placeholder="Enter second ID number" :class="{ 'is-invalid': errors.secondIdNumber }" as="input" />
-          <ErrorMessage name="secondIdNumber" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="secondExpiryDate">Second ID Expiry Date</label>
-          <Field name="secondExpiryDate" id="secondExpiryDate" type="date" :class="{ 'is-invalid': errors.secondExpiryDate }" as="input" :disabled="isSecondExpiryDateDisabled" />
-          <ErrorMessage name="secondExpiryDate" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="secondIdDocument">Second ID Document</label>
-          <input type="file" id="secondIdDocument" @change="handleSecondIdFileUpload" required />
-        </div>
-        <div class="input-container">
-          <label for="schoolName">School Name</label>
-          <Field name="schoolName" id="schoolName" placeholder="Enter school name" :class="{ 'is-invalid': errors.schoolName }" as="input" />
-          <ErrorMessage name="schoolName" class="error-message" />
-        </div>
-        <div class="button-group">
-          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="next-button">Next</button>
-        </div>
-      </form>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </div>
+      <div class="button-group">
+        <button class="back-button" @click="navigateToBasicInformation">Back</button>
+        <button class="next-button" @click="navigateToNext">Next</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useDemoStore } from '@/store/demoStore';
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
-import { useField, useForm, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-
 export default {
   name: 'ChildIDInformation',
-  components: {
-    Field,
-    ErrorMessage
-  },
-  setup() {
-    const store = useDemoStore();
-    const router = useRouter();
-    const errorMessage = ref('');
-    const firstIdDocument = ref(null);
-    const secondIdDocument = ref(null);
-    const firstIdType = ref('');
-    const secondIdType = ref('');
-
-    const isFirstExpiryDateDisabled = computed(() => firstIdType.value === 'birthpaper');
-    const isSecondExpiryDateDisabled = computed(() => secondIdType.value === 'birthpaper');
-
-    const validationSchema = yup.object({
-    firstIdType: yup.string().required('First ID Type is required'),
-    firstIdNumber: yup.string().required('First ID Number is required'),
-    firstExpiryDate: yup.date().min(new Date(), 'First ID Expiry Date must be after the current date').when('firstIdType', (firstIdType) => {
-        if (firstIdType === 'birthpaper') {
-            return yup.date().nullable();
-        } else {
-            return yup.date().required('First ID Expiry Date is required');
-        }
-    }),
-    secondIdType: yup.string().required('Second ID Type is required'),
-    secondIdNumber: yup.string().required('Second ID Number is required'),
-    secondExpiryDate: yup.date().min(new Date(), 'Second ID Expiry Date must be after the current date').when('secondIdType', (secondIdType) => {
-        if (secondIdType === 'birthpaper') {
-            return yup.date().nullable();
-        } else {
-            return yup.date().required('Second ID Expiry Date is required');
-        }
-    }),
-    schoolName: yup.string().required('School name is required')
-});
-
-    const { handleSubmit, errors } = useForm({
-      validationSchema
-    });
-
-    const handleFirstIdFileUpload = (event) => {
-      firstIdDocument.value = event.target.files[0];
-    };
-
-    const handleSecondIdFileUpload = (event) => {
-      secondIdDocument.value = event.target.files[0];
-    };
-
-    const onSubmit = async (values) => {
-      try {
-        const formData = new FormData();
-        formData.append('firstIdType', values.firstIdType);
-        formData.append('firstIdNumber', values.firstIdNumber);
-        formData.append('firstExpiryDate', values.firstExpiryDate);
-        formData.append('firstIdDocument', firstIdDocument.value);
-        formData.append('secondIdType', values.secondIdType);
-        formData.append('secondIdNumber', values.secondIdNumber);
-        formData.append('secondExpiryDate', values.secondExpiryDate);
-        formData.append('secondIdDocument', secondIdDocument.value);
-        formData.append('schoolName', values.schoolName);
-
-        // Save state to the store
-        store.setChildIdInfo({
-          firstIdType: values.firstIdType,
-          firstIdNumber: values.firstIdNumber,
-          firstExpiryDate: values.firstExpiryDate,
-          firstIdDocument: firstIdDocument.value,
-          secondIdType: values.secondIdType,
-          secondIdNumber: values.secondIdNumber,
-          secondExpiryDate: values.secondExpiryDate,
-          secondIdDocument: secondIdDocument.value,
-          schoolName: values.schoolName
-        });
-
-        // Debugging logs to check form data
-        console.log('Form Data:', values);
-
-        const response = await axios.post('http://localhost:3000/child-id-information', formData);
-        console.log('Child ID information submitted:', response.data);
-
-        // Navigate to the next page
-        router.push('/parent-guardian-information');
-      } catch (error) {
-        console.error('Error submitting child ID information:', error);
-        errorMessage.value = error.message;
-        console.error('Error details:', error.response ? error.response.data : error.message);
-      } finally {
-        isLoading.value = false;
-      }
-    };
-
-    const navigateToPrevious = () => {
-      router.go(-1);
-    };
-
+  data() {
     return {
-      handleSubmit: handleSubmit(onSubmit),
-      errors,
-      errorMessage,
-      handleFirstIdFileUpload,
-      handleSecondIdFileUpload,
-      navigateToPrevious,
-      firstIdType,
-      secondIdType,
-      isFirstExpiryDateDisabled,
-      isSecondExpiryDateDisabled,
-      isLoading: ref(false)
+      firstIdType: '',
+      firstIdNumber: '',
+      firstExpiryDate: '',
+      firstIdDocument: null,
+      secondIdType: '',
+      secondIdNumber: '',
+      secondExpiryDate: '',
+      secondIdDocument: null,
+      secondIdOptions: ['ID Card', 'Passport', 'Birthpaper'],
+      schoolName: '',
     };
+  },
+  computed: {
+    maxExpiryDate() {
+      const today = new Date();
+      const maxDate = new Date(today.setFullYear(today.getFullYear() + 20));
+      return maxDate.toISOString().split('T')[0];
+    }
+  },
+  methods: {
+    updateSecondIdOptions() {
+      if (this.firstIdType === 'Birthpaper') {
+        this.secondIdOptions = ['ID Card', 'Passport'];
+      } else {
+        this.secondIdOptions = ['ID Card', 'Passport', 'Birthpaper'];
+      }
+      // Reset secondIdType if it is no longer a valid option
+      if (!this.secondIdOptions.includes(this.secondIdType)) {
+        this.secondIdType = '';
+      }
+    },
+    handleFileUpload(event, idType) {
+      const file = event.target.files[0];
+      if (idType === 'first') {
+        this.firstIdDocument = file;
+      } else {
+        this.secondIdDocument = file;
+      }
+    },
+    triggerFileInput(id) {
+      document.getElementById(id).click();
+    },
+    navigateToBasicInformation() {
+      this.$router.push('/basic-info');
+    },
+    navigateToNext() 
+    {
+      this.$router.push('/parent-guardian-information');
+    }
   }
 };
 </script>
@@ -232,7 +167,7 @@ label {
   font-weight: 600;
 }
 
-input, select, textarea {
+input, select {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -243,7 +178,7 @@ input, select, textarea {
   transition: 0.3s ease;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus, select:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
