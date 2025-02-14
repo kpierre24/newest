@@ -142,7 +142,6 @@ export default {
           maritalStatus: this.maritalStatus
         };
 
-        // Debugging logs to check form data
         console.log('ID Info Data:', idInfoData);
 
         const response = await axios.post('http://localhost:3000/id-information', idInfoData, {
@@ -152,8 +151,13 @@ export default {
         });
         console.log('ID info submitted:', response.data);
 
-        // Navigate to the next page after successful submission
-        this.$router.push('/due-diligence');
+        const store = useDemoStore();
+        // Navigate to account number if existing customer, otherwise to due diligence
+        if (store.isExistingCustomer) {
+          this.$router.push('/account-number');
+        } else {
+          this.$router.push('/due-diligence');
+        }
       } catch (error) {
         console.error('Error submitting ID info:', error);
         console.error('Error details:', error.response ? error.response.data : error.message);

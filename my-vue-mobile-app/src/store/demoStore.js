@@ -8,8 +8,11 @@ export const useDemoStore = defineStore('demo', {
     email: '',
     mobileNumber: '',
     gender: '',
-    dateOfBirth: '',
-    age: null,
+    dob: '',
+    password: '',
+    confirmPassword: '',
+    termsViewed: false,
+    financialAgreementViewed: false,
     AddressLine1: '',
     AddressLine2: '',
     City: '',
@@ -99,11 +102,13 @@ export const useDemoStore = defineStore('demo', {
       this.email = info.email;
       this.mobileNumber = info.mobileNumber;
       this.gender = info.gender;
-      this.dateOfBirth = info.dateOfBirth;
+      this.dob = info.dob;
+      this.password = info.password;
+      this.confirmPassword = info.confirmPassword;
+      this.termsViewed = info.termsViewed;
+      this.financialAgreementViewed = info.financialAgreementViewed;
     },
-    setAge(age) {
-      this.age = age;
-    },
+    
     setAddressInfo(info) {
       this.AddressLine1 = info.AddressLine1;
       this.AddressLine2 = info.AddressLine2;
@@ -210,4 +215,6 @@ export const useDemoStore = defineStore('demo', {
       this.poaDocument = info.poaDocument;
     },
   },
+
+  persist: true,
 });

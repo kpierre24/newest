@@ -3,7 +3,7 @@
     <div class="form-container">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Basic Information</h1>
-      <form @submit.prevent="navigateToNext">
+      <form @submit.prevent="navigateToNext" method="post">
         <div class="input-group">
           <div class="input-container">
             <input type="text" v-model="firstName" id="firstName" placeholder="First Name" maxlength="50" required />
@@ -81,6 +81,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TermsAndConditions from './TermsAndConditions.vue';
 import FinancialDeclaration from './FinancialDeclaration.vue';
+import axios from 'axios';
 
 
 export default {
@@ -124,31 +125,53 @@ export default {
         this.passwordError = '';
       }
     },
-    navigateToNext() {
+    async navigateToNext() {
       // Ensure all required fields are filled
       if (!this.firstName || !this.lastName || !this.email || !this.mobileNumber || !this.gender || !this.dob || !this.password || !this.confirmPassword || !this.termsViewed || !this.financialAgreementViewed) {
         alert('Please fill all required fields and agree to the terms.');
         return;
       }
 
-      // Save data to the store
-      const store = useDemoStore();
-      store.setBasicInfo({
-        firstName: this.firstName,
-        lastName: this.lastName,
-        otherName: this.otherName,
-        email: this.email,
-        mobileNumber: this.mobileNumber,
-        gender: this.gender,
-        dob: this.dob,
-        password: this.password,
-        confirmPassword: this.confirmPassword,
-        termsViewed: this.termsViewed,
-        financialAgreementViewed: this.financialAgreementViewed
-      });
+      // Validate passwords match
+      if (this.password !== this.confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
 
-      // Navigate to the next page
-      this.router.push({ name: 'EmailVerification' });
+      try {
+        // Create the data object
+        const basicInfoData = {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          otherName: this.otherName,
+          email: this.email,
+          mobileNumber: this.mobileNumber,
+          gender: this.gender,
+          dob: this.dob,
+          password: this.password,
+          termsViewed: this.termsViewed,
+          financialAgreementViewed: this.financialAgreementViewed
+        };
+
+        // Save to store using Pinia
+        const store = useDemoStore();
+        store.setBasicInfo(basicInfoData);
+
+        // Make API call if needed
+        const response = await axios.post('http://localhost:3000/basic-info', basicInfoData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log('Basic info submitted:', response.data);
+        
+        // Navigate to the next page
+        this.router.push({ name: 'EmailVerification' });
+      } catch (error) {
+        console.error('Error submitting basic info:', error);
+        alert('An error occurred while saving your information.');
+      }
     },
     navigateToPrevious() {
       this.router.go(-1);

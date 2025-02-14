@@ -114,8 +114,8 @@ export default {
     triggerFileInput(id) {
       document.getElementById(id).click();
     },
-    navigateToBasicInformation() {
-      this.$router.push('/basic-info');
+    handleBackNavigation() {
+      this.$router.push('/politically-exposed-persons-2');
     },
     navigateToNext() 
     {

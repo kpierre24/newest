@@ -56,23 +56,11 @@ export default {
     const pepName = ref('');
     const errorMessage = ref('');
 
-    const dob = computed(() => store.dob); // Get dob from the store
 
-    const calculateAge = (dob) => {
-      if (!dob) return null;
-      const birthDate = new Date(dob);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age;
-    };
-
-    const age = computed(() => {
-      return calculateAge(dob.value);
-    });
+  
+      
+    
+ 
 
     const validateForm = () => {
       if (!pepAssociate.value || !relationshipToPep.value || !pepName.value) {
@@ -94,23 +82,42 @@ export default {
           // Save PEP info to the store
           store.setPepInfo(formData);
 
-          const response = await axios.post('http://localhost:3000/politically-exposed-persons-2', formData, {
+          // Make API call
+          await axios.post('http://localhost:3000/politically-exposed-persons-2', formData, {
             headers: {
               'Content-Type': 'application/json'
             }
           });
-          console.log('PEP information submitted:', response.data);
 
-          // Navigate to the next page based on age
-          if (age.value !== null && age.value < 17) {
-            router.push({ name: 'ChildIdInformation' });
+          // Get date of birth from store
+          const dateOfBirth = store.dob;
+          console.log('Date of Birth from store:', dateOfBirth);
+
+          // Calculate age
+          const today = new Date();
+          const birthDate = new Date(dateOfBirth);
+          const age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          
+          // Adjust age if birthday hasn't occurred this year
+          const finalAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate()) 
+            ? age - 1 
+            : age;
+
+          console.log('Calculated age:', finalAge);
+
+          // Navigate based on age
+          if (finalAge >= 17) {
+            console.log('Navigating to ID Information (Adult)');
+            router.push('/id-information');
           } else {
-            router.push({ name: 'IdInformation' });
+            console.log('Navigating to Child ID Information');
+            router.push('/child-id-information');
           }
+
         } catch (error) {
-          console.error('Error submitting PEP information:', error);
-          errorMessage.value = error.message;
-          console.error('Error details:', error.response ? error.response.data : error.message);
+          console.error('Error in form submission:', error);
+          errorMessage.value = 'An error occurred while processing your information.';
         }
       }
     };
@@ -126,8 +133,7 @@ export default {
       errorMessage,
       submitPepInfo,
       navigateToPrevious,
-      dob, // Expose the computed dob
-      age  // Expose the computed age
+    
     };
   }
 };
