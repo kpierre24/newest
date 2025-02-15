@@ -89,6 +89,18 @@ export default {
     TermsAndConditions,
     FinancialDeclaration
   },
+  setup() {
+    const demoStore = useDemoStore();
+
+    // Set the password
+    demoStore.setPassword('mysecretpassword');
+
+    // Set the confirm password
+    demoStore.setConfirmPassword('mysecretpassword');
+
+    // Clear the password
+    demoStore.clearPassword();
+  },
   data() {
     return {
       isTermsVisible: false,
@@ -183,6 +195,7 @@ export default {
       this.isFinancialVisible = true;
     }
   }
+
 };
 </script>
 

@@ -3,14 +3,16 @@
     <div class="form-container">
       <h1>Sign In</h1>
       <p class="subtitle">Sign In using your Online Account</p>
-      <form @submit.prevent="submitLogin">
+      <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" v-model="email" id="email" required />
+          <input type="email" v-model="credentials.email" id="email" required />
+          <span v-if="emailError" class="error-message">{{ emailError }}</span>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" v-model="password" id="password" required />
+          <input type="password" v-model="credentials.password" id="password" required />
+          <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
         </div>
         <button type="submit" class="signin-button">Sign In</button>
         <p class="recover-account">Recover your account</p>
@@ -26,44 +28,39 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
+import { useDemoStore } from '@/store/demoStore'; // Import your Pinia store
+import axios from 'axios';
+
+const credentials = ref({
+  email: '',
+  password: '',
+});
 
 export default {
   setup() {
     const router = useRouter();
+    const store = useDemoStore(); // Use your Pinia store
 
-    const { handleSubmit } = useForm({
-      validationSchema: yup.object({
-        email: yup.string().email('Please enter a valid email address').required('This field is required'),
-        password: yup.string().required('This field is required')
-      })
-    });
-
-    const { value: email, errorMessage: emailError } = useField('email');
-    const { value: password, errorMessage: passwordError } = useField('password');
-
-    const submitLogin = handleSubmit(async () => {
+    const handleLogin = async () => {
       try {
-        const response = await axios.post('http://localhost:3000/login', {
-          email: email.value,
-          password: password.value
-        });
-
-        console.log('Login successful:', response.data);
-        router.push('/dashboard');
+        await store.login(credentials.value);
+        router.push('/dashboard'); // Redirect to dashboard after login 
       } catch (error) {
         console.error('Login failed:', error);
         alert('Login failed. Please check your email and password.');
       }
+    }
+
+    // Form validation with vee-validate
+    const { handleSubmit } = useForm({
+      validationSchema: yup.object({
+        email: yup.string().email('Please enter a valid email address').required('This field is required'),
+        password: yup.string().required('This field is required'),
+      }),
     });
 
-    return {
-      email,
-      emailError,
-      password,
-      passwordError,
-      submitLogin
-    };
-  }
+    
+  },
 };
 </script>
 
@@ -72,22 +69,22 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Add your image here */
+  min-height: 100vh;
   background-size: cover;
   background-position: center;
   padding: 20px;
 }
 
 .form-container {
-  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-  background-image: url('@/assets/woman background.jpg'); /* Add your image here */
+  background: rgba(255, 255, 255, 0.9);
+  background-image: url('@/assets/woman background.jpg');
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
   text-align: center;
-  backdrop-filter: blur(5px); /* Optional: Adds a blur effect */
+  backdrop-filter: blur(5px);
 }
 
 .form-container::before {
@@ -99,8 +96,8 @@ export default {
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.336), /* Semi-transparent white at the top */
-    rgba(213, 197, 231, 0.61) /* More opaque at the bottom */
+    rgba(255, 255, 255, 0.336),
+    rgba(213, 197, 231, 0.61)
   );
   z-index: 1;
 }
@@ -109,7 +106,6 @@ export default {
   position: relative;
   z-index: 2;
 }
-
 
 h1 {
   font-size: 24px;
@@ -186,8 +182,15 @@ input:focus {
   color: #666;
   margin-top: 20px;
 }
+
 .logo {
   width: 100px;
   margin-top: 20px;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
 }
 </style>
