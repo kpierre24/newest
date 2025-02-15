@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="button-group">
-        <button class="back-button" @click="navigateToBasicInformation">Back</button>
+        <button class="back-button" @click="handleBackNavigation">Back</button>
         <button class="next-button" @click="navigateToNext">Next</button>
       </div>
     </div>
@@ -68,6 +68,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { useDemoStore } from '@/store/demoStore';
+
 export default {
   name: 'ChildIDInformation',
   data() {
@@ -114,12 +117,42 @@ export default {
     triggerFileInput(id) {
       document.getElementById(id).click();
     },
-    handleBackNavigation() {
-      this.$router.push('/politically-exposed-persons-2');
+    async navigateToNext() {
+      try {
+        const childIdData = {
+          firstIdType: this.firstIdType,
+          firstIdNumber: this.firstIdNumber,
+          firstExpiryDate: this.firstExpiryDate,
+          firstIdDocument: this.firstIdDocument,
+          secondIdType: this.secondIdType,
+          secondIdNumber: this.secondIdNumber,
+          secondExpiryDate: this.secondExpiryDate,
+          secondIdDocument: this.secondIdDocument,
+          schoolName: this.schoolName
+        };
+
+        // Save to store
+        const store = useDemoStore();
+        store.setChildIdInformation(childIdData);
+        console.log('Child ID Info Data being sent to API:', childIdData);
+
+        // Make API call
+        const response = await axios.post('http://localhost:3000/child-id-information', childIdData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('API Response:', response.data);
+
+        // Navigate to next screen
+        this.$router.push('/parent-guardian-information');
+      } catch (error) {
+        console.error('API Error:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
+      }
     },
-    navigateToNext() 
-    {
-      this.$router.push('/parent-guardian-information');
+    handleBackNavigation() {
+      this.$router.push('/membership-declaration-agreement');
     }
   }
 };

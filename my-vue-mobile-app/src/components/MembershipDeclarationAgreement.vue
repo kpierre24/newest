@@ -52,8 +52,8 @@ export default {
     };
   },
   methods: {
-    navigateToPrevious() {
-      this.$router.go(-1);
+    navigateToHome() {
+      this.$router.push('/');
     },
     navigateToNext() {
       this.$router.push('/politically-exposed-persons');

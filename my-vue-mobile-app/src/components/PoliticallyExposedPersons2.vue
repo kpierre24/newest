@@ -5,7 +5,7 @@
       <form @submit.prevent="submitPepInfo">
         <div class="input-container">
           <label for="pepAssociate">Are you an associate of a politically exposed person?</label>
-          <select v-model="pepAssociate" id="pepAssociate">
+          <select v-model="pepAssociate" id="pepAssociate" required>
             <option value="" disabled>Select an option</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
@@ -17,18 +17,24 @@
 
         <div class="input-container" v-if="pepAssociate === 'yes'">
           <label for="relationshipToPep">Relationship to PEP</label>
-          <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship" />
-          <div class="error-container">
-            <span class="error">{{ errorMessage }}</span>
-          </div>
+          <input 
+            type="text" 
+            v-model="relationshipToPep" 
+            id="relationshipToPep" 
+            placeholder="Enter relationship"
+            :required="pepAssociate === 'yes'"
+          />
         </div>
 
         <div class="input-container" v-if="pepAssociate === 'yes'">
           <label for="pepName">Name of PEP</label>
-          <input type="text" v-model="pepName" id="pepName" placeholder="Enter name of PEP" />
-          <div class="error-container">
-            <span class="error">{{ errorMessage }}</span>
-          </div>
+          <input 
+            type="text" 
+            v-model="pepName" 
+            id="pepName" 
+            placeholder="Enter name of PEP"
+            :required="pepAssociate === 'yes'"
+          />
         </div>
 
         <div class="button-group">
@@ -63,10 +69,19 @@ export default {
  
 
     const validateForm = () => {
-      if (!pepAssociate.value || !relationshipToPep.value || !pepName.value) {
-        errorMessage.value = 'Please fill all required fields.';
+      if (!pepAssociate.value) {
+        errorMessage.value = 'Please select whether you are an associate of a politically exposed person.';
         return false;
       }
+
+      // Only validate other fields if 'yes' is selected
+      if (pepAssociate.value === 'yes') {
+        if (!relationshipToPep.value || !pepName.value) {
+          errorMessage.value = 'Please fill all required fields.';
+          return false;
+        }
+      }
+
       return true;
     };
 
@@ -75,8 +90,8 @@ export default {
         try {
           const formData = {
             pepAssociate: pepAssociate.value,
-            relationshipToPep: relationshipToPep.value,
-            pepName: pepName.value
+            relationshipToPep: pepAssociate.value === 'yes' ? relationshipToPep.value : '',
+            pepName: pepAssociate.value === 'yes' ? pepName.value : ''
           };
 
           // Save PEP info to the store
@@ -123,7 +138,7 @@ export default {
     };
 
     const navigateToPrevious = () => {
-      router.go(-1);
+      router.push('/politically-exposed-persons');
     };
 
     return {

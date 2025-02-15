@@ -2,6 +2,7 @@
   <div class="container">
     <div class="form-container">
       <h1>Power of Attorney</h1>
+      
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
           <label for="poaFirstName">First Name</label>
@@ -61,6 +62,9 @@
           <label for="poaDocument">Power of Attorney Document</label>
           <input type="file" id="poaDocument" @change="handleFileUpload" required />
         </div>
+        <div class="skip-container">
+        <a href="#" @click.prevent="skipToNext" class="skip-link">Add Power of Attorney later</a>
+      </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="goBack">Back</button>
           <button type="submit" class="next-button">Next</button>
@@ -169,6 +173,10 @@ export default {
       router.go(-1);
     };
 
+    const skipToNext = () => {
+      router.push('/branch');
+    };
+
     return {
       handleSubmit: handleSubmit(onSubmit),
       errors,
@@ -176,6 +184,7 @@ export default {
       handleFileUpload,
       handleIdFileUpload,
       goBack,
+      skipToNext,
       poaFirstName: ref(''),
       poaLastName: ref(''),
       poaOtherName: ref(''),
@@ -380,5 +389,22 @@ input:focus, select:focus, textarea:focus {
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
+}
+
+.skip-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.skip-link {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.skip-link:hover {
+  text-decoration: underline;
+  color: #5a6268;
 }
 </style>

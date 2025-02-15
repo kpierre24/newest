@@ -7,7 +7,7 @@
         <div class="input-group">
           <div class="input-container">
             <input type="text" v-model="firstName" id="firstName" placeholder="First Name" maxlength="50" required />
-             <i class="icon fas fa-user"></i>
+            <i class="icon fas fa-user"></i>
           </div>
           <div class="input-container">
             <input type="text" v-model="lastName" id="lastName" placeholder="Last Name" maxlength="50" required />
@@ -45,33 +45,29 @@
             <input type="password" v-model="confirmPassword" id="confirmPassword" placeholder="Confirm Password" maxlength="50" required />
           </div>
           <div class="input-container">
-            <label>
+            <div class="checkbox-link-container">
+              <input type="checkbox" v-model="termsViewed" id="termsViewed" />
               <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
-            </label>
+            </div>
           </div>
           <div class="input-container">
-            <label>
+            <div class="checkbox-link-container">
+              <input type="checkbox" v-model="financialAgreementViewed" id="financialAgreementViewed" />
               <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
-            </label>
+            </div>
           </div>
-          <div class="checkbox-container">
-            <input type="checkbox" v-model="termsViewed" id="termsViewed" />
-            <label for="termsViewed">I have viewed the Terms and Conditions</label>
-          </div>
-          <div class="checkbox-container">
-            <input type="checkbox" v-model="financialAgreementViewed" id="financialAgreementViewed" />
-            <label for="financialAgreementViewed">I have viewed the Financial Agreement</label>
-          </div>
+          
+          
+         
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
             <button type="submit" class="submit-button">Submit</button>
           </div>
-          
         </div>
       </form>
+      <TermsAndConditions :visible="isTermsVisible" @close="handleCloseTerms"></TermsAndConditions>
+      <FinancialDeclaration :visible="isFinancialVisible" @close="handleCloseFinancial"></FinancialDeclaration>
     </div>
-    <TermsAndConditions :visible="isTermsVisible" @close="handleCloseTerms" />
-    <FinancialDeclaration :visible="isFinancialVisible" @close="handleCloseFinancial"  />
   </div>
 </template>
 
@@ -91,15 +87,6 @@ export default {
   },
   setup() {
     const demoStore = useDemoStore();
-
-    // Set the password
-    demoStore.setPassword('mysecretpassword');
-
-    // Set the confirm password
-    demoStore.setConfirmPassword('mysecretpassword');
-
-    // Clear the password
-    demoStore.clearPassword();
   },
   data() {
     return {
@@ -337,7 +324,7 @@ h1 {
 
 .checkbox-container label {
   font-size: 14px;
-  color: white; /* White text for contrast */
+  color: rgb(19, 16, 16); /* White text for contrast */
   cursor: pointer;
 }
 
@@ -351,5 +338,57 @@ h1 {
   color: #ff4d4d; /* Red for error messages */
   font-size: 12px;
   margin-top: 5px;
+}
+
+.checkbox-link-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-link-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.checkbox-link-container a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.checkbox-link-container a:hover {
+  text-decoration: underline;
+}
+
+/* Modal Styles */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  text-align: left;
+  color: #333; /* Dark text color for modal content */
+}
+
+.modal-content h2 {
+  color: #333;
+  margin-top: 0;
+}
+
+.modal-content p {
+  color: #333; /* Dark text color for paragraphs */
+  line-height: 1.6;
+}
+
+.modal-content ul, 
+.modal-content ol {
+  color: #333; /* Dark text color for lists */
+}
+
+.modal-content a {
+  color: #007bff; /* Blue color for links in modal */
 }
 </style>

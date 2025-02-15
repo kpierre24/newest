@@ -24,6 +24,7 @@ import ParentGuardianInformation from '@/components/ParentGuardianInformation.vu
 import AccountNumber from '@/components/AccountNumber.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import { useDemoStore } from '../store/demoStore';
+import { useAuthStore } from '@/store/authStore';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -50,7 +51,7 @@ const routes = [
   { path: '/success', name: 'Success', component: Success },
   { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
   { path: '/account-number', name: 'AccountNumber', component: AccountNumber },
-  { path: '/dashboard', component: () => import('@/views/Dashboard.vue'), meta: { requiresAuth: true } }
+  { path: '/dashboard', component: () => import('@/components/Dashboard.vue'), meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({
@@ -58,13 +59,19 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
-  const store = useDemoStore();
-  if (to.meta.requiresAuth && !store.isAuthenticated) {
-    next('/login'); // Redirect to login if not authenticated
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
+  
+  await authStore.checkAuth();
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login');
+  } else if (to.path === '/login' && authStore.isAuthenticated) {
+    next('/dashboard');
   } else {
     next();
   }
 });
+
 
 export default router;

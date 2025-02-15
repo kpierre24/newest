@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import { useRouter } from 'vue-router';
 
@@ -22,9 +23,31 @@ export default {
     const store = useDemoStore();
     const router = useRouter();
 
-    const setExistingCustomer = (isExisting) => {
-      store.isExistingCustomer = isExisting;
-      navigateToGettingReady();
+    const setExistingCustomer = async (isExisting) => {
+      try {
+        // Save to store
+        store.isExistingCustomer = isExisting;
+        console.log('Customer type saved to store:', isExisting ? 'Existing' : 'New');
+
+        // Prepare data for API
+        const customerData = {
+          isExistingCustomer: isExisting
+        };
+
+        // Make API call
+        const response = await axios.post('http://localhost:3000/new-or-existing-customer', customerData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('API Response:', response.data);
+
+        // Navigate to next screen
+        navigateToGettingReady();
+      } catch (error) {
+        console.error('API Error:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
+      }
     };
 
     const navigateToGettingReady = () => {

@@ -77,6 +77,17 @@ export const useDemoStore = defineStore('demo', {
     relationshipToChild: '',
     relationshipDocument: null,
     verificationCode: null,
+    childIdInformation: {
+      firstIdType: '',
+      firstIdNumber: '',
+      firstExpiryDate: '',
+      firstIdDocument: null,
+      secondIdType: '',
+      secondIdNumber: '',
+      secondExpiryDate: '',
+      secondIdDocument: null,
+      schoolName: ''
+    },
     membershipInfo: {
       isMemberOfAnotherCreditUnion: null,
       creditUnionName: null,
@@ -97,6 +108,19 @@ export const useDemoStore = defineStore('demo', {
     // New authentication state
     user: null,
     token: localStorage.getItem('token') || null,
+
+    idInformation: {
+      firstIdType: '',
+      firstIdNumber: '',
+      firstExpiryDate: '',
+      firstIdDocument: null,
+      secondIdType: '',
+      secondIdNumber: '',
+      secondExpiryDate: '',
+      secondIdDocument: null,
+      maritalStatus: ''
+    },
+    pepSelections: null
   }),
   getters: {
     // Existing getters (if any)
@@ -151,6 +175,10 @@ export const useDemoStore = defineStore('demo', {
       this.childId = info.childId;
       this.childName = info.childName;
       this.childAge = info.childAge;
+    },
+    setChildIdInformation(data) {
+      this.childIdInformation = data;
+      console.log('Child ID Information saved in store:', this.childIdInformation);
     },
     setMailingAddressInfo(info) {
       this.mailingAddressLine1 = info.AddressLine1;
@@ -290,6 +318,13 @@ export const useDemoStore = defineStore('demo', {
         }
       }
     },
+    setIdInformation(data) {
+      this.idInformation = data;
+      console.log('ID Information saved in store:', this.idInformation);
+    },
+    setPepSelections(selections) {
+      this.pepSelections = selections;
+    }
   },
 
   persist: true,

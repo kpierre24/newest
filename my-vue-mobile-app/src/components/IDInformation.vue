@@ -142,6 +142,9 @@ export default {
           maritalStatus: this.maritalStatus
         };
 
+        // Save to store first
+        const store = useDemoStore();
+        store.setIdInformation(idInfoData);
         console.log('ID Info Data:', idInfoData);
 
         const response = await axios.post('http://localhost:3000/id-information', idInfoData, {
@@ -151,11 +154,12 @@ export default {
         });
         console.log('ID info submitted:', response.data);
 
-        const store = useDemoStore();
-        // Navigate to account number if existing customer, otherwise to due diligence
+        // Check customer type from store and navigate accordingly
         if (store.isExistingCustomer) {
+          console.log('Navigating to Account Number (Existing Customer)');
           this.$router.push('/account-number');
         } else {
+          console.log('Navigating to Due Diligence (New Customer)');
           this.$router.push('/due-diligence');
         }
       } catch (error) {
@@ -171,7 +175,7 @@ export default {
       if (store.isExistingCustomer) {
         this.$router.push('/account-number');
       } else {
-        this.$router.push('/basic-info');
+        this.$router.push('/due-diligence');
       }
     };
 

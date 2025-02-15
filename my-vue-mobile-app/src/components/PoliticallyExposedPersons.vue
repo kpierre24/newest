@@ -37,10 +37,14 @@
       </form>
       <div v-if="modalVisible" class="modal">
         <div class="modal-content">
-          <h2>Select an Option</h2>
-          <div class="radio-group">
-            <label v-for="option in options" :key="option">
-              <input type="radio" v-model="selectedOption" :value="option" />
+          <h2>Select Options</h2>
+          <div class="checkbox-group">
+            <label v-for="option in currentModalOptions" :key="option">
+              <input 
+                type="checkbox" 
+                :value="option" 
+                v-model="selectedOptions[currentModalType]"
+              />
               {{ option }}
             </label>
           </div>
@@ -70,56 +74,84 @@ export default {
     const pepName = ref('');
     const jobTitle = ref('');
     const modalVisible = ref(false);
-    const selectedOption = ref('');
-    const options = ref([
-      'Domestic Pep or Foreign PEP',
-      'Interntional Organization PEP',
-      'Immediate Family member of a PEP'
-    ]);
+    const selectedOptions = ref({
+      'Domestic Pep or Foreign PEP': [],
+      'Interntional Organization PEP': [],
+      'Immediate Family member of a PEP': []
+    });
+    const currentModalType = ref('');
+    
+    const currentModalOptions = ref([]);
+
+    const modalOptions = {
+      'Domestic Pep or Foreign PEP': [
+        'Head of State',
+        'Senior Politician',
+        'Senior Government Official',
+        'Senior Judicial Official',
+        'Senior Military Official'
+      ],
+      'Interntional Organization PEP': [
+        'Director',
+        'Deputy Director',
+        'Board Member',
+        'Executive Committee Member'
+      ],
+      'Immediate Family member of a PEP': [
+        'Spouse',
+        'Child',
+        'Parent',
+        'Sibling',
+        'Spouse\'s Parent'
+      ]
+    };
 
     onMounted(() => {
       pepAssociate.value = store.pepAssociate;
       relationshipToPep.value = store.relationshipToPep;
       pepName.value = store.pepName;
       jobTitle.value = store.jobTitle;
-    });
-
-    const handleSubmit = async () => {
-  if (pepAssociate.value === 'no') {
-    router.push({ name: 'PoliticallyExposedPersons2' });
-    return;
-  }
-
-  try {
-    const formData = {
-      pepAssociate: pepAssociate.value,
-      relationshipToPep: relationshipToPep.value,
-      pepName: pepName.value,
-      jobTitle: jobTitle.value
-    };
-
-    const response = await axios.post('http://localhost:3000/politically-exposed-persons', formData, {
-      headers: {
-        'Content-Type': 'application/json'
+      // Load saved selections from store if they exist
+      if (store.pepSelections) {
+        selectedOptions.value = store.pepSelections;
       }
     });
 
-        console.log('PEP information submitted:', response.data);
+    const handleSubmit = async () => {
+      if (pepAssociate.value === 'no') {
+        router.push({ name: 'PoliticallyExposedPersons2' });
+        return;
+      }
 
-        // Navigate to the next page
-        router.push({ name: 'PoliticallyExposedPersons2' }); // Replace with the actual next page route
+      try {
+        const formData = {
+          pepAssociate: pepAssociate.value,
+          relationshipToPep: relationshipToPep.value,
+          pepName: pepName.value,
+          jobTitle: jobTitle.value,
+          pepSelections: selectedOptions.value
+        };
+
+        const response = await axios.post('http://localhost:3000/politically-exposed-persons', formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log('PEP information submitted:', response.data);
+        router.push({ name: 'PoliticallyExposedPersons2' });
       } catch (error) {
         console.error('Error submitting PEP information:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
       }
     };
 
     const navigateToPrevious = () => {
-      router.go(-1);
+      router.push('/membership-declaration-agreement');
     };
 
     const showModal = (option) => {
-      selectedOption.value = option;
+      currentModalType.value = option;
+      currentModalOptions.value = modalOptions[option];
       modalVisible.value = true;
     };
 
@@ -128,7 +160,10 @@ export default {
     };
 
     const confirmSelection = () => {
-      // Handle the selection confirmation logic here
+      // Save selections to store
+      store.$patch({
+        pepSelections: selectedOptions.value
+      });
       closeModal();
     };
 
@@ -138,13 +173,14 @@ export default {
       pepName,
       jobTitle,
       modalVisible,
-      selectedOption,
-      options,
-      handleSubmit,
-      navigateToPrevious,
+      selectedOptions,
+      currentModalType,
+      currentModalOptions,
       showModal,
       closeModal,
-      confirmSelection
+      confirmSelection,
+      handleSubmit,
+      navigateToPrevious
     };
   }
 };
@@ -290,15 +326,26 @@ input[type="text"] {
   text-align: center;
 }
 
-.radio-group {
+.checkbox-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin: 20px 0;
+  text-align: left;
 }
 
-.radio-group label {
+.checkbox-group label {
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 
 .modal-buttons {

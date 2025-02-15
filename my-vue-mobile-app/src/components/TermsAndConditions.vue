@@ -165,7 +165,7 @@ input:focus, select:focus {
 }
 
 .modal-content {
-  background: white;
+  background: #3363cc;
   padding: 20px;
   border-radius: 10px;
   width: 80%;
