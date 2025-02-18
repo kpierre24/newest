@@ -61,6 +61,9 @@
           <label for="poaDocument">Power of Attorney Document</label>
           <input type="file" id="poaDocument" @change="handleFileUpload" required />
         </div>
+        <div class="skip-link">
+          <a href="#" @click.prevent="skipToNext">Add Power of Attorney Later</a>
+        </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="goBack">Back</button>
           <button type="submit" class="next-button">Next</button>
@@ -169,6 +172,10 @@ export default {
       router.go(-1);
     };
 
+    const skipToNext = () => {
+      router.push('/branch'); // Adjust the route as needed
+    };
+
     return {
       handleSubmit: handleSubmit(onSubmit),
       errors,
@@ -176,6 +183,7 @@ export default {
       handleFileUpload,
       handleIdFileUpload,
       goBack,
+      skipToNext,
       poaFirstName: ref(''),
       poaLastName: ref(''),
       poaOtherName: ref(''),
@@ -249,6 +257,23 @@ input:focus, select:focus, textarea:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.skip-link {
+  margin-bottom: 20px;
+}
+
+.skip-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.skip-link a:hover {
+  color: #0056b3;
+  text-decoration: underline;
 }
 
 .button-group {

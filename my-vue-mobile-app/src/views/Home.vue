@@ -1,14 +1,17 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/Logo.png" alt="Logo" class="logo" />
-      <h2>Welcome to</h2> <br><h1>Cathedral Online</h1>
+      <img src="@/assets/Logo1.png" alt="Logo" class="logo" />
+      <h2>Welcome to</h2>
+      <h1>Cathedral Online</h1>
       <h6>If you don't have an online account,
-       <br>click "Don't have an account?" to begin</h6>
+       <br>click "Don't have an account?" to get started</h6>
       <div class="button-group">
-        <button @click="navigateToLogin" class="button login-button">Login</button>
+        <button @click="navigateToLogin" class="button login-button">Sign In</button>
         <button @click="navigateToSignup" class="button signup-button">Don't have an account?</button>
       </div>
+      <div><h5>Powered by</h5></div>
+      <img src="@/assets/Logo.png" alt="Logo" class="logo" />
     </div>
   </div>
 </template>
@@ -90,6 +93,10 @@ h1 {
 h6 {
   margin: 0;
 }
+h5 {
+  font-size: 10px;
+  margin: 0;
+}
 h2 {
   font-size: 20px;
   color: #333;
@@ -98,36 +105,7 @@ h2 {
 }
 
 
-.input-group, .input-container {
-  width: 100%;
-  margin-bottom: 20px;
-  text-align: left;
-}
 
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
 
 .button-group {
   display: flex;
@@ -144,13 +122,11 @@ input:focus, select:focus {
 }
 
 .login-button {
-  background-color: #007bff;
+  background-color: #7b3be2;
   color: #fff;
 }
 
-.login-button:hover {
-  background-color: #0056b3;
-}
+
 
 .signup-button {
   background-color: #28a745;
@@ -161,115 +137,20 @@ input:focus, select:focus {
   background-color: #218838;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: 0.3s ease;
-}
 
-.back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
-}
 
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
-}
 
 .logo {
   width: 157.5px; 
   height: auto;
   margin-bottom: 20px;
   margin: 0;
+  flex-direction: column;
+align-items: center;
+justify-content: center;
+margin-top: 30px;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
 
 
 .signup-button {

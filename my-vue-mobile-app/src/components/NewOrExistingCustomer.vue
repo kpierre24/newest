@@ -49,7 +49,9 @@ export default {
 
     const handleApiCall = async (endpoint) => {
       try {
-        const response = await axios.post(`http://localhost:3000/new-or-existing-customer/`);
+        const response = await axios.post(`http://localhost:3000/new-or-existing-customer/`, {
+          customerType: customerType
+        });
         return response.data;
       } catch (error) {
         console.error('API Error:', error);
@@ -64,7 +66,7 @@ export default {
         await handleApiCall('new');
         setExistingCustomer(false);
       } catch (error) {
-        // Handle error
+        console.error('Error handling new customer:', error);
       } finally {
         loading.value = false;
       }
@@ -77,7 +79,7 @@ export default {
         await handleApiCall('existing');
         setExistingCustomer(true);
       } catch (error) {
-        // Handle error
+        console.error('Error handling existing customer:', error);
       } finally {
         loading.value = false;
       }

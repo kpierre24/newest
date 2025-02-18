@@ -29,14 +29,17 @@ import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+import axios from 'axios';
 
 export default defineComponent({
   components: {
     Field,
     ErrorMessage
   },
-  setup() {
+  async setup() {
     const router = useRouter();
+
+    
 
     const validationSchema = yup.object({
       accountNumber: yup
@@ -47,6 +50,10 @@ export default defineComponent({
 
     const { handleSubmit, errors } = useForm({
       validationSchema
+    });
+
+    const response = await axios.post('http://localhost:3000/account-number', formData, {
+      headers: { 'Content-Type': 'application/json' }
     });
 
     const onSubmit = (values) => {

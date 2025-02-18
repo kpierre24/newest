@@ -11,9 +11,10 @@
               <label for="firstIdType">Type of ID</label>
               <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
                 <option value="" disabled>Select ID Type</option>
-                <option value="National ID">National ID</option>
-                <option value="Driver's Permit">Driver's Permit</option>
-                <option value="Passport">Passport</option>
+                <option value="id card">ID Card</option>
+                <option value="passport">Passport</option>
+                <option value="driver's permit">Driver's Permit</option>
+                <option value="birthpaper">Birthpaper</option>
               </select>
             </div>
             <div class="input-container">
@@ -22,7 +23,7 @@
             </div>
             <div class="input-container">
               <label for="firstExpiryDate">Expiry Date</label>
-              <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" />
+              <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :min="minDate" />
             </div>
             <div class="input-container">
               <label for="firstIdDocument">Upload Document</label>
@@ -47,7 +48,7 @@
             </div>
             <div class="input-container">
               <label for="secondExpiryDate">Expiry Date</label>
-              <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" />
+              <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :min="minDate" />
             </div>
             <div class="input-container">
               <label for="secondIdDocument">Upload Document</label>
@@ -82,9 +83,18 @@
 <script>
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
+import { useDateValidation } from '@/composables/useDateValidation';
 
 export default {
   name: 'IDInformation',
+  setup() {
+    const { minDate, validateExpiryDate } = useDateValidation();
+
+    return {
+      minDate,
+      validateExpiryDate
+    };
+  },
   data() {
     return {
       firstIdType: '',
@@ -109,9 +119,9 @@ export default {
   methods: {
     updateSecondIdOptions() {
       if (this.firstIdType === 'National ID') {
-        this.secondIdOptions = ["Driver's Permit", 'Passport'];
+        this.secondIdOptions = ["Driver's Permit", 'Birthpaper', 'Passport'];
       } else {
-        this.secondIdOptions = ['National ID', "Driver's Permit", 'Passport'];
+        this.secondIdOptions = ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
       }
     },
     handleFileUpload(event, idType) {
@@ -129,6 +139,11 @@ export default {
       this.$router.go(-1);
     },
     async submitIDInformation() {
+      if (!this.validateIdType()) {
+        console.error('Invalid ID Type');
+        return;
+      }
+
       try {
         const idInfoData = {
           firstIdType: this.firstIdType,
@@ -152,7 +167,6 @@ export default {
         console.log('ID info submitted:', response.data);
 
         const store = useDemoStore();
-        // Navigate to account number if existing customer, otherwise to due diligence
         if (store.isExistingCustomer) {
           this.$router.push('/account-number');
         } else {
@@ -162,22 +176,7 @@ export default {
         console.error('Error submitting ID info:', error);
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
-    }
-  },
-  setup() {
-    const store = useDemoStore();
-
-    const navigateToNext = () => {
-      if (store.isExistingCustomer) {
-        this.$router.push('/account-number');
-      } else {
-        this.$router.push('/basic-info');
-      }
-    };
-
-    return {
-      navigateToNext
-    };
+    },
   }
 };
 </script>

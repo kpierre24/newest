@@ -1,5 +1,73 @@
 {
   "account-number": [],
+  "new-or-existing-customer": [
+    {
+      "id": "7c56"
+    },
+    {
+      "id": "9085"
+    },
+    {
+      "id": "4bd0"
+    },
+    {
+      "id": "3337"
+    },
+    {
+      "id": "e7c3"
+    },
+    {
+      "id": "0393"
+    },
+    {
+      "id": "6e2b"
+    },
+    {
+      "id": "8944"
+    },
+    {
+      "id": "975d"
+    },
+    {
+      "id": "add0"
+    },
+    {
+      "id": "6dbe"
+    },
+    {
+      "id": "2e1a"
+    },
+    {
+      "id": "d93f"
+    },
+    {
+      "id": "feae"
+    },
+    {
+      "id": "5e79"
+    },
+    {
+      "id": "84a4"
+    },
+    {
+      "id": "f9a6"
+    },
+    {
+      "id": "400b"
+    },
+    {
+      "id": "80e2"
+    },
+    {
+      "id": "8438"
+    },
+    {
+      "id": "be1f"
+    },
+    {
+      "id": "1197"
+    }
+  ],
   "foreign-national-bank-information": [
     {
       "id": "25ab",
@@ -215,9 +283,64 @@
       "bankAccountNumber": "232355",
       "swiftCode": "343434",
       "bankTelephoneNumber": "8682784233"
+    },
+    {
+      "id": "dde0",
+      "bankName": "dfssf",
+      "bankAddressLine1": "3 Granado St",
+      "bankCity": "Barataria",
+      "bankCountry": "Angola",
+      "bankAccountNumber": "23343",
+      "swiftCode": "2323323",
+      "bankTelephoneNumber": "8687626226"
+    },
+    {
+      "id": "4aef",
+      "bankName": "dfssf",
+      "bankAddressLine1": "APT 5, Church Street, Cunupia",
+      "bankCity": "Chaguanas",
+      "bankCountry": "Aland",
+      "bankAccountNumber": "23343",
+      "swiftCode": "2323323",
+      "bankTelephoneNumber": "8682784233"
+    },
+    {
+      "id": "4b43",
+      "bankName": "dfssf",
+      "bankAddressLine1": "APT 5, Church Street, Cunupia",
+      "bankCity": "Chaguanas",
+      "bankCountry": "Aland",
+      "bankAccountNumber": "23343",
+      "swiftCode": "2323323",
+      "bankTelephoneNumber": "8682784233"
     }
   ],
-  "parent-guardian-information": [],
+  "parent-guardian-information": [
+    {
+      "id": "4e8c",
+      "ParentFirstName": "john michael",
+      "ParentMiddleName": "fdfdf",
+      "ParentLastName": "aboud",
+      "ParentOccupation": "dfdfdff",
+      "ParentWorkplace": "dfdfdf",
+      "ParentEmail": "reggwgs@gmail.com",
+      "ParentPhoneNumber": "8682224706",
+      "RelationshipToChild": "father",
+      "RelationshipDocument": {}
+    },
+    {
+      "id": "8d40",
+      "ParentFirstName": "Kendell",
+      "ParentMiddleName": "KEVIN",
+      "ParentLastName": "Pierre",
+      "ParentOccupation": "sdsdsds",
+      "ParentWorkplace": "sdsdsds",
+      "ParentEmail": "kpierre24@gmail.com",
+      "ParentPhoneNumber": "8687626226",
+      "RelationshipToChild": "grandparent",
+      "RelationshipDocument": {}
+    }
+  ],
   "success": [
     {
       "id": "50c8",
@@ -296,6 +419,16 @@
     },
     {
       "id": "95fd",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    },
+    {
+      "id": "c1b7",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    },
+    {
+      "id": "518e",
       "userId": "12345",
       "message": "User has successfully signed up"
     }
@@ -387,6 +520,24 @@
       "selectedBranch": "Port of Spain",
       "preferredContactMethod": "phone",
       "bestContactTime": "8:00am to 12:00pm"
+    },
+    {
+      "id": "cbfb",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "email",
+      "bestContactTime": "12:00pm to 4:00pm"
+    },
+    {
+      "id": "1222",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "email",
+      "bestContactTime": "12:00pm to 4:00pm"
+    },
+    {
+      "id": "7a03",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "email",
+      "bestContactTime": "12:00pm to 4:00pm"
     }
   ],
   "power-of-attorney": [
@@ -557,6 +708,34 @@
       "poaIdType": "drivers-permit",
       "poaIdDocument": {},
       "poaDocument": {}
+    },
+    {
+      "id": "ef18",
+      "poaFirstName": "KENDELL",
+      "poaLastName": "PIERRE",
+      "poaOtherName": "undefined",
+      "poaAddressLine1": "Apt #5 Church St",
+      "poaAddressLine2": "Barataria",
+      "poaCity": "CUNUPIA",
+      "poaCountry": "Trinidad & Tobago",
+      "poaDob": "2025-02-21",
+      "poaIdType": "drivers-permit",
+      "poaIdDocument": {},
+      "poaDocument": {}
+    },
+    {
+      "id": "be46",
+      "poaFirstName": "Kendell",
+      "poaLastName": "Pierre",
+      "poaOtherName": "undefined",
+      "poaAddressLine1": "3 Granado St",
+      "poaAddressLine2": "Barataria",
+      "poaCity": "Barataria",
+      "poaCountry": "Trinidad & Tobago",
+      "poaDob": "2025-02-15",
+      "poaIdType": "drivers-permit",
+      "poaIdDocument": {},
+      "poaDocument": {}
     }
   ],
   "designation-of-beneficiary": [
@@ -687,6 +866,22 @@
       "typeOfId": "driver's permit",
       "idNumber": "232323232",
       "percentageOfInterest": 40
+    },
+    {
+      "id": "f49d",
+      "firstName": "Kendell",
+      "lastName": "Pierre",
+      "otherName": "",
+      "addressLine1": "3 Granado St",
+      "addressLine2": "Barataria",
+      "city": "Barataria",
+      "country": "Trinidad & Tobago",
+      "dob": "2025-02-13",
+      "gender": "male",
+      "relationshipToBeneficiary": "ddgdgdgdg",
+      "typeOfId": "driver's permit",
+      "idNumber": "223232323",
+      "percentageOfInterest": 50
     }
   ],
   "child-id-information": [
@@ -1193,6 +1388,54 @@
       "pepAssociate": "yes",
       "relationshipToPep": "fdfdf",
       "pepName": "dfdf"
+    },
+    {
+      "id": "1930",
+      "pepAssociate": "yes",
+      "relationshipToPep": "sdsd",
+      "pepName": "sdsd"
+    },
+    {
+      "id": "a256",
+      "pepAssociate": "yes",
+      "relationshipToPep": "sdsd",
+      "pepName": "sdsd"
+    },
+    {
+      "id": "2d65",
+      "pepAssociate": "yes",
+      "relationshipToPep": "sdsd",
+      "pepName": "sdsd"
+    },
+    {
+      "id": "fe0b",
+      "pepAssociate": "yes",
+      "relationshipToPep": "sdsdsd",
+      "pepName": "dfdf"
+    },
+    {
+      "id": "f2a3",
+      "pepAssociate": "yes",
+      "relationshipToPep": "fsf",
+      "pepName": "sfsf"
+    },
+    {
+      "id": "afbe",
+      "pepAssociate": "yes",
+      "relationshipToPep": "wewe",
+      "pepName": "wewe"
+    },
+    {
+      "id": "6996",
+      "pepAssociate": "yes",
+      "relationshipToPep": "xdgd",
+      "pepName": "ghghgh"
+    },
+    {
+      "id": "69be",
+      "pepAssociate": "yes",
+      "relationshipToPep": "sdsfsf",
+      "pepName": "dfdf"
     }
   ],
   "politically-exposed-persons": [
@@ -1514,6 +1757,12 @@
       "pepAssociate": "yes",
       "relationshipToPep": "wdwd",
       "pepName": "dgdgd"
+    },
+    {
+      "id": "309c",
+      "pepAssociate": "yes",
+      "relationshipToPep": "",
+      "pepName": ""
     }
   ],
   "employment-information": [
@@ -1799,6 +2048,39 @@
       "workNumber": "56666",
       "employmentStatus": "unemployed",
       "employmentType": "part-time",
+      "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "e12d",
+      "employerName": "sdsdds",
+      "employerAddressLine1": "APT 5, Church Street, Cunupia",
+      "employerCity": "Chaguanas",
+      "employerCountry": "Armenia",
+      "workNumber": "32323",
+      "employmentStatus": "unemployed",
+      "employmentType": "part-time",
+      "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "596f",
+      "employerName": "sdsdds",
+      "employerAddressLine1": "APT 5, Church Street, Cunupia",
+      "employerCity": "Chaguanas",
+      "employerCountry": "Albania",
+      "workNumber": "32323",
+      "employmentStatus": "unemployed",
+      "employmentType": "contract",
+      "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "7d16",
+      "employerName": "sdsdds",
+      "employerAddressLine1": "APT 5, Church Street, Cunupia",
+      "employerCity": "Chaguanas",
+      "employerCountry": "Albania",
+      "workNumber": "32323",
+      "employmentStatus": "unemployed",
+      "employmentType": "contract",
       "proofOfEmploymentFile": {}
     }
   ],
@@ -2117,6 +2399,34 @@
       "AddressLine2": "sfsfs",
       "City": "sfsfsfs",
       "Country": "Bosnia and Herzegovina"
+    },
+    {
+      "id": "607b",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Barbados"
+    },
+    {
+      "id": "b802",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "American Samoa"
+    },
+    {
+      "id": "0b7a",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "American Samoa"
+    },
+    {
+      "id": "7732",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "American Samoa"
     }
   ],
   "verify-mobile": [
@@ -2353,8 +2663,36 @@
       "verificationCode": "34345"
     },
     {
-      "id": "74e5",
-      "verificationCode": "44444"
+      "id": "dc15",
+      "verificationCode": "34444"
+    },
+    {
+      "id": "a984",
+      "verificationCode": "44555"
+    },
+    {
+      "id": "5a7e",
+      "verificationCode": "23333"
+    },
+    {
+      "id": "e735",
+      "verificationCode": "33333"
+    },
+    {
+      "id": "2021",
+      "verificationCode": "12333"
+    },
+    {
+      "id": "d992",
+      "verificationCode": "34345"
+    },
+    {
+      "id": "1a8d",
+      "verificationCode": "12333"
+    },
+    {
+      "id": "8d71",
+      "verificationCode": "23333"
     }
   ],
   "verify-email": [
@@ -2663,16 +3001,36 @@
       "verificationCode": "76877"
     },
     {
-      "id": "67e1",
-      "verificationCode": "11111"
-    },
-    {
-      "id": "6b7f",
-      "verificationCode": "44444"
-    },
-    {
-      "id": "6b91",
+      "id": "9364",
       "verificationCode": "23333"
+    },
+    {
+      "id": "03bb",
+      "verificationCode": "34444"
+    },
+    {
+      "id": "fa41",
+      "verificationCode": "34434"
+    },
+    {
+      "id": "9dca",
+      "verificationCode": "34444"
+    },
+    {
+      "id": "ed14",
+      "verificationCode": "34345"
+    },
+    {
+      "id": "d564",
+      "verificationCode": "76877"
+    },
+    {
+      "id": "276b",
+      "verificationCode": "12345"
+    },
+    {
+      "id": "8379",
+      "verificationCode": "34444"
     }
   ],
   "address": [
@@ -2945,6 +3303,46 @@
       "Nationality": "Aruba",
       "DwellingStatus": "owned",
       "ProofOfAddress": {}
+    },
+    {
+      "id": "ea00",
+      "AddressLine1": "APT 5, Church Street, Cunupia",
+      "AddressLine2": "",
+      "City": "Chaguanas",
+      "Country": "Barbados",
+      "Nationality": "Barbados",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "6993",
+      "AddressLine1": "APT 5, Church Street, Cunupia",
+      "AddressLine2": "",
+      "City": "Chaguanas",
+      "Country": "American Samoa",
+      "Nationality": "American Samoa",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "9f0d",
+      "AddressLine1": "APT 5, Church Street, Cunupia",
+      "AddressLine2": "",
+      "City": "Chaguanas",
+      "Country": "American Samoa",
+      "Nationality": "American Samoa",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": {}
+    },
+    {
+      "id": "316d",
+      "AddressLine1": "APT 5, Church Street, Cunupia",
+      "AddressLine2": "",
+      "City": "Chaguanas",
+      "Country": "American Samoa",
+      "Nationality": "American Samoa",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": {}
     }
   ],
   "basic-info": [
@@ -3036,27 +3434,170 @@
       "financialAgreementViewed": true
     },
     {
-      "id": "5a83",
+      "id": "d686",
       "firstName": "Kendell",
       "lastName": "Pierre",
       "otherName": "",
       "email": "kpierre24@gmail.com",
       "mobileNumber": "8687626226",
       "gender": "male",
-      "dob": "2025-02-15",
+      "dob": "2025-02-05",
       "password": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true
     },
     {
-      "id": "2507",
+      "id": "d9f7",
+      "firstName": "Kendell",
+      "lastName": "Pierre",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687626226",
+      "gender": "male",
+      "dob": "1998-06-16",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "6e26",
       "firstName": "KENDELL",
       "lastName": "PIERRE",
       "otherName": "",
       "email": "kpierre24@gmail.com",
       "mobileNumber": "8682784233",
       "gender": "male",
-      "dob": "2025-02-20",
+      "dob": "1997-01-13",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "91c3",
+      "firstName": "KENDELL",
+      "lastName": "PIERRE",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8682784233",
+      "gender": "female",
+      "dob": "2025-01-29",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "dd00",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "",
+      "email": "kendellapc@gmail.com",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-02-06",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "cb48",
+      "firstName": "777777",
+      "lastName": "66666",
+      "otherName": "666",
+      "email": "KPIERRE24@GMAIL.COM",
+      "mobileNumber": "6666",
+      "gender": "male",
+      "dob": "2024-12-31",
+      "password": "Rendell1234",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "6f08",
+      "firstName": "77777",
+      "lastName": "aboud",
+      "otherName": "",
+      "email": "kendellapc@gmail.com",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-02-01",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "7456",
+      "firstName": "555555",
+      "lastName": "555555",
+      "otherName": "555555",
+      "email": "KPIERRE24@GMAIL.COM",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-02-04",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "e536",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "666",
+      "email": "KPIERRE24@GMAIL.COM",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-01-27",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "87da",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "",
+      "email": "kendellapc@gmail.com",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-03-05",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "7bba",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "666",
+      "email": "KPIERRE24@GMAIL.COM",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-02-13",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "f94f",
+      "firstName": "KENDELL",
+      "lastName": "PIERRE",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8682784233",
+      "gender": "male",
+      "dob": "2025-01-28",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "6744",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "tytyty",
+      "email": "kendellapc@gmail.com",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-01-30",
       "password": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true
@@ -3242,6 +3783,66 @@
       "secondExpiryDate": "2025-02-03",
       "secondIdDocument": null,
       "maritalStatus": "Divorced"
+    },
+    {
+      "id": "30dc",
+      "firstIdType": "Driver's Permit",
+      "firstIdNumber": "1515151",
+      "firstExpiryDate": "2025-02-12",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "42335",
+      "secondExpiryDate": "2025-02-20",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "7249",
+      "firstIdType": "driver's permit",
+      "firstIdNumber": "1515151",
+      "firstExpiryDate": "2025-02-26",
+      "firstIdDocument": null,
+      "secondIdType": "Passport",
+      "secondIdNumber": "42335",
+      "secondExpiryDate": "2025-02-21",
+      "secondIdDocument": null,
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "891b",
+      "firstIdType": "passport",
+      "firstIdNumber": "19851005073",
+      "firstExpiryDate": "2025-02-13",
+      "firstIdDocument": {},
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "42335",
+      "secondExpiryDate": "2025-02-28",
+      "secondIdDocument": {},
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "34bb",
+      "firstIdType": "driver's permit",
+      "firstIdNumber": "1515151",
+      "firstExpiryDate": "2025-03-06",
+      "firstIdDocument": null,
+      "secondIdType": "National ID",
+      "secondIdNumber": "42335",
+      "secondExpiryDate": "2025-03-05",
+      "secondIdDocument": {},
+      "maritalStatus": "Divorced"
+    },
+    {
+      "id": "0dcf",
+      "firstIdType": "passport",
+      "firstIdNumber": "19851005073",
+      "firstExpiryDate": "2025-02-13",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "42335",
+      "secondExpiryDate": "2025-02-15",
+      "secondIdDocument": {},
+      "maritalStatus": "Single"
     }
   ]
 }

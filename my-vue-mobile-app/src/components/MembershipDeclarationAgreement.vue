@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container background-image">
     <div class="form-container">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Membership Declaration Agreement</h1>
@@ -33,8 +33,8 @@
         <input type="text" v-model="creditUnionBoardName" placeholder="Name of credit union board" v-if="isServingOnBoard === 'yes'" />
       </div>
       <div class="button-group">
-        <button class="disagree-button" @click="navigateToHome">Disagree</button>
-        <button class="next-button" @click="navigateToNext">Next</button>
+        <button class="next-button" @click="goNext">Next</button>
+        <button class="disagree-button" @click="disagree">Disagree</button>
       </div>
     </div>
   </div>
@@ -42,7 +42,6 @@
 
 <script>
 export default {
-  name: 'MembershipDeclarationAgreement',
   data() {
     return {
       isMemberOfAnotherCreditUnion: '',
@@ -52,11 +51,11 @@ export default {
     };
   },
   methods: {
-    navigateToPrevious() {
-      this.$router.go(-1);
+    goNext() {
+      // Logic for the Next button
     },
-    navigateToNext() {
-      this.$router.push('/politically-exposed-persons');
+    disagree() {
+      // Logic for the Disagree button
     }
   }
 };
@@ -74,20 +73,20 @@ export default {
 
 .form-container {
   background-color: #ffffff;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 420px;
-  text-align: center;
   overflow-y: auto;
   max-height: 90vh;
+  text-align: left; /* Left align all text by default */
 }
 
-h1 {
-  font-size: 22px;
-  color: #333;
-  margin-bottom: 20px;
+h1, h2, h3, h4, h5, h6 {
+  text-align: center; /* Center align all heading tags */
 }
 
 .input-group, .input-container {
@@ -128,9 +127,30 @@ input:focus, select:focus {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  flex-direction: column;
+  gap: 10px;
   margin-top: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.next-button {
+  background-color: purple;
+  color: white;
+}
+
+.disagree-button {
+  background-color: orange;
+  color: white;
 }
 
 .back-button, .submit-button, .next-button {

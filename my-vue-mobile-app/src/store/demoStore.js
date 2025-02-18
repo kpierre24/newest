@@ -26,7 +26,7 @@ export const useDemoStore = defineStore('demo', {
     childId: '',
     childName: '',
     childAge: '',
-    isExistingCustomer: false,
+    isNewCustomer: false,
     mailingAddressLine1: '',
     mailingAddressLine2: '',
     mailingCity: '',
@@ -91,8 +91,7 @@ export const useDemoStore = defineStore('demo', {
     poaIdDocument: null,
     poaDocument: null
     },
-   
-
+    
   }),
   actions: {
     setBasicInfo(info) {
@@ -213,6 +212,9 @@ export const useDemoStore = defineStore('demo', {
       this.poaIdType = info.poaIdType;
       this.poaIdDocument = info.poaIdDocument;
       this.poaDocument = info.poaDocument;
+    },
+    setNewCustomer(value) {
+      this.isNewCustomer = value;
     },
   },
 

@@ -4,37 +4,10 @@
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Parent/Guardian Information</h1>
       <form @submit.prevent="submitForm">
-        <div class="input-container">
-          <label for="ParentFirstName">First Name</label>
-          <input type="text" v-model="ParentFirstName" id="ParentFirstName" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentMiddleName">Middle Name</label>
-          <input type="text" v-model="ParentMiddleName" id="ParentMiddleName" />
-        </div>
-        <div class="input-container">
-          <label for="ParentLastName">Last Name</label>
-          <input type="text" v-model="ParentLastName" id="ParentLastName" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentOccupation">Occupation</label>
-          <input type="text" v-model="ParentOccupation" id="ParentOccupation" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentWorkplace">Workplace</label>
-          <input type="text" v-model="ParentWorkplace" id="ParentWorkplace" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentEmail">Email Address</label>
-          <input type="email" v-model="ParentEmail" id="ParentEmail" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentPhoneNumber">Phone Number</label>
-          <input type="tel" v-model="ParentPhoneNumber" id="ParentPhoneNumber" required />
-        </div>
-        <div class="input-container">
-          <label for="RelationshipToChild">Relationship to Child</label>
-          <select v-model="RelationshipToChild" id="RelationshipToChild" required>
+        <div class="input-container" v-for="(value, key) in formData" :key="key">
+          <label :for="key">{{ formatLabel(key) }}</label>
+          <input v-if="key !== 'RelationshipToChild' && key !== 'RelationshipDocument'" :type="getInputType(key)" v-model="formData[key]" :id="key" required />
+          <select v-if="key === 'RelationshipToChild'" v-model="formData[key]" :id="key" required>
             <option value="" disabled>Select Relationship</option>
             <option value="mother">Mother</option>
             <option value="father">Father</option>
@@ -42,10 +15,7 @@
             <option value="related_guardian">Related Guardian</option>
             <option value="unrelated_guardian">Unrelated Guardian</option>
           </select>
-        </div>
-        <div class="input-container">
-          <label for="RelationshipDocument">Upload Relationship Document</label>
-          <input type="file" @change="handleFileUpload" id="RelationshipDocument" required />
+          <input v-if="key === 'RelationshipDocument'" type="file" @change="handleFileUpload" id="key" required />
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -59,61 +29,65 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
   name: 'ParentGuardianInformation',
   setup() {
     const router = useRouter();
-
-    const ParentFirstName = ref('');
-    const ParentMiddleName = ref('');
-    const ParentLastName = ref('');
-    const ParentOccupation = ref('');
-    const ParentWorkplace = ref('');
-    const ParentEmail = ref('');
-    const ParentPhoneNumber = ref('');
-    const RelationshipToChild = ref('');
-    const RelationshipDocument = ref(null);
+    const formData = ref({
+      ParentFirstName: '',
+      ParentMiddleName: '',
+      ParentLastName: '',
+      ParentOccupation: '',
+      ParentWorkplace: '',
+      ParentEmail: '',
+      ParentPhoneNumber: '',
+      RelationshipToChild: '',
+      RelationshipDocument: null
+    });
 
     const handleFileUpload = (event) => {
-      RelationshipDocument.value = event.target.files[0];
+      formData.value.RelationshipDocument = event.target.files[0];
     };
 
-    const submitForm = () => {
-      // Perform form validation and API call here
-      console.log('Form submitted', {
-        ParentFirstName: ParentFirstName.value,
-        ParentMiddleName: ParentMiddleName.value,
-        ParentLastName: ParentLastName.value,
-        ParentOccupation: ParentOccupation.value,
-        ParentWorkplace: ParentWorkplace.value,
-        ParentEmail: ParentEmail.value,
-        ParentPhoneNumber: ParentPhoneNumber.value,
-        RelationshipToChild: RelationshipToChild.value,
-        RelationshipDocument: RelationshipDocument.value
-      });
+    const submitForm = async () => {
+      try {
+        const formDataObj = new FormData();
+        for (const key in formData.value) {
+          formDataObj.append(key, formData.value[key]);
+        }
 
-      // Navigate to the next page
-      router.push({ name: 'IdInformation' });
+        const response = await axios.post('http://localhost:3000/parent-guardian-information', formDataObj, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        console.log('Response:', response.data);
+        router.push({ name: 'IdInformation' });
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
     };
 
     const navigateToPrevious = () => {
       router.push({ name: 'ChildIdInformation' });
     };
 
+    const formatLabel = (label) => {
+      return label.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+    };
+
+    const getInputType = (key) => {
+      return key.includes('Email') ? 'email' : key.includes('Phone') ? 'tel' : 'text';
+    };
+
     return {
-      ParentFirstName,
-      ParentMiddleName,
-      ParentLastName,
-      ParentOccupation,
-      ParentWorkplace,
-      ParentEmail,
-      ParentPhoneNumber,
-      RelationshipToChild,
-      RelationshipDocument,
+      formData,
       handleFileUpload,
       submitForm,
-      navigateToPrevious
+      navigateToPrevious,
+      formatLabel,
+      getInputType
     };
   }
 };
@@ -147,7 +121,7 @@ h1 {
   margin-bottom: 20px;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
@@ -185,7 +159,7 @@ input:focus, select:focus {
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
+.back-button, .submit-button {
   flex: 1;
   padding: 12px 0;
   border: none;
@@ -202,110 +176,9 @@ input:focus, select:focus {
   margin-right: 10px;
 }
 
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
+.submit-button {
   background-color: #007bff;
   color: white;
   margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
-}
-
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
 }
 </style>
