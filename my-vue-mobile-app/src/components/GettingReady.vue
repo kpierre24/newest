@@ -1,12 +1,11 @@
 <template>
   <div class="container">
     <div class="content">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Getting Ready</h1>
+      <h5>Before going forward, here are some of the things you should have on hand that are required:</h5>
       <div class="text-container">
         <div class="text-content">
-          <p>Welcome to the Cathedral Credit Union Online Banking service. We are excited to have you on board and look forward to providing you with a seamless banking experience.</p>
-          <p>Before you get started, please take a moment to review the following important information:</p>
+        
           <h3>1. Personal Identification</h3>
           <p>
             Government-issued ID (e.g., driver's license, passport, ID card, birth paper (Under 16))<br>
@@ -55,7 +54,7 @@
           the signup process before it will need to be restarted.</p>
         </div>
       </div>
-      <div class="button-group">
+      <div class="customer-button">
         <button class="back-button" @click="navigateToPrevious">Back</button>
         <button class="next-button" @click="navigateToNext">Next</button>
       </div>
@@ -84,12 +83,14 @@ export default {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  
   background: #f4f4f4; /* Light background for the page */
   padding: 20px;
 }
 
 .content {
-  background: linear-gradient(to right, #6e48aa, #9d50bb); /* Purple gradient */
+  background-image: url('@/assets/background.png');
+  background-size: cover;
   padding: 30px;
   border-radius: 20px; /* Rounded corners */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -97,7 +98,12 @@ export default {
   max-width: 400px; /* Narrower width for consistency */
   max-height: 80vh; /* Set max height */
   overflow-y: auto; /* Enable vertical scrolling */
-  color: white; /* White text for contrast */
+  color: rgb(12, 12, 12);
+   /* White text for contrast */
+}
+.p{
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.1)
 }
 
 .logo {
@@ -105,16 +111,27 @@ export default {
   height: auto;
   margin-bottom: 20px;
 }
+h5{
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: rgb(20, 42, 163);
+}
 
 h1 {
-  font-size: 24px;
+  font-size: 20px;
   margin-bottom: 20px;
 }
 
-.text-container, .placeholder-container {
+h3{
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: rgb(20, 42, 163);
+}
+
+.text-container {
   margin-bottom: 20px;
   border-radius: 10px; /* Rounded corners */
-  background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+  background: rgb(248, 245, 245); /* Semi-transparent white background */
   padding: 15px;
 }
 
@@ -122,15 +139,15 @@ h1 {
   text-align: left;
   max-height: 30vh; /* Set max height for text content */
   overflow-y: auto; /* Enable vertical scrolling */
-  font-size: 14px; /* Reduce text size */
+  font-size: 12px; /* Reduce text size */
 }
 
 .placeholder-content {
   text-align: center;
   max-height: 30vh; /* Set max height for text content */
   overflow-y: auto; /* Enable vertical scrolling */
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+  font-size: 10px;
+  background: rgb(211, 205, 205); /* Semi-transparent white background */
   padding: 15px;
   border-radius: 10px; /* Rounded corners */
 }
@@ -153,17 +170,21 @@ h1 {
 
 .back-button, .next-button {
   padding: 10px 20px;
+  width: 100%;
+  gap: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
+  
 }
 
 .back-button {
   background-color: #6c757d;
   color: white;
+  margin-right: 10px;
 }
 
 .back-button:hover {
@@ -193,6 +214,22 @@ h1 {
 
 .placeholder-content {
   -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  scrollbar-width: none; 
 }
+  
+  .customer-button {
+  width: 100%;
+  margin: 20px 0;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: space-between;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+}
+
 </style>

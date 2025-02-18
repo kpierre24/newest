@@ -1,9 +1,8 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>Welcome to Cathedral Online</h1>
-      <img src="@/assets/welcome.png" alt="Welcome" class="welcome-image" />
+      <img src="@/assets/Logo.png" alt="Logo" class="logo" />
+      <h2>Welcome to</h2> <br><h1>Cathedral Online</h1>
       <h6>If you don't have an online account,
        <br>click "Don't have an account?" to begin</h6>
       <div class="button-group">
@@ -40,31 +39,64 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
-  background-color: #ffffff;
+  background-image: url('@/assets/front screen.png');
+  background-size: cover;
+  background-position: center;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  width: 420px;
   max-width: 420px;
+  height: 100%;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  height:850.5px;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
 h1 {
-  font-size: 22px;
+  font-size: 24px;
   color: #333;
   margin-bottom: 20px;
+  margin: 0;
 }
+h6 {
+  margin: 0;
+}
+h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 20px;
+  margin: 0;
+}
+
 
 .input-group, .input-container {
   width: 100%;
@@ -164,6 +196,7 @@ input:focus, select:focus {
   width: 157.5px; 
   height: auto;
   margin-bottom: 20px;
+  margin: 0;
 }
 
 .modal {

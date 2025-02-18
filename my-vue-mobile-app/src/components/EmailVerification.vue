@@ -1,26 +1,40 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <div></div>
       <h1>Email Verification</h1>
+      <h4>Enter the verification code sent to your email</h4>
+      <i class="fas fa-envelope common-icon"></i> <!-- Email icon -->
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <label for="verificationCode">Verification Code</label>
-          <Field
-            name="verificationCode"
-            id="verificationCode"
-            placeholder="Enter verification code"
-            maxlength="5"
-            :class="{ 'is-invalid': errors.verificationCode }"
-            as="input"
-          />
+          <div class="code-inputs">
+            <input type="number" v-model="code[0]" maxlength="1" />
+            <input type="number" v-model="code[1]" maxlength="1" />
+            <input type="number" v-model="code[2]" maxlength="1" />
+            <input type="number" v-model="code[3]" maxlength="1" />
+            <input type="number" v-model="code[4]" maxlength="1" />
+            <input type="number" v-model="code[5]" maxlength="1" />
+          </div>
+          <p class="center-text">Enter the code received in your email</p>
           <ErrorMessage name="verificationCode" class="error-message" />
         </div>
+        <h5 v-if="resendCount < 5">
+          Didn't receive the code? 
+          <br />
+          <a href="#" @click.prevent="resendCode">Resend code</a>
+        </h5>
+        <h5 v-else class="error-message">You are locked out of your account.</h5>
+        <div v-if="attemptsLeft > 0" class="attempts-container">
+          <div class="attempts-circle">{{ attemptsLeft }}</div>
+          <p class="center-text">Attempts remaining</p>
+        </div>
+        
         <div class="button-group">
-          <button class="back-button" @click="navigateToBasicInfo">Back</button>
           <button class="verify-button" type="submit">Verify</button>
+          <button class="back-button" @click="navigateToBasicInfo">Back</button>
         </div>
       </form>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div v-if="errorMessage" class="error-message center-text">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
@@ -43,6 +57,9 @@ export default {
     const store = useDemoStore();
     const router = useRouter();
     const errorMessage = ref('');
+    const code = ref(['', '', '', '']);
+    const resendCount = ref(0);
+    const attemptsLeft = ref(5);
 
     const validationSchema = yup.object({
       verificationCode: yup
@@ -57,12 +74,13 @@ export default {
 
     const onSubmit = async (values) => {
       try {
+        const verificationCode = code.value.join('');
         const verificationData = {
-          verificationCode: values.verificationCode
+          verificationCode
         };
 
         // Save verification code to the store
-        store.setVerificationCode(values.verificationCode);
+        store.setVerificationCode(verificationCode);
 
         // Debugging logs to check form data
         console.log('Verification Data:', verificationData);
@@ -80,6 +98,9 @@ export default {
         console.error('Error verifying code:', error);
         errorMessage.value = error.message;
         console.error('Error details:', error.response ? error.response.data : error.message);
+        if (attemptsLeft.value > 0) {
+          attemptsLeft.value--;
+        }
       }
     };
 
@@ -87,11 +108,23 @@ export default {
       router.push('/basic-info');
     };
 
+    const resendCode = () => {
+      if (resendCount.value < 5) {
+        resendCount.value++;
+        // Logic to resend the code
+        console.log('Code resent');
+      }
+    };
+
     return {
       handleSubmit: handleSubmit(onSubmit),
       errors,
       errorMessage,
-      navigateToBasicInfo
+      navigateToBasicInfo,
+      code,
+      resendCount,
+      resendCode,
+      attemptsLeft
     };
   }
 };
@@ -105,6 +138,8 @@ export default {
   min-height: 100vh;
   background: #f4f4f4;
   padding: 20px;
+  max-width: 375px; /* Standard mobile phone width */
+  margin: 0 auto;
 }
 
 .form-container {
@@ -113,10 +148,13 @@ export default {
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
+  height: 100vh;
   text-align: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
   overflow-y: auto;
-  max-height: 90vh;
+  max-width: 375px;
+  max-height: 100vh;
 }
 
 h1 {
@@ -129,7 +167,6 @@ h1 {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
-  
 }
 
 label {
@@ -140,17 +177,32 @@ label {
   font-weight: 600;
 }
 
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
 
+input:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
+.back-button, .verify-button {
   padding: 12px 0;
   border: none;
   border-radius: 8px;
@@ -158,25 +210,24 @@ label {
   font-size: 16px;
   font-weight: 600;
   transition: 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #ff9800; /* Orange color */
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #e68900;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.verify-button {
+  background-color: #007bff; /* Blue color */
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
+.verify-button:hover {
   background-color: #0056b3;
 }
 
@@ -232,19 +283,12 @@ label {
   align-items: center;
   margin-bottom: 15px;
   width: 100%;
-  gap: 10px; /* Space between checkbox and label */
+  gap: 5px;
 }
 
 .checkbox-container input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: #007bff; /* Custom checkbox color */
-}
-
-.checkbox-container label {
-  font-size: 14px;
-  color: white; /* White text for contrast */
-  cursor: pointer;
+  width: 14px;
+  height: 14px;
 }
 
 .agree-button {
@@ -265,39 +309,75 @@ label {
   background-color: #5a6268;
 }
 
-.input-container {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
+.common-icon {
+  font-size: 80px; /* Set icon size to 80px */
+  color: #00008b; /* Dark blue color */
+}
+
+.icon fas fa-envelope common-icon {
+  width: 80px;
+  height: 80px;
+  color: #00008b;
+  transform: translateY(-10px);
+  vertical-align: middle;
+}
+
+.code-inputs {
   display: flex;
+  gap: 10px;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
-.input-container .icon {
-  position: absolute;
-  left: 15px;  /* Align icon to the left */
-  color: #666;
-  font-size: 16px;
-}
-
-.input-container input,
-.input-container select {
-  width: 100%;
-  padding: 12px;
-  padding-left: 40px; /* Add space on the left for the icon */
+.code-inputs input {
+  flex: 1;
+  padding: 15px;
+  text-align: center;
+  font-size: 24px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
   background: #f9f9f9;
   transition: 0.3s ease;
 }
 
-.input-container input:focus,
-.input-container select:focus {
+.code-inputs input:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}/* Adds space between the icons */
+}
 
+.center-text {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.attempts-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.attempts-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #00008b; /* Dark blue background */
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+}
 </style>

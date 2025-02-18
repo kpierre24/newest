@@ -2351,6 +2351,10 @@
     {
       "id": "add9",
       "verificationCode": "34345"
+    },
+    {
+      "id": "74e5",
+      "verificationCode": "44444"
     }
   ],
   "verify-email": [
@@ -2657,6 +2661,18 @@
     {
       "id": "c409",
       "verificationCode": "76877"
+    },
+    {
+      "id": "67e1",
+      "verificationCode": "11111"
+    },
+    {
+      "id": "6b7f",
+      "verificationCode": "44444"
+    },
+    {
+      "id": "6b91",
+      "verificationCode": "23333"
     }
   ],
   "address": [
@@ -3015,6 +3031,32 @@
       "mobileNumber": "8682784233",
       "gender": "male",
       "dob": "2025-01-27",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "5a83",
+      "firstName": "Kendell",
+      "lastName": "Pierre",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687626226",
+      "gender": "male",
+      "dob": "2025-02-15",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "2507",
+      "firstName": "KENDELL",
+      "lastName": "PIERRE",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8682784233",
+      "gender": "male",
+      "dob": "2025-02-20",
       "password": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true

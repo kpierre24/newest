@@ -1,77 +1,67 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Basic Information</h1>
       <form @submit.prevent="navigateToNext" method="post">
         <div class="input-group">
           <div class="input-container">
+            <i class="icon fas fa-user"></i>
             <input type="text" v-model="firstName" id="firstName" placeholder="First Name" maxlength="50" required />
-             <i class="icon fas fa-user"></i>
           </div>
           <div class="input-container">
+            <i class="icon fas fa-user"></i>
             <input type="text" v-model="lastName" id="lastName" placeholder="Last Name" maxlength="50" required />
-            <i class="icon fas fa-user"></i>
           </div>
           <div class="input-container">
+            <i class="icon fas fa-user"></i>
             <input type="text" v-model="otherName" id="otherName" placeholder="Other Name" maxlength="50" />
-            <i class="icon fas fa-user"></i>
           </div>
           <div class="input-container">
-            <input type="email" v-model="email" id="email" placeholder="Email Address" maxlength="50" required />
             <i class="icon fas fa-envelope"></i>
+            <input type="email" v-model="email" id="email" placeholder="Email Address" maxlength="50" required />
           </div>
           <div class="input-container">
-            <input type="tel" v-model="mobileNumber" id="mobileNumber" placeholder="Mobile Number" maxlength="11" required />
             <i class="icon fas fa-phone"></i>
+            <input type="tel" v-model="mobileNumber" id="mobileNumber" placeholder="Mobile Number" maxlength="11" required />
           </div>
           <div class="input-container">
+            <i class="icon fas fa-venus-mars"></i>
             <select v-model="gender" id="gender" class="gender-select" required>
               <option value="" disabled>Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-            <i class="icon fas fa-venus-mars"></i>
           </div>
-          <div class="input-container">
-            <input type="date" v-model="dob" id="dob" required class="date-picker" placeholder="Date of Birth" />
+          <div>
             <i class="icon fas fa-calendar-alt"></i>
+            <input type="date" v-model="dob" id="dob" required class="date-picker" placeholder="Date of Birth" />
           </div>
           <div class="input-container">
+            <i class="icon fas fa-lock"></i>
             <input type="password" v-model="password" id="password" placeholder="Password" maxlength="50" required @input="validatePassword" />
             <small v-if="passwordError" class="error">{{ passwordError }}</small>
           </div>
           <div class="input-container">
+            <i class="icon fas fa-lock"></i>
             <input type="password" v-model="confirmPassword" id="confirmPassword" placeholder="Confirm Password" maxlength="50" required />
-          </div>
-          <div class="input-container">
-            <label>
-              <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
-            </label>
-          </div>
-          <div class="input-container">
-            <label>
-              <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
-            </label>
           </div>
           <div class="checkbox-container">
             <input type="checkbox" v-model="termsViewed" id="termsViewed" />
-            <label for="termsViewed">I have viewed the Terms and Conditions</label>
+             <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
           </div>
           <div class="checkbox-container">
             <input type="checkbox" v-model="financialAgreementViewed" id="financialAgreementViewed" />
-            <label for="financialAgreementViewed">I have viewed the Financial Agreement</label>
+             <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
           </div>
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
             <button type="submit" class="submit-button">Submit</button>
           </div>
-          
         </div>
       </form>
     </div>
     <TermsAndConditions :visible="isTermsVisible" @close="handleCloseTerms" />
-    <FinancialDeclaration :visible="isFinancialVisible" @close="handleCloseFinancial"  />
+    <FinancialDeclaration :visible="isFinancialVisible" @close="handleCloseFinancial" />
   </div>
 </template>
 
@@ -82,7 +72,6 @@ import { useRouter } from 'vue-router';
 import TermsAndConditions from './TermsAndConditions.vue';
 import FinancialDeclaration from './FinancialDeclaration.vue';
 import axios from 'axios';
-
 
 export default {
   components: {
@@ -126,20 +115,17 @@ export default {
       }
     },
     async navigateToNext() {
-      // Ensure all required fields are filled
       if (!this.firstName || !this.lastName || !this.email || !this.mobileNumber || !this.gender || !this.dob || !this.password || !this.confirmPassword || !this.termsViewed || !this.financialAgreementViewed) {
         alert('Please fill all required fields and agree to the terms.');
         return;
       }
 
-      // Validate passwords match
       if (this.password !== this.confirmPassword) {
         alert('Passwords do not match');
         return;
       }
 
       try {
-        // Create the data object
         const basicInfoData = {
           firstName: this.firstName,
           lastName: this.lastName,
@@ -153,11 +139,9 @@ export default {
           financialAgreementViewed: this.financialAgreementViewed
         };
 
-        // Save to store using Pinia
         const store = useDemoStore();
         store.setBasicInfo(basicInfoData);
 
-        // Make API call if needed
         const response = await axios.post('http://localhost:3000/basic-info', basicInfoData, {
           headers: {
             'Content-Type': 'application/json'
@@ -165,8 +149,7 @@ export default {
         });
 
         console.log('Basic info submitted:', response.data);
-        
-        // Navigate to the next page
+
         this.router.push({ name: 'EmailVerification' });
       } catch (error) {
         console.error('Error submitting basic info:', error);
@@ -192,21 +175,30 @@ export default {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f4f4f4; /* Light background for the page */
+  background: #f4f4f4;
   padding: 20px;
 }
 
 .form-container {
-  background: linear-gradient(to right, #a8c0ff, #3f2b96); /* Light purple gradient */
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 40px;
-  border-radius: 20px; /* Rounded corners */
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px; /* Narrower width for consistency */
+  max-width: 420px;
   text-align: center;
   overflow-y: auto;
   max-height: 90vh;
-  color: white; /* White text for contrast */
+  color: white;
+}
+
+.form-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+}
+.form-container {
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
 h1 {
@@ -228,22 +220,44 @@ h1 {
 
 .input-container .icon {
   position: absolute;
-  left: 15px; /* Align icon to the left */
+  left: 15px;
   color: #666;
   font-size: 16px;
+  z-index: 1; /* Ensure the icon is above the input */
 }
 
 .input-container input,
 .input-container select {
   width: 100%;
-  padding: 12px;
-  padding-left: 40px; /* Add space on the left for the icon */
+  padding: 12px 12px 12px 40px; /* Add left padding for the icon */
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  background: rgba(255, 255, 255, 0.9);
   transition: 0.3s ease;
+}
+#gender {
+  border: 2px solid mediumpurple;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2); /* Adds a 2px solid purple border */
+}
+
+#dob {
+  border: 2px  mediumpurple; 
+  box-shadow: 0 0 10px rgb(159 158 233);
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+  width: 100%;
+  padding: 12px 12px 12px 40px; /* Add left padding for the icon */
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.9);
+  transition: 0.3s ease;
+  position: relative;
+  display: flex;
+  
 }
 
 .input-container input:focus,
@@ -253,12 +267,8 @@ h1 {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-/* Checkbox container styling */
-
-
-/* Modal link styling */
 .input-container a {
-  color: #007bff; /* Blue for links */
+  color: #007bff;
   text-decoration: none;
   font-size: 14px;
   cursor: pointer;
@@ -266,7 +276,7 @@ h1 {
 }
 
 .input-container a:hover {
-  color: #0056b3; /* Darker blue on hover */
+  color: #0056b3;
   text-decoration: underline;
 }
 
@@ -313,18 +323,18 @@ h1 {
   align-items: center;
   margin-bottom: 15px;
   width: 100%;
-  gap: 10px; /* Space between checkbox and label */
+  gap: 10px;
 }
 
 .checkbox-container input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #007bff; /* Custom checkbox color */
+  accent-color: #007bff;
 }
 
 .checkbox-container label {
   font-size: 14px;
-  color: white; /* White text for contrast */
+  color: white;
   cursor: pointer;
 }
 
@@ -335,7 +345,7 @@ h1 {
 }
 
 .error {
-  color: #ff4d4d; /* Red for error messages */
+  color: #ff4d4d;
   font-size: 12px;
   margin-top: 5px;
 }

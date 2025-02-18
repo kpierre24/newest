@@ -1,26 +1,87 @@
 <template>
   <div class="container">
+    <a href="/" class="back-icon-link">
+    <i class="fas fa-arrow-left back-icon"></i>
+  </a>
+    <div class="form-container"> 
+      
+   </div>
+   <div></div>
+   <div></div>
     <div class="content">
+      <h1>New or Existing Customer?</h1>
+      <p>Choose whether you're a new or existing customer</p>
+      <button 
+        class="customer-button" 
+        @click="handleNewCustomer"
+        :disabled="loading"
+      >
+        {{ loading && isNewCustomer ? 'Processing...' : 'New Customer' }}
+      </button>
+      <button 
+        class="customer-button" 
+        @click="handleExistingCustomer"
+        :disabled="loading"
+      >
+        {{ loading && !isNewCustomer ? 'Processing...' : 'Existing Customer' }}
+      </button>
+    </div>
+    <div class="footer">
+      <p>powered by:</p>
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>Are you a new or existing customer?</h1>
-      <div class="button-group">
-        <button class="button" @click="setExistingCustomer(true)">Existing Customer</button>
-        <button class="button" @click="setExistingCustomer(false)">New Customer</button>
-      </div>
-      <button class="back-button" @click="navigateToHome">Back</button>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue';
 import { useDemoStore } from '@/store/demoStore';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
   name: 'NewOrExistingCustomer',
   setup() {
     const store = useDemoStore();
     const router = useRouter();
+    const loading = ref(false);
+    const isNewCustomer = ref(false);
+
+    const handleApiCall = async (endpoint) => {
+      try {
+        const response = await axios.post(`http://localhost:3000/new-or-existing-customer/`);
+        return response.data;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    };
+
+    const handleNewCustomer = async () => {
+      loading.value = true;
+      isNewCustomer.value = true;
+      try {
+        await handleApiCall('new');
+        setExistingCustomer(false);
+      } catch (error) {
+        // Handle error
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const handleExistingCustomer = async () => {
+      loading.value = true;
+      isNewCustomer.value = false;
+      try {
+        await handleApiCall('existing');
+        setExistingCustomer(true);
+      } catch (error) {
+        // Handle error
+      } finally {
+        loading.value = false;
+      }
+    };
 
     const setExistingCustomer = (isExisting) => {
       store.isExistingCustomer = isExisting;
@@ -36,6 +97,10 @@ export default {
     };
 
     return {
+      loading,
+      isNewCustomer,
+      handleNewCustomer,
+      handleExistingCustomer,
       setExistingCustomer,
       navigateToHome
     };
@@ -44,121 +109,137 @@ export default {
 </script>
 
 <style scoped>
-
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4; /* Light background for the page */
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
-}
-
-.content {
-  background: linear-gradient(to right, #6aa4da, #9d50bb); /* Purple gradient */
-  padding: 30px;
-  border-radius: 20px; /* Rounded corners */
+  background-image: url('@/assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px; /* Narrower width for consistency */
-  max-height: 80vh; /* Set max height */
-  overflow-y: auto; /* Enable vertical scrolling */
-  color: white; /* White text for contrast */
-}
-
-.logo {
-  width: 165px; /* Slightly larger for better visibility */
-  height: auto;
-  margin-bottom: 20px;
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.text-container, .placeholder-container {
-  margin-bottom: 20px;
-  border-radius: 10px; /* Rounded corners */
-  background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
-  padding: 15px;
-}
-
-.text-content {
-  text-align: left;
-  max-height: 30vh; /* Set max height for text content */
-  overflow-y: auto; /* Enable vertical scrolling */
-  font-size: 14px; /* Reduce text size */
-}
-
-.placeholder-content {
   text-align: center;
-  max-height: 30vh; /* Set max height for text content */
-  overflow-y: auto; /* Enable vertical scrolling */
-  font-size: 12px;
-  background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
-  padding: 15px;
-  border-radius: 10px; /* Rounded corners */
+  backdrop-filter: blur(5px);
+  color: #fff;
+  opacity: 0; /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
-.text-content p, .text-content h3, .placeholder-content p {
-  margin: 10px 0;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -55%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
 
-.text-content a {
-  color: #007bff;
-  text-decoration: underline;
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
+.form-container {
+  background: rgba(255, 255, 255, 0);
+  padding: 20px;
+  border-radius: 10px;
   width: 100%;
-  margin-top: 20px;
+  max-width: 1px;
+  text-align: center;
+  margin-top: auto;  /* Pushes content down */
 }
 
-.back-button, .next-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
 }
 
 .back-button {
-  background-color: #6c757d;
-  color: white;
+  background: none;
+  border: none;
+  color: #5c65e2;
+  font-size: 30px;  /* Increased font size */
+  cursor: pointer;
+  padding: 12px 20px;  /* Increased padding for better size */
+  transition: color 0.3s ease;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  color: #434190;
 }
 
-.next-button {
-  background-color: #007bff;
-  color: white;
+.content {
+  text-align: center;
+  margin-top: 30px;  /* Increased margin-top to push content lower */
 }
 
-.next-button:hover {
-  background-color: #0056b3;
+h1 {
+  font-size: 24px; 
+  margin-top: 80px; /* Larger font size */
+  margin-bottom: 15px;  /* Adjusted margin */
+  color: #5c65e2;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.text-content::-webkit-scrollbar, .placeholder-content::-webkit-scrollbar {
-  width: 0;
-  background: transparent; /* Optional: just make scrollbar invisible */
+p {
+  font-size: 14px;  /* Slightly bigger text */
+  margin-bottom: 30px;  /* Increased space below */
+  color: #030303;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.text-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.customer-button {
+  width: 80%;
+  padding: 15px;
+  margin: 20px 0;  /* Increased margin to spread out buttons */
+  background-color: #5a67d8;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.placeholder-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.customer-button:hover {
+  background-color: #434190;
+}
+
+.footer {
+  text-align: center;
+  margin-top: auto;  /* Ensures footer stays at the bottom */
+}
+
+.logo {
+  width: 100px;
+  margin-top: 10px;
+}
+.back-icon-link {
+  position: absolute; /* Position the link relative to the form container */
+  top: 27px; /* Adjust the top position as needed */
+  left: 24px; /* Adjust the left position as needed */
+  text-decoration: none; /* Remove the underline from the link */
+  color: inherit; /* Inherit the color from the parent */
+  z-index: 10;
+  display: flex; /* Use flexbox to center the icon */
+  align-items: center; /* Vertically center the icon */
+  justify-content: center; /* Horizontally center the icon */
+  width: 40px; /* Set a fixed width for the circular border */
+  height: 40px; /* Set a fixed height for the circular border */
+  border-radius: 50%; /* Make the border circular */
+  border: 1px solid rgba(0, 0, 0, 0.041); /* Add a border */
+  padding: 5px;
+  background-color: rgb(98, 103, 173);
+}
+
+.back-icon {
+  font-size: 24px; /* Adjust the icon size as needed */
+  color: black;
 }
 </style>
