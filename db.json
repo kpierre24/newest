@@ -66,6 +66,22 @@
     },
     {
       "id": "1197"
+    },
+    {
+      "id": "642b",
+      "customerType": "new_customer"
+    },
+    {
+      "id": "4ac1",
+      "customerType": "new_customer"
+    },
+    {
+      "id": "c332",
+      "customerType": "new_customer"
+    },
+    {
+      "id": "7bbd",
+      "customerType": "existing_customer"
     }
   ],
   "foreign-national-bank-information": [
@@ -3601,6 +3617,19 @@
       "password": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true
+    },
+    {
+      "id": "7007",
+      "firstName": "Kendell",
+      "lastName": "Pierre",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8687626226",
+      "gender": "male",
+      "dob": "2025-02-27",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
     }
   ],
   "id-information": [
@@ -3843,6 +3872,44 @@
       "secondExpiryDate": "2025-02-15",
       "secondIdDocument": {},
       "maritalStatus": "Single"
+    }
+  ],
+  "email-verification-successful": [
+    {
+      "id": "1",
+      "status": "success",
+      "message": "Email has been successfully verified"
+    },
+    {
+      "id": "f15a",
+      "status": "success"
+    },
+    {
+      "id": "2891",
+      "status": "success"
+    },
+    {
+      "id": "7762",
+      "status": "success"
+    }
+  ],
+  "mobile-verification-successful": [
+    {
+      "id": "1",
+      "status": "success",
+      "message": "Mobile number has been successfully verified"
+    },
+    {
+      "id": "9955",
+      "status": "success"
+    },
+    {
+      "id": "6f91",
+      "status": "success"
+    },
+    {
+      "id": "4d63",
+      "status": "success"
     }
   ]
 }

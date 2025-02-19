@@ -57,7 +57,7 @@ export default {
     const store = useDemoStore();
     const router = useRouter();
     const errorMessage = ref('');
-    const code = ref(['', '', '', '']);
+    const code = ref(['', '', '', '']); 
     const resendCount = ref(0);
     const attemptsLeft = ref(5);
 

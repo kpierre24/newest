@@ -47,7 +47,7 @@ export default {
     const loading = ref(false);
     const isNewCustomer = ref(false);
 
-    const handleApiCall = async (endpoint) => {
+    const handleApiCall = async (endpoint, customerType) => {
       try {
         const response = await axios.post(`http://localhost:3000/new-or-existing-customer/`, {
           customerType: customerType
@@ -63,8 +63,9 @@ export default {
       loading.value = true;
       isNewCustomer.value = true;
       try {
-        await handleApiCall('new');
+        await handleApiCall('new', 'new_customer');
         setExistingCustomer(false);
+        navigateToGettingReady();
       } catch (error) {
         console.error('Error handling new customer:', error);
       } finally {
@@ -76,8 +77,9 @@ export default {
       loading.value = true;
       isNewCustomer.value = false;
       try {
-        await handleApiCall('existing');
+        await handleApiCall('existing', 'existing_customer');
         setExistingCustomer(true);
+        navigateToGettingReady();
       } catch (error) {
         console.error('Error handling existing customer:', error);
       } finally {
