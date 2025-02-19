@@ -3,9 +3,11 @@
     <div class="form-container">
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Membership Declaration Agreement</h1>
-      <p>
-        I hereby make application for membership in <strong>CATHEDRAL CREDIT UNION CO-OPERATIVE SOCIETY LIMITED</strong> and if admitted, agree to abide by the Bye-Laws or amendments of the said Society. I am aware that I am not a bona fide member of the society until this application is approved by the Board of Directors. I further pledge to offer my skills towards the growth of the Society.
-      </p>
+      <div class="body-container">
+        <p>
+          I hereby make application for membership in <strong>CATHEDRAL CREDIT UNION CO-OPERATIVE SOCIETY LIMITED</strong> and if admitted, agree to abide by the Bye-Laws or amendments of the said Society. I am aware that I am not a bona fide member of the society until this application is approved by the Board of Directors. I further pledge to offer my skills towards the growth of the Society.
+        </p>
+      </div>
       <p>Are you a member of another credit union?</p>
       <div class="radio-group">
         <label>
@@ -41,25 +43,56 @@
 </template>
 
 <script>
+import { ref } from 'vue'; // Import ref from vue
+import { useRouter } from 'vue-router'; // Import useRouter from vue-router
+import axios from 'axios';
+import { useDemoStore } from '@/store/demostore';
+
 export default {
-  data() {
-    return {
-      isMemberOfAnotherCreditUnion: '',
-      creditUnionName: '',
-      isServingOnBoard: '',
-      creditUnionBoardName: ''
+  setup() {
+    const router = useRouter(); // Use the router
+    const demoStore = useDemoStore();
+    const isMemberOfAnotherCreditUnion = ref(demoStore.isMemberOfAnotherCreditUnion);
+    const creditUnionName = ref(demoStore.creditUnionName);
+    const isServingOnBoard = ref(demoStore.isServingOnBoard);
+    const creditUnionBoardName = ref(demoStore.creditUnionBoardName);
+
+    const goNext = async () => {
+      try {
+        // Save form data to Pinia store
+        demoStore.setMembershipInfo({
+          isMemberOfAnotherCreditUnion: isMemberOfAnotherCreditUnion.value,
+          creditUnionName: creditUnionName.value,
+          isServingOnBoard: isServingOnBoard.value,
+          creditUnionBoardName: creditUnionBoardName.value
+        });
+
+        // Make an API call to submit membership declaration data
+        await axios.post('http://localhost:3000/membership-declaration-agreement', {
+          isMemberOfAnotherCreditUnion: isMemberOfAnotherCreditUnion.value,
+          creditUnionName: creditUnionName.value,
+          isServingOnBoard: isServingOnBoard.value,
+          creditUnionBoardName: creditUnionBoardName.value
+        });
+
+        // Navigate to the politically exposed persons page
+        router.push({ name: 'PoliticallyExposedPersons' });
+      } catch (error) {
+        console.error('Error submitting membership declaration:', error);
+      }
     };
-  },
-  methods: {
-    goNext() {
-      // Logic for the Next button
-    },
-    disagree() {
-      // Logic for the Disagree button
-    }
+
+    return {
+      isMemberOfAnotherCreditUnion,
+      creditUnionName,
+      isServingOnBoard,
+      creditUnionBoardName,
+      goNext
+    };
   }
 };
 </script>
+
 
 <style scoped>
 .container {
@@ -97,7 +130,13 @@ h1, h2, h3, h4, h5, h6 {
 .radio-group {
   display: inline-flex;
   flex-direction: row;
+  justify-content: space-between;
   gap: 10px;
+  text-align: center;
+}
+.body-container {
+  margin-bottom: 20px;
+  font-size: 12px;
 }
 
 label {

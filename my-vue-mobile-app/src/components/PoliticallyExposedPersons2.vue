@@ -4,12 +4,15 @@
       <h1>Politically Exposed Persons - Part 2</h1>
       <form @submit.prevent="submitPepInfo">
         <div class="input-container">
-          <label for="pepAssociate">Are you an associate of a politically exposed person?</label>
-          <select v-model="pepAssociate" id="pepAssociate">
-            <option value="" disabled>Select an option</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
+          <label>Are you an associate of a politically exposed person?</label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" v-model="pepAssociate" value="yes" /> Yes
+            </label>
+            <label>
+              <input type="radio" v-model="pepAssociate" value="no" /> No
+            </label>
+          </div>
           <div class="error-container">
             <span class="error">{{ errorMessage }}</span>
           </div>
@@ -327,5 +330,25 @@ input:focus, select:focus {
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: #555;
+}
+
+.radio-group input[type="radio"] {
+  width: 16px;
+  height: 16px;
 }
 </style>

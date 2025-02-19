@@ -41,6 +41,8 @@ export const useDemoStore = defineStore('demo', {
     pepAssociate: '',
     relationshipToPep: '',
     pepName: '',
+    jobTitle: '',
+    selectedOptions: [],
     firstIdType: '',
     firstIdNumber: '',
     firstExpiryDate: '',
@@ -144,10 +146,16 @@ export const useDemoStore = defineStore('demo', {
       this.employmentType = info.employmentType;
       this.proofOfEmploymentFile = info.proofOfEmploymentFile;
     },
-    setPepInfo(info) {
-      this.pepAssociate = info.pepAssociate;
-      this.relationshipToPep = info.relationshipToPep;
-      this.pepName = info.pepName;
+    setPepInfo(data) {
+      this.pepAssociate = data.pepAssociate;
+      this.relationshipToPep = data.relationshipToPep;
+      this.pepName = data.pepName;
+      this.jobTitle = data.jobTitle;
+      this.selectedOptions = data.selectedOptions;
+    },
+    setSelectedOptions(options) {
+      this.selectedOptions = options;
+    
     },
     setChildIdInfo(info) {
       this.firstIdType = info.firstIdType;

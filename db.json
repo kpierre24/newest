@@ -1,4 +1,18 @@
 {
+  "membership-declaration-agreement": [
+    {
+      "id": "9933",
+      "isMemberOfAnotherCreditUnion": "no",
+      "isServingOnBoard": "no"
+    },
+    {
+      "id": "8834",
+      "isMemberOfAnotherCreditUnion": "yes",
+      "creditUnionName": "etet",
+      "isServingOnBoard": "yes",
+      "creditUnionBoardName": "fggfg"
+    }
+  ],
   "account-number": [],
   "new-or-existing-customer": [
     {
@@ -81,6 +95,18 @@
     },
     {
       "id": "7bbd",
+      "customerType": "existing_customer"
+    },
+    {
+      "id": "a78d",
+      "customerType": "existing_customer"
+    },
+    {
+      "id": "b14e",
+      "customerType": "existing_customer"
+    },
+    {
+      "id": "42a5",
       "customerType": "existing_customer"
     }
   ],
@@ -1452,6 +1478,12 @@
       "pepAssociate": "yes",
       "relationshipToPep": "sdsfsf",
       "pepName": "dfdf"
+    },
+    {
+      "id": "9375",
+      "pepAssociate": "yes",
+      "relationshipToPep": "fggf",
+      "pepName": "fgfgf"
     }
   ],
   "politically-exposed-persons": [
@@ -1779,6 +1811,26 @@
       "pepAssociate": "yes",
       "relationshipToPep": "",
       "pepName": ""
+    },
+    {
+      "id": "16c1",
+      "pepAssociate": "yes",
+      "relationshipToPep": "",
+      "pepName": ""
+    },
+    {
+      "id": "7cb6",
+      "pepAssociate": "yes",
+      "relationshipToPep": "",
+      "pepName": "",
+      "selectedOptions": []
+    },
+    {
+      "id": "ab9a",
+      "pepAssociate": "yes",
+      "relationshipToPep": "",
+      "pepName": "",
+      "selectedOptions": []
     }
   ],
   "employment-information": [
@@ -3630,6 +3682,19 @@
       "password": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true
+    },
+    {
+      "id": "f32f",
+      "firstName": "KENDELL",
+      "lastName": "PIERRE",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8682784233",
+      "gender": "male",
+      "dob": "2025-02-09",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
     }
   ],
   "id-information": [
@@ -3890,6 +3955,10 @@
     },
     {
       "id": "7762",
+      "status": "success"
+    },
+    {
+      "id": "6ccf",
       "status": "success"
     }
   ],
