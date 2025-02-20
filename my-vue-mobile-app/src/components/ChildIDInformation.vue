@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Child ID Information</h1>
       <div class="id-box">
         <div class="id-container">
@@ -24,7 +23,7 @@
             <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" :disabled="firstIdType === 'Birthpaper'" />
           </div>
           <div class="input-container">
-            <label for="firstIdDocument">Upload Document</label>
+            
             <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
             <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
           </div>
@@ -49,15 +48,17 @@
             <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" :disabled="secondIdType === 'Birthpaper'" />
           </div>
           <div class="input-container">
-            <label for="secondIdDocument">Upload Document</label>
+            
             <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
             <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
           </div>
+          <div class="id-box">
           <div class="input-container">
             <label for="schoolName">School Name</label>
             <input type="text" v-model="schoolName" id="schoolName" placeholder="Enter school name" />
           </div>
         </div>
+      </div>
       </div>
       <div class="button-group">
         <button class="back-button" @click="navigateToBasicInformation">Back</button>
@@ -126,17 +127,21 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.container  {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   background: #f4f4f4;
   padding: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .form-container {
   background-color: #ffffff;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -145,7 +150,15 @@ export default {
   text-align: center;
   overflow-y: auto;
   max-height: 90vh;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+
+.form-container::-webkit-scrollbar {
+  display: none;
+}
+
+
 
 h1 {
   font-size: 22px;
@@ -184,42 +197,57 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-.button-group {
-  display: flex;
-  justify-content: space-between;
+select {
   width: 100%;
-  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #800080;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+select:focus {
+  border-color: #4b0082;
+  outline: none;
+  box-shadow: 0 0 5px rgba(128, 0, 128, 0.2);
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.back-button, .next-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.next-button {
+  background-color: #7838dd;
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover {
+  background-color: #9e79da;
 }
 
 .logo {
@@ -313,5 +341,37 @@ input:focus, select:focus {
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
+}
+
+.id-box {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.id-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.browse-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #800080;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.browse-button:hover {
+  background-color: #4b0082;
 }
 </style>

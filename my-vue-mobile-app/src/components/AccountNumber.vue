@@ -1,18 +1,22 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>Account Number</h1>
+      
+      <h1>Enter Account Number</h1>
+      <p>Please enter any account number you have with Cathedral Credit Union</p>
       <form @submit.prevent="handleSubmit">
-        <div class="input-container">
+        <div class="account-number-box">
           <label for="accountNumber">Account Number</label>
-          <Field
-            name="accountNumber"
-            id="accountNumber"
-            placeholder="Enter account number"
-            :class="{ 'is-invalid': errors.accountNumber }"
-            as="input"
-          />
+          <div class="input-with-icon">
+            <i class="fas fa-user-circle icon"></i>
+            <Field
+              name="accountNumber"
+              id="accountNumber"
+              placeholder="Enter account number"
+              :class="{ 'is-invalid': errors.accountNumber }"
+              as="input"
+            />
+          </div>
           <ErrorMessage name="accountNumber" class="error-message" />
         </div>
         <div class="button-group">
@@ -36,10 +40,8 @@ export default defineComponent({
     Field,
     ErrorMessage
   },
-  async setup() {
+  setup() {
     const router = useRouter();
-
-    
 
     const validationSchema = yup.object({
       accountNumber: yup
@@ -52,14 +54,18 @@ export default defineComponent({
       validationSchema
     });
 
-    const response = await axios.post('http://localhost:3000/account-number', formData, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    const onSubmit = (values) => {
-      console.log('Form submitted:', values);
-      // Navigate to the next page
-      router.push('/due-diligence'); // Replace with the actual next page route
+    const onSubmit = async (values) => {
+      try {
+        console.log('Form submitted:', values);
+        const response = await axios.post('http://localhost:3000/account-number', values, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('API response:', response.data);
+        router.push('/due-diligence'); // Navigate to the next page
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while submitting the form.');
+      }
     };
 
     const navigateToPrevious = () => {
@@ -80,49 +86,80 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 100vh; /* Full viewport height */
   background: #f4f4f4; /* Light background for the page */
   padding: 20px;
+  width: 100%; /* Ensure the container takes full width */
 }
 
 .form-container {
-  background: linear-gradient(to right, #a8c0ff, #3f2b96); /* Light purple gradient */
+  background-image: url('@/assets/back.jpg');
+  background-size: cover; /* Light purple gradient */
   padding: 40px;
   border-radius: 20px; /* Rounded corners */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px; /* Narrower width for consistency */
+  max-width: 600px; /* Adjust to match the ParentInformation container width */
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 90vh; /* Match the height of ParentInformation container */
   color: white; /* White text for contrast */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+.logo {
+  width: 157.5px;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 h1 {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reduced margin */
+  color: #333; /* Darker heading color */
 }
 
-.input-container {
+p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #5f5555; /* Slightly darker text color */
+}
+
+.account-number-box {
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  padding: 20px;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add shadow */
   width: 100%;
   margin-bottom: 20px;
-  text-align: left;
+  text-align: center;
 }
 
-label {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-  margin-bottom: 6px;
+.input-with-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.icon {
+  position: absolute;
+  left: 10px; /* Position the icon to the left */
+  color: #333; /* Icon color */
+  font-size: 20px; /* Icon size */
 }
 
 input {
   width: 100%;
-  padding: 12px;
+  padding: 12px 12px 12px 40px; /* Add padding to the left for the icon */
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  background-color: white; /* Solid white background for input */
   transition: 0.3s ease;
 }
 
@@ -134,46 +171,39 @@ input:focus {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  flex-direction: column; /* Arrange buttons vertically */
+  gap: 10px; /* Add space between buttons */
   margin-top: 20px;
+  width: 100%; /* Stretch to the width of the container */
 }
 
 .back-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+  width: 100%; /* Stretch buttons to full width */
+  padding: 15px; /* Increase padding for better appearance */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
+  background-color: #f15539ea; /* Red background */
+  color: white; /* White text */
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea; /* Lighter red on hover */
 }
 
 .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
+  background-color: #7838dd; /* Purple background */
+  color: white; /* White text */
 }
 
 .next-button:hover {
-  background-color: #0056b3;
-}
-
-.logo {
-  width: 157.5px;
-  height: auto;
-  margin-bottom: 20px;
+  background-color: #9e79da; /* Lighter purple on hover */
 }
 
 .error-message {

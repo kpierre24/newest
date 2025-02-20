@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+      
       <h1>ID Information</h1>
       <form @submit.prevent="submitIDInformation">
         <div class="id-box">
@@ -26,7 +26,6 @@
               <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :min="minDate" />
             </div>
             <div class="input-container">
-              <label for="firstIdDocument">Upload Document</label>
               <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
               <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
             </div>
@@ -51,7 +50,6 @@
               <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :min="minDate" />
             </div>
             <div class="input-container">
-              <label for="secondIdDocument">Upload Document</label>
               <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
               <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
             </div>
@@ -73,7 +71,7 @@
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="submit-button">Next</button>
+          <button type="submit" class="next-button">Next</button>
         </div>
       </form>
     </div>
@@ -193,6 +191,8 @@ export default {
 
 .form-container {
   background-color: #ffffff;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -240,42 +240,57 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-.button-group {
-  display: flex;
-  justify-content: space-between;
+select {
   width: 100%;
-  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #800080;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+select:focus {
+  border-color: #4b0082;
+  outline: none;
+  box-shadow: 0 0 5px rgba(128, 0, 128, 0.2);
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.back-button, .next-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.next-button {
+  background-color: #7838dd;
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover {
+  background-color: #9e79da;
 }
 
 .logo {
@@ -369,5 +384,37 @@ input:focus, select:focus {
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
+}
+
+.id-box {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.id-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.browse-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #800080;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.browse-button:hover {
+  background-color: #4b0082;
 }
 </style>

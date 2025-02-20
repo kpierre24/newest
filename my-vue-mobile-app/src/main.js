@@ -7,6 +7,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faUser, faPhone, faEnvelope, faLock, faCalendarAlt, faVenusMars} from '@fortawesome/free-solid-svg-icons';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const app = createApp(App);
 const pinia = createPinia();

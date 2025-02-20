@@ -1,19 +1,19 @@
 <template>
   <div class="container">
     <div class="content">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+     
       <h1>Due Diligence</h1>
       <div class="text-container">
         <div class="text-content">
           <p>As part of our commitment to regulatory compliance and ensuring the security of our members, we may require all 
             foreign nationals to complete additional due diligence procedures which may include: </p>
           <div class="tags-container">
-            <h3>Foreign bank information</h3>
-            <h3>Source of funds</h3>
-            <h3>Purpose of the account</h3>
-            <h3>Anti-Money Laundering (AML) Compliance</h3>
-            <h3>Foreign Account Tax Compliance Act (FATCA) Compliance</h3>
-            <h3>Politically Exposed Persons Regulations</h3>
+            <h5>Foreign bank information</h5>
+            <h5>Source of funds</h5>
+            <h5>Purpose of the account</h5>
+            <h5>Anti-Money Laundering (AML) Compliance</h5>
+            <h5>Foreign Account Tax Compliance Act (FATCA) Compliance</h5>
+            <h5>Politically Exposed Persons Regulations</h5>
           </div>
           <a href="https://drive.google.com/drive/folders/1t8z2oRVvDwJwXGtKQ7JAQGdsK7-IuZIN" target="_blank">Link to Laws and Regulations</a>
         </div>
@@ -100,7 +100,7 @@ h3 {
 }
 
 p {
-  font-size: 16px;
+  font-size: 10px;
   color: #666;
   margin-bottom: 20px;
 }
