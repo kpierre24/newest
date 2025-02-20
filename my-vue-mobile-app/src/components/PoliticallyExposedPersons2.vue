@@ -18,33 +18,46 @@
           </div>
         </div>
 
-        <div class="input-container" v-if="pepAssociate === 'yes'">
+        <div class="input-container">
           <label for="relationshipToPep">Relationship to PEP</label>
-          <input type="text" v-model="relationshipToPep" id="relationshipToPep" placeholder="Enter relationship" />
+          <input
+            type="text"
+            v-model="relationshipToPep"
+            id="relationshipToPep"
+            placeholder="Enter relationship"
+            :disabled="pepAssociate === 'no'"
+          />
           <div class="error-container">
             <span class="error">{{ errorMessage }}</span>
           </div>
         </div>
 
-        <div class="input-container" v-if="pepAssociate === 'yes'">
+        <div class="input-container">
           <label for="pepName">Name of PEP</label>
-          <input type="text" v-model="pepName" id="pepName" placeholder="Enter name of PEP" />
+          <input
+            type="text"
+            v-model="pepName"
+            id="pepName"
+            placeholder="Enter name of PEP"
+            :disabled="pepAssociate === 'no'"
+          />
           <div class="error-container">
             <span class="error">{{ errorMessage }}</span>
           </div>
-        </div>
-
-        <div class="button-group">
-          <button class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="next-button">Next</button>
         </div>
       </form>
+
+      <!-- Navigation buttons at the bottom -->
+      <div class="button-group">
+        <button class="back-button" @click="navigateToPrevious">Back</button>
+        <button type="submit" class="next-button" @click="submitPepInfo">Next</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'; // Import computed
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
@@ -54,79 +67,67 @@ export default {
   setup() {
     const router = useRouter();
     const store = useDemoStore();
+
     const pepAssociate = ref('');
     const relationshipToPep = ref('');
     const pepName = ref('');
     const errorMessage = ref('');
 
+    // Pull date of birth from Pinia store
+    const dateOfBirth = computed(() => store.basicInfo?.dob);
 
-  
-      
-    
- 
+    // Function to calculate age
+    const calculateAge = (dob) => {
+      const today = new Date();
+      const birthDate = new Date(dob);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
 
-    const validateForm = () => {
-      if (!pepAssociate.value || !relationshipToPep.value || !pepName.value) {
-        errorMessage.value = 'Please fill all required fields.';
-        return false;
+      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
       }
-      return true;
+
+      return age;
     };
 
     const submitPepInfo = async () => {
-      if (validateForm()) {
-        try {
-          const formData = {
-            pepAssociate: pepAssociate.value,
-            relationshipToPep: relationshipToPep.value,
-            pepName: pepName.value
-          };
+      if (!pepAssociate.value) {
+        errorMessage.value = 'Please select an option.';
+        return;
+      }
 
-          // Save PEP info to the store
-          store.setPepInfo(formData);
+      try {
+        const formData = {
+          pepAssociate: pepAssociate.value,
+          relationshipToPep: relationshipToPep.value,
+          pepName: pepName.value,
+        };
 
-          // Make API call
-          await axios.post('http://localhost:3000/politically-exposed-persons-2', formData, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
+        // Save data to Pinia store
+        store.setPepInfo(formData);
 
-          // Get date of birth from store
-          const dateOfBirth = store.dob;
-          console.log('Date of Birth from store:', dateOfBirth);
+        // Make API call
+        await axios.post('http://localhost:3000/politically-exposed-persons-2', formData);
 
-          // Calculate age
-          const today = new Date();
-          const birthDate = new Date(dateOfBirth);
-          const age = today.getFullYear() - birthDate.getFullYear();
-          const monthDiff = today.getMonth() - birthDate.getMonth();
-          
-          // Adjust age if birthday hasn't occurred this year
-          const finalAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate()) 
-            ? age - 1 
-            : age;
-
-          console.log('Calculated age:', finalAge);
-
-          // Navigate based on age
-          if (finalAge >= 17) {
-            console.log('Navigating to ID Information (Adult)');
-            router.push('/id-information');
+        // Calculate age and navigate accordingly
+        if (dateOfBirth.value) {
+          const age = calculateAge(dateOfBirth.value);
+          if (age <= 17) {
+            router.push({ name: 'ChildIdInformation' });
           } else {
-            console.log('Navigating to Child ID Information');
-            router.push('/child-id-information');
+            router.push({ name: 'IdInformation' });
           }
-
-        } catch (error) {
-          console.error('Error in form submission:', error);
-          errorMessage.value = 'An error occurred while processing your information.';
+        } else {
+          errorMessage.value = 'Date of birth is missing.';
         }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        errorMessage.value = 'An error occurred while submitting the form.';
       }
     };
 
     const navigateToPrevious = () => {
-      router.go(-1);
+      router.push({ name: 'PoliticallyExposedPersons' }); // Replace with your previous route
     };
 
     return {
@@ -136,7 +137,6 @@ export default {
       errorMessage,
       submitPepInfo,
       navigateToPrevious,
-    
     };
   }
 };
@@ -154,14 +154,18 @@ export default {
 
 .form-container {
   background-color: #ffffff;
+  background-image: url('@/assets/back.jpg');
+  background-size: contain;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 420px;
-  text-align: center;
-  overflow-y: auto;
-  max-height: 90vh;
+  height: 90vh; /* Set a fixed height for the form container */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribute space evenly */
+  align-items: center; /* Center items horizontally */
 }
 
 h1 {
@@ -170,10 +174,10 @@ h1 {
   margin-bottom: 20px;
 }
 
-.input-group, .input-container {
-  width: 100%;
+.input-container {
   margin-bottom: 20px;
-  text-align: left;
+  width: 100%; /* Ensure input containers take full width */
+  text-align: center; /* Center text and inputs */
 }
 
 label {
@@ -201,42 +205,66 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-.button-group {
+.radio-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 20px;
+  gap: 20px;
+  margin-top: 10px;
+  justify-content: center;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: #555;
+}
+
+.radio-group input[type="radio"] {
+  width: 16px;
+  height: 16px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%; /* Ensure buttons take full width */
+}
+
+.back-button, .next-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.next-button {
+  background-color: #7838dd;
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover {
+  background-color: #9e79da;
+}
+
+.error-container {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
 .logo {
@@ -330,25 +358,5 @@ input:focus, select:focus {
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
-}
-
-.radio-group {
-  display: flex;
-  gap: 20px;
-  margin-top: 10px;
-  justify-content: center;
-}
-
-.radio-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  color: #555;
-}
-
-.radio-group input[type="radio"] {
-  width: 16px;
-  height: 16px;
 }
 </style>

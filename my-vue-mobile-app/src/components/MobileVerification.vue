@@ -1,20 +1,20 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <div></div>
       <h1>Mobile [SMS] Verification</h1>
       <h4>Enter the verification code sent as an SMS to your mobile phone</h4>
       <i class="fas fa-mobile-alt common-icon"></i> <!-- Mobile phone icon -->
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <div class="code-inputs">
-            <input type="number" v-model="code[0]" maxlength="1" />
-            <input type="number" v-model="code[1]" maxlength="1" />
-            <input type="number" v-model="code[2]" maxlength="1" />
-            <input type="number" v-model="code[3]" maxlength="1" />
-            <input type="number" v-model="code[4]" maxlength="1" />
-            <input type="number" v-model="code[5]" maxlength="1" />
-          </div>
+          <label for="verificationCode">Verification Code</label>
+          <input
+            type="number"
+            v-model="verificationCode"
+            id="verificationCode"
+            placeholder="Enter 6-digit code"
+            maxlength="6"
+            :oninput="(e) => e.target.value = e.target.value.slice(0, 6)"
+          />
           <p class="center-text">Enter the code received on your device</p>
           <ErrorMessage name="verificationCode" class="error-message" />
         </div>
@@ -57,14 +57,14 @@ export default {
     const store = useDemoStore();
     const router = useRouter();
     const errorMessage = ref('');
-    const code = ref(['', '', '', '']);
+    const verificationCode = ref('');
     const resendCount = ref(0);
     const attemptsLeft = ref(5);
 
     const validationSchema = yup.object({
       verificationCode: yup
         .string()
-        .matches(/^\d{5}$/, 'Verification code must be exactly 5 digits')
+        .matches(/^\d{6}$/, 'Verification code must be exactly 6 digits')
         .required('Verification code is required')
     });
 
@@ -74,13 +74,12 @@ export default {
 
     const onSubmit = async (values) => {
       try {
-        const verificationCode = code.value.join('');
         const verificationData = {
-          verificationCode
+          verificationCode: verificationCode.value
         };
 
         // Save verification code to the store
-        store.setVerificationCode(verificationCode);
+        store.setVerificationCode(verificationCode.value);
 
         // Debugging logs to check form data
         console.log('Verification Data:', verificationData);
@@ -121,7 +120,7 @@ export default {
       errors,
       errorMessage,
       navigateToPrevious,
-      code,
+      verificationCode,
       resendCount,
       resendCode,
       attemptsLeft
@@ -379,5 +378,22 @@ input:focus, select:focus {
 .error-message {
   color: red;
   text-align: center;
+}
+
+.input-container input[type="number"] {
+  width: 100%;
+  padding: 15px;
+  text-align: center;
+  font-size: 24px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+.input-container input[type="number"]:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 </style>
