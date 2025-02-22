@@ -2,34 +2,41 @@
   <div class="container">
     <div class="form-container">
       <h1>Designation of Beneficiary</h1>
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <form @submit.prevent="handleSubmit('next')">
         <div class="input-container">
+          <i class="fas fa-user icon"></i>
           <input type="text" v-model="firstName" placeholder="First Name" required />
         </div>
         <div class="input-container">
+          <i class="fas fa-user icon"></i>
           <input type="text" v-model="lastName" placeholder="Last Name" required />
         </div>
         <div class="input-container">
+          <i class="fas fa-user icon"></i>
           <input type="text" v-model="otherName" placeholder="Other Name" />
         </div>
         <div class="input-container">
+          <i class="fas fa-map-marker-alt icon"></i>
           <input type="text" v-model="addressLine1" placeholder="Address Line 1" required />
         </div>
         <div class="input-container">
+          <i class="fas fa-map-marker-alt icon"></i>
           <input type="text" v-model="addressLine2" placeholder="Address Line 2" />
         </div>
         <div class="input-container">
+          <i class="fas fa-city icon"></i>
           <input type="text" v-model="city" placeholder="City" required />
         </div>
         <div class="input-container">
+          <i class="fas fa-globe icon"></i>
           <input type="text" v-model="country" placeholder="Country" required />
         </div>
         <div class="input-container">
-          <label for="dob">Date of Birth</label>
-          <input type="date" v-model="dob" id="dob" required />
+          <i class="fas fa-birthday-cake icon"></i>
+          <input type="date" v-model="dob" placeholder="Date of Birth" id="dob" required />
         </div>
         <div class="input-container">
+          <i class="fas fa-venus-mars icon"></i>
           <select v-model="gender" required>
             <option value="" disabled>Select Gender</option>
             <option value="male">Male</option>
@@ -37,9 +44,11 @@
           </select>
         </div>
         <div class="input-container">
+          <i class="fas fa-users icon"></i>
           <input type="text" v-model="relationshipToBeneficiary" placeholder="Relationship to Beneficiary" required />
         </div>
         <div class="input-container">
+          <i class="fas fa-id-card icon"></i>
           <select v-model="typeOfId" required>
             <option value="" disabled>Select Type of ID</option>
             <option value="id card">ID Card</option>
@@ -49,18 +58,20 @@
           </select>
         </div>
         <div class="input-container">
+          <i class="fas fa-id-badge icon"></i>
           <input type="text" v-model="idNumber" placeholder="ID Number" required />
         </div>
         <div class="input-container">
+          <i class="fas fa-percent icon"></i>
           <input type="number" v-model="percentageOfInterest" placeholder="Percentage of Beneficiary Interest" required />
         </div>
-        <div class="additional-actions">
+        <div class="button-container">
           <button type="button" class="add-button" @click="handleSubmit('add')">Add Another Beneficiary</button>
-          <a href="#" @click.prevent="skipAddingBeneficiary">Skip Adding Beneficiary</a>
-        </div>
-        <div class="buttons">
-          <button type="button" class="back-button" @click="goBack">Back</button>
-          <button type="submit" class="next-button">Next</button>
+          <a href="#" class="skip-button" @click.prevent="skipAddingBeneficiary">Skip Adding Beneficiary</a>
+          <div class="navigation-buttons">
+            <button type="button" class="back-button" @click="goBack">Back</button>
+            <button type="submit" class="next-button">Next</button>
+          </div>
         </div>
       </form>
     </div>
@@ -186,27 +197,56 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;
+  max-height: 120vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
-  background-color: #ffffff;
-  padding: 40px;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  width: 420px;
   max-width: 420px;
+  max-height: 120vh;
+  height: 100%;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}
+
+.form-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+}
+.form-container {
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
 h1 {
@@ -230,44 +270,69 @@ label {
   font-weight: 600;
 }
 
-
-
-.button-group {
+.button-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px; /* Space between buttons */
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.add-button,
+.skip-button,
+.back-button,
+.next-button {
+  width: 100%; /* Stretch buttons to full width */
+  padding: 15px; /* Increase padding for better appearance */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.add-button {
+  background-color: #7838dd; /* Purple background */
+  color: white; /* White text */
+}
+
+.add-button:hover {
+  background-color: #9e79da; /* Lighter purple on hover */
+}
+
+.skip-button {
+  background-color: transparent;
+  color: #7838dd; /* Purple text */
+  text-decoration: underline;
+}
+
+.skip-button:hover {
+  color: #9e79da; /* Lighter purple on hover */
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 10px; /* Space between Back and Next buttons */
 }
 
 .back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
+  background-color: #f15539ea; /* Red background */
+  color: white; /* White text */
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea; /* Lighter red on hover */
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
+.next-button {
+  background-color: #7838dd; /* Purple background */
+  color: white; /* White text */
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover {
+  background-color: #9e79da; /* Lighter purple on hover */
 }
 
 .logo {
@@ -352,22 +417,21 @@ label {
   position: relative;
   width: 100%;
   margin-bottom: 20px;
-  display: flex;
-  align-items: center;
 }
 
-.input-container .icon {
+.icon {
   position: absolute;
-  left: 15px;  /* Align icon to the left */
-  color: #666;
-  font-size: 16px;
+  left: 10px; /* Position the icon to the left */
+  top: 50%; /* Center the icon vertically */
+  transform: translateY(-50%);
+  color: #666; /* Icon color */
+  font-size: 16px; /* Icon size */
 }
 
 .input-container input,
 .input-container select {
   width: 100%;
-  padding: 12px;
-  padding-left: 40px; /* Add space on the left for the icon */
+  padding: 12px 12px 12px 40px; /* Add padding to the left for the icon */
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
@@ -381,6 +445,5 @@ label {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}/* Adds space between the icons */
-
+}
 </style>

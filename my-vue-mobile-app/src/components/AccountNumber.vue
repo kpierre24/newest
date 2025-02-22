@@ -83,49 +83,62 @@ export default defineComponent({
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: #FFFFFF;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh; /* Full viewport height */
-  background: #f4f4f4; /* Light background for the page */
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
-  width: 100%; /* Ensure the container takes full width */
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
   background-image: url('@/assets/back.jpg');
-  background-size: cover; /* Light purple gradient */
+  background-size: cover;
+  background-position: center;
   padding: 40px;
-  border-radius: 20px; /* Rounded corners */
+  border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 600px; /* Adjust to match the ParentInformation container width */
+  width: 420px;
+  max-width: 420px;
+  height: 100%;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh; /* Match the height of ParentInformation container */
-  color: white; /* White text for contrast */
+  height:850.5px;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
-.logo {
-  width: 157.5px;
-  height: auto;
-  margin-bottom: 20px;
-}
+
 
 h1 {
   font-size: 24px;
-  margin-bottom: 10px; /* Reduced margin */
-  color: #333; /* Darker heading color */
+  margin-bottom: 20px; /* Reduced margin */
+  color: #FFBC2D;
+  margin: 0; /* Darker heading color */
 }
 
 p {
   font-size: 16px;
   margin-bottom: 20px;
-  color: #5f5555; /* Slightly darker text color */
+  color: #000000; /* Slightly darker text color */
 }
 
 .account-number-box {

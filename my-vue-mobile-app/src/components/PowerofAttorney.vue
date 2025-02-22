@@ -4,62 +4,90 @@
       <h1>Power of Attorney</h1>
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <label for="poaFirstName">First Name</label>
-          <Field name="poaFirstName" id="poaFirstName" placeholder="First Name" :class="{ 'is-invalid': errors.poaFirstName }" as="input" />
-          <ErrorMessage name="poaFirstName" class="error-message" />
+          <input
+            type="text"
+            v-model="poaFirstName"
+            placeholder="First Name"
+            required
+          />
         </div>
         <div class="input-container">
-          <label for="poaLastName">Last Name</label>
-          <Field name="poaLastName" id="poaLastName" placeholder="Last Name" :class="{ 'is-invalid': errors.poaLastName }" as="input" />
-          <ErrorMessage name="poaLastName" class="error-message" />
+          <input
+            type="text"
+            v-model="poaLastName"
+            placeholder="Last Name"
+            required
+          />
         </div>
         <div class="input-container">
-          <label for="poaOtherName">Other Name</label>
-          <Field name="poaOtherName" id="poaOtherName" placeholder="Other Name" :class="{ 'is-invalid': errors.poaOtherName }" as="input" />
-          <ErrorMessage name="poaOtherName" class="error-message" />
+          <input
+            type="text"
+            v-model="poaOtherName"
+            placeholder="Other Name"
+          />
         </div>
         <div class="input-container">
-          <label for="poaAddressLine1">Address Line 1</label>
-          <Field name="poaAddressLine1" id="poaAddressLine1" placeholder="Address Line 1" :class="{ 'is-invalid': errors.poaAddressLine1 }" as="input" />
-          <ErrorMessage name="poaAddressLine1" class="error-message" />
+          <input
+            type="text"
+            v-model="poaAddressLine1"
+            placeholder="Address Line 1"
+            required
+          />
         </div>
         <div class="input-container">
-          <label for="poaAddressLine2">Address Line 2</label>
-          <Field name="poaAddressLine2" id="poaAddressLine2" placeholder="Address Line 2" :class="{ 'is-invalid': errors.poaAddressLine2 }" as="input" />
-          <ErrorMessage name="poaAddressLine2" class="error-message" />
+          <input
+            type="text"
+            v-model="poaAddressLine2"
+            placeholder="Address Line 2"
+          />
         </div>
         <div class="input-container">
-          <label for="poaCity">City</label>
-          <Field name="poaCity" id="poaCity" placeholder="City" :class="{ 'is-invalid': errors.poaCity }" as="input" />
-          <ErrorMessage name="poaCity" class="error-message" />
+          <input
+            type="text"
+            v-model="poaCity"
+            placeholder="City"
+            required
+          />
         </div>
         <div class="input-container">
-          <label for="poaCountry">Country</label>
-          <Field name="poaCountry" id="poaCountry" placeholder="Country" :class="{ 'is-invalid': errors.poaCountry }" as="input" />
-          <ErrorMessage name="poaCountry" class="error-message" />
+          <input
+            type="text"
+            v-model="poaCountry"
+            placeholder="Country"
+            required
+          />
         </div>
         <div class="input-container">
-          <label for="poaDob">Date of Birth</label>
-          <Field name="poaDob" id="poaDob" type="date" :class="{ 'is-invalid': errors.poaDob }" as="input" />
-          <ErrorMessage name="poaDob" class="error-message" />
+          <input
+            type="date"
+            v-model="poaDob"
+            placeholder="Date of Birth"
+            required
+          />
         </div>
         <div class="input-container">
-          <label for="poaIdType">ID Type</label>
-          <Field name="poaIdType" id="poaIdType" as="select" :class="{ 'is-invalid': errors.poaIdType }">
-            <option value="">Select ID Type</option>
+          <select v-model="poaIdType" required>
+            <option value="" disabled>Select ID Type</option>
             <option value="national-id">National ID</option>
             <option value="drivers-permit">Driver's Permit</option>
             <option value="passport">Passport</option>
-          </Field>
-          <ErrorMessage name="poaIdType" class="error-message" />
+          </select>
         </div>
         <div class="input-container">
-          <label for="poaIdDocument">ID Document</label>
-          <input type="file" id="poaIdDocument" @change="handleIdFileUpload" required />
+          <input
+            type="file"
+            id="poaIdDocument"
+            @change="handleIdFileUpload"
+            required
+          />
         </div>
         <div class="input-container">
-          <label for="poaDocument">Power of Attorney Document</label>
-          <input type="file" id="poaDocument" @change="handleFileUpload" required />
+          <input
+            type="file"
+            id="poaDocument"
+            @change="handleFileUpload"
+            required
+          />
         </div>
         <div class="skip-link">
           <a href="#" @click.prevent="skipToNext">Add Power of Attorney Later</a>
@@ -211,7 +239,9 @@ export default {
 }
 
 .form-container {
-  background-color: #ffffff;
+  background-image: url('@/assets/back.jpg');
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -220,6 +250,17 @@ export default {
   text-align: center;
   overflow-y: auto;
   max-height: 90vh;
+}
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 h1 {
@@ -278,40 +319,63 @@ input:focus, select:focus, textarea:focus {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
   width: 100%;
-  margin-top: 20px;
+  margin-bottom: 30px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.navigation-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.back-button, .next-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.next-button {
+  background-color: #7838dd;
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover {
+  background-color: #9e79da;
+}
+
+.stretch-button {
+  background-color: #2d5ad4;
+  color: white;
+  font-size: 12px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.stretch-button:hover {
+  background-color: #9e79da;
 }
 
 .logo {

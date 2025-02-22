@@ -209,7 +209,7 @@ export default {
   max-width: 420px;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 100vh;
 }
 
 @keyframes gradientAnimation {
@@ -269,61 +269,67 @@ input[type="text"] {
 .button-group {
   display: flex;
   flex-direction: column;
+  gap: 20px;
   width: 100%;
-}
-
-.stretch-button {
-  width: 100%;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 7px;
-  cursor: pointer;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.stretch-button:hover {
-  background-color: #0056b3;
+  margin-bottom: 30px;
 }
 
 .navigation-buttons {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
   width: 100%;
-  margin-top: 20px;
 }
 
 .back-button, .next-button {
-  padding: 10px 20px;
+  width: 100%;
+  padding: 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
   transition: background-color 0.3s ease;
-  width: 48%;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
 .next-button {
-  background-color: #007bff;
+  background-color: #7838dd;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
+}
+
+.stretch-button {
+  background-color: #2d5ad4;
+  color: white;
+  font-size: 12px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.stretch-button:hover {
+  background-color: #9e79da;
+}
+
+.stretch-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .modal-content {
@@ -430,13 +436,6 @@ input[type="text"] {
   position: relative;
   overflow: hidden;
 }
-
-.stretch-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-
 
 .label {
   font-size: 14px;

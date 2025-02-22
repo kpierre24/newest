@@ -4,9 +4,20 @@
       <h1>Parent/Guardian Information</h1>
       <form @submit.prevent="submitForm">
         <div class="input-container" v-for="(value, key) in formData" :key="key">
-          <label :for="key">{{ formatLabel(key) }}</label>
-          <input v-if="key !== 'RelationshipToChild' && key !== 'RelationshipDocument'" :type="getInputType(key)" v-model="formData[key]" :id="key" required />
-          <select v-if="key === 'RelationshipToChild'" v-model="formData[key]" :id="key" required>
+          <input
+            v-if="key !== 'RelationshipToChild' && key !== 'RelationshipDocument'"
+            :type="getInputType(key)"
+            v-model="formData[key]"
+            :id="key"
+            :placeholder="formatPlaceholder(key)"
+            required
+          />
+          <select
+            v-if="key === 'RelationshipToChild'"
+            v-model="formData[key]"
+            :id="key"
+            required
+          >
             <option value="" disabled>Select Relationship</option>
             <option value="mother">Mother</option>
             <option value="father">Father</option>
@@ -14,7 +25,13 @@
             <option value="related_guardian">Related Guardian</option>
             <option value="unrelated_guardian">Unrelated Guardian</option>
           </select>
-          <input v-if="key === 'RelationshipDocument'" type="file" @change="handleFileUpload" id="key" required />
+          <input
+            v-if="key === 'RelationshipDocument'"
+            type="file"
+            @change="handleFileUpload"
+            :id="key"
+            required
+          />
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -72,8 +89,11 @@ export default {
       router.push({ name: 'ChildIdInformation' });
     };
 
-    const formatLabel = (label) => {
-      return label.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+    const formatPlaceholder = (key) => {
+      return key
+        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+        .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
+        .trim(); // Remove any leading/trailing spaces
     };
 
     const getInputType = (key) => {
@@ -85,7 +105,7 @@ export default {
       handleFileUpload,
       submitForm,
       navigateToPrevious,
-      formatLabel,
+      formatPlaceholder,
       getInputType
     };
   }
@@ -105,7 +125,8 @@ export default {
 .form-container {
   background-color: #ffffff;
   background-image: url('@/assets/back.jpg');
-  background-size: cover;
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -118,6 +139,21 @@ export default {
   -ms-overflow-style: none;
 }
 
+.form-container::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 .form-container::-webkit-scrollbar {
   display: none;
 }

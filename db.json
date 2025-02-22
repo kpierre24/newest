@@ -23,6 +23,13 @@
       "creditUnionName": "sdsd",
       "isServingOnBoard": "yes",
       "creditUnionBoardName": "sdsd"
+    },
+    {
+      "id": "fcd0",
+      "isMemberOfAnotherCreditUnion": "yes",
+      "creditUnionName": "dsdsdsd",
+      "isServingOnBoard": "yes",
+      "creditUnionBoardName": "sdsdsd"
     }
   ],
   "account-number": [
@@ -40,6 +47,14 @@
     },
     {
       "id": "ab6f",
+      "accountNumber": "152478888888"
+    },
+    {
+      "id": "4c5e",
+      "accountNumber": "152478888888"
+    },
+    {
+      "id": "6a73",
       "accountNumber": "152478888888"
     }
   ],
@@ -140,6 +155,14 @@
     },
     {
       "id": "1339",
+      "customerType": "existing_customer"
+    },
+    {
+      "id": "9ca6",
+      "customerType": "new_customer"
+    },
+    {
+      "id": "7a47",
       "customerType": "existing_customer"
     }
   ],
@@ -398,6 +421,16 @@
       "bankAccountNumber": "232355",
       "swiftCode": "343434",
       "bankTelephoneNumber": "8682784233"
+    },
+    {
+      "id": "b4a4",
+      "bankName": "dgdgd",
+      "bankAddressLine1": "O Connor Street",
+      "bankCity": "port of spain",
+      "bankCountry": "Argentina",
+      "bankAccountNumber": "232355",
+      "swiftCode": "343434",
+      "bankTelephoneNumber": "8682224706"
     }
   ],
   "parent-guardian-information": [
@@ -519,6 +552,11 @@
     },
     {
       "id": "f89d",
+      "userId": "12345",
+      "message": "User has successfully signed up"
+    },
+    {
+      "id": "587d",
       "userId": "12345",
       "message": "User has successfully signed up"
     }
@@ -1584,6 +1622,18 @@
       "pepAssociate": "yes",
       "relationshipToPep": "",
       "pepName": ""
+    },
+    {
+      "id": "75db",
+      "pepAssociate": "no",
+      "relationshipToPep": "",
+      "pepName": ""
+    },
+    {
+      "id": "e2e7",
+      "pepAssociate": "no",
+      "relationshipToPep": "",
+      "pepName": ""
     }
   ],
   "politically-exposed-persons": [
@@ -1957,6 +2007,39 @@
       "pepName": "",
       "jobTitle": "",
       "selectedOptions": []
+    },
+    {
+      "id": "d81d",
+      "pepAssociate": "no",
+      "relationshipToPep": "",
+      "pepName": "",
+      "jobTitle": "",
+      "selectedOptions": []
+    },
+    {
+      "id": "26fc",
+      "pepAssociate": "yes",
+      "relationshipToPep": "",
+      "pepName": "",
+      "selectedOptions": [
+        "Sibling"
+      ]
+    },
+    {
+      "id": "60a5",
+      "pepAssociate": "yes",
+      "relationshipToPep": "",
+      "pepName": "",
+      "selectedOptions": [
+        "Sibling"
+      ]
+    },
+    {
+      "id": "fcc3",
+      "pepAssociate": "no",
+      "relationshipToPep": "",
+      "pepName": "",
+      "selectedOptions": []
     }
   ],
   "employment-information": [
@@ -2285,6 +2368,17 @@
       "employerCountry": "Australia",
       "workNumber": "56666",
       "employmentStatus": "unemployed",
+      "employmentType": "part-time",
+      "proofOfEmploymentFile": {}
+    },
+    {
+      "id": "732f",
+      "employerName": "ewewewe",
+      "employerAddressLine1": "Apartment 5",
+      "employerCity": "cunupia",
+      "employerCountry": "Antigua and Barbuda",
+      "workNumber": "3434434",
+      "employmentStatus": "self-employed",
       "employmentType": "part-time",
       "proofOfEmploymentFile": {}
     }
@@ -2639,6 +2733,20 @@
       "AddressLine2": "church st",
       "City": "cunupia",
       "Country": "Antarctica"
+    },
+    {
+      "id": "b7b0",
+      "AddressLine1": "Apartment 5",
+      "AddressLine2": "church st",
+      "City": "cunupia",
+      "Country": "Austria"
+    },
+    {
+      "id": "49e6",
+      "AddressLine1": "",
+      "AddressLine2": "",
+      "City": "",
+      "Country": "Trinidad and Tobago"
     }
   ],
   "verify-mobile": [
@@ -3565,6 +3673,26 @@
       "Nationality": "Bosnia and Herzegovina",
       "DwellingStatus": "owned",
       "ProofOfAddress": {}
+    },
+    {
+      "id": "cee6",
+      "AddressLine1": "O Connor Street",
+      "AddressLine2": "woodbrook",
+      "City": "port of spain",
+      "Country": "Austria",
+      "Nationality": "Azerbaijan",
+      "DwellingStatus": "owned",
+      "ProofOfAddress": "null"
+    },
+    {
+      "id": "fab3",
+      "AddressLine1": "O Connor Street",
+      "AddressLine2": "woodbrook",
+      "City": "port of spain",
+      "Country": "Trinidad and Tobago",
+      "Nationality": "Aland",
+      "DwellingStatus": "subletting",
+      "ProofOfAddress": "null"
     }
   ],
   "basic-info": [
@@ -3888,6 +4016,32 @@
       "password": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true
+    },
+    {
+      "id": "9af0",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "",
+      "email": "KPIERRE24@GMAIL.COM",
+      "mobileNumber": "8682224706",
+      "gender": "female",
+      "dob": "2025-01-27",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "2d5b",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "",
+      "email": "KPIERRE24@GMAIL.COM",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-02-04",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
     }
   ],
   "id-information": [
@@ -4157,6 +4311,10 @@
     {
       "id": "d82d",
       "status": "success"
+    },
+    {
+      "id": "02ae",
+      "status": "success"
     }
   ],
   "mobile-verification-successful": [
@@ -4183,6 +4341,14 @@
     },
     {
       "id": "db57",
+      "status": "success"
+    },
+    {
+      "id": "e2f7",
+      "status": "success"
+    },
+    {
+      "id": "c7e4",
       "status": "success"
     }
   ]

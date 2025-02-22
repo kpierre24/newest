@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Mailing Address</h1>
       <form @submit.prevent="submitMailingAddress">
         <div class="input-container">
@@ -129,6 +128,8 @@ export default {
 
 .form-container {
   background-color: #ffffff;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -178,40 +179,38 @@ input:focus, select:focus {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%; /* Ensure buttons take full width */
 }
 
 .back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.next-button , .submit-button {
+  background-color: #7838dd;
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover , .submit-button:hover {
+  background-color: #9e79da;
 }
 
 .logo {

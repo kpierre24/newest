@@ -1,20 +1,20 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <div></div>
       <h1>Email Verification</h1>
       <h4>Enter the verification code sent to your email</h4>
       <i class="fas fa-envelope common-icon"></i> <!-- Email icon -->
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <div class="code-inputs">
-            <input type="number" v-model="code[0]" maxlength="1" />
-            <input type="number" v-model="code[1]" maxlength="1" />
-            <input type="number" v-model="code[2]" maxlength="1" />
-            <input type="number" v-model="code[3]" maxlength="1" />
-            <input type="number" v-model="code[4]" maxlength="1" />
-            <input type="number" v-model="code[5]" maxlength="1" />
-          </div>
+          <label for="verificationCode">Verification Code</label>
+          <input
+            type="number"
+            v-model="verificationCode"
+            id="verificationCode"
+            placeholder="Enter 6-digit code"
+            maxlength="6"
+            oninput="this.value = this.value.slice(0, 6)"
+          />
           <p class="center-text">Enter the code received in your email</p>
           <ErrorMessage name="verificationCode" class="error-message" />
         </div>
@@ -28,7 +28,6 @@
           <div class="attempts-circle">{{ attemptsLeft }}</div>
           <p class="center-text">Attempts remaining</p>
         </div>
-        
         <div class="button-group">
           <button class="verify-button" type="submit">Verify</button>
           <button class="back-button" @click="navigateToBasicInfo">Back</button>
@@ -57,43 +56,50 @@ export default {
     const store = useDemoStore();
     const router = useRouter();
     const errorMessage = ref('');
-    const code = ref(['', '', '', '']); 
+    const verificationCode = ref('');
     const resendCount = ref(0);
     const attemptsLeft = ref(5);
 
     const validationSchema = yup.object({
       verificationCode: yup
         .string()
-        .matches(/^\d{5}$/, 'Verification code must be exactly 5 digits')
+        .matches(/^\d{6}$/, 'Verification code must be exactly 6 digits')
         .required('Verification code is required')
     });
 
     const { handleSubmit, errors } = useForm({
       validationSchema
     });
+     
 
     const onSubmit = async (values) => {
       try {
-        const verificationCode = code.value.join('');
         const verificationData = {
-          verificationCode
+          verificationCode: verificationCode.value
         };
 
         // Save verification code to the store
-        store.setVerificationCode(verificationCode);
+        store.setVerificationCode(verificationCode.value);
 
         // Debugging logs to check form data
         console.log('Verification Data:', verificationData);
 
-        const response = await axios.post('http://localhost:3000/verify-email', verificationData, {
+        
+
+        // API call to verify the code
+        const response = await axios.post('http://localhost:3000/email-verification-successful', verificationData, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
-        console.log('Verification response:', response.data);
 
-        // Navigate to mobile verification page
-        router.push('/mobile-verification');
+        // Check if the verification was successful
+        if (response.data.success) {
+          console.log('Verification successful');
+          router.push('/email-verification-successful'); // Navigate to the next page
+        } else {
+          throw new Error(response.data.message || 'Invalid verification code');
+        }
       } catch (error) {
         console.error('Error verifying code:', error);
         errorMessage.value = error.message;
@@ -105,7 +111,7 @@ export default {
     };
 
     const navigateToBasicInfo = () => {
-      router.push('/basic-info');
+      router.push('/email-verification-successful');
     };
 
     const resendCode = () => {
@@ -121,7 +127,7 @@ export default {
       errors,
       errorMessage,
       navigateToBasicInfo,
-      code,
+      verificationCode,
       resendCount,
       resendCode,
       attemptsLeft
@@ -145,25 +151,41 @@ export default {
 .form-container {
   background-color: #ffffff;
   padding: 40px;
-  border-radius: 15px;
+  border-radius: 20px; /* Rounded corners */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   height: 100vh;
   text-align: center;
-  background-image: url('@/assets/background.png');
+  background-image: url('@/assets/back.jpg');
   background-size: cover;
   overflow-y: auto;
   max-width: 375px;
   max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
 }
 
 h1 {
   font-size: 22px;
   color: #333;
+  margin-bottom: 10px;
+}
+
+h4 {
+  font-size: 16px;
+  color: #555;
   margin-bottom: 20px;
 }
 
-.input-group, .input-container {
+.common-icon {
+  font-size: 80px;
+  color: #00008b;
+  margin-bottom: 20px;
+}
+
+.input-container {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
@@ -177,7 +199,7 @@ label {
   font-weight: 600;
 }
 
-input, select {
+input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -188,10 +210,38 @@ input, select {
   transition: 0.3s ease;
 }
 
-input:focus, select:focus {
+input:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.center-text {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.attempts-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.attempts-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #00008b;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 .button-group {
@@ -231,153 +281,9 @@ input:focus, select:focus {
   background-color: #0056b3;
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.common-icon {
-  font-size: 80px; /* Set icon size to 80px */
-  color: #00008b; /* Dark blue color */
-}
-
-.icon fas fa-envelope common-icon {
-  width: 80px;
-  height: 80px;
-  color: #00008b;
-  transform: translateY(-10px);
-  vertical-align: middle;
-}
-
-.code-inputs {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-
-.code-inputs input {
-  flex: 1;
-  padding: 15px;
-  text-align: center;
-  font-size: 24px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-.code-inputs input:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
-
-.center-text {
-  text-align: center;
-  margin-top: 10px;
-  font-size: 14px;
-  color: #555;
-}
-
-.attempts-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.attempts-circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #00008b; /* Dark blue background */
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  margin-right: 10px;
-}
-
 .error-message {
   color: red;
   text-align: center;
+  margin-top: 20px;
 }
 </style>

@@ -155,7 +155,8 @@ export default {
 .form-container {
   background-color: #ffffff;
   background-image: url('@/assets/back.jpg');
-  background-size: contain;
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -167,7 +168,17 @@ export default {
   justify-content: space-between; /* Distribute space evenly */
   align-items: center; /* Center items horizontally */
 }
-
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 h1 {
   font-size: 22px;
   color: #333;
@@ -267,42 +278,9 @@ input:focus, select:focus {
   margin-top: 5px;
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
 
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
 
 .agree-button, .disagree-button {
   padding: 10px 20px;
@@ -314,18 +292,6 @@ input:focus, select:focus {
   transition: background-color 0.3s ease;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
 
 .agree-button {
   background-color: #007bff;
@@ -336,14 +302,7 @@ input:focus, select:focus {
   background-color: #0056b3;
 }
 
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
 
-.disagree-button:hover {
-  background-color: #5a6268;
-}
 
 .common-icon {
   /* Add your CSS adjustments here */

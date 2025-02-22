@@ -32,7 +32,7 @@ export default {
         await axios.post('http://localhost:3000/mobile-verification-successful', { status: 'success' });
 
         // Navigate to the membership declaration page
-        router.push({ name: 'MembershipDeclaration' });
+        router.push({ name: 'MembershipDeclarationAgreement' });
       } catch (error) {
         console.error('Error verifying mobile number:', error);
       }

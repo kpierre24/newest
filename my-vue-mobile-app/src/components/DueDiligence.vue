@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="content">
-     
       <h1>Due Diligence</h1>
+      <h3>Due Diligence Information</h3>
       <div class="text-container">
         <div class="text-content">
           <p>As part of our commitment to regulatory compliance and ensuring the security of our members, we may require all 
@@ -54,6 +54,8 @@ export default {
 
 .content {
   background-color: white;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -93,14 +95,14 @@ h1 {
 }
 
 h3 {
-  font-size: 18px;
+  font-size: 16px;
   color: #555;
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
 p {
-  font-size: 10px;
+  font-size: 12px;
   color: #666;
   margin-bottom: 20px;
 }
@@ -119,36 +121,38 @@ a:hover {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%; /* Ensure buttons take full width */
 }
 
 .back-button, .next-button {
-  padding: 10px 20px;
+  width: 100%;
+  padding: 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
   transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
 .next-button {
-  background-color: #007bff;
+  background-color: #7838dd;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
+
 </style>

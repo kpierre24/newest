@@ -171,26 +171,46 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;
+  max-height: 120vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
   background-image: url('@/assets/back.jpg');
   background-size: cover;
-  padding: 40px;
-  border-radius: 20px;
+  background-position: center;
+  padding: 20px;
+  border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  width: 420px;
   max-width: 420px;
+  max-height: 120vh;
+  height: 100%;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
-  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
 }
 
 .form-container::-webkit-scrollbar {
@@ -204,6 +224,7 @@ export default {
 h1 {
   font-size: 24px;
   margin-bottom: 20px;
+  margin-top: 50px;
 }
 
 .input-group, .input-container {
@@ -282,41 +303,41 @@ h1 {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  flex-direction: column; /* Arrange buttons vertically */
+  gap: 10px; /* Add space between buttons */
   margin-top: 20px;
+  width: 100%; /* Stretch to the width of the container */
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .next-button, .submit-button {
+  width: 100%; /* Stretch buttons to full width */
+  padding: 15px; /* Increase padding for better appearance */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
+  background-color: #f15539ea; /* Red background */
+  color: white; /* White text */
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea; /* Lighter red on hover */
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
+.next-button , .submit-button {
+  background-color: #7838dd; /* Purple background */
+  color: white; /* White text */
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover, .submit-button:hover {
+  background-color: #9e79da; /* Lighter purple on hover */
 }
+
 
 .checkbox-container {
   display: flex;

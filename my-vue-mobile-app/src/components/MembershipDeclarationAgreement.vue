@@ -1,7 +1,6 @@
 <template>
   <div class="container background-image">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Membership Declaration Agreement</h1>
       <div class="body-container">
         <p>
@@ -107,7 +106,8 @@ export default {
 .form-container {
   background-color: #ffffff;
   background-image: url('@/assets/back.jpg');
-  background-size: cover;
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -192,46 +192,16 @@ button {
   color: white;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
-}
-
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .logo {

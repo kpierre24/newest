@@ -4,35 +4,24 @@
       <h1>Address Information</h1>
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <label for="addressLine1">Address Line 1</label>
-          <input type="text" v-model="AddressLine1" id="addressLine1" placeholder="Enter address line 1" required />
+        
+          <input type="text" v-model="AddressLine1" id="addressLine1" placeholder=" Address line 1" required />
         </div>
         <div class="input-container">
-          <label for="addressLine2">Address Line 2</label>
-          <input type="text" v-model="AddressLine2" id="addressLine2" placeholder="Enter address line 2" />
+                    <input type="text" v-model="AddressLine2" id="addressLine2" placeholder="Address line 2" />
         </div>
         <div class="input-container">
-          <label for="city">City</label>
-          <input type="text" v-model="City" id="city" placeholder="Enter city" required />
+          <input type="text" v-model="City" id="city" placeholder="City" required />
         </div>
         <div class="input-container">
-          <label for="country">Country</label>
-          <select v-model="Country" id="country" required>
-            <option value="" disabled>Select country</option>
+          <select v-model="Country" id="country" required class="select-input">
+            <option value="" disabled>Country</option>
             <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
           </select>
         </div>
         <div class="input-container">
-          <label for="nationality">Nationality</label>
-          <select v-model="Nationality" id="nationality" required>
-            <option value="" disabled>Select nationality</option>
-            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <label for="dwellingStatus">Dwelling Status</label>
-          <select v-model="DwellingStatus" id="dwellingStatus" required>
-            <option value="" disabled>Select dwelling status</option>
+          <select v-model="DwellingStatus" id="dwellingStatus" required class="select-input">
+            <option value="" disabled>Dwelling status</option>
             <option value="rented">Rented</option>
             <option value="owned">Owned</option>
             <option value="subletting">Subletting</option>
@@ -40,8 +29,16 @@
           </select>
         </div>
         <div class="input-container">
-          <label for="ProofOfAddress">Proof of Address</label>
-          <input type="file" id="ProofOfAddress" @change="handleFileUpload" required />
+          <button type="button" class="upload-button" @click="triggerFileUpload">
+            Upload Proof of Address
+          </button>
+          <input type="file" id="ProofOfAddress" @change="handleFileUpload" style="display: none;" />
+        </div>
+        <div class="input-container">
+          <select v-model="Nationality" id="nationality" required class="select-input">
+            <option value="" disabled>Nationality</option>
+            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
+          </select>
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -84,6 +81,10 @@ export default {
 
     const handleFileUpload = (event) => {
       ProofOfAddress.value = event.target.files[0];
+    };
+
+    const triggerFileUpload = () => {
+      document.getElementById('ProofOfAddress').click();
     };
 
     const handleSubmit = async () => {
@@ -136,6 +137,7 @@ export default {
       ProofOfAddress,
       countryList,
       handleFileUpload,
+      triggerFileUpload,
       handleSubmit,
       navigateToPrevious
     };
@@ -144,26 +146,48 @@ export default {
 </script>
 
 <style scoped>
-.container {
+ .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4; /* Light background for the page */
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
-  background: linear-gradient(to right, #a8c0ff, #3f2b96); /* Light purple gradient */
+  background-image: 
+    url('@/assets/back.jpg');
+  background-size: cover; 
+  background-position: center;
   padding: 40px;
-  border-radius: 20px; /* Rounded corners */
+  border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px; /* Narrower width for consistency */
+  width: 420px;
+  max-width: 420px;
+  height: 100%;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
-  color: white; /* White text for contrast */
+  height:850.5px;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
 h1 {
@@ -202,45 +226,76 @@ input:focus, select:focus {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%; /* Ensure buttons take full width */
 }
 
 .back-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
 .next-button {
-  background-color: #007bff;
+  background-color: #7838dd;
   color: white;
-  margin-left: 10px;
 }
 
 .next-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
 
 .error-message {
   color: #ff4d4d; /* Red for error messages */
   font-size: 12px;
   margin-top: 5px;
+}
+
+.select-input {
+  border: 2px solid #7838dd; /* Purple border */
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: border-color 0.3s ease;
+}
+
+.select-input:focus {
+  border-color: #9e79da; /* Lighter purple on focus */
+  outline: none;
+  box-shadow: 0 0 5px rgba(120, 56, 221, 0.2);
+}
+
+.upload-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #7838dd; /* Purple background */
+  color: white; /* White text */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #9e79da; /* Lighter purple on hover */
 }
 </style>

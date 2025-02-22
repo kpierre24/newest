@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <p class="arrow">↓</p>
       <h1>Sign In</h1>
       <p class="subtitle">Sign In using your Online Account</p>
       <form @submit.prevent="submitLogin">
@@ -17,6 +18,7 @@
       </form>
       <p class="powered-by">powered by</p>
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
+      <p class="credit-union-name">Cathedral Credit Union Co-Operative Society Limited</p>
     </div>
   </div>
 </template>
@@ -66,28 +68,27 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Add your image here */
-  background-size: cover;
-  background-position: center;
+  min-height: 100vh;
   padding: 20px;
 }
 
 .form-container {
-  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-  background-image: url('@/assets/woman background.jpg'); /* Add your image here */
+  background: rgba(255, 255, 255, 0.541); /* Changed to plain white */
+  background-image: url('@/assets/signin.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
   text-align: center;
-  backdrop-filter: blur(5px); /* Optional: Adds a blur effect */
 }
 
 .form-container::before {
@@ -99,8 +100,8 @@ export default {
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.336), /* Semi-transparent white at the top */
-    rgba(213, 197, 231, 0.61) /* More opaque at the bottom */
+    rgba(255, 255, 255, 0) 0%, /* Transparent at the top */
+    rgba(255, 255, 255, 1) 100% /* White at the bottom */
   );
   z-index: 1;
 }
@@ -110,11 +111,16 @@ export default {
   z-index: 2;
 }
 
+.arrow {
+  font-size: 2em;
+  margin-bottom: 5px;
+}
 
 h1 {
   font-size: 24px;
   color: #333;
   margin-bottom: 10px;
+  font-weight: bold;
 }
 
 .subtitle {
@@ -144,7 +150,7 @@ input {
   border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
-  background: #f9f9f9;
+  background: #f9f9f9; /* Light gray background */
   transition: 0.3s ease;
 }
 
@@ -159,7 +165,7 @@ input:focus {
   padding: 12px;
   border: none;
   border-radius: 8px;
-  background-color: #007bff;
+  background-color: #333; /* Dark color for the button */
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -170,7 +176,7 @@ input:focus {
 }
 
 .signin-button:hover {
-  background-color: #0056b3;
+  background-color: #555;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -186,8 +192,15 @@ input:focus {
   color: #666;
   margin-top: 20px;
 }
+
 .logo {
   width: 100px;
   margin-top: 20px;
+}
+
+.credit-union-name {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
 }
 </style>

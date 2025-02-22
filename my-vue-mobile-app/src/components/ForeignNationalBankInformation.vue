@@ -5,35 +5,28 @@
       <h1>Foreign National Bank Information</h1>
       <form @submit.prevent="handleSubmit">
         <div class="input-container">
-          <label for="bankName">Bank Name</label>
-          <input type="text" v-model="bankName" id="bankName" placeholder="Enter bank name" required />
+          <input type="text" v-model="bankName" id="bankName" placeholder="Bank name" required />
         </div>
         <div class="input-container">
-          <label for="bankAddressLine1">Address Line 1</label>
-          <input type="text" v-model="bankAddressLine1" id="bankAddressLine1" placeholder="Enter address line 1" required />
+          <input type="text" v-model="bankAddressLine1" id="bankAddressLine1" placeholder=" Address line 1" required />
         </div>
         <div class="input-container">
-          <label for="bankCity">City</label>
-          <input type="text" v-model="bankCity" id="bankCity" placeholder="Enter city" required />
+          <input type="text" v-model="bankCity" id="bankCity" placeholder=" City" required />
         </div>
         <div class="input-container">
-          <label for="bankCountry">Country</label>
           <select v-model="bankCountry" id="bankCountry" required>
-            <option value="" disabled>Select country</option>
+            <option value="" disabled> Country</option>
             <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
           </select>
         </div>
         <div class="input-container">
-          <label for="bankAccountNumber">Account Number</label>
-          <input type="text" v-model="bankAccountNumber" id="bankAccountNumber" placeholder="Enter account number" required />
+          <input type="text" v-model="bankAccountNumber" id="bankAccountNumber" placeholder=" Account number" required />
         </div>
         <div class="input-container">
-          <label for="swiftCode">SWIFT Code</label>
-          <input type="text" v-model="swiftCode" id="swiftCode" placeholder="Enter SWIFT code" required />
+          <input type="text" v-model="swiftCode" id="swiftCode" placeholder="SWIFT code" required />
         </div>
         <div class="input-container">
-          <label for="bankTelephoneNumber">Bank Telephone Number</label>
-          <input type="text" v-model="bankTelephoneNumber" id="bankTelephoneNumber" placeholder="Enter bank telephone number" required />
+          <input type="text" v-model="bankTelephoneNumber" id="bankTelephoneNumber" placeholder="Bank telephone number" required />
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -143,12 +136,12 @@ export default {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f4f4f4;
   padding: 20px;
 }
 
 .form-container {
-  background-color: #ffffff;
+  background-image: url("@/assets/back.jpg");
+  background-size: contain;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -198,40 +191,39 @@ input:focus, select:focus {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  flex-direction: column; /* Arrange buttons vertically */
+  gap: 10px; /* Add space between buttons */
   margin-top: 20px;
+  width: 100%; /* Stretch to the width of the container */
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .next-button, .submit-button {
+  width: 100%; /* Stretch buttons to full width */
+  padding: 15px; /* Increase padding for better appearance */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
+  background-color: #f15539ea; /* Red background */
+  color: white; /* White text */
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea; /* Lighter red on hover */
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
+.next-button, .submit-button {
+  background-color: #7838dd; /* Purple background */
+  color: white; /* White text */
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.next-button:hover , .submit-button:hover{
+  background-color: #9e79da; /* Lighter purple on hover */
 }
 
 .logo {
