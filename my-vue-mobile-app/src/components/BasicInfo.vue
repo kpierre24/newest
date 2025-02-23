@@ -4,47 +4,90 @@
       <h1>Basic Information</h1>
       <form @submit.prevent="navigateToNext" method="post">
         <div class="input-group">
-          <div class="input-container">
-            <i class="icon fas fa-user"></i>
-            <input type="text" v-model="firstName" id="firstName" placeholder="First Name" maxlength="50" required />
-          </div>
-          <div class="input-container">
-            <i class="icon fas fa-user"></i>
-            <input type="text" v-model="lastName" id="lastName" placeholder="Last Name" maxlength="50" required />
-          </div>
-          <div class="input-container">
-            <i class="icon fas fa-user"></i>
-            <input type="text" v-model="otherName" id="otherName" placeholder="Other Name" maxlength="50" />
-          </div>
-          <div class="input-container">
-            <i class="icon fas fa-envelope"></i>
-            <input type="email" v-model="email" id="email" placeholder="Email Address" maxlength="50" required />
-          </div>
-          <div class="input-container">
-            <i class="icon fas fa-phone"></i>
-            <input type="tel" v-model="mobileNumber" id="mobileNumber" placeholder="Mobile Number" maxlength="11" required />
-          </div>
-          <div class="input-container">
-            <i class="icon fas fa-venus-mars"></i>
-            <select v-model="gender" id="gender" class="gender-select" required>
-              <option value="" disabled>Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </div>
-          <div>
-            <i class="icon fas fa-calendar-alt"></i>
-            <input type="date" v-model="dob" id="dob" required class="date-picker" placeholder="Date of Birth" />
-          </div>
-          <div class="input-container">
-            <i class="icon fas fa-lock"></i>
-            <input type="password" v-model="password" id="password" placeholder="Password" maxlength="50" required @input="validatePassword" />
-            <small v-if="passwordError" class="error">{{ passwordError }}</small>
-          </div>
-          <div class="input-container">
-            <i class="icon fas fa-lock"></i>
-            <input type="password" v-model="confirmPassword" id="confirmPassword" placeholder="Confirm Password" maxlength="50" required />
-          </div>
+          <FormInput
+            type="text"
+            id="firstName"
+            
+            placeholder="First Name"
+            v-model="firstName"
+            :maxlength="50"
+            :required="true"
+            iconClass="icon fas fa-user"
+          />
+          <FormInput
+            type="text"
+            id="lastName"
+            
+            placeholder="Last Name"
+            v-model="lastName"
+            :maxlength="50"
+            :required="true"
+            iconClass="icon fas fa-user"
+          />
+          <FormInput
+            type="text"
+            id="otherName"
+           
+            placeholder="Other Name"
+            v-model="otherName"
+            :maxlength="50"
+            iconClass="icon fas fa-user"
+          />
+          <FormInput
+            type="email"
+            id="email"
+            
+            placeholder="Email Address"
+            v-model="email"
+            :maxlength="50"
+            :required="true"
+            iconClass="icon fas fa-envelope"
+          />
+          <FormInput
+            type="tel"
+            id="mobileNumber"
+            
+            placeholder="Mobile Number"
+            v-model="mobileNumber"
+            :maxlength="11"
+            :required="true"
+            iconClass="icon fas fa-phone"
+          />
+          <FormInput
+            type="select"
+            id="gender"
+            v-model="gender"
+            :required="true"
+            iconClass="icon fas fa-venus-mars"
+            :selectOptions="['male', 'female']"
+          />
+          <FormInput
+            type="date"
+            id="dob"
+            v-model="dob"
+            :required="true"
+            iconClass="icon fas fa-calendar-alt"
+          />
+          <FormInput
+            type="password"
+            id="password"
+            placeholder="Password"
+            v-model="password"
+            :maxlength="50"
+            :required="true"
+            iconClass="icon fas fa-lock"
+            @input="validatePassword"
+            :error="passwordError"
+          />
+          <FormInput
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm Password"
+            v-model="confirmPassword"
+            :maxlength="50"
+            :required="true"
+            iconClass="icon fas fa-lock"
+          />
           <div class="checkbox-container">
             <input type="checkbox" v-model="termsViewed" id="termsViewed" />
              <a href="#" @click.prevent="showTermsAndConditions">Terms and Conditions</a>
@@ -72,11 +115,13 @@ import { useRouter } from 'vue-router';
 import TermsAndConditions from './TermsAndConditions.vue';
 import FinancialDeclaration from './FinancialDeclaration.vue';
 import axios from 'axios';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
   components: {
     TermsAndConditions,
-    FinancialDeclaration
+    FinancialDeclaration,
+    FormInput
   },
   data() {
     return {

@@ -5,23 +5,29 @@
       <h1>Enter Account Number</h1>
       <p>Please enter any account number you have with Cathedral Credit Union</p>
       <form @submit.prevent="handleSubmit">
-        <div class="account-number-box">
-          <label for="accountNumber">Account Number</label>
-          <div class="input-with-icon">
-            <i class="fas fa-user-circle icon"></i>
-            <Field
-              name="accountNumber"
-              id="accountNumber"
-              placeholder="Enter account number"
-              :class="{ 'is-invalid': errors.accountNumber }"
-              as="input"
-            />
-          </div>
-          <ErrorMessage name="accountNumber" class="error-message" />
-        </div>
+        <FormInput
+          label="Account Number"
+          type="text"
+          id="accountNumber"
+          name="accountNumber"
+          placeholder="Enter account number"
+          v-model="accountNumber"
+          :required="true"
+          :error="errors.accountNumber"
+        />
+        <FormInput
+          label="Verify Account Number"
+          type="text"
+          id="verifyAccountNumber"
+          name="verifyAccountNumber"
+          placeholder="Re-enter account number"
+          v-model="verifyAccountNumber"
+          :required="true"
+          :error="errors.verifyAccountNumber"
+        />
         <div class="button-group">
-          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="next-button">Next</button>
+          <FormButton text="Back" type="button" @click="navigateToPrevious" />
+          <FormButton text="Next" type="submit" />
         </div>
       </form>
     </div>
@@ -29,42 +35,36 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useForm, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-import axios from 'axios';
+import { useDemoStore } from '@/store/demoStore';
+import FormInput from '@/props/FormInput.vue';
 
-export default defineComponent({
-  components: {
-    Field,
-    ErrorMessage
-  },
+
+export default {
+  components: { FormInput },
   setup() {
+    const store = useDemoStore();
     const router = useRouter();
 
-    const validationSchema = yup.object({
-      accountNumber: yup
-        .string()
-        .matches(/^\d{12}$/, 'Account number must be exactly 12 digits')
-        .required('Account number is required')
-    });
+    const accountNumber = ref('');
+    const verifyAccountNumber = ref('');
+    const errors = ref({});
 
-    const { handleSubmit, errors } = useForm({
-      validationSchema
-    });
+    const handleSubmit = () => {
+      // Validation logic
+      if (!accountNumber.value) errors.value.accountNumber = 'Account number is required';
+      if (!verifyAccountNumber.value) errors.value.verifyAccountNumber = 'Please verify your account number';
+      if (accountNumber.value !== verifyAccountNumber.value) {
+        errors.value.verifyAccountNumber = 'Account numbers do not match';
+      }
 
-    const onSubmit = async (values) => {
-      try {
-        console.log('Form submitted:', values);
-        const response = await axios.post('http://localhost:3000/account-number', values, {
-          headers: { 'Content-Type': 'application/json' }
-        });
-        console.log('API response:', response.data);
-        router.push('/due-diligence'); // Navigate to the next page
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('An error occurred while submitting the form.');
+      if (Object.keys(errors.value).length === 0) {
+        // Save account number to the store
+        store.setAccountNumber(accountNumber.value);
+
+        // Navigate to the next page
+        router.push('/power-of-attorney');
       }
     };
 
@@ -73,12 +73,14 @@ export default defineComponent({
     };
 
     return {
-      handleSubmit: handleSubmit(onSubmit),
+      accountNumber,
+      verifyAccountNumber,
       errors,
-      navigateToPrevious
+      handleSubmit,
+      navigateToPrevious,
     };
-  }
-});
+  },
+};
 </script>
 
 <style scoped>
@@ -125,8 +127,6 @@ export default defineComponent({
   align-items: center;
   gap: 20px;
 }
-
-
 
 h1 {
   font-size: 24px;

@@ -69,6 +69,10 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useDateValidation } from '@/composables/useDateValidation';
+
+
 export default {
   name: 'ChildIDInformation',
   data() {
@@ -91,6 +95,45 @@ export default {
       const maxDate = new Date(today.setFullYear(today.getFullYear() + 20));
       return maxDate.toISOString().split('T')[0];
     }
+  },
+  setup() {
+    const {
+      minDate,
+      validateExpiryDate,
+      validateDOB,
+      dob,
+      dobError,
+    } = useDateValidation();
+
+    const expiryDate = ref('');
+    const expiryDateError = ref('');
+
+    const handleSubmit = () => {
+      const isDOBValid = validateDOB();
+      const isExpiryDateValid = validateExpiryDate(expiryDate.value);
+
+      if (!isExpiryDateValid) {
+        expiryDateError.value = 'Expiry date must be today or in the future';
+      } else {
+        expiryDateError.value = '';
+      }
+
+      if (isDOBValid && isExpiryDateValid) {
+        // Proceed with form submission
+        console.log('Form submitted successfully');
+      } else {
+        console.log('Validation failed');
+      }
+    };
+
+    return {
+      minDate,
+      dob,
+      dobError,
+      expiryDate,
+      expiryDateError,
+      handleSubmit,
+    };
   },
   methods: {
     updateSecondIdOptions() {
@@ -157,8 +200,6 @@ export default {
 .form-container::-webkit-scrollbar {
   display: none;
 }
-
-
 
 h1 {
   font-size: 22px;

@@ -82,29 +82,62 @@
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import { useDateValidation } from '@/composables/useDateValidation';
+import { ref } from 'vue';
+
+
 
 export default {
   name: 'IDInformation',
   setup() {
+    const { errors, validateRequired, validateLength } = useDateValidation();
     const { minDate, validateExpiryDate } = useDateValidation();
 
-    return {
-      minDate,
-      validateExpiryDate
+    const firstIdType = ref('');
+    const firstIdNumber = ref('');
+    const firstExpiryDate = ref('');
+    const firstIdDocument = ref(null);
+    const secondIdType = ref('');
+    const secondIdNumber = ref('');
+    const secondExpiryDate = ref('');
+    const secondIdDocument = ref(null);
+    const secondIdOptions = ref(['National ID', "Driver's Permit", 'Passport']);
+    const maritalStatus = ref('');
+
+    const submitIDInformation = () => {
+      let isValid = true;
+
+      // Validate first form of ID
+      isValid = validateRequired('firstIdType', firstIdType.value) && isValid;
+      isValid = validateLength('firstIdNumber', firstIdNumber.value, 12, 12) && isValid;
+      isValid = validateExpiryDate(firstExpiryDate.value) && isValid;
+
+      // Validate second form of ID
+      isValid = validateRequired('secondIdType', secondIdType.value) && isValid;
+      isValid = validateLength('secondIdNumber', secondIdNumber.value, 12, 12) && isValid;
+      isValid = validateExpiryDate(secondExpiryDate.value) && isValid;
+
+      if (isValid) {
+        // Proceed with form submission
+        console.log('Form submitted successfully');
+      } else {
+        console.log('Validation failed');
+      }
     };
-  },
-  data() {
+
     return {
-      firstIdType: '',
-      firstIdNumber: '',
-      firstExpiryDate: '',
-      firstIdDocument: null,
-      secondIdType: '',
-      secondIdNumber: '',
-      secondExpiryDate: '',
-      secondIdDocument: null,
-      secondIdOptions: ['National ID', "Driver's Permit", 'Passport'],
-      maritalStatus: ''
+      firstIdType,
+      firstIdNumber,
+      firstExpiryDate,
+      firstIdDocument,
+      secondIdType,
+      secondIdNumber,
+      secondExpiryDate,
+      secondIdDocument,
+      secondIdOptions,
+      maritalStatus,
+      minDate,
+      errors,
+      submitIDInformation,
     };
   },
   computed: {

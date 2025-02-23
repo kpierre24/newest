@@ -164,6 +164,10 @@
     {
       "id": "7a47",
       "customerType": "existing_customer"
+    },
+    {
+      "id": "9a28",
+      "customerType": "existing_customer"
     }
   ],
   "foreign-national-bank-information": [
@@ -3693,6 +3697,16 @@
       "Nationality": "Aland",
       "DwellingStatus": "subletting",
       "ProofOfAddress": "null"
+    },
+    {
+      "id": "97d4",
+      "AddressLine1": "O Connor Street",
+      "AddressLine2": "woodbrook",
+      "City": "port of spain",
+      "Country": "American Samoa",
+      "Nationality": "Australia",
+      "DwellingStatus": "Owned",
+      "ProofOfAddress": {}
     }
   ],
   "basic-info": [
@@ -4042,6 +4056,32 @@
       "password": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true
+    },
+    {
+      "id": "fc5a",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "",
+      "email": "kendellapc@gmail.com",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "2025-02-05",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "c042",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "tytyty",
+      "email": "kendellapc@gmail.com",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "1985-10-15",
+      "password": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
     }
   ],
   "id-information": [
@@ -4314,6 +4354,34 @@
     },
     {
       "id": "02ae",
+      "status": "success"
+    },
+    {
+      "id": "aa42",
+      "status": "success"
+    },
+    {
+      "id": "eb93",
+      "status": "success"
+    },
+    {
+      "id": "0db5",
+      "status": "success"
+    },
+    {
+      "id": "ca3f",
+      "status": "success"
+    },
+    {
+      "id": "5e88",
+      "status": "success"
+    },
+    {
+      "id": "a912",
+      "status": "success"
+    },
+    {
+      "id": "3ab9",
       "status": "success"
     }
   ],
