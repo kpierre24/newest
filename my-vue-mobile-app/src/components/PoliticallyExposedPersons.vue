@@ -8,16 +8,15 @@
              As defined by these Acts and adopted within the Cathedral Credit Union, a PEP shall be considered as an individual 
             who is or has been entrusted with a prominent function either locally or in a foreign country.</p>
         </div>
-        <div class="input-container">
-          <label for="pepAssociate">Are you a politically exposed person (PEP) or associated with one?</label>
-          <div class="select-container">
-            <select v-model="pepAssociate" id="pepAssociate" required>
-              <option value="" disabled>Select an option</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          </div>
-        </div>
+        <FormInput
+          label="Are you a politically exposed person (PEP) or associated with one?"
+          type="select"
+          id="pepAssociate"
+          v-model="pepAssociate"
+          :required="true"
+          :selectOptions="['Yes', 'No']"
+          iconClass="icon fas fa-user-tie"
+        />
       </div>
       <div class="button-group">
         <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Domestic Pep or Foreign PEP</button>
@@ -56,8 +55,12 @@ import { useDemoStore } from '@/store/demoStore';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
+  components: {
+    FormInput
+  },
   setup() {
     const store = useDemoStore();
     const router = useRouter();
@@ -190,26 +193,42 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
+  background-color: #ffffff;
   background-image: url('@/assets/back.jpg');
-  background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
+  background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   text-align: center;
   overflow-y: auto;
   max-height: 100vh;
+}
+
+.form-container::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes gradientAnimation {
@@ -222,6 +241,9 @@ export default {
   100% {
     background-position: 0% 50%;
   }
+}
+.form-container::-webkit-scrollbar {
+  display: none;
 }
 
 .select-container select,
@@ -243,17 +265,21 @@ h1 {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .text-container {
   width: 100%;
   margin-bottom: 20px;
+  text-align: center;
+  font-size: 16px;
 }
 
 .text-content {
   text-align: left;
   font-size: 12px;
+  text-align:center;
+  margin-bottom: 20px;
 }
 
 input[type="text"] {

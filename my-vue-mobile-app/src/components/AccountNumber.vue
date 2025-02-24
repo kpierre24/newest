@@ -88,7 +88,6 @@ export default {
   position: absolute;
   top: 50%;
   left: 50%;
-  background-color: #FFFFFF;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
@@ -104,6 +103,7 @@ export default {
   backdrop-filter: blur(5px);
    /* Start hidden */
   animation: fadeIn 1s ease-in-out forwards;
+
 }
 
 .form-container {

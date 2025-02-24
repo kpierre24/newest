@@ -1,10 +1,6 @@
 <template>
      <div class="container">
-    <a href="/" class="back-icon-link">
-    <i class="fas fa-arrow-left back-icon"></i>
-  </a>
-    <div class="form-container"> 
-      
+    <div class="form-container">    
    </div>
       <div class="content">
         <h1>Congratulations</h1>
@@ -49,16 +45,24 @@
 <style scoped>
 
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 812px; /* Typical height for a mobile phone */
-  width: 375px; /* Typical width for a mobile phone */
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
-  margin: 0 auto; /* Center the container horizontally */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
-  border-radius: 20px; /* Optional: Rounded corners */
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .content {

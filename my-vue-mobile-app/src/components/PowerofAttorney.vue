@@ -3,90 +3,101 @@
     <div class="form-container">
       <h1>Power of Attorney</h1>
       <form @submit.prevent="handleSubmit">
+        <FormInput
+          label="First Name"
+          type="text"
+          id="poaFirstName"
+          v-model="poaFirstName"
+          placeholder="First Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Last Name"
+          type="text"
+          id="poaLastName"
+          v-model="poaLastName"
+          placeholder="Last Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Other Name"
+          type="text"
+          id="poaOtherName"
+          v-model="poaOtherName"
+          placeholder="Other Name"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="poaAddressLine1"
+          v-model="poaAddressLine1"
+          placeholder="Address Line 1"
+          :required="true"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="Address Line 2"
+          type="text"
+          id="poaAddressLine2"
+          v-model="poaAddressLine2"
+          placeholder="Address Line 2"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="City"
+          type="text"
+          id="poaCity"
+          v-model="poaCity"
+          placeholder="City"
+          :required="true"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          label="Country"
+          type="text"
+          id="poaCountry"
+          v-model="poaCountry"
+          placeholder="Country"
+          :required="true"
+          iconClass="icon fas fa-globe"
+        />
+        <FormInput
+          label="Date of Birth"
+          type="date"
+          id="poaDob"
+          v-model="poaDob"
+          placeholder="Date of Birth"
+          :required="true"
+          iconClass="icon fas fa-calendar-alt"
+        />
+        <FormInput
+          label="ID Type"
+          type="select"
+          id="poaIdType"
+          v-model="poaIdType"
+          :required="true"
+          :selectOptions="['National ID', 'Driver\'s Permit', 'Passport']"
+          iconClass="icon fas fa-id-card"
+        />
         <div class="input-container">
-          <input
-            type="text"
-            v-model="poaFirstName"
-            placeholder="First Name"
-            required
-          />
-        </div>
-        <div class="input-container">
-          <input
-            type="text"
-            v-model="poaLastName"
-            placeholder="Last Name"
-            required
-          />
-        </div>
-        <div class="input-container">
-          <input
-            type="text"
-            v-model="poaOtherName"
-            placeholder="Other Name"
-          />
-        </div>
-        <div class="input-container">
-          <input
-            type="text"
-            v-model="poaAddressLine1"
-            placeholder="Address Line 1"
-            required
-          />
-        </div>
-        <div class="input-container">
-          <input
-            type="text"
-            v-model="poaAddressLine2"
-            placeholder="Address Line 2"
-          />
-        </div>
-        <div class="input-container">
-          <input
-            type="text"
-            v-model="poaCity"
-            placeholder="City"
-            required
-          />
-        </div>
-        <div class="input-container">
-          <input
-            type="text"
-            v-model="poaCountry"
-            placeholder="Country"
-            required
-          />
-        </div>
-        <div class="input-container">
-          <input
-            type="date"
-            v-model="poaDob"
-            placeholder="Date of Birth"
-            required
-          />
-        </div>
-        <div class="input-container">
-          <select v-model="poaIdType" required>
-            <option value="" disabled>Select ID Type</option>
-            <option value="national-id">National ID</option>
-            <option value="drivers-permit">Driver's Permit</option>
-            <option value="passport">Passport</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <input
-            type="file"
+          <label>POA ID Document</label>
+          <FileUpload
             id="poaIdDocument"
-            @change="handleIdFileUpload"
-            required
+            buttonText="Upload ID"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleIdFileUpload"
           />
         </div>
         <div class="input-container">
-          <input
-            type="file"
+          <label>POA Document</label>
+          <FileUpload
             id="poaDocument"
-            @change="handleFileUpload"
-            required
+            buttonText="Upload POA"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload"
           />
         </div>
         <div class="skip-link">
@@ -109,12 +120,16 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useField, useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
 
 export default {
   name: 'PowerofAttorney',
   components: {
     Field,
-    ErrorMessage
+    ErrorMessage,
+    FormInput,
+    FileUpload
   },
   setup() {
     const store = useDemoStore();

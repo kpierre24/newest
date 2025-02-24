@@ -78,14 +78,34 @@ export default {
 
 <style scoped>
 
-.container {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  };
+}
+  .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  
-  background: #f4f4f4; /* Light background for the page */
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
+
 }
 
 .content {
@@ -96,7 +116,7 @@ export default {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px; /* Narrower width for consistency */
-  max-height: 80vh; /* Set max height */
+  max-height: 100vh; /* Set max height */
   overflow-y: auto; /* Enable vertical scrolling */
   color: rgb(12, 12, 12);
    /* White text for contrast */
@@ -106,11 +126,7 @@ export default {
   color: rgba(0, 0, 0, 0.1)
 }
 
-.logo {
-  width: 165px; /* Slightly larger for better visibility */
-  height: auto;
-  margin-bottom: 20px;
-}
+
 h5{
   font-size: 12px;
   margin-bottom: 10px;

@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <p class="arrow">↓</p>
       <h1>Sign In</h1>
       <p class="subtitle">Sign In using your Online Account</p>
       <form @submit.prevent="submitLogin">
@@ -18,7 +17,6 @@
       </form>
       <p class="powered-by">powered by</p>
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <p class="credit-union-name">Cathedral Credit Union Co-Operative Society Limited</p>
     </div>
   </div>
 </template>
@@ -70,11 +68,24 @@ export default {
 </script>
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
@@ -82,11 +93,13 @@ export default {
   background-image: url('@/assets/signin.jpg');
   background-size: cover;
   background-position: center;
+  margin-top: 20px;
   position: relative;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
+  height: 100vh;
   max-width: 400px;
   text-align: center;
 }

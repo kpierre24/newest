@@ -212,6 +212,7 @@ export default {
   animation: fadeIn 1s ease-in-out forwards;
 }
 
+
 .form-container {
   background-image: 
     url('@/assets/back.jpg');

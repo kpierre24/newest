@@ -3,46 +3,77 @@
     <div class="form-container">
       <h1>Employment Information</h1>
       <form @submit.prevent="handleSubmit">
+        <FormInput
+          label="Employer Name"
+          type="text"
+          id="employerName"
+          v-model="employerName"
+          placeholder="Enter employer name"
+          :required="true"
+          iconClass="icon fas fa-building"
+        />
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="employerAddressLine1"
+          v-model="employerAddressLine1"
+          placeholder="Enter address line 1"
+          :required="true"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="City"
+          type="text"
+          id="employerCity"
+          v-model="employerCity"
+          placeholder="Enter city"
+          :required="true"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          label="Country"
+          type="select"
+          id="employerCountry"
+          v-model="employerCountry"
+          :required="true"
+          :selectOptions="countryList"
+          iconClass="icon fas fa-globe"
+        />
+        <FormInput
+          label="Work Number"
+          type="text"
+          id="workNumber"
+          v-model="workNumber"
+          placeholder="Enter work number"
+          :required="true"
+          iconClass="icon fas fa-phone"
+        />
+        <FormInput
+          label="Employment Status"
+          type="select"
+          id="employmentStatus"
+          v-model="employmentStatus"
+          :required="true"
+          :selectOptions="['Employed', 'Self-Employed', 'Unemployed', 'Student', 'Retired']"
+          iconClass="icon fas fa-briefcase"
+        />
+        <FormInput
+          label="Employment Type"
+          type="select"
+          id="employmentType"
+          v-model="employmentType"
+          :required="true"
+          :selectOptions="['Full-Time', 'Part-Time', 'Contract', 'Temporary']"
+          iconClass="icon fas fa-user-tie"
+        />
         <div class="input-container">
-          <input type="text" v-model="employerName" id="employerName" placeholder="Enter employer name" required />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="employerAddressLine1" id="employerAddressLine1" placeholder="Enter address line 1" required />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="employerCity" id="employerCity" placeholder="Enter city" required />
-        </div>
-        <div class="input-container">
-          <select v-model="employerCountry" id="employerCountry" required>
-            <option value="" disabled>Select country</option>
-            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="workNumber" id="workNumber" placeholder="Enter work number" required />
-        </div>
-        <div class="input-container">
-          <select v-model="employmentStatus" id="employmentStatus" required>
-            <option value="" disabled>Select employment status</option>
-            <option value="employed">Employed</option>
-            <option value="self-employed">Self-Employed</option>
-            <option value="unemployed">Unemployed</option>
-            <option value="student">Student</option>
-            <option value="retired">Retired</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <label>Employment Type</label>
-          <select v-model="employmentType" id="employmentType" required>
-            <option value="" disabled>Select employment type</option>
-            <option value="full-time">Full-Time</option>
-            <option value="part-time">Part-Time</option>
-            <option value="contract">Contract</option>
-            <option value="temporary">Temporary</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <input type="file" id="proofOfEmploymentFile" @change="handleFileUpload" required />
+          <label>Proof of Employment</label>
+          <FileUpload
+            id="proofOfEmploymentFile"
+            buttonText="Upload Proof"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload"
+          />
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="goBack">Back</button>
@@ -59,8 +90,14 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { countries } from 'countries-list';
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
 
 export default {
+  components: {
+    FormInput,
+    FileUpload
+  },
   setup() {
     const store = useDemoStore();
     const router = useRouter();
@@ -137,6 +174,10 @@ export default {
       router.go(-1);
     };
 
+    const triggerFileUpload = () => {
+      document.getElementById('proofOfEmploymentFile').click();
+    };
+
     return {
       employerName,
       employerAddressLine1,
@@ -149,7 +190,8 @@ export default {
       countryList,
       handleFileUpload,
       handleSubmit,
-      goBack
+      goBack,
+      triggerFileUpload
     };
   }
 };
@@ -157,12 +199,24 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
@@ -178,6 +232,13 @@ export default {
   overflow-y: auto;
   max-height: 90vh;
 }
+.form-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+}
+.form-container {
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
 
 h1 {
   font-size: 22px;
@@ -185,48 +246,22 @@ h1 {
   margin-bottom: 20px;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
   margin-bottom: 20px;
-  text-align: left;
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .button-group {
   display: flex;
-  flex-direction: column; /* Arrange buttons vertically */
-  gap: 10px; /* Add space between buttons */
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
   margin-top: 20px;
-  width: 100%; /* Stretch to the width of the container */
 }
 
 .back-button, .next-button, .submit-button {
-  width: 100%; /* Stretch buttons to full width */
-  padding: 15px; /* Increase padding for better appearance */
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -236,21 +271,21 @@ input:focus, select:focus {
 }
 
 .back-button {
-  background-color: #f15539ea; /* Red background */
-  color: white; /* White text */
+  background-color: #f15539ea;
+  color: white;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea; /* Lighter red on hover */
+  background-color: #f38b79ea;
 }
 
 .next-button, .submit-button {
-  background-color: #7838dd; /* Purple background */
-  color: white; /* White text */
+  background-color: #7838dd;
+  color: white;
 }
 
 .next-button:hover , .submit-button:hover{
-  background-color: #9e79da; /* Lighter purple on hover */
+  background-color: #9e79da;
 }
 
 .logo {
@@ -332,7 +367,6 @@ input:focus, select:focus {
 }
 
 .common-icon {
-  /* Add your CSS adjustments here */
   width: 24px;
   height: 24px;
   color: #333;
@@ -344,5 +378,22 @@ input:focus, select:focus {
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
+}
+
+.browse-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #7838dd;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.browse-button:hover {
+  background-color: #9e79da;
 }
 </style>

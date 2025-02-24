@@ -74,21 +74,7 @@ export default {
     const errorMessage = ref('');
 
     // Pull date of birth from Pinia store
-    const dateOfBirth = computed(() => store.basicInfo?.dob);
-
-    // Function to calculate age
-    const calculateAge = (dob) => {
-      const today = new Date();
-      const birthDate = new Date(dob);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-
-      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-
-      return age;
-    };
+    
 
     const submitPepInfo = async () => {
       if (!pepAssociate.value) {
@@ -110,21 +96,20 @@ export default {
         await axios.post('http://localhost:3000/politically-exposed-persons-2', formData);
 
         // Calculate age and navigate accordingly
-        if (dateOfBirth.value) {
-          const age = calculateAge(dateOfBirth.value);
-          if (age <= 17) {
-            router.push({ name: 'ChildIdInformation' });
-          } else {
-            router.push({ name: 'IdInformation' });
-          }
-        } else {
-          errorMessage.value = 'Date of birth is missing.';
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        errorMessage.value = 'An error occurred while submitting the form.';
+        if (store.basicInfo.age !== null) {
+      if (store.basicInfo.age <= 17) {
+        router.push({ name: 'ChildIdInformation' });
+      } else {
+        router.push({ name: 'IdInformation' });
       }
-    };
+    } else {
+      errorMessage.value = 'Date of birth or age is missing.';
+    }
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    errorMessage.value = 'An error occurred while submitting the form.';
+  }
+};
 
     const navigateToPrevious = () => {
       router.push({ name: 'PoliticallyExposedPersons' }); // Replace with your previous route
@@ -278,10 +263,6 @@ input:focus, select:focus {
   margin-top: 5px;
 }
 
-
-
-
-
 .agree-button, .disagree-button {
   padding: 10px 20px;
   border: none;
@@ -292,7 +273,6 @@ input:focus, select:focus {
   transition: background-color 0.3s ease;
 }
 
-
 .agree-button {
   background-color: #007bff;
   color: white;
@@ -301,8 +281,6 @@ input:focus, select:focus {
 .agree-button:hover {
   background-color: #0056b3;
 }
-
-
 
 .common-icon {
   /* Add your CSS adjustments here */

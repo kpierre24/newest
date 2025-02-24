@@ -24,6 +24,8 @@ import ParentGuardianInformation from '@/components/ParentGuardianInformation.vu
 import AccountNumber from '@/components/AccountNumber.vue';
 import EmailVerSuccessful from '@/components/EmailVerSuccessful.vue';
 import MobileVerSuccessful from '@/components/MobileVerSuccessful.vue';
+import ChildIdInformation from '@/components/ChildIdInformation.vue';
+import IdInformation from '@/components/IdInformation.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -31,7 +33,7 @@ const routes = [
   { path: '/basic-info', name: 'BasicInfo', component: BasicInfo },
   { path: '/address', component: Address },
   { path: '/new-or-existing-customer', component: NewOrExistingCustomer },
-  { path: '/getting-ready', component: GettingReady },
+  { path: '/getting-ready', name: 'GettingReady', component: GettingReady },
   { path: '/email-verification', name: 'EmailVerification', component: EmailVerification },
   { path: '/id-information', name: 'IdInformation', component: IDInformation },
   { path: '/child-id-information', name: 'ChildIdInformation', component: ChildIDInformation },

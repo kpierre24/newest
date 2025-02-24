@@ -3,68 +3,121 @@
     <div class="form-container">
       <h1>Designation of Beneficiary</h1>
       <form @submit.prevent="handleSubmit('next')">
-        <div class="input-container">
-          <i class="fas fa-user icon"></i>
-          <input type="text" v-model="firstName" placeholder="First Name" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-user icon"></i>
-          <input type="text" v-model="lastName" placeholder="Last Name" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-user icon"></i>
-          <input type="text" v-model="otherName" placeholder="Other Name" />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-map-marker-alt icon"></i>
-          <input type="text" v-model="addressLine1" placeholder="Address Line 1" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-map-marker-alt icon"></i>
-          <input type="text" v-model="addressLine2" placeholder="Address Line 2" />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-city icon"></i>
-          <input type="text" v-model="city" placeholder="City" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-globe icon"></i>
-          <input type="text" v-model="country" placeholder="Country" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-birthday-cake icon"></i>
-          <input type="date" v-model="dob" placeholder="Date of Birth" id="dob" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-venus-mars icon"></i>
-          <select v-model="gender" required>
-            <option value="" disabled>Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <i class="fas fa-users icon"></i>
-          <input type="text" v-model="relationshipToBeneficiary" placeholder="Relationship to Beneficiary" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-id-card icon"></i>
-          <select v-model="typeOfId" required>
-            <option value="" disabled>Select Type of ID</option>
-            <option value="id card">ID Card</option>
-            <option value="driver's permit">Driver's Permit</option>
-            <option value="passport">Passport</option>
-            <option value="birthpaper">Birthpaper</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <i class="fas fa-id-badge icon"></i>
-          <input type="text" v-model="idNumber" placeholder="ID Number" required />
-        </div>
-        <div class="input-container">
-          <i class="fas fa-percent icon"></i>
-          <input type="number" v-model="percentageOfInterest" placeholder="Percentage of Beneficiary Interest" required />
-        </div>
+        <FormInput
+          
+          type="text"
+          id="firstName"
+          v-model="firstName"
+          placeholder="First Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          
+          type="text"
+          id="lastName"
+          v-model="lastName"
+          placeholder="Last Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          
+          type="text"
+          id="otherName"
+          v-model="otherName"
+          placeholder="Other Name"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          
+          type="text"
+          id="addressLine1"
+          v-model="addressLine1"
+          placeholder="Address Line 1"
+          :required="true"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          
+          type="text"
+          id="addressLine2"
+          v-model="addressLine2"
+          placeholder="Address Line 2"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          
+          type="text"
+          id="city"
+          v-model="city"
+          placeholder="City"
+          :required="true"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          
+          type="text"
+          id="country"
+          v-model="country"
+          placeholder="Country"
+          :required="true"
+          iconClass="icon fas fa-globe"
+        />
+        <FormInput
+          label="Date of Birth"
+          type="date"
+          id="dob"
+          v-model="dob"
+          placeholder="Date of Birth"
+          :required="true"
+          iconClass="icon fas fa-birthday-cake"
+        />
+        <FormInput
+          label="Gender"
+          type="select"
+          id="gender"
+          v-model="gender"
+          :required="true"
+          :selectOptions="['male', 'female']"
+          iconClass="icon fas fa-venus-mars"
+        />
+        <FormInput
+          
+          type="text"
+          id="relationshipToBeneficiary"
+          v-model="relationshipToBeneficiary"
+          placeholder="Relationship to Beneficiary"
+          :required="true"
+          iconClass="icon fas fa-users"
+        />
+        <FormInput
+          label="Type of ID"
+          type="select"
+          id="typeOfId"
+          v-model="typeOfId"
+          :required="true"
+          :selectOptions="['ID Card', 'Driver\'s Permit', 'Passport', 'Birthpaper']"
+          iconClass="icon fas fa-id-card"
+        />
+        <FormInput
+          
+          type="text"
+          id="idNumber"
+          v-model="idNumber"
+          placeholder="ID Number"
+          :required="true"
+          iconClass="icon fas fa-id-badge"
+        />
+        <FormInput
+          
+          type="number"
+          id="percentageOfInterest"
+          v-model="percentageOfInterest"
+          placeholder="Percentage of Beneficiary Interest"
+          :required="true"
+          iconClass="icon fas fa-percent"
+        />
         <div class="button-container">
           <button type="button" class="add-button" @click="handleSubmit('add')">Add Another Beneficiary</button>
           <a href="#" class="skip-button" @click.prevent="skipAddingBeneficiary">Skip Adding Beneficiary</a>
@@ -80,9 +133,13 @@
 
 <script>
 import axios from 'axios';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
   name: 'DesignationOfBeneficiary',
+  components: {
+    FormInput
+  },
   data() {
     return {
       firstName: '',
@@ -207,8 +264,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;
-  max-height: 120vh;  /* Adjusted height */
+  height: 100vh;  /* Adjusted height */
   width: 100%;
   max-width: 400px;
   padding: 20px;

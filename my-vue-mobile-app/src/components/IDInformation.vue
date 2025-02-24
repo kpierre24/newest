@@ -7,28 +7,38 @@
         <div class="id-box">
           <div class="id-container">
             <h2>First Form of ID</h2>
-            <div class="input-container">
-              <label for="firstIdType">Type of ID</label>
-              <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
-                <option value="" disabled>Select ID Type</option>
-                <option value="id card">ID Card</option>
-                <option value="passport">Passport</option>
-                <option value="driver's permit">Driver's Permit</option>
-                <option value="birthpaper">Birthpaper</option>
-              </select>
-            </div>
-            <div class="input-container">
-              <label for="firstIdNumber">ID Number</label>
-              <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
-            </div>
-            <div class="input-container">
-              <label for="firstExpiryDate">Expiry Date</label>
-              <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :min="minDate" />
-            </div>
-            <div class="input-container">
-              <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
-              <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
-            </div>
+            <FormInput
+              label="Type of ID"
+              type="select"
+              id="firstIdType"
+              v-model="firstIdType"
+              @change="updateSecondIdOptions"
+              :selectOptions="['ID Card', 'Passport', 'Driver\'s Permit', 'Birthpaper']"
+              iconClass="icon fas fa-id-card"
+            />
+            <FormInput
+              label="ID Number"
+              type="text"
+              id="firstIdNumber"
+              v-model="firstIdNumber"
+              placeholder="Enter 12-digit ID number"
+              :maxlength="12"
+              iconClass="icon fas fa-hashtag"
+            />
+            <FormInput
+              label="Expiry Date"
+              type="date"
+              id="firstExpiryDate"
+              v-model="firstExpiryDate"
+              :min="minDate"
+              iconClass="icon fas fa-calendar-alt"
+            />
+            <FileUpload
+              id="firstIdDocument"
+              buttonText="Upload ID"
+              accept=".pdf,.jpg,.png"
+              @file-uploaded="handleFileUpload($event, 'first')"
+            />
           </div>
         </div>
         <div class="id-box">
@@ -49,10 +59,12 @@
               <label for="secondExpiryDate">Expiry Date</label>
               <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :min="minDate" />
             </div>
-            <div class="input-container">
-              <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
-              <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
-            </div>
+            <FileUpload
+              id="secondIdDocument"
+              buttonText="Upload ID"
+              accept=".pdf,.jpg,.png"
+              @file-uploaded="handleFileUpload($event, 'second')"
+            />
           </div>
         </div>
         <div class="id-box">
@@ -83,14 +95,23 @@ import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import { useDateValidation } from '@/composables/useDateValidation';
 import { ref } from 'vue';
-
-
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
 
 export default {
   name: 'IDInformation',
+  components: {
+    FormInput,
+    FileUpload
+  },
   setup() {
-    const { errors, validateRequired, validateLength } = useDateValidation();
-    const { minDate, validateExpiryDate } = useDateValidation();
+    const { 
+      minDate, 
+      validateExpiryDate, 
+      validateDOB, 
+      dob, 
+      dobError 
+    } = useDateValidation();
 
     const firstIdType = ref('');
     const firstIdNumber = ref('');
@@ -136,7 +157,9 @@ export default {
       secondIdOptions,
       maritalStatus,
       minDate,
-      errors,
+      validateExpiryDate,
+      dob,
+      dobError,
       submitIDInformation,
     };
   },
@@ -214,12 +237,24 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
@@ -326,42 +361,7 @@ select:focus {
   background-color: #9e79da;
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
 
 .agree-button, .disagree-button {
   padding: 10px 20px;

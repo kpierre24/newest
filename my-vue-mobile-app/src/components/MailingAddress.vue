@@ -3,22 +3,41 @@
     <div class="form-container">
       <h1>Mailing Address</h1>
       <form @submit.prevent="submitMailingAddress">
-        <div class="input-container">
-          <input type="text" v-model="AddressLine1" id="AddressLine1" placeholder="Mailing Address line 1" :required="!sameAsHomeAddress" />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="AddressLine2" id="AddressLine2" placeholder="Mailing Address line 2" />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="City" id="City" placeholder="Mailing City" :required="!sameAsHomeAddress" />
-        </div>
-        <div class="input-container">
-          <label for="Country">Mailing Country</label>
-          <select v-model="Country" id="Country" :required="!sameAsHomeAddress">
-            <option value="" disabled>Select Country</option>
-            <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
-          </select>
-        </div>
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="AddressLine1"
+          v-model="AddressLine1"
+          placeholder="Mailing Address line 1"
+          :required="!sameAsHomeAddress"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="Address Line 2"
+          type="text"
+          id="AddressLine2"
+          v-model="AddressLine2"
+          placeholder="Mailing Address line 2"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="City"
+          type="text"
+          id="City"
+          v-model="City"
+          placeholder="Mailing City"
+          :required="!sameAsHomeAddress"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          label="Country"
+          type="select"
+          id="Country"
+          v-model="Country"
+          :required="!sameAsHomeAddress"
+          :selectOptions="countries"
+          iconClass="icon fas fa-globe"
+        />
         <div class="checkbox-container">
           <input type="checkbox" v-model="sameAsHomeAddress" id="sameAsHomeAddress" />
           <label for="sameAsHomeAddress">Same as Home Address</label>
@@ -38,8 +57,12 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
+  components: {
+    FormInput
+  },
   setup() {
     const store = useDemoStore();
     const router = useRouter();
@@ -118,26 +141,38 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
-  background-color: #ffffff;
   background-image: url('@/assets/back.jpg');
   background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  height: 100vh;
   width: 100%;
   max-width: 420px;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 100vh;
 }
 
 h1 {
@@ -148,7 +183,7 @@ h1 {
 
 .input-group, .input-container {
   width: 100%;
-  margin-bottom: 20px;
+  
   text-align: left;
 }
 

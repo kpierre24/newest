@@ -3,34 +3,84 @@
     <div class="form-container">
       <h1>Parent/Guardian Information</h1>
       <form @submit.prevent="submitForm">
-        <div class="input-container" v-for="(value, key) in formData" :key="key">
-          <input
-            v-if="key !== 'RelationshipToChild' && key !== 'RelationshipDocument'"
-            :type="getInputType(key)"
-            v-model="formData[key]"
-            :id="key"
-            :placeholder="formatPlaceholder(key)"
-            required
-          />
-          <select
-            v-if="key === 'RelationshipToChild'"
-            v-model="formData[key]"
-            :id="key"
-            required
-          >
-            <option value="" disabled>Select Relationship</option>
-            <option value="mother">Mother</option>
-            <option value="father">Father</option>
-            <option value="grandparent">Grandparent</option>
-            <option value="related_guardian">Related Guardian</option>
-            <option value="unrelated_guardian">Unrelated Guardian</option>
-          </select>
-          <input
-            v-if="key === 'RelationshipDocument'"
-            type="file"
-            @change="handleFileUpload"
-            :id="key"
-            required
+        <FormInput
+          label="First Name"
+          type="text"
+          id="ParentFirstName"
+          v-model="formData.ParentFirstName"
+          placeholder="Parent First Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Middle Name"
+          type="text"
+          id="ParentMiddleName"
+          v-model="formData.ParentMiddleName"
+          placeholder="Parent Middle Name"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Last Name"
+          type="text"
+          id="ParentLastName"
+          v-model="formData.ParentLastName"
+          placeholder="Parent Last Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Occupation"
+          type="text"
+          id="ParentOccupation"
+          v-model="formData.ParentOccupation"
+          placeholder="Parent Occupation"
+          :required="true"
+          iconClass="icon fas fa-briefcase"
+        />
+        <FormInput
+          label="Workplace"
+          type="text"
+          id="ParentWorkplace"
+          v-model="formData.ParentWorkplace"
+          placeholder="Parent Workplace"
+          :required="true"
+          iconClass="icon fas fa-building"
+        />
+        <FormInput
+          label="Email"
+          type="email"
+          id="ParentEmail"
+          v-model="formData.ParentEmail"
+          placeholder="Parent Email"
+          :required="true"
+          iconClass="icon fas fa-envelope"
+        />
+        <FormInput
+          label="Phone Number"
+          type="tel"
+          id="ParentPhoneNumber"
+          v-model="formData.ParentPhoneNumber"
+          placeholder="Parent Phone Number"
+          :required="true"
+          iconClass="icon fas fa-phone"
+        />
+        <FormInput
+          label="Relationship to Child"
+          type="select"
+          id="RelationshipToChild"
+          v-model="formData.RelationshipToChild"
+          :required="true"
+          :selectOptions="['Mother', 'Father', 'Grandparent', 'Related Guardian', 'Unrelated Guardian']"
+          iconClass="icon fas fa-users"
+        />
+        <div class="input-container">
+          <label>Relationship Document</label>
+          <FileUpload
+            id="RelationshipDocument"
+            buttonText="Browse"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload"
           />
         </div>
         <div class="button-group">
@@ -46,9 +96,15 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
 
 export default {
   name: 'ParentGuardianInformation',
+  components: {
+    FormInput,
+    FileUpload
+  },
   setup() {
     const router = useRouter();
     const formData = ref({
@@ -100,13 +156,18 @@ export default {
       return key.includes('Email') ? 'email' : key.includes('Phone') ? 'tel' : 'text';
     };
 
+    const triggerFileUpload = () => {
+      // Implementation of triggerFileUpload method
+    };
+
     return {
       formData,
       handleFileUpload,
       submitForm,
       navigateToPrevious,
       formatPlaceholder,
-      getInputType
+      getInputType,
+      triggerFileUpload
     };
   }
 };
@@ -114,29 +175,38 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
   background-color: #ffffff;
   background-image: url('@/assets/back.jpg');
-  background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
+  background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  max-height: 100vh;
 }
 
 .form-container::-webkit-scrollbar {

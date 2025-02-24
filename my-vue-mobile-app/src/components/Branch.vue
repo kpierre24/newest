@@ -4,13 +4,15 @@
       <h1>Branch</h1>
       <h2>Choose which branch you would like your account managed at</h2>
       <form @submit.prevent="submitBranch">
-        <div class="input-container">
-          <select v-model="selectedBranch" required>
-            <option value="" disabled>Select Branch</option>
-            <option value="Port of Spain">Port of Spain</option>
-            <option value="Milford Rd, Tobago">Milford Rd, Tobago</option>
-          </select>
-        </div>
+        <FormInput
+          label="Branch"
+          type="select"
+          id="branch"
+          v-model="selectedBranch"
+          :required="true"
+          :selectOptions="['Port of Spain', 'Milford Rd, Tobago']"
+          iconClass="icon fas fa-building"
+        />
         <div class="contact-method-container">
           <p>Choose which is your preferred method of contact</p>
           <hr />
@@ -54,9 +56,13 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
   name: 'Branch',
+  components: {
+    FormInput
+  },
   setup() {
     const router = useRouter();
     const store = useDemoStore();
@@ -121,11 +127,24 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
@@ -137,7 +156,8 @@ export default {
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 600px;
+  height: 100vh;
+  max-width: 400px;
   text-align: center;
   overflow-y: auto;
 }
@@ -164,22 +184,6 @@ p {
 .input-container {
   width: 100%;
   margin-bottom: 20px;
-}
-
-.input-container select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #949090;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-.input-container select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .contact-method-container,

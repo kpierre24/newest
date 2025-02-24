@@ -5,60 +5,85 @@
       <div class="id-box">
         <div class="id-container">
           <h2>First Form of ID</h2>
-          <div class="input-container">
-            <label for="firstIdType">Type of ID</label>
-            <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
-              <option value="" disabled>Select ID Type</option>
-              <option value="ID Card">ID Card</option>
-              <option value="Passport">Passport</option>
-              <option value="Birthpaper">Birthpaper</option>
-            </select>
-          </div>
-          <div class="input-container">
-            <label for="firstIdNumber">ID Number</label>
-            <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter ID number" />
-          </div>
-          <div class="input-container">
-            <label for="firstExpiryDate">Expiry Date</label>
-            <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" :disabled="firstIdType === 'Birthpaper'" />
-          </div>
-          <div class="input-container">
-            
-            <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
-            <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
-          </div>
+          <FormInput
+            label="Type of ID"
+            type="select"
+            id="firstIdType"
+            v-model="firstIdType"
+            @change="updateSecondIdOptions"
+            :selectOptions="['ID Card', 'Passport', 'Birthpaper']"
+            iconClass="icon fas fa-id-card"
+          />
+          <FormInput
+            label="ID Number"
+            type="text"
+            id="firstIdNumber"
+            v-model="firstIdNumber"
+            placeholder="Enter ID number"
+            iconClass="icon fas fa-hashtag"
+          />
+          <FormInput
+            label="Expiry Date"
+            type="date"
+            id="firstExpiryDate"
+            v-model="firstExpiryDate"
+            :max="maxExpiryDate"
+            :disabled="firstIdType === 'Birthpaper'"
+            iconClass="icon fas fa-calendar-alt"
+          />
+          <FileUpload
+            id="firstIdDocument"
+            buttonText="Upload ID"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload($event, 'first')"
+          />
         </div>
       </div>
       <div class="id-box">
         <div class="id-container">
           <h2>Second Form of ID</h2>
-          <div class="input-container">
-            <label for="secondIdType">Type of ID</label>
-            <select v-model="secondIdType" id="secondIdType">
-              <option value="" disabled>Select ID Type</option>
-              <option v-for="option in secondIdOptions" :key="option" :value="option">{{ option }}</option>
-            </select>
-          </div>
-          <div class="input-container">
-            <label for="secondIdNumber">ID Number</label>
-            <input type="text" v-model="secondIdNumber" id="secondIdNumber" placeholder="Enter ID number" />
-          </div>
-          <div class="input-container">
-            <label for="secondExpiryDate">Expiry Date</label>
-            <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" :disabled="secondIdType === 'Birthpaper'" />
-          </div>
-          <div class="input-container">
-            
-            <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
-            <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
-          </div>
+          <FormInput
+            label="Type of ID"
+            type="select"
+            id="secondIdType"
+            v-model="secondIdType"
+            :selectOptions="secondIdOptions"
+            iconClass="icon fas fa-id-card"
+          />
+          <FormInput
+            label="ID Number"
+            type="text"
+            id="secondIdNumber"
+            v-model="secondIdNumber"
+            placeholder="Enter ID number"
+            iconClass="icon fas fa-hashtag"
+          />
+          <FormInput
+            label="Expiry Date"
+            type="date"
+            id="secondExpiryDate"
+            v-model="secondExpiryDate"
+            :max="maxExpiryDate"
+            :disabled="secondIdType === 'Birthpaper'"
+            iconClass="icon fas fa-calendar-alt"
+          />
+          <FileUpload
+            id="secondIdDocument"
+            buttonText="Upload ID"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload($event, 'second')"
+          />
           <div class="id-box">
-          <div class="input-container">
-            <label for="schoolName">School Name</label>
-            <input type="text" v-model="schoolName" id="schoolName" placeholder="Enter school name" />
+            <FormInput
+              label="School Name"
+              type="text"
+              id="schoolName"
+              v-model="schoolName"
+              placeholder="Enter school name"
+              iconClass="icon fas fa-school"
+            />
           </div>
         </div>
-      </div>
       </div>
       <div class="button-group">
         <button class="back-button" @click="navigateToBasicInformation">Back</button>
@@ -71,10 +96,15 @@
 <script>
 import { ref } from 'vue';
 import { useDateValidation } from '@/composables/useDateValidation';
-
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
 
 export default {
   name: 'ChildIDInformation',
+  components: {
+    FormInput,
+    FileUpload
+  },
   data() {
     return {
       firstIdType: '',
@@ -97,12 +127,12 @@ export default {
     }
   },
   setup() {
-    const {
-      minDate,
-      validateExpiryDate,
-      validateDOB,
-      dob,
-      dobError,
+    const { 
+      minDate, 
+      validateExpiryDate, 
+      validateDOB, 
+      dob, 
+      dobError 
     } = useDateValidation();
 
     const expiryDate = ref('');
@@ -128,6 +158,8 @@ export default {
 
     return {
       minDate,
+      validateExpiryDate,
+      validateDOB,
       dob,
       dobError,
       expiryDate,
@@ -170,15 +202,25 @@ export default {
 </script>
 
 <style scoped>
-.container  {
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
@@ -188,11 +230,12 @@ export default {
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
+  width: 400px;
+  max-width: 400px;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  height: 100vh;
+  max-height: 100vh;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }

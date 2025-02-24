@@ -4,30 +4,69 @@
     <div class="form-container">
       <h1>Foreign National Bank Information</h1>
       <form @submit.prevent="handleSubmit">
-        <div class="input-container">
-          <input type="text" v-model="bankName" id="bankName" placeholder="Bank name" required />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="bankAddressLine1" id="bankAddressLine1" placeholder=" Address line 1" required />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="bankCity" id="bankCity" placeholder=" City" required />
-        </div>
-        <div class="input-container">
-          <select v-model="bankCountry" id="bankCountry" required>
-            <option value="" disabled> Country</option>
-            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="bankAccountNumber" id="bankAccountNumber" placeholder=" Account number" required />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="swiftCode" id="swiftCode" placeholder="SWIFT code" required />
-        </div>
-        <div class="input-container">
-          <input type="text" v-model="bankTelephoneNumber" id="bankTelephoneNumber" placeholder="Bank telephone number" required />
-        </div>
+        <FormInput
+          label="Bank Name"
+          type="text"
+          id="bankName"
+          v-model="bankName"
+          placeholder="Bank name"
+          :required="true"
+          iconClass="icon fas fa-university"
+        />
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="bankAddressLine1"
+          v-model="bankAddressLine1"
+          placeholder="Address line 1"
+          :required="true"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="City"
+          type="text"
+          id="bankCity"
+          v-model="bankCity"
+          placeholder="City"
+          :required="true"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          label="Country"
+          type="select"
+          id="bankCountry"
+          v-model="bankCountry"
+          :required="true"
+          :selectOptions="countryList"
+          iconClass="icon fas fa-globe"
+        />
+        <FormInput
+          label="Account Number"
+          type="text"
+          id="bankAccountNumber"
+          v-model="bankAccountNumber"
+          placeholder="Account number"
+          :required="true"
+          iconClass="icon fas fa-credit-card"
+        />
+        <FormInput
+          label="SWIFT Code"
+          type="text"
+          id="swiftCode"
+          v-model="swiftCode"
+          placeholder="SWIFT code"
+          :required="true"
+          iconClass="icon fas fa-code"
+        />
+        <FormInput
+          label="Telephone Number"
+          type="text"
+          id="bankTelephoneNumber"
+          v-model="bankTelephoneNumber"
+          placeholder="Bank telephone number"
+          :required="true"
+          iconClass="icon fas fa-phone"
+        />
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="next-button">Next</button>
@@ -43,8 +82,12 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { countries } from 'countries-list';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
+  components: {
+    FormInput
+  },
   setup() {
     const store = useDemoStore();
     const router = useRouter();
@@ -132,11 +175,24 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
@@ -146,10 +202,11 @@ export default {
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
+  height: 100vh;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 100vh;
 }
 
 h1 {
@@ -158,48 +215,22 @@ h1 {
   margin-bottom: 20px;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
   margin-bottom: 20px;
-  text-align: left;
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .button-group {
   display: flex;
-  flex-direction: column; /* Arrange buttons vertically */
-  gap: 10px; /* Add space between buttons */
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
   margin-top: 20px;
-  width: 100%; /* Stretch to the width of the container */
 }
 
 .back-button, .next-button, .submit-button {
-  width: 100%; /* Stretch buttons to full width */
-  padding: 15px; /* Increase padding for better appearance */
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -209,25 +240,25 @@ input:focus, select:focus {
 }
 
 .back-button {
-  background-color: #f15539ea; /* Red background */
-  color: white; /* White text */
+  background-color: #f15539ea;
+  color: white;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea; /* Lighter red on hover */
+  background-color: #f38b79ea;
 }
 
 .next-button, .submit-button {
-  background-color: #7838dd; /* Purple background */
-  color: white; /* White text */
+  background-color: #7838dd;
+  color: white;
 }
 
-.next-button:hover , .submit-button:hover{
-  background-color: #9e79da; /* Lighter purple on hover */
+.next-button:hover, .submit-button:hover {
+  background-color: #9e79da;
 }
 
 .logo {
-  width: 157.5px; 
+  width: 157.5px;
   height: auto;
   margin-bottom: 20px;
 }
@@ -305,7 +336,6 @@ input:focus, select:focus {
 }
 
 .common-icon {
-  /* Add your CSS adjustments here */
   width: 24px;
   height: 24px;
   color: #333;
