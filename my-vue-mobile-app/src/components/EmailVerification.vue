@@ -139,7 +139,7 @@ input:focus {
   font-weight: 600;
   transition: 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #007bff;
+  background-color: #FFBC2D ;
   color: white;
 }
 

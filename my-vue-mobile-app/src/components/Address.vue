@@ -8,7 +8,7 @@
           type="text"
           id="addressLine1"
           name="addressLine1"
-          placeholder="Enter address line 1"
+          placeholder="Address line 1"
           v-model="AddressLine1"
           :required="true"
           :error="errors.addressLine1"
@@ -18,7 +18,7 @@
           type="text"
           id="addressLine2"
           name="addressLine2"
-          placeholder="Enter address line 2"
+          placeholder=" Address line 2"
           v-model="AddressLine2"
           :error="errors.addressLine2"
         />
@@ -27,7 +27,7 @@
           type="text"
           id="city"
           name="city"
-          placeholder="Enter city"
+          placeholder="City"
           v-model="City"
           :required="true"
           :error="errors.city"
@@ -191,55 +191,8 @@ export default {
 </script>
 
 <style scoped>
- .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
-}
+ 
 
-
-.form-container {
-  background-image: 
-    url('@/assets/back.jpg');
-  background-size: cover; 
-  background-position: center;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 420px;
-  max-width: 420px;
-  height: 100%;
-  text-align: center;
-  overflow-y: auto;
-  height:850.5px;
-  max-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
 
 .input-container {
   width: 100%;
@@ -270,41 +223,7 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%; /* Ensure buttons take full width */
-}
 
-.back-button, .next-button ,.submit-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.back-button {
-  background-color: #f15539ea;
-  color: white;
-}
-
-.back-button:hover {
-  background-color: #f38b79ea;
-}
-
-.next-button , .submit-button{
-  background-color: #7838dd;
-  color: white;
-}
-
-.next-button:hover , .submit-button:hover{
-  background-color: #9e79da;
-}
 
 .error-message {
   color: #ff4d4d; /* Red for error messages */
@@ -328,20 +247,5 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(120, 56, 221, 0.2);
 }
 
-.upload-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  background-color: #7838dd; /* Purple background */
-  color: white; /* White text */
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
 
-.upload-button:hover {
-  background-color: #9e79da; /* Lighter purple on hover */
-}
 </style>

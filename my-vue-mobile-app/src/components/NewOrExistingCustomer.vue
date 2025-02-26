@@ -201,7 +201,7 @@ p {
   width: 80%;
   padding: 15px;
   margin: 20px 0;  /* Increased margin to spread out buttons */
-  background-color: #5a67d8;
+  background-color: #FFBC2D ;
   border: none;
   border-radius: 8px;
   color: #fff;

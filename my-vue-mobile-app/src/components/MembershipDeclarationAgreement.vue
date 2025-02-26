@@ -45,7 +45,7 @@
 import { ref } from 'vue'; // Import ref from vue
 import { useRouter } from 'vue-router'; // Import useRouter from vue-router
 import axios from 'axios';
-import { useDemoStore } from '@/store/demostore';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
   setup() {
@@ -94,46 +94,7 @@ export default {
 
 
 <style scoped>
-.container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
-}
 
-.form-container {
-background-color: #ffffff;
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  max-width: 400px;
-  text-align: center;
-  overflow-y: auto;
-  height: 100vh;
-  max-height: 100vh;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-h1, h2, h3, h4, h5, h6 {
-  text-align: center; /* Center align all heading tags */
-}
 
 .input-group, .input-container {
   width: 100%;
@@ -196,7 +157,7 @@ button {
 }
 
 .next-button {
-  background-color: purple;
+  background-color: #FFBC2D ;
   color: white;
 }
 

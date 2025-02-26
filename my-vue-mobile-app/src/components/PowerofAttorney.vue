@@ -154,16 +154,25 @@ export default {
       validationSchema
     });
 
-    const handleFileUpload = (event) => {
-      poaDocument.value = event.target.files[0];
+    const handleFileUpload = (file) => {
+      poaDocument.value = file;
     };
 
-    const handleIdFileUpload = (event) => {
-      poaIdDocument.value = event.target.files[0];
+    const handleIdFileUpload = (file) => {
+      poaIdDocument.value = file;
     };
 
     const onSubmit = async (values) => {
       try {
+        if (!poaIdDocument.value || !poaDocument.value) {
+          throw new Error('ID Document and/or Power of Attorney Document is missing');
+        }
+
+        // Validate the form data
+        if (!values.poaFirstName || !values.poaLastName || !values.poaAddressLine1 || !values.poaCity || !values.poaCountry || !values.poaDob || !values.poaIdType) {
+          throw new Error('Please fill in all required fields.');
+        }
+
         const formData = new FormData();
         formData.append('poaFirstName', values.poaFirstName);
         formData.append('poaLastName', values.poaLastName);
@@ -174,8 +183,14 @@ export default {
         formData.append('poaCountry', values.poaCountry);
         formData.append('poaDob', values.poaDob);
         formData.append('poaIdType', values.poaIdType);
-        formData.append('poaIdDocument', poaIdDocument.value);
-        formData.append('poaDocument', poaDocument.value);
+
+        // Append files only if they exist
+        if (poaIdDocument.value) {
+          formData.append('poaIdDocument', poaIdDocument.value);
+        }
+        if (poaDocument.value) {
+          formData.append('poaDocument', poaDocument.value);
+        }
 
         // Save state to the store
         store.setPowerOfAttorneyInfo({
@@ -195,28 +210,46 @@ export default {
         // Debugging logs to check form data
         console.log('Form Data:', values);
 
-        const response = await axios.post('http://localhost:3000/power-of-attorney', formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
+        const response = await axios.post('http://localhost:3000/power-of-attorney', formData);
+
         console.log('Submission response:', response.data);
 
         // Navigate to the branch page
         router.push('/branch'); 
       } catch (error) {
         console.error('Error submitting form:', error);
-        errorMessage.value = error.message;
+        errorMessage.value = 'An error occurred. Please check the console for details.'; // Changed error message
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
     };
 
     const goBack = () => {
-      router.go(-1);
+      if (!router || !router.go) {
+        console.error('Router instance or its go method is not available.');
+        return;
+      }
+
+      try {
+        router.go(-1);
+      } catch (error) {
+        console.error('Error navigating to the previous route:', error);
+        if (error instanceof Error) {
+          console.error('Error details:', error.message, error.stack);
+        }
+      }
     };
 
     const skipToNext = () => {
-      router.push('/branch'); // Adjust the route as needed
+      if (!router) {
+        console.error('Router instance is not available.');
+        return;
+      }
+
+      try {
+        router.push('/branch'); // Adjust the route as needed
+      } catch (error) {
+        console.error('Error navigating to the next route:', error);
+      }
     };
 
     return {
@@ -245,26 +278,43 @@ export default {
 
 <style scoped>
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
-  padding: 20px;
+    position: relative;
+    margin-top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: fit-content; /* Add this line */
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 1s ease-in-out forwards;
+    overflow-y: auto; /* Move overflow to container */
 }
 
 .form-container {
-  background-image: url('@/assets/back.jpg');
-  background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  overflow-y: auto;
-  max-height: 90vh;
+    background-image: url('@/assets/back.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+    padding-top: 50px; /* add padding top */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    max-width: 420px;
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 @keyframes gradientAnimation {
   0% {
@@ -368,7 +418,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .next-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 

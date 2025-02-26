@@ -98,6 +98,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import FormInput from '@/props/FormInput.vue';
 import FileUpload from '@/props/FileUpload.vue';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
   name: 'ParentGuardianInformation',
@@ -107,6 +108,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const store = useDemoStore();
     const formData = ref({
       ParentFirstName: '',
       ParentMiddleName: '',
@@ -135,6 +137,7 @@ export default {
         });
 
         console.log('Response:', response.data);
+        store.setParentGuardianInfo(formData.value);
         router.push({ name: 'IdInformation' });
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -306,7 +309,7 @@ select:focus {
   color: white;
 }
 .submit-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 
@@ -315,7 +318,7 @@ select:focus {
 }
 
 .next-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 

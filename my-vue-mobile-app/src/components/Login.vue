@@ -26,10 +26,12 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useField, useForm } from 'vee-validate';
 import * as yup from 'yup';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
   setup() {
     const router = useRouter();
+    const store = useDemoStore();
 
     const { handleSubmit } = useForm({
       validationSchema: yup.object({
@@ -49,6 +51,7 @@ export default {
         });
 
         console.log('Login successful:', response.data);
+        store.setUserEmail(email.value);
         router.push('/dashboard');
       } catch (error) {
         console.error('Login failed:', error);

@@ -4,7 +4,7 @@
       <h1>Mailing Address</h1>
       <form @submit.prevent="submitMailingAddress">
         <FormInput
-          label="Address Line 1"
+          label=""
           type="text"
           id="AddressLine1"
           v-model="AddressLine1"
@@ -13,7 +13,7 @@
           iconClass="icon fas fa-map-marker-alt"
         />
         <FormInput
-          label="Address Line 2"
+          label=""
           type="text"
           id="AddressLine2"
           v-model="AddressLine2"
@@ -21,7 +21,7 @@
           iconClass="icon fas fa-map-marker-alt"
         />
         <FormInput
-          label="City"
+          label=""
           type="text"
           id="City"
           v-model="City"
@@ -30,7 +30,7 @@
           iconClass="icon fas fa-city"
         />
         <FormInput
-          label="Country"
+          label=""
           type="select"
           id="Country"
           v-model="Country"
@@ -140,46 +140,7 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
-}
 
-.form-container {
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  height: 100vh;
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  overflow-y: auto;
-  max-height: 100vh;
-}
-
-h1 {
-  font-size: 22px;
-  color: #333;
-  margin-bottom: 20px;
-}
 
 .input-group, .input-container {
   width: 100%;
@@ -191,7 +152,7 @@ label {
   display: block;
   font-size: 14px;
   color: #555;
-  margin-bottom: 6px;
+  margin-bottom: 0px;
   font-weight: 600;
 }
 
@@ -240,7 +201,7 @@ input:focus, select:focus {
 }
 
 .next-button , .submit-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 
@@ -266,24 +227,7 @@ input:focus, select:focus {
   justify-content: center;
 }
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
 
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
 
 .agree-button, .disagree-button {
   padding: 10px 20px;
@@ -332,12 +276,13 @@ input:focus, select:focus {
   height: 24px;
   color: #333;
 }
-.icon fas fa-user {
+.icon fas fa-map-marker-alt {
   width: 24px;
   height: 24px;
   color: #333;
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
+  
 }
 </style>

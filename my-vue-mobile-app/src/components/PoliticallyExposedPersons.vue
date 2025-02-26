@@ -328,7 +328,7 @@ input[type="text"] {
 }
 
 .next-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 

@@ -127,6 +127,7 @@ export const useDemoStore = defineStore('demo', {
       this.basicInfo.confirmPassword = data.confirmPassword;
       this.basicInfo.termsViewed = data.termsViewed;
       this.basicInfo.financialAgreementViewed = data.financialAgreementViewed;
+      this.age = data.age;
     },
     
     setAddressInfo(info) {
@@ -192,6 +193,9 @@ export const useDemoStore = defineStore('demo', {
       this.bankAccountNumber = info.bankAccountNumber;
       this.swiftCode = info.swiftCode;
       this.bankTelephoneNumber = info.bankTelephoneNumber;
+    },
+    setBankAccountNumber(accountNumber) {
+      this.bankAccountNumber = accountNumber;
     },
     setBeneficiaryInfo(info) {
       this.beneficiaryFirstName = info.firstName;

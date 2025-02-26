@@ -176,6 +176,8 @@ export default {
 
         console.log('Basic info submitted:', response.data);
 
+        store.setBasicInfo(basicInfoData);
+
         router.push({ name: 'EmailVerification' });
       } catch (error) {
         console.error('Error submitting basic info:', error);
@@ -229,61 +231,47 @@ export default {
 </script>
 
 <style scoped>
+
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+    position: relative;
+    margin-top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: fit-content; /* Add this line */
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 1s ease-in-out forwards;
+    overflow-y: auto; /* Move overflow to container */
 }
 
 .form-container {
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 420px;
-  max-width: 420px;
-  max-height: 120vh;
-  height: 100%;
-  text-align: center;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 20px;
+    background-image: url('@/assets/back.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+    padding-top: 50px; /* add padding top */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    max-width: 420px;
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
-.form-container::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
-}
-.form-container {
-  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  margin-top: 50px;
-}
 
 .input-group, .input-container {
   width: 100%;
@@ -388,7 +376,7 @@ h1 {
 }
 
 .next-button , .submit-button {
-  background-color: #7838dd; /* Purple background */
+  background-color: #FFBC2D ; /* Purple background */
   color: white; /* White text */
 }
 

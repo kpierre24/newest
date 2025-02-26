@@ -280,7 +280,7 @@ h1 {
 }
 
 .next-button, .submit-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 

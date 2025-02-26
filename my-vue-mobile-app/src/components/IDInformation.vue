@@ -95,14 +95,15 @@ import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import { useDateValidation } from '@/composables/useDateValidation';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'; // Import useRouter
 import FormInput from '@/props/FormInput.vue';
-import FileUpload from '@/props/FileUpload.vue';
+import FileUpload from '@/props/FileUpload.vue'; // Ensure this import is correct
 
 export default {
   name: 'IDInformation',
   components: {
     FormInput,
-    FileUpload
+    FileUpload // Ensure this component is registered
   },
   setup() {
     const { 
@@ -123,25 +124,65 @@ export default {
     const secondIdDocument = ref(null);
     const secondIdOptions = ref(['National ID', "Driver's Permit", 'Passport']);
     const maritalStatus = ref('');
+    const router = useRouter(); // Use useRouter
 
-    const submitIDInformation = () => {
-      let isValid = true;
+    const validateIdType = () => {
+      return firstIdType.value !== '' && secondIdType.value !== '';
+    };
 
-      // Validate first form of ID
-      isValid = validateRequired('firstIdType', firstIdType.value) && isValid;
-      isValid = validateLength('firstIdNumber', firstIdNumber.value, 12, 12) && isValid;
-      isValid = validateExpiryDate(firstExpiryDate.value) && isValid;
+    const submitIDInformation = async () => {
+      if (!validateIdType()) {
+        console.error('Invalid ID Type');
+        return;
+      }
 
-      // Validate second form of ID
-      isValid = validateRequired('secondIdType', secondIdType.value) && isValid;
-      isValid = validateLength('secondIdNumber', secondIdNumber.value, 12, 12) && isValid;
-      isValid = validateExpiryDate(secondExpiryDate.value) && isValid;
+      try {
+        const idInfoData = {
+          firstIdType: firstIdType.value,
+          firstIdNumber: firstIdNumber.value,
+          firstExpiryDate: firstExpiryDate.value,
+          firstIdDocument: firstIdDocument.value,
+          secondIdType: secondIdType.value,
+          secondIdNumber: secondIdNumber.value,
+          secondExpiryDate: secondExpiryDate.value,
+          secondIdDocument: secondIdDocument.value,
+          maritalStatus: maritalStatus.value
+        };
 
-      if (isValid) {
-        // Proceed with form submission
-        console.log('Form submitted successfully');
+        console.log('ID Info Data:', idInfoData);
+
+        const response = await axios.post('http://localhost:3000/id-information', idInfoData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('ID info submitted:', response.data);
+
+        const store = useDemoStore();
+        if (store.isExistingCustomer) {
+          router.push('/account-number'); // Use router for navigation
+        } else {
+          router.push('/due-diligence'); // Use router for navigation
+        }
+      } catch (error) {
+        console.error('Error submitting ID info:', error);
+        console.error('Error details:', error.response ? error.response.data : error.message);
+      }
+    };
+
+    const handleFileUpload = (event, idType) => {
+      const target = event.target;
+      if (!target || !target.files || target.files.length === 0) {
+        console.error('No file selected:', target);
+        return;
+      }
+      const file = target.files[0];
+      if (idType === 'first') {
+        firstIdDocument.value = file;
+      } else if (idType === 'second') {
+        secondIdDocument.value = file;
       } else {
-        console.log('Validation failed');
+        console.error('Invalid idType:', idType);
       }
     };
 
@@ -161,6 +202,8 @@ export default {
       dob,
       dobError,
       submitIDInformation,
+      validateIdType,
+      handleFileUpload // Ensure this method is returned
     };
   },
   computed: {
@@ -179,96 +222,62 @@ export default {
       }
     },
     handleFileUpload(event, idType) {
-      const file = event.target.files[0];
+      const file = event.target?.files[0];
       if (idType === 'first') {
         this.firstIdDocument = file;
       } else {
         this.secondIdDocument = file;
       }
     },
-    triggerFileInput(id) {
-      document.getElementById(id).click();
+    triggerFileUpload(id) {
+      document.getElementById(id)?.click();
     },
     navigateToPrevious() {
       this.$router.go(-1);
-    },
-    async submitIDInformation() {
-      if (!this.validateIdType()) {
-        console.error('Invalid ID Type');
-        return;
-      }
-
-      try {
-        const idInfoData = {
-          firstIdType: this.firstIdType,
-          firstIdNumber: this.firstIdNumber,
-          firstExpiryDate: this.firstExpiryDate,
-          firstIdDocument: this.firstIdDocument,
-          secondIdType: this.secondIdType,
-          secondIdNumber: this.secondIdNumber,
-          secondExpiryDate: this.secondExpiryDate,
-          secondIdDocument: this.secondIdDocument,
-          maritalStatus: this.maritalStatus
-        };
-
-        console.log('ID Info Data:', idInfoData);
-
-        const response = await axios.post('http://localhost:3000/id-information', idInfoData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log('ID info submitted:', response.data);
-
-        const store = useDemoStore();
-        if (store.isExistingCustomer) {
-          this.$router.push('/account-number');
-        } else {
-          this.$router.push('/due-diligence');
-        }
-      } catch (error) {
-        console.error('Error submitting ID info:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
-      }
-    },
+    }
   }
 };
 </script>
 
 <style scoped>
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+    position: relative;
+    margin-top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: fit-content; /* Add this line */
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 1s ease-in-out forwards;
+    overflow-y: auto; /* Move overflow to container */
 }
 
 .form-container {
-  background-color: #ffffff;
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  overflow-y: auto;
-  max-height: 90vh;
+    background-image: url('@/assets/back.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+    padding-top: 50px; /* add padding top */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    max-width: 420px;
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 h1 {
@@ -353,7 +362,7 @@ select:focus {
 }
 
 .next-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 

@@ -1,35 +1,24 @@
 <template>
   <div class="container">
     <div class="form-container">
-      
-      <h1>Enter Account Number</h1>
-      <p>Please enter any account number you have with Cathedral Credit Union</p>
-      <form @submit.prevent="handleSubmit">
-        <FormInput
-          label="Account Number"
-          type="text"
-          id="accountNumber"
-          name="accountNumber"
-          placeholder="Enter account number"
+      <h1>Enter Your Account Number</h1>
+      <div class="input-container">
+        <label for="accountNumber">Account Number</label>
+        <input
+          type="number"
           v-model="accountNumber"
-          :required="true"
-          :error="errors.accountNumber"
+          id="accountNumber"
+          placeholder="Enter your account number"
         />
-        <FormInput
-          label="Verify Account Number"
-          type="text"
-          id="verifyAccountNumber"
-          name="verifyAccountNumber"
-          placeholder="Re-enter account number"
-          v-model="verifyAccountNumber"
-          :required="true"
-          :error="errors.verifyAccountNumber"
-        />
-        <div class="button-group">
-          <FormButton text="Back" type="button" @click="navigateToPrevious" />
-          <FormButton text="Next" type="submit" />
+        <div class="error-container" v-if="errorMessage">
+          <span class="error">{{ errorMessage }}</span>
         </div>
-      </form>
+      </div>
+      <div class="button-group">
+        <button @click="goBack" class="button back-button">Back</button>
+        <button @click="verifyAccountNumber" class="button next-button" :disabled="loading">Next</button>
+      </div>
+      <a href="#" @click.prevent="skipAccountNumber" class="skip-link">Skip adding account number</a>
     </div>
   </div>
 </template>
@@ -37,191 +26,192 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useDemoStore } from '@/store/demoStore';
-import FormInput from '@/props/FormInput.vue';
-
+import axios from 'axios';
+import { useDemoStore } from '../store/demoStore';
+import { watch } from 'vue';
 
 export default {
-  components: { FormInput },
+  name: 'AccountNumber',
   setup() {
-    const store = useDemoStore();
     const router = useRouter();
+    const demoStore = useDemoStore();
+    const errorMessage = ref('');
+    const loading = ref(false);
 
-    const accountNumber = ref('');
-    const verifyAccountNumber = ref('');
-    const errors = ref({});
+    const accountNumber = ref(demoStore.bankAccountNumber);
 
-    const handleSubmit = () => {
-      // Validation logic
-      if (!accountNumber.value) errors.value.accountNumber = 'Account number is required';
-      if (!verifyAccountNumber.value) errors.value.verifyAccountNumber = 'Please verify your account number';
-      if (accountNumber.value !== verifyAccountNumber.value) {
-        errors.value.verifyAccountNumber = 'Account numbers do not match';
+    watch(
+      () => demoStore.bankAccountNumber,
+      (newAccountNumber) => {
+        accountNumber.value = newAccountNumber;
       }
+    );
 
-      if (Object.keys(errors.value).length === 0) {
-        // Save account number to the store
-        store.setAccountNumber(accountNumber.value);
+    watch(accountNumber, (newAccountNumber) => {
+      demoStore.setBankAccountNumber(newAccountNumber);
+    });
 
-        // Navigate to the next page
-        router.push('/power-of-attorney');
+    const verifyAccountNumber = async () => {
+      loading.value = true;
+      errorMessage.value = '';
+      const accountNumberValue = demoStore.bankAccountNumber;
+      try {
+        // Basic validation: Check if it's a 12-digit number
+        if (!/^\d{12}$/.test(accountNumberValue)) {
+          errorMessage.value = 'Account number must be 12 digits.';
+          return;
+        }
+
+        const response = await axios.post('http://localhost:3000/account-number', {
+          accountNumber: accountNumberValue,
+        });
+
+        if (response.data.success) {
+          router.push('/due-diligence');
+        } else {
+          errorMessage.value = 'Invalid account number. Please try again.';
+        }
+      } catch (error) {
+        console.error('Error verifying account number:', error);
+        errorMessage.value = 'An error occurred. Please try again later.';
+      } finally {
+        loading.value = false;
       }
     };
 
-    const navigateToPrevious = () => {
-      router.go(-1);
+    const goBack = () => {
+      router.back();
+    };
+
+    const skipAccountNumber = () => {
+      router.push('/due-diligence');
     };
 
     return {
       accountNumber,
+      errorMessage,
+      loading,
       verifyAccountNumber,
-      errors,
-      handleSubmit,
-      navigateToPrevious,
+      goBack,
+      skipAccountNumber,
     };
   },
 };
 </script>
 
 <style scoped>
-.container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
+
+
+input-group, .input-container {
   width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
-
-}
-
-.form-container {
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 420px;
-  max-width: 420px;
-  height: 100%;
-  text-align: center;
-  overflow-y: auto;
-  height:850.5px;
-  max-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px; /* Reduced margin */
-  color: #FFBC2D;
-  margin: 0; /* Darker heading color */
-}
-
-p {
-  font-size: 16px;
-  margin-bottom: 20px;
-  color: #000000; /* Slightly darker text color */
-}
-
-.account-number-box {
-  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-  padding: 20px;
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add shadow */
-  width: 100%;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.input-with-icon {
-  display: flex;
-  align-items: center;
   position: relative;
-  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
-.icon {
-  position: absolute;
-  left: 10px; /* Position the icon to the left */
-  color: #333; /* Icon color */
-  font-size: 20px; /* Icon size */
+label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
-input {
+input, select {
   width: 100%;
-  padding: 12px 12px 12px 40px; /* Add padding to the left for the icon */
+  padding: 12px;
+  padding-left: 40px; /* Adjust padding to make space for the icon */
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
   box-sizing: border-box;
-  background-color: white; /* Solid white background for input */
+  background: #f9f9f9;
   transition: 0.3s ease;
 }
 
-input:focus {
+input:focus, select:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-.button-group {
-  display: flex;
-  flex-direction: column; /* Arrange buttons vertically */
-  gap: 10px; /* Add space between buttons */
-  margin-top: 20px;
-  width: 100%; /* Stretch to the width of the container */
-}
-
-.back-button, .next-button {
-  width: 100%; /* Stretch buttons to full width */
-  padding: 15px; /* Increase padding for better appearance */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.back-button {
-  background-color: #f15539ea; /* Red background */
-  color: white; /* White text */
-}
-
-.back-button:hover {
-  background-color: #f38b79ea; /* Lighter red on hover */
-}
-
-.next-button {
-  background-color: #7838dd; /* Purple background */
-  color: white; /* White text */
-}
-
-.next-button:hover {
-  background-color: #9e79da; /* Lighter purple on hover */
-}
-
-.error-message {
-  color: #ff4d4d; /* Red for error messages */
+error-container {
+  color: red;
   font-size: 12px;
-  margin-top: 5px;
+}
+
+.error {
+  display: block;
+}
+
+
+
+.icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #555;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+
+  .form-container {
+    padding: 20px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .back-button, .next-button, .submit-button {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    width: 100%;
+    height: 100vh;
+    padding: 40px;
+  }
+
+  .form-container {
+    padding: 60px;
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+  }
+
+  .button-group {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .back-button, .next-button, .submit-button {
+    width: 48%;
+    padding: 20px;
+    font-size: 18px;
+  }
+}
+
+.skip-link {
+  display: block;
+  margin-top: 10px;
+  color: #007bff;
+  text-decoration: none;
+  text-align: center;
+}
+
+.skip-link:hover {
+  text-decoration: underline;
 }
 </style>

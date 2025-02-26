@@ -74,7 +74,7 @@ export default {
     const errorMessage = ref('');
 
     // Pull date of birth from Pinia store
-    
+    const age = computed(() => store.basicInfo.age);
 
     const submitPepInfo = async () => {
       if (!pepAssociate.value) {
@@ -93,23 +93,27 @@ export default {
         store.setPepInfo(formData);
 
         // Make API call
-        await axios.post('http://localhost:3000/politically-exposed-persons-2', formData);
+        await axios.post('http://localhost:3000/politically-exposed-persons-2', formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
 
         // Calculate age and navigate accordingly
-        if (store.basicInfo.age !== null) {
-      if (store.basicInfo.age <= 17) {
+        if (age.value !== null) {
+          if (age.value < 17) {
         router.push({ name: 'ChildIdInformation' });
-      } else {
+          } else {
         router.push({ name: 'IdInformation' });
+          }
+        } else {
+          errorMessage.value = 'Date of birth or age is missing.';
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        errorMessage.value = 'An error occurred while submitting the form.';
       }
-    } else {
-      errorMessage.value = 'Date of birth or age is missing.';
-    }
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    errorMessage.value = 'An error occurred while submitting the form.';
-  }
-};
+    };
 
     const navigateToPrevious = () => {
       router.push({ name: 'PoliticallyExposedPersons' }); // Replace with your previous route
@@ -171,6 +175,7 @@ h1 {
 }
 
 .input-container {
+  position: relative;
   margin-bottom: 20px;
   width: 100%; /* Ensure input containers take full width */
   text-align: center; /* Center text and inputs */
@@ -187,6 +192,7 @@ label {
 input, select {
   width: 100%;
   padding: 12px;
+  padding-left: 40px; /* Adjust padding to make space for the icon */
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
@@ -249,7 +255,7 @@ input:focus, select:focus {
 }
 
 .next-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 
@@ -295,5 +301,62 @@ input:focus, select:focus {
   transform: translateY(-10px);
   display: inline-block;
   vertical-align: middle;
+}
+
+.icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #555;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+
+  .form-container {
+    padding: 20px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .back-button, .next-button {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    width: 100%;
+    height: 100vh;
+    padding: 40px;
+  }
+
+  .form-container {
+    padding: 60px;
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+  }
+
+  .button-group {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .back-button, .next-button {
+    width: 48%;
+    padding: 20px;
+    font-size: 18px;
+  }
 }
 </style>

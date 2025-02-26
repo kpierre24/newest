@@ -134,167 +134,193 @@
 <script>
 import axios from 'axios';
 import FormInput from '@/props/FormInput.vue';
+import { useDemoStore } from '@/store/demoStore';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'DesignationOfBeneficiary',
   components: {
     FormInput
   },
-  data() {
+  setup() {
+    const store = useDemoStore();
+    const router = useRouter();
+
+    const firstName = ref('');
+    const lastName = ref('');
+    const otherName = ref('');
+    const addressLine1 = ref('');
+    const addressLine2 = ref('');
+    const city = ref('');
+    const country = ref('');
+    const dob = ref('');
+    const gender = ref('');
+    const relationshipToBeneficiary = ref('');
+    const typeOfId = ref('');
+    const idNumber = ref('');
+    const percentageOfInterest = ref('');
+    const errors = ref({});
+
+    const validateForm = () => {
+      errors.value = {};
+      if (!firstName.value) {
+        errors.value.firstName = 'First Name is required.';
+      }
+      if (!lastName.value) {
+        errors.value.lastName = 'Last Name is required.';
+      }
+      if (!addressLine1.value) {
+        errors.value.addressLine1 = 'Address Line 1 is required.';
+      }
+      if (!city.value) {
+        errors.value.city = 'City is required.';
+      }
+      if (!country.value) {
+        errors.value.country = 'Country is required.';
+      }
+      if (!dob.value) {
+        errors.value.dob = 'Date of Birth is required.';
+      }
+      if (!gender.value) {
+        errors.value.gender = 'Gender is required.';
+      }
+      if (!relationshipToBeneficiary.value) {
+        errors.value.relationshipToBeneficiary = 'Relationship to Beneficiary is required.';
+      }
+      if (!typeOfId.value) {
+        errors.value.typeOfId = 'Type of ID is required.';
+      }
+      if (!idNumber.value) {
+        errors.value.idNumber = 'ID Number is required.';
+      }
+      if (!percentageOfInterest.value) {
+        errors.value.percentageOfInterest = 'Percentage of Beneficiary Interest is required.';
+      }
+      return Object.keys(errors.value).length === 0;
+    };
+
+    const handleSubmit = async (action) => {
+      if (validateForm()) {
+        const payload = {
+          firstName: firstName.value,
+          lastName: lastName.value,
+          otherName: otherName.value,
+          addressLine1: addressLine1.value,
+          addressLine2: addressLine2.value,
+          city: city.value,
+          country: country.value,
+          dob: dob.value,
+          gender: gender.value,
+          relationshipToBeneficiary: relationshipToBeneficiary.value,
+          typeOfId: typeOfId.value,
+          idNumber: idNumber.value,
+          percentageOfInterest: percentageOfInterest.value
+        };
+
+        try {
+          const response = await axios.post('http://localhost:3000/designation-of-beneficiary', payload);
+          console.log('Success:', response.data);
+
+          store.setBeneficiaryInfo(payload);
+
+          if (action === 'next') {
+            router.push('/power-of-attorney');
+          } else if (action === 'add') {
+            clearForm();
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+    };
+
+    const clearForm = () => {
+      firstName.value = '';
+      lastName.value = '';
+      otherName.value = '';
+      addressLine1.value = '';
+      addressLine2.value = '';
+      city.value = '';
+      country.value = '';
+      dob.value = '';
+      gender.value = '';
+      relationshipToBeneficiary.value = '';
+      typeOfId.value = '';
+      idNumber.value = '';
+      percentageOfInterest.value = '';
+    };
+
+    const goBack = () => {
+      router.go(-1);
+    };
+
+    const skipAddingBeneficiary = () => {
+      router.push('/power-of-attorney');
+    };
+
     return {
-      firstName: '',
-      lastName: '',
-      otherName: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      country: '',
-      dob: '',
-      gender: '',
-      relationshipToBeneficiary: '',
-      typeOfId: '',
-      idNumber: '',
-      percentageOfInterest: '',
-      errors: {}
+      firstName,
+      lastName,
+      otherName,
+      addressLine1,
+      addressLine2,
+      city,
+      country,
+      dob,
+      gender,
+      relationshipToBeneficiary,
+      typeOfId,
+      idNumber,
+      percentageOfInterest,
+      errors,
+      handleSubmit,
+      clearForm,
+      goBack,
+      skipAddingBeneficiary
     };
   },
-  methods: {
-    validateForm() {
-      this.errors = {};
-      if (!this.firstName) {
-        this.errors.firstName = 'First Name is required.';
-      }
-      if (!this.lastName) {
-        this.errors.lastName = 'Last Name is required.';
-      }
-      if (!this.addressLine1) {
-        this.errors.addressLine1 = 'Address Line 1 is required.';
-      }
-      if (!this.city) {
-        this.errors.city = 'City is required.';
-      }
-      if (!this.country) {
-        this.errors.country = 'Country is required.';
-      }
-      if (!this.dob) {
-        this.errors.dob = 'Date of Birth is required.';
-      }
-      if (!this.gender) {
-        this.errors.gender = 'Gender is required.';
-      }
-      if (!this.relationshipToBeneficiary) {
-        this.errors.relationshipToBeneficiary = 'Relationship to Beneficiary is required.';
-      }
-      if (!this.typeOfId) {
-        this.errors.typeOfId = 'Type of ID is required.';
-      }
-      if (!this.idNumber) {
-        this.errors.idNumber = 'ID Number is required.';
-      }
-      if (!this.percentageOfInterest) {
-        this.errors.percentageOfInterest = 'Percentage of Beneficiary Interest is required.';
-      }
-      return Object.keys(this.errors).length === 0;
-    },
-    handleSubmit(action) {
-      if (this.validateForm()) {
-        // Make API call using Axios
-        const payload = {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          otherName: this.otherName,
-          addressLine1: this.addressLine1,
-          addressLine2: this.addressLine2,
-          city: this.city,
-          country: this.country,
-          dob: this.dob,
-          gender: this.gender,
-          relationshipToBeneficiary: this.relationshipToBeneficiary,
-          typeOfId: this.typeOfId,
-          idNumber: this.idNumber,
-          percentageOfInterest: this.percentageOfInterest
-        };
-        axios.post('http://localhost:3000/designation-of-beneficiary', payload)
-          .then(response => {
-            console.log('Success:', response.data);
-            // Handle success response
-            if (action === 'next') {
-              this.$router.push('/power-of-attorney'); // Navigate to Power of Attorney screen
-            } else if (action === 'add') {
-              this.clearForm();
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            // Handle error response
-          });
-      }
-    },
-    clearForm() {
-      this.firstName = '';
-      this.lastName = '';
-      this.otherName = '';
-      this.addressLine1 = '';
-      this.addressLine2 = '';
-      this.city = '';
-      this.country = '';
-      this.dob = '';
-      this.gender = '';
-      this.relationshipToBeneficiary = '';
-      this.typeOfId = '';
-      this.idNumber = '';
-      this.percentageOfInterest = '';
-    },
-    goBack() {
-      this.$router.go(-1);
-    },
-    skipAddingBeneficiary() {
-      this.$router.push('/power-of-attorney'); // Navigate to Power of Attorney screen
-    }
-  }
 };
 </script>
 <style scoped>
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+    position: relative;
+    margin-top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: fit-content; /* Add this line */
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 1s ease-in-out forwards;
+    overflow-y: auto; /* Move overflow to container */
 }
 
 .form-container {
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 420px;
-  max-width: 420px;
-  max-height: 120vh;
-  height: 100%;
-  text-align: center;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 20px;
+    background-image: url('@/assets/back.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+    padding-top: 50px; /* add padding top */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    max-width: 420px;
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .form-container::-webkit-scrollbar {
@@ -383,7 +409,7 @@ label {
 }
 
 .next-button {
-  background-color: #7838dd; /* Purple background */
+  background-color: #FFBC2D; /* Purple background */
   color: white; /* White text */
 }
 

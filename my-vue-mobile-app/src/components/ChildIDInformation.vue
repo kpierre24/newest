@@ -98,6 +98,7 @@ import { ref } from 'vue';
 import { useDateValidation } from '@/composables/useDateValidation';
 import FormInput from '@/props/FormInput.vue';
 import FileUpload from '@/props/FileUpload.vue';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
   name: 'ChildIDInformation',
@@ -105,28 +106,8 @@ export default {
     FormInput,
     FileUpload
   },
-  data() {
-    return {
-      firstIdType: '',
-      firstIdNumber: '',
-      firstExpiryDate: '',
-      firstIdDocument: null,
-      secondIdType: '',
-      secondIdNumber: '',
-      secondExpiryDate: '',
-      secondIdDocument: null,
-      secondIdOptions: ['ID Card', 'Passport', 'Birthpaper'],
-      schoolName: '',
-    };
-  },
-  computed: {
-    maxExpiryDate() {
-      const today = new Date();
-      const maxDate = new Date(today.setFullYear(today.getFullYear() + 20));
-      return maxDate.toISOString().split('T')[0];
-    }
-  },
   setup() {
+    const store = useDemoStore();
     const { 
       minDate, 
       validateExpiryDate, 
@@ -135,8 +116,38 @@ export default {
       dobError 
     } = useDateValidation();
 
+    const firstIdType = ref('');
+    const firstIdNumber = ref('');
+    const firstExpiryDate = ref('');
+    const firstIdDocument = ref(null);
+    const secondIdType = ref('');
+    const secondIdNumber = ref('');
+    const secondExpiryDate = ref('');
+    const secondIdDocument = ref(null);
+    const secondIdOptions = ref(['ID Card', 'Passport', 'Birthpaper']);
+    const schoolName = ref('');
     const expiryDate = ref('');
     const expiryDateError = ref('');
+
+    const updateSecondIdOptions = () => {
+      if (firstIdType.value === 'Birthpaper') {
+        secondIdOptions.value = ['ID Card', 'Passport'];
+      } else {
+        secondIdOptions.value = ['ID Card', 'Passport', 'Birthpaper'];
+      }
+      if (!secondIdOptions.value.includes(secondIdType.value)) {
+        secondIdType.value = '';
+      }
+    };
+
+    const handleFileUpload = (event, idType) => {
+      const file = event.target.files[0];
+      if (idType === 'first') {
+        firstIdDocument.value = file;
+      } else {
+        secondIdDocument.value = file;
+      }
+    };
 
     const handleSubmit = () => {
       const isDOBValid = validateDOB();
@@ -149,11 +160,40 @@ export default {
       }
 
       if (isDOBValid && isExpiryDateValid) {
-        // Proceed with form submission
         console.log('Form submitted successfully');
       } else {
         console.log('Validation failed');
       }
+    };
+
+    const navigateToNext = async () => {
+      const childIdInfo = {
+        firstIdType: firstIdType.value,
+        firstIdNumber: firstIdNumber.value,
+        firstExpiryDate: firstExpiryDate.value,
+        firstIdDocument: firstIdDocument.value,
+        secondIdType: secondIdType.value,
+        secondIdNumber: secondIdNumber.value,
+        secondExpiryDate: secondExpiryDate.value,
+        secondIdDocument: secondIdDocument.value,
+        schoolName: schoolName.value,
+      };
+
+      try {
+        const response = await axios.post('http://localhost:3000/child-id-information', childIdInfo);
+        console.log('Child ID Info submitted:', response.data);
+
+        store.setChildIdInfo(childIdInfo);
+
+        router.push('/parent-guardian-information');
+      } catch (error) {
+        console.error('Error submitting child ID info:', error);
+        alert('An error occurred while saving child ID information.');
+      }
+    };
+
+    const navigateToBasicInformation = () => {
+      router.push('/politically-exposed-persons-2');
     };
 
     return {
@@ -165,89 +205,78 @@ export default {
       expiryDate,
       expiryDateError,
       handleSubmit,
+      firstIdType,
+      firstIdNumber,
+      firstExpiryDate,
+      firstIdDocument,
+      secondIdType,
+      secondIdNumber,
+      secondExpiryDate,
+      secondIdDocument,
+      secondIdOptions,
+      schoolName,
+      updateSecondIdOptions,
+      handleFileUpload,
+      navigateToNext,
+      navigateToBasicInformation,
     };
-  },
-  methods: {
-    updateSecondIdOptions() {
-      if (this.firstIdType === 'Birthpaper') {
-        this.secondIdOptions = ['ID Card', 'Passport'];
-      } else {
-        this.secondIdOptions = ['ID Card', 'Passport', 'Birthpaper'];
-      }
-      // Reset secondIdType if it is no longer a valid option
-      if (!this.secondIdOptions.includes(this.secondIdType)) {
-        this.secondIdType = '';
-      }
-    },
-    handleFileUpload(event, idType) {
-      const file = event.target.files[0];
-      if (idType === 'first') {
-        this.firstIdDocument = file;
-      } else {
-        this.secondIdDocument = file;
-      }
-    },
-    triggerFileInput(id) {
-      document.getElementById(id).click();
-    },
-    handleBackNavigation() {
-      this.$router.push('/politically-exposed-persons-2');
-    },
-    navigateToNext() 
-    {
-      this.$router.push('/parent-guardian-information');
-    }
   }
 };
 </script>
 
 <style scoped>
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+    position: relative;
+    margin-top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: fit-content; /* Add this line */
+    min-height: calc(100vh - 40px);
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 1s ease-in-out forwards;
+    overflow-y: auto; /* Move overflow to container */
 }
 
 .form-container {
-  background-color: #ffffff;
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  max-width: 400px;
-  text-align: center;
-  overflow-y: auto;
-  height: 100vh;
-  max-height: 100vh;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+    background-image: url('@/assets/back.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 30px;
+    padding-top: 50px; /* add padding top */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    max-width: 420px;
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
+
 
 .form-container::-webkit-scrollbar {
   display: none;
 }
 
-h1 {
-  font-size: 22px;
-  color: #333;
+h1{
+  color: #FFBC2D ;
+  font-size: 25px;
+  font-style: regular;
+  font-family: roboto;
   margin-bottom: 20px;
+  margin-top: 50px;
 }
 
 .input-group, .input-container {
@@ -326,7 +355,7 @@ select:focus {
 }
 
 .next-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 
@@ -340,36 +369,7 @@ select:focus {
   margin-bottom: 20px;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
 
 .agree-button, .disagree-button {
   padding: 10px 20px;
@@ -433,6 +433,12 @@ select:focus {
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  min-width:fit-content;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
 }
 
 .id-container {

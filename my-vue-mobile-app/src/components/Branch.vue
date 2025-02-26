@@ -126,60 +126,7 @@ export default {
 
 
 <style scoped>
-.container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
-}
 
-.form-container {
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Prevent the image from repeating */
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  height: 100vh;
-  max-width: 400px;
-  text-align: center;
-  overflow-y: auto;
-}
-
-h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #FFBC2D;
-}
-
-h2 {
-  font-size: 16px;
-  margin-bottom: 20px;
-  color: #6362F8;
-}
-
-p {
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #0c0c0c;
-  font-style: italic;
-}
 
 .input-container {
   width: 100%;
@@ -218,42 +165,6 @@ hr {
   cursor: pointer;
 }
 
-.button-group {
-  display: flex;
-  flex-direction: column; /* Arrange buttons vertically */
-  gap: 10px; /* Add space between buttons */
-  margin-top: 20px;
-  width: 100%; /* Stretch to the width of the container */
-}
-
-.back-button, .next-button, .submit-button {
-  width: 100%; /* Stretch buttons to full width */
-  padding: 15px; /* Increase padding for better appearance */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.back-button {
-  background-color: #f15539ea; /* Red background */
-  color: white; /* White text */
-}
-
-.back-button:hover {
-  background-color: #f38b79ea; /* Lighter red on hover */
-}
-
-.next-button , .submit-button {
-  background-color: #7838dd; /* Purple background */
-  color: white; /* White text */
-}
-
-.next-button:hover, .submit-button:hover {
-  background-color: #9e79da; /* Lighter purple on hover */
-}
 
 .error-message {
   color: #ff4d4d;

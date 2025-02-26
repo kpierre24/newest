@@ -27,15 +27,27 @@
 </template>
 
 <script>
+import { useDemoStore } from '@/store/demoStore';
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'DueDiligence',
-  methods: {
-    navigateToPrevious() {
-      this.$router.go(-1); // Navigate to the previous page
-    },
-    navigateToNext() {
-      this.$router.push('/address'); // Navigate to the address page
-    }
+  setup() {
+    const router = useRouter();
+    const store = useDemoStore();
+
+    const navigateToPrevious = () => {
+      router.go(-1);
+    };
+
+    const navigateToNext = () => {
+      router.push('/address');
+    };
+
+    return {
+      navigateToPrevious,
+      navigateToNext
+    };
   }
 };
 </script>
@@ -158,7 +170,7 @@ a:hover {
 }
 
 .next-button {
-  background-color: #7838dd;
+  background-color: #FFBC2D ;
   color: white;
 }
 

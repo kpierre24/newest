@@ -1,0 +1,176 @@
+/* Font styles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Container styles */
+.container {
+  margin-top: 60px;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards; 
+  
+}
+
+/* Heading styles */
+.h1 {
+  color: #FFBC2D;
+  font-size: 45px;
+  font-style: regular;
+}
+.h2{
+  color: #6362F8;
+  font-size: 35px;
+  font-family: roboto;
+  font-style: regular;
+}
+.h3{
+  color: #FF883F;
+  font-size: 35px;
+  font-family: roboto;
+  font-style: italics;
+}
+.h4{
+  color: #261C6B;
+  font-size: 30px;
+  font-family: roboto;
+  font-style: regular;
+}
+.h5{
+  color: #000000;
+  font-size: 25px;
+  font-family: roboto;
+  font-style: bold;
+}
+.h6{
+  color: #000000;
+  font-size: 20px;
+  font-family: roboto;
+  font-style: bold;
+}
+.p{
+  color: #000000;
+  font-size: 15px;
+  font-family: roboto;
+  font-style: regular;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.form-container {
+  background-image: 
+    url('@/assets/back.jpg');
+  background-size: cover; 
+  background-position: center;
+  padding: 80px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 420px;
+  max-width: 420px;
+  height: 100%;
+  text-align: center;
+  overflow-y:auto ;
+  height:140vh;
+  margin-bottom: -40px;
+  max-height: 140vh;
+  display: flex;
+  flex-direction: column;
+  margin-top: -30px;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  
+}
+.form-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+}
+.form-container {
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+.button-group {
+  display: flex;
+  flex-direction: column; /* Arrange buttons vertically */
+  gap: 10px; /* Add space between buttons */
+  margin-top: 20px;
+  width: 100%; /* Stretch to the width of the container */
+  font-family: roboto;
+}
+
+.back-button, .next-button, .submit-button {
+  width: 100%; /* Stretch buttons to full width */
+  padding: 15px; /* Increase padding for better appearance */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  font-family: roboto;
+ 
+}
+
+.back-button ,.disagree-button {
+  background-color: #6362F8; /* Red background */
+  color: white; /* White text */
+}
+ 
+
+.back-button:hover {
+  background-color: #261C6B; /* Lighter red on hover */
+}
+
+.next-button , .submit-button {
+  background-color: #FFBC2D ; /* Purple background */
+  color: white; /* White text */
+}
+
+.next-button:hover, .submit-button:hover {
+  background-color: #261C6B; /* Lighter purple on hover */
+}
+.upload-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #261C6B; /* Purple background */
+  color: white; /* White text */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #9e79da; /* Lighter purple on hover */
+}
