@@ -12,6 +12,7 @@
           :required="true"
           iconClass="icon fas fa-user"
         />
+        <ErrorMessage name="poaFirstName" class="error" />
         <FormInput
           label="Last Name"
           type="text"
@@ -21,6 +22,7 @@
           :required="true"
           iconClass="icon fas fa-user"
         />
+        <ErrorMessage name="poaLastName" class="error" />
         <FormInput
           label="Other Name"
           type="text"
@@ -29,6 +31,7 @@
           placeholder="Other Name"
           iconClass="icon fas fa-user"
         />
+        <ErrorMessage name="poaOtherName" class="error" />
         <FormInput
           label="Address Line 1"
           type="text"
@@ -38,6 +41,7 @@
           :required="true"
           iconClass="icon fas fa-map-marker-alt"
         />
+        <ErrorMessage name="poaAddressLine1" class="error" />
         <FormInput
           label="Address Line 2"
           type="text"
@@ -46,6 +50,7 @@
           placeholder="Address Line 2"
           iconClass="icon fas fa-map-marker-alt"
         />
+        <ErrorMessage name="poaAddressLine2" class="error" />
         <FormInput
           label="City"
           type="text"
@@ -55,6 +60,7 @@
           :required="true"
           iconClass="icon fas fa-city"
         />
+        <ErrorMessage name="poaCity" class="error" />
         <FormInput
           label="Country"
           type="text"
@@ -64,6 +70,7 @@
           :required="true"
           iconClass="icon fas fa-globe"
         />
+        <ErrorMessage name="poaCountry" class="error" />
         <FormInput
           label="Date of Birth"
           type="date"
@@ -73,6 +80,7 @@
           :required="true"
           iconClass="icon fas fa-calendar-alt"
         />
+        <ErrorMessage name="poaDob" class="error" />
         <FormInput
           label="ID Type"
           type="select"
@@ -82,6 +90,7 @@
           :selectOptions="['National ID', 'Driver\'s Permit', 'Passport']"
           iconClass="icon fas fa-id-card"
         />
+        <ErrorMessage name="poaIdType" class="error" />
         <div class="input-container">
           <label>POA ID Document</label>
           <FileUpload
@@ -118,7 +127,7 @@ import { useDemoStore } from '@/store/demoStore';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { useField, useForm, Field, ErrorMessage } from 'vee-validate';
+import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import FormInput from '@/props/FormInput.vue';
 import FileUpload from '@/props/FileUpload.vue';
@@ -129,7 +138,7 @@ export default {
     Field,
     ErrorMessage,
     FormInput,
-    FileUpload
+    FileUpload,
   },
   setup() {
     const store = useDemoStore();
@@ -138,6 +147,7 @@ export default {
     const poaDocument = ref(null);
     const poaIdDocument = ref(null);
 
+    // Validation Schema
     const validationSchema = yup.object({
       poaFirstName: yup.string().required('First Name is required'),
       poaLastName: yup.string().required('Last Name is required'),
@@ -147,11 +157,23 @@ export default {
       poaCity: yup.string().required('City is required'),
       poaCountry: yup.string().required('Country is required'),
       poaDob: yup.string().required('Date of Birth is required'),
-      poaIdType: yup.string().required('ID Type is required')
+      poaIdType: yup.string().required('ID Type is required'),
     });
 
+    // Form data with ref
+    const poaFirstName = ref('');
+    const poaLastName = ref('');
+    const poaOtherName = ref('');
+    const poaAddressLine1 = ref('');
+    const poaAddressLine2 = ref('');
+    const poaCity = ref('');
+    const poaCountry = ref('');
+    const poaDob = ref('');
+    const poaIdType = ref('');
+
+    // Setup Form with Vee-Validate
     const { handleSubmit, errors } = useForm({
-      validationSchema
+      validationSchema,
     });
 
     const handleFileUpload = (file) => {
@@ -162,17 +184,11 @@ export default {
       poaIdDocument.value = file;
     };
 
-    const onSubmit = async (values) => {
+    const onSubmit = handleSubmit(async (values) => {
       try {
         if (!poaIdDocument.value || !poaDocument.value) {
           throw new Error('ID Document and/or Power of Attorney Document is missing');
         }
-
-        // Validate the form data
-        if (!values.poaFirstName || !values.poaLastName || !values.poaAddressLine1 || !values.poaCity || !values.poaCountry || !values.poaDob || !values.poaIdType) {
-          throw new Error('Please fill in all required fields.');
-        }
-
         const formData = new FormData();
         formData.append('poaFirstName', values.poaFirstName);
         formData.append('poaLastName', values.poaLastName);
@@ -204,7 +220,7 @@ export default {
           poaDob: values.poaDob,
           poaIdType: values.poaIdType,
           poaIdDocument: poaIdDocument.value,
-          poaDocument: poaDocument.value
+          poaDocument: poaDocument.value,
         });
 
         // Debugging logs to check form data
@@ -215,13 +231,13 @@ export default {
         console.log('Submission response:', response.data);
 
         // Navigate to the branch page
-        router.push('/branch'); 
+        router.push('/branch');
       } catch (error) {
         console.error('Error submitting form:', error);
         errorMessage.value = 'An error occurred. Please check the console for details.'; // Changed error message
         console.error('Error details:', error.response ? error.response.data : error.message);
       }
-    };
+    });
 
     const goBack = () => {
       if (!router || !router.go) {
@@ -253,28 +269,33 @@ export default {
     };
 
     return {
-      handleSubmit: handleSubmit(onSubmit),
+      handleSubmit,
       errors,
       errorMessage,
       handleFileUpload,
       handleIdFileUpload,
       goBack,
       skipToNext,
-      poaFirstName: ref(''),
-      poaLastName: ref(''),
-      poaOtherName: ref(''),
-      poaAddressLine1: ref(''),
-      poaAddressLine2: ref(''),
-      poaCity: ref(''),
-      poaCountry: ref(''),
-      poaDob: ref(''),
-      poaIdType: ref(''),
+      poaFirstName,
+      poaLastName,
+      poaOtherName,
+      poaAddressLine1,
+      poaAddressLine2,
+      poaCity,
+      poaCountry,
+      poaDob,
+      poaIdType,
       poaDocument,
-      poaIdDocument
+      poaIdDocument,
     };
-  }
+  },
 };
 </script>
+
+
+
+
+
 
 <style scoped>
 .container {
@@ -298,6 +319,20 @@ export default {
     animation: fadeIn 1s ease-in-out forwards;
     overflow-y: auto; /* Move overflow to container */
 }
+
+.error{
+    color: red;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 
 .form-container {
     background-image: url('@/assets/back.jpg');

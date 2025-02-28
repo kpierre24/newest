@@ -7,10 +7,10 @@
           <label>Are you an associate of a politically exposed person?</label>
           <div class="radio-group">
             <label>
-              <input type="radio" v-model="pepAssociate" value="yes" /> Yes
+              <input type="radio" v-model="pepAssociate" value="yes" required/> Yes
             </label>
             <label>
-              <input type="radio" v-model="pepAssociate" value="no" /> No
+              <input type="radio" v-model="pepAssociate" value="no" required/> No
             </label>
           </div>
           <div class="error-container">
@@ -45,13 +45,13 @@
             <span class="error">{{ errorMessage }}</span>
           </div>
         </div>
-      </form>
 
       <!-- Navigation buttons at the bottom -->
       <div class="button-group">
         <button class="back-button" @click="navigateToPrevious">Back</button>
-        <button type="submit" class="next-button" @click="submitPepInfo">Next</button>
+        <button type="submit" class="next-button">Next</button>
       </div>
+      </form>
     </div>
   </div>
 </template>
@@ -81,6 +81,7 @@ export default {
         errorMessage.value = 'Please select an option.';
         return;
       }
+      errorMessage.value = ''
 
       try {
         const formData = {
@@ -102,12 +103,13 @@ export default {
         // Calculate age and navigate accordingly
         if (age.value !== null) {
           if (age.value < 17) {
-        router.push({ name: 'ChildIdInformation' });
+            router.push({ name: 'ChildIdInformation' });
           } else {
-        router.push({ name: 'IdInformation' });
+            router.push({ name: 'IdInformation' });
           }
         } else {
-          errorMessage.value = 'Date of birth or age is missing.';
+          router.push({ name: 'IdInformation' }) // navigate to this page even if age is null
+          console.log('Date of birth or age is missing.');
         }
       } catch (error) {
         console.error('Error submitting form:', error);
