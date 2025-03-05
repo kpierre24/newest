@@ -1,55 +1,82 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Employment Information</h1>
       <form @submit.prevent="handleSubmit">
+        <FormInput
+          label="Employer Name"
+          type="text"
+          id="employerName"
+          v-model="employerName"
+          placeholder="Enter employer name"
+          :required="true"
+          iconClass="icon fas fa-building"
+        />
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="employerAddressLine1"
+          v-model="employerAddressLine1"
+          placeholder="Enter address line 1"
+          :required="true"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="City"
+          type="text"
+          id="employerCity"
+          v-model="employerCity"
+          placeholder="Enter city"
+          :required="true"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          label="Country"
+          type="select"
+          id="employerCountry"
+          v-model="employerCountry"
+          :required="true"
+          :selectOptions="countryList"
+          iconClass="icon fas fa-globe"
+        />
+        <FormInput
+          label="Work Number"
+          type="text"
+          id="workNumber"
+          v-model="workNumber"
+          placeholder="Enter work number"
+          :required="true"
+          iconClass="icon fas fa-phone"
+        />
+        <FormInput
+          label="Employment Status"
+          type="select"
+          id="employmentStatus"
+          v-model="employmentStatus"
+          :required="true"
+          :selectOptions="['Employed', 'Self-Employed', 'Unemployed', 'Student', 'Retired']"
+          iconClass="icon fas fa-briefcase"
+        />
+        <FormInput
+          label="Employment Type"
+          type="select"
+          id="employmentType"
+          v-model="employmentType"
+          :required="true"
+          :selectOptions="['Full-Time', 'Part-Time', 'Contract', 'Temporary']"
+          iconClass="icon fas fa-user-tie"
+        />
         <div class="input-container">
-          <label for="employerName">Employer Name</label>
-          <input type="text" v-model="employerName" id="employerName" placeholder="Enter employer name" required />
-        </div>
-        <div class="input-container">
-          <label for="employerAddressLine1">Employer Address Line 1</label>
-          <input type="text" v-model="employerAddressLine1" id="employerAddressLine1" placeholder="Enter address line 1" required />
-        </div>
-        <div class="input-container">
-          <label for="employerCity">City</label>
-          <input type="text" v-model="employerCity" id="employerCity" placeholder="Enter city" required />
-        </div>
-        <div class="input-container">
-          <label for="employerCountry">Country</label>
-          <select v-model="employerCountry" id="employerCountry" required>
-            <option value="" disabled>Select country</option>
-            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <label for="workNumber">Work Number</label>
-          <input type="text" v-model="workNumber" id="workNumber" placeholder="Enter work number" required />
-        </div>
-        <div class="input-container">
-          <label for="employmentStatus">Employment Status</label>
-          <select v-model="employmentStatus" id="employmentStatus" required>
-            <option value="" disabled>Select employment status</option>
-            <option value="employed">Employed</option>
-            <option value="self-employed">Self-Employed</option>
-            <option value="unemployed">Unemployed</option>
-            <option value="student">Student</option>
-            <option value="retired">Retired</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <label for="employmentType">Employment Type</label>
-          <select v-model="employmentType" id="employmentType" required>
-            <option value="" disabled>Select employment type</option>
-            <option value="full-time">Full-Time</option>
-            <option value="part-time">Part-Time</option>
-            <option value="contract">Contract</option>
-            <option value="temporary">Temporary</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <label for="proofOfEmploymentFile">Proof of Employment</label>
-          <input type="file" id="proofOfEmploymentFile" @change="handleFileUpload" required />
+          <label>Proof of Employment</label>
+          <FileUpload
+            id="proofOfEmploymentFile"
+            buttonText="Upload Proof"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload"
+          />
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="goBack">Back</button>
@@ -66,8 +93,14 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { countries } from 'countries-list';
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
 
 export default {
+  components: {
+    FormInput,
+    FileUpload
+  },
   setup() {
     const store = useDemoStore();
     const router = useRouter();
@@ -81,6 +114,11 @@ export default {
     const employmentType = ref('');
     const proofOfEmploymentFile = ref(null);
     const countryList = ref(Object.values(countries).map(country => country.name));
+    
+    // Get the base URL dynamically
+    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : `http://${window.location.hostname}:3000`;
 
     onMounted(() => {
       employerName.value = store.employerName;
@@ -93,7 +131,12 @@ export default {
     });
 
     const handleFileUpload = (event) => {
-      proofOfEmploymentFile.value = event.target.files[0];
+      if (event && event.target && event.target.files && event.target.files.length > 0) {
+        const file = event.target.files[0];
+        proofOfEmploymentFile.value = file;
+      } else {
+        console.warn('No file selected or file input event is invalid');
+      }
     };
 
     const handleSubmit = async () => {
@@ -125,12 +168,17 @@ export default {
           console.log(`${key}: ${value}`);
         }
 
-        const response = await axios.post('http://localhost:3000/employment-information', formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log('Employment information submitted:', response.data);
+        try {
+          const response = await axios.post(`${baseURL}/employment-information`, formData, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('Employment information submitted:', response.data);
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Continue with navigation even if API fails
+        }
 
         // Navigate to the next page
         router.push('/designation-of-beneficiary'); // Replace with the actual next page route
@@ -167,30 +215,58 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
   background: #f4f4f4;
   padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 15px;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
-  text-align: center;
+  max-width: 350px;
+  height: 90%;
   overflow-y: auto;
-  max-height: 90vh;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
 }
 
 h1 {
-  font-size: 22px;
-  color: #333;
+  font-size: 24px;
   margin-bottom: 20px;
+  color: #FFBC2D;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
@@ -204,151 +280,56 @@ label {
   font-weight: 600;
 }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
-
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .next-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
-}
-
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
-}
-
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
+.back-button {
+  background-color: #f15539ea;
   color: white;
 }
 
-.agree-button:hover {
-  background-color: #0056b3;
+.back-button:hover {
+  background-color: #f38b79ea;
 }
 
-.disagree-button {
-  background-color: #6c757d;
+.next-button {
+  background-color: #FFBC2D;
   color: white;
 }
 
-.disagree-button:hover {
-  background-color: #5a6268;
+.next-button:hover {
+  background-color: #9e79da;
 }
 
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>

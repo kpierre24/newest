@@ -1,7 +1,7 @@
 <template>
   <div class="modal" v-if="visible">
     <div class="modal-content">
-      <span class="close-button" @click="$emit('close')">&times;</span>
+      <button class="close-button" @click="closeModal">&times;</button>
       <h2>Financial Declaration Agreement</h2>
       <div class="modal-text">
         <p>I hereby certify that the information given in this Declaration filled with CREDIT UNION CO-OPERATIVE SOCIETY LIMITED is TRUE and CORRECT.</p>
@@ -21,17 +21,39 @@ export default {
       required: true
     }
   },
+  emits: ['close'],
+  setup(props, { emit }) {
+    const closeModal = () => {
+      emit('close');
+    };
+    
+    return {
+      closeModal
+    };
+  }
 };
 </script>
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
@@ -133,84 +155,100 @@ input:focus, select:focus {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
   max-width: 500px;
-  text-align: left;
+  max-height: 80vh;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
 }
 
-.modal-content h2 {
-  margin-top: 0;
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
+.modal-text {
+  overflow-y: auto;
+  max-height: calc(80vh - 100px);
+  padding-right: 10px;
 }
 
-.agree-button, .disagree-button {
-  padding: 10px 20px;
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
   border: none;
-  border-radius: 5px;
+  font-size: 24px;
   cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
+  color: #333;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.close-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 22px;
+  padding-right: 30px;
+}
+
+p {
   margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
+  line-height: 1.5;
+  color: #555;
 }
 
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+/* Scrollbar styling */
+.modal-text::-webkit-scrollbar {
+  width: 6px;
 }
 
-.agree-button {
-  background-color: #007bff;
-  color: white;
+.modal-text::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
 }
 
-.agree-button:hover {
-  background-color: #0056b3;
+.modal-text::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
 }
 
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
+.modal-text::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
+/* For Firefox */
+.modal-text {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
 }
 </style>

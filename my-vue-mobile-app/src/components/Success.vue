@@ -1,243 +1,154 @@
 <template>
   <div class="container">
-    <div class="form-container">
     <div class="content">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Success</h1>
+      <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
       <p>You have successfully signed up for mobile banking and will be contacted soon by one of our agents.</p>
-      <button @click="navigateToLogin">Go to Login</button>
+      <div class="button-group">
+        <button @click="navigateToLogin" class="login-button">Go to Login</button>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'Success',
-  data() {
-    return {
-      // Add any form input data here if needed
-      formData: {
-        // Example form data
+  setup() {
+    const router = useRouter();
+    
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
+    
+    const navigateToLogin = async () => {
+      // Example form data
+      const formData = {
         userId: '12345',
         message: 'User has successfully signed up'
+      };
+      
+      try {
+        // Try to submit to API but don't block navigation if it fails
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/success`, formData);
+        console.log('Success data submitted:', response.data);
+      } catch (error) {
+        console.error('Error submitting success data:', error);
+        // Continue with navigation even if API fails
       }
+      
+      // Navigate to the login screen
+      console.log('Navigating to /login');
+      router.push('/login');
     };
-  },
-  methods: {
-    navigateToLogin() {
-      // Make API call with form input data
-      axios.post('http://localhost:3000/success', this.formData)
-        .then(response => {
-          console.log('Success:', response.data);
-          // Navigate to the login screen
-          this.$router.push('/login'); // Replace with the actual login route
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          // Handle error response
-        });
-    }
+    
+    return {
+      navigateToLogin
+    };
   }
 };
 </script>
 
-<<style scoped>
+<style scoped>
 .container {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
   background: #f4f4f4;
   padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 15px;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
-  text-align: center;
+  max-width: 350px;
+  height: 90%;
   overflow-y: auto;
-  max-height: 90vh;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
+  text-align: center;
 }
 
 h1 {
-  font-size: 22px;
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #FFBC2D;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 30px;
   color: #333;
-  margin-bottom: 20px;
 }
 
-.input-group, .input-container {
-  width: 100%;
-  margin-bottom: 20px;
-  text-align: left;
-  
+.success-icon {
+  font-size: 80px;
+  color: #4CAF50;
+  margin: 20px 0;
 }
-
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-
 
 .button-group {
-  display: flex;
-  justify-content: space-between;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.login-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
-}
-
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
-}
-
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
+  background-color: #FFBC2D;
   color: white;
 }
 
-.agree-button:hover {
-  background-color: #0056b3;
+.login-button:hover {
+  background-color: #9e79da;
 }
 
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-.disagree-button:hover {
-  background-color: #5a6268;
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
-.input-container {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
-
-.input-container .icon {
-  position: absolute;
-  left: 15px;  /* Align icon to the left */
-  color: #666;
-  font-size: 16px;
-}
-
-.input-container input,
-.input-container select {
-  width: 100%;
-  padding: 12px;
-  padding-left: 40px; /* Add space on the left for the icon */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-.input-container input:focus,
-.input-container select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}/* Adds space between the icons */
-
 </style>

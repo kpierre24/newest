@@ -9,6 +9,7 @@ export const useDemoStore = defineStore('demo', {
     mobileNumber: '',
     gender: '',
     dob: '',
+    age: null,
     password: '',
     confirmPassword: '',
     termsViewed: false,
@@ -26,7 +27,7 @@ export const useDemoStore = defineStore('demo', {
     childId: '',
     childName: '',
     childAge: '',
-    isExistingCustomer: false,
+    isNewCustomer: false,
     mailingAddressLine1: '',
     mailingAddressLine2: '',
     mailingCity: '',
@@ -41,6 +42,8 @@ export const useDemoStore = defineStore('demo', {
     pepAssociate: '',
     relationshipToPep: '',
     pepName: '',
+    jobTitle: '',
+    selectedOptions: [],
     firstIdType: '',
     firstIdNumber: '',
     firstExpiryDate: '',
@@ -74,7 +77,7 @@ export const useDemoStore = defineStore('demo', {
     parentPhoneNumber: '',
     relationshipToChild: '',
     relationshipDocument: null,
-    verificationCode: null,
+    verificationCode: '',
     membershipInfo: {
       isMemberOfAnotherCreditUnion: null,
       creditUnionName: null,
@@ -91,22 +94,40 @@ export const useDemoStore = defineStore('demo', {
     poaIdDocument: null,
     poaDocument: null
     },
-   
-
+    isExistingCustomer: false,
+    basicInfo: {
+      firstName: '',
+      lastName: '',
+      otherName: '',
+      email: '',
+      mobileNumber: '',
+      gender: '',
+      dob: '',
+      password: '',
+      confirmPassword: '',
+      termsViewed: false,
+      financialAgreementViewed: false,
+    },
+    pepInfo: {
+      pepAssociate: '',
+      relationshipToPep: '',
+      pepName: '',
+    },
   }),
   actions: {
-    setBasicInfo(info) {
-      this.firstName = info.firstName;
-      this.lastName = info.lastName;
-      this.otherName = info.otherName;
-      this.email = info.email;
-      this.mobileNumber = info.mobileNumber;
-      this.gender = info.gender;
-      this.dob = info.dob;
-      this.password = info.password;
-      this.confirmPassword = info.confirmPassword;
-      this.termsViewed = info.termsViewed;
-      this.financialAgreementViewed = info.financialAgreementViewed;
+    setBasicInfo(data) {
+      this.basicInfo.firstName = data.firstName;
+      this.basicInfo.lastName = data.lastName;
+      this.basicInfo.otherName = data.otherName;
+      this.basicInfo.email = data.email;
+      this.basicInfo.mobileNumber = data.mobileNumber;
+      this.basicInfo.gender = data.gender;
+      this.basicInfo.dob = data.dob;
+      this.basicInfo.password = data.password;
+      this.basicInfo.confirmPassword = data.confirmPassword;
+      this.basicInfo.termsViewed = data.termsViewed;
+      this.basicInfo.financialAgreementViewed = data.financialAgreementViewed;
+      this.age = data.age;
     },
     
     setAddressInfo(info) {
@@ -145,10 +166,14 @@ export const useDemoStore = defineStore('demo', {
       this.employmentType = info.employmentType;
       this.proofOfEmploymentFile = info.proofOfEmploymentFile;
     },
-    setPepInfo(info) {
-      this.pepAssociate = info.pepAssociate;
-      this.relationshipToPep = info.relationshipToPep;
-      this.pepName = info.pepName;
+    setPepInfo(data) {
+      this.pepInfo.pepAssociate = data.pepAssociate;
+      this.pepInfo.relationshipToPep = data.relationshipToPep;
+      this.pepInfo.pepName = data.pepName;
+    },
+    setSelectedOptions(options) {
+      this.selectedOptions = options;
+    
     },
     setChildIdInfo(info) {
       this.firstIdType = info.firstIdType;
@@ -168,6 +193,9 @@ export const useDemoStore = defineStore('demo', {
       this.bankAccountNumber = info.bankAccountNumber;
       this.swiftCode = info.swiftCode;
       this.bankTelephoneNumber = info.bankTelephoneNumber;
+    },
+    setBankAccountNumber(accountNumber) {
+      this.bankAccountNumber = accountNumber;
     },
     setBeneficiaryInfo(info) {
       this.beneficiaryFirstName = info.firstName;
@@ -213,6 +241,12 @@ export const useDemoStore = defineStore('demo', {
       this.poaIdType = info.poaIdType;
       this.poaIdDocument = info.poaIdDocument;
       this.poaDocument = info.poaDocument;
+    },
+    setNewCustomer(value) {
+      this.isNewCustomer = value;
+    },
+    setExistingCustomer(isExisting) {
+      this.isExistingCustomer = isExisting;
     },
   },
 

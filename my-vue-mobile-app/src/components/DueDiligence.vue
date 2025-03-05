@@ -1,19 +1,19 @@
 <template>
   <div class="container">
     <div class="content">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
       <h1>Due Diligence</h1>
+      <h3>Due Diligence Information</h3>
       <div class="text-container">
         <div class="text-content">
           <p>As part of our commitment to regulatory compliance and ensuring the security of our members, we may require all 
             foreign nationals to complete additional due diligence procedures which may include: </p>
           <div class="tags-container">
-            <h3>Foreign bank information</h3>
-            <h3>Source of funds</h3>
-            <h3>Purpose of the account</h3>
-            <h3>Anti-Money Laundering (AML) Compliance</h3>
-            <h3>Foreign Account Tax Compliance Act (FATCA) Compliance</h3>
-            <h3>Politically Exposed Persons Regulations</h3>
+            <h5>Foreign bank information</h5>
+            <h5>Source of funds</h5>
+            <h5>Purpose of the account</h5>
+            <h5>Anti-Money Laundering (AML) Compliance</h5>
+            <h5>Foreign Account Tax Compliance Act (FATCA) Compliance</h5>
+            <h5>Politically Exposed Persons Regulations</h5>
           </div>
           <a href="https://drive.google.com/drive/folders/1t8z2oRVvDwJwXGtKQ7JAQGdsK7-IuZIN" target="_blank">Link to Laws and Regulations</a>
         </div>
@@ -27,36 +27,61 @@
 </template>
 
 <script>
+import { useDemoStore } from '@/store/demoStore';
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'DueDiligence',
-  methods: {
-    navigateToPrevious() {
-      this.$router.go(-1); // Navigate to the previous page
-    },
-    navigateToNext() {
-      this.$router.push('/address'); // Navigate to the address page
-    }
+  setup() {
+    const router = useRouter();
+    const store = useDemoStore();
+
+    const navigateToPrevious = () => {
+      router.go(-1);
+    };
+
+    const navigateToNext = () => {
+      router.push('/address');
+    };
+
+    return {
+      navigateToPrevious,
+      navigateToNext
+    };
   }
 };
 </script>
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f5f5f5;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .content {
   background-color: white;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100vh;
   width: 100%;
   max-width: 400px; /* Adjusted to replicate mobile phone size */
   display: flex;
@@ -93,14 +118,14 @@ h1 {
 }
 
 h3 {
-  font-size: 18px;
+  font-size: 16px;
   color: #555;
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
 p {
-  font-size: 16px;
+  font-size: 12px;
   color: #666;
   margin-bottom: 20px;
 }
@@ -119,36 +144,39 @@ a:hover {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
 .back-button, .next-button {
-  padding: 10px 20px;
+  width: 100%;
+  padding: 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
   transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
 .next-button {
-  background-color: #007bff;
+  background-color: #FFBC2D;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
+
 </style>

@@ -1,65 +1,122 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Power of Attorney</h1>
       <form @submit.prevent="handleSubmit">
+        <FormInput
+          label="First Name"
+          type="text"
+          id="poaFirstName"
+          v-model="poaFirstName"
+          placeholder="First Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <ErrorMessage name="poaFirstName" class="error" />
+        <FormInput
+          label="Last Name"
+          type="text"
+          id="poaLastName"
+          v-model="poaLastName"
+          placeholder="Last Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <ErrorMessage name="poaLastName" class="error" />
+        <FormInput
+          label="Other Name"
+          type="text"
+          id="poaOtherName"
+          v-model="poaOtherName"
+          placeholder="Other Name"
+          iconClass="icon fas fa-user"
+        />
+        <ErrorMessage name="poaOtherName" class="error" />
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="poaAddressLine1"
+          v-model="poaAddressLine1"
+          placeholder="Address Line 1"
+          :required="true"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <ErrorMessage name="poaAddressLine1" class="error" />
+        <FormInput
+          label="Address Line 2"
+          type="text"
+          id="poaAddressLine2"
+          v-model="poaAddressLine2"
+          placeholder="Address Line 2"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <ErrorMessage name="poaAddressLine2" class="error" />
+        <FormInput
+          label="City"
+          type="text"
+          id="poaCity"
+          v-model="poaCity"
+          placeholder="City"
+          :required="true"
+          iconClass="icon fas fa-city"
+        />
+        <ErrorMessage name="poaCity" class="error" />
+        <FormInput
+          label="Country"
+          type="text"
+          id="poaCountry"
+          v-model="poaCountry"
+          placeholder="Country"
+          :required="true"
+          iconClass="icon fas fa-globe"
+        />
+        <ErrorMessage name="poaCountry" class="error" />
+        <FormInput
+          label="Date of Birth"
+          type="date"
+          id="poaDob"
+          v-model="poaDob"
+          placeholder="Date of Birth"
+          :required="true"
+          :max="today"
+          :error="dobError"
+          @validation="validateDateOfBirth"
+          iconClass="icon fas fa-birthday-cake"
+        />
+        <ErrorMessage name="poaDob" class="error" />
+        <FormInput
+          label="ID Type"
+          type="select"
+          id="poaIdType"
+          v-model="poaIdType"
+          :required="true"
+          :selectOptions="['National ID', 'Driver\'s Permit', 'Passport']"
+          iconClass="icon fas fa-id-card"
+        />
+        <ErrorMessage name="poaIdType" class="error" />
         <div class="input-container">
-          <label for="poaFirstName">First Name</label>
-          <Field name="poaFirstName" id="poaFirstName" placeholder="First Name" :class="{ 'is-invalid': errors.poaFirstName }" as="input" />
-          <ErrorMessage name="poaFirstName" class="error-message" />
+          <label>POA ID Document</label>
+          <FileUpload
+            id="poaIdDocument"
+            buttonText="Upload ID"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleIdFileUpload"
+          />
         </div>
         <div class="input-container">
-          <label for="poaLastName">Last Name</label>
-          <Field name="poaLastName" id="poaLastName" placeholder="Last Name" :class="{ 'is-invalid': errors.poaLastName }" as="input" />
-          <ErrorMessage name="poaLastName" class="error-message" />
+          <label>POA Document</label>
+          <FileUpload
+            id="poaDocument"
+            buttonText="Upload POA"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload"
+          />
         </div>
-        <div class="input-container">
-          <label for="poaOtherName">Other Name</label>
-          <Field name="poaOtherName" id="poaOtherName" placeholder="Other Name" :class="{ 'is-invalid': errors.poaOtherName }" as="input" />
-          <ErrorMessage name="poaOtherName" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="poaAddressLine1">Address Line 1</label>
-          <Field name="poaAddressLine1" id="poaAddressLine1" placeholder="Address Line 1" :class="{ 'is-invalid': errors.poaAddressLine1 }" as="input" />
-          <ErrorMessage name="poaAddressLine1" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="poaAddressLine2">Address Line 2</label>
-          <Field name="poaAddressLine2" id="poaAddressLine2" placeholder="Address Line 2" :class="{ 'is-invalid': errors.poaAddressLine2 }" as="input" />
-          <ErrorMessage name="poaAddressLine2" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="poaCity">City</label>
-          <Field name="poaCity" id="poaCity" placeholder="City" :class="{ 'is-invalid': errors.poaCity }" as="input" />
-          <ErrorMessage name="poaCity" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="poaCountry">Country</label>
-          <Field name="poaCountry" id="poaCountry" placeholder="Country" :class="{ 'is-invalid': errors.poaCountry }" as="input" />
-          <ErrorMessage name="poaCountry" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="poaDob">Date of Birth</label>
-          <Field name="poaDob" id="poaDob" type="date" :class="{ 'is-invalid': errors.poaDob }" as="input" />
-          <ErrorMessage name="poaDob" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="poaIdType">ID Type</label>
-          <Field name="poaIdType" id="poaIdType" as="select" :class="{ 'is-invalid': errors.poaIdType }">
-            <option value="">Select ID Type</option>
-            <option value="national-id">National ID</option>
-            <option value="drivers-permit">Driver's Permit</option>
-            <option value="passport">Passport</option>
-          </Field>
-          <ErrorMessage name="poaIdType" class="error-message" />
-        </div>
-        <div class="input-container">
-          <label for="poaIdDocument">ID Document</label>
-          <input type="file" id="poaIdDocument" @change="handleIdFileUpload" required />
-        </div>
-        <div class="input-container">
-          <label for="poaDocument">Power of Attorney Document</label>
-          <input type="file" id="poaDocument" @change="handleFileUpload" required />
+        <div class="skip-link">
+          <a href="#" @click.prevent="skipToNext">Add Power of Attorney Later</a>
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="goBack">Back</button>
@@ -73,17 +130,22 @@
 
 <script>
 import { useDemoStore } from '@/store/demoStore';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { useField, useForm, Field, ErrorMessage } from 'vee-validate';
+import { useForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
+import { useDateValidation } from '@/composables/useDateValidation';
 
 export default {
   name: 'PowerofAttorney',
   components: {
     Field,
-    ErrorMessage
+    ErrorMessage,
+    FormInput,
+    FileUpload,
   },
   setup() {
     const store = useDemoStore();
@@ -92,6 +154,7 @@ export default {
     const poaDocument = ref(null);
     const poaIdDocument = ref(null);
 
+    // Validation Schema
     const validationSchema = yup.object({
       poaFirstName: yup.string().required('First Name is required'),
       poaLastName: yup.string().required('Last Name is required'),
@@ -101,94 +164,230 @@ export default {
       poaCity: yup.string().required('City is required'),
       poaCountry: yup.string().required('Country is required'),
       poaDob: yup.string().required('Date of Birth is required'),
-      poaIdType: yup.string().required('ID Type is required')
+      poaIdType: yup.string().required('ID Type is required'),
     });
 
+    // Form data with ref
+    const poaFirstName = ref('');
+    const poaLastName = ref('');
+    const poaOtherName = ref('');
+    const poaAddressLine1 = ref('');
+    const poaAddressLine2 = ref('');
+    const poaCity = ref('');
+    const poaCountry = ref('');
+    const poaDob = ref('');
+    const poaIdType = ref('');
+
+    // Setup Form with Vee-Validate
     const { handleSubmit, errors } = useForm({
-      validationSchema
+      validationSchema,
     });
 
-    const handleFileUpload = (event) => {
-      poaDocument.value = event.target.files[0];
+    const { validateDOB, dobError } = useDateValidation();
+
+    // Get today's date for max DOB
+    const today = computed(() => {
+      const date = new Date();
+      return date.toISOString().split('T')[0];
+    });
+
+    const handleFileUpload = (file) => {
+      poaDocument.value = file;
+      console.log('POA Document uploaded:', file);
     };
 
-    const handleIdFileUpload = (event) => {
-      poaIdDocument.value = event.target.files[0];
+    const handleIdFileUpload = (file) => {
+      poaIdDocument.value = file;
+      console.log('POA ID Document uploaded:', file);
     };
 
-    const onSubmit = async (values) => {
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
+
+    const onSubmit = handleSubmit(async (values) => {
+      // Validate date of birth first
+      if (!validateDateOfBirth()) {
+        return; // Stop submission if date validation fails
+      }
+      
       try {
+        // Prepare form data for API submission
         const formData = new FormData();
         formData.append('poaFirstName', values.poaFirstName);
         formData.append('poaLastName', values.poaLastName);
-        formData.append('poaOtherName', values.poaOtherName);
+        formData.append('poaOtherName', values.poaOtherName || '');
         formData.append('poaAddressLine1', values.poaAddressLine1);
-        formData.append('poaAddressLine2', values.poaAddressLine2);
+        formData.append('poaAddressLine2', values.poaAddressLine2 || '');
         formData.append('poaCity', values.poaCity);
         formData.append('poaCountry', values.poaCountry);
-        formData.append('poaDob', values.poaDob);
+        formData.append('poaDob', poaDob.value);
+        formData.append('poaGender', values.poaGender);
+        formData.append('poaRelationship', values.poaRelationship);
         formData.append('poaIdType', values.poaIdType);
-        formData.append('poaIdDocument', poaIdDocument.value);
-        formData.append('poaDocument', poaDocument.value);
-
-        // Save state to the store
-        store.setPowerOfAttorneyInfo({
+        
+        if (poaIdDocument.value) {
+          formData.append('poaIdDocument', poaIdDocument.value);
+        }
+        
+        if (poaDocument.value) {
+          formData.append('poaDocument', poaDocument.value);
+        }
+        
+        // Update store with POA information
+        const poaInfo = {
           poaFirstName: values.poaFirstName,
           poaLastName: values.poaLastName,
-          poaOtherName: values.poaOtherName,
+          poaOtherName: values.poaOtherName || '',
           poaAddressLine1: values.poaAddressLine1,
-          poaAddressLine2: values.poaAddressLine2,
+          poaAddressLine2: values.poaAddressLine2 || '',
           poaCity: values.poaCity,
           poaCountry: values.poaCountry,
-          poaDob: values.poaDob,
+          poaDob: poaDob.value,
+          poaGender: values.poaGender,
+          poaRelationship: values.poaRelationship,
           poaIdType: values.poaIdType,
           poaIdDocument: poaIdDocument.value,
           poaDocument: poaDocument.value
-        });
-
-        // Debugging logs to check form data
-        console.log('Form Data:', values);
-
-        const response = await axios.post('http://localhost:3000/power-of-attorney', formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log('Submission response:', response.data);
-
-        // Navigate to the branch page
-        router.push('/branch'); 
+        };
+        
+        store.setPowerOfAttorneyInfo(poaInfo);
+        console.log('Store updated with POA info:', poaInfo);
+        
+        // Try to submit to API but don't block navigation if it fails
+        try {
+          const response = await axios.post(`${getBaseURL()}/api/power-of-attorney`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          console.log('Form submitted successfully:', response.data);
+        } catch (error) {
+          console.error('Error submitting form:', error);
+        }
+        
+        // Navigate to next page regardless of API success
+        console.log('Navigating to /branch');
+        router.push('/branch');
       } catch (error) {
-        console.error('Error submitting form:', error);
-        errorMessage.value = error.message;
-        console.error('Error details:', error.response ? error.response.data : error.message);
+        console.error('Error in form submission:', error);
+        errorMessage.value = error.message || 'An error occurred. Please try again.';
       }
-    };
+    });
 
     const goBack = () => {
       router.go(-1);
     };
 
+    const skipToNext = () => {
+      // Make sure to update the store with empty values
+      store.setPowerOfAttorneyInfo({
+        poaFirstName: '',
+        poaLastName: '',
+        poaOtherName: '',
+        poaAddressLine1: '',
+        poaAddressLine2: '',
+        poaCity: '',
+        poaCountry: '',
+        poaDob: '',
+        poaIdType: '',
+        poaIdDocument: null,
+        poaDocument: null,
+      });
+      
+      console.log('Skipping POA, navigating to /branch');
+      router.push('/branch');
+    };
+
+    const validateDateOfBirth = () => {
+      if (!poaDob.value) {
+        dobError.value = 'Date of birth is required';
+        return false;
+      }
+      
+      const selectedDate = new Date(poaDob.value);
+      selectedDate.setHours(0, 0, 0, 0);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate >= todayDate) {
+        dobError.value = 'Date of birth cannot be today or in the future';
+        return false;
+      }
+      
+      dobError.value = '';
+      return true;
+    };
+
+    const validateForm = () => {
+      errors.value = {};
+      let isValid = true;
+      
+      if (!poaFirstName.value) {
+        errors.value.poaFirstName = 'First Name is required.';
+        isValid = false;
+      }
+      
+      if (!poaLastName.value) {
+        errors.value.poaLastName = 'Last Name is required.';
+        isValid = false;
+      }
+      
+      if (!poaAddress.value) {
+        errors.value.poaAddress = 'Address is required.';
+        isValid = false;
+      }
+      
+      if (!poaCountry.value) {
+        errors.value.poaCountry = 'Country is required.';
+        isValid = false;
+      }
+      
+      // Use the validateDateOfBirth function
+      if (!validateDateOfBirth()) {
+        isValid = false;
+      }
+      
+      if (!poaGender.value) {
+        errors.value.poaGender = 'Gender is required.';
+        isValid = false;
+      }
+      
+      if (!poaRelationship.value) {
+        errors.value.poaRelationship = 'Relationship is required.';
+        isValid = false;
+      }
+      
+      return isValid;
+    };
+
     return {
-      handleSubmit: handleSubmit(onSubmit),
+      handleSubmit: onSubmit,
       errors,
       errorMessage,
       handleFileUpload,
       handleIdFileUpload,
       goBack,
-      poaFirstName: ref(''),
-      poaLastName: ref(''),
-      poaOtherName: ref(''),
-      poaAddressLine1: ref(''),
-      poaAddressLine2: ref(''),
-      poaCity: ref(''),
-      poaCountry: ref(''),
-      poaDob: ref(''),
-      poaIdType: ref(''),
+      skipToNext,
+      poaFirstName,
+      poaLastName,
+      poaOtherName,
+      poaAddressLine1,
+      poaAddressLine2,
+      poaCity,
+      poaCountry,
+      poaDob,
+      poaIdType,
       poaDocument,
-      poaIdDocument
+      poaIdDocument,
+      dobError,
+      today,
+      validateDateOfBirth,
     };
-  }
+  },
 };
 </script>
 
@@ -197,32 +396,78 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
   background: #f4f4f4;
   padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 15px;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
-  text-align: center;
+  max-width: 350px;
+  height: 90%;
   overflow-y: auto;
-  max-height: 90vh;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+form {
+  width: 100%;
+  padding-bottom: 20px; /* Add padding at the bottom for better scrolling experience */
 }
 
 h1 {
-  font-size: 22px;
-  color: #333;
+  font-size: 24px;
   margin-bottom: 20px;
+  color: #FFBC2D;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   text-align: left;
 }
 
@@ -234,21 +479,22 @@ label {
   font-weight: 600;
 }
 
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
+.skip-link {
+  margin: 15px 0;
+  text-align: center;
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+.skip-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.skip-link a:hover {
+  color: #0056b3;
+  text-decoration: underline;
 }
 
 .button-group {
@@ -258,127 +504,48 @@ input:focus, select:focus, textarea:focus {
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .next-button {
+  width: 48%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
-}
-
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
-}
-
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
+.back-button {
+  background-color: #f15539ea;
   color: white;
 }
 
-.agree-button:hover {
-  background-color: #0056b3;
+.back-button:hover {
+  background-color: #f38b79ea;
 }
 
-.disagree-button {
-  background-color: #6c757d;
+.next-button {
+  background-color: #FFBC2D;
   color: white;
 }
 
-.disagree-button:hover {
-  background-color: #5a6268;
+.next-button:hover {
+  background-color: #9e79da;
 }
 
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>

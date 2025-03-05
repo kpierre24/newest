@@ -1,51 +1,90 @@
 <template>
   <div class="container">
-    <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Parent/Guardian Information</h1>
       <form @submit.prevent="submitForm">
+        <FormInput
+          label="First Name"
+          type="text"
+          id="ParentFirstName"
+          v-model="formData.ParentFirstName"
+          placeholder="Parent First Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Middle Name"
+          type="text"
+          id="ParentMiddleName"
+          v-model="formData.ParentMiddleName"
+          placeholder="Parent Middle Name"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Last Name"
+          type="text"
+          id="ParentLastName"
+          v-model="formData.ParentLastName"
+          placeholder="Parent Last Name"
+          :required="true"
+          iconClass="icon fas fa-user"
+        />
+        <FormInput
+          label="Occupation"
+          type="text"
+          id="ParentOccupation"
+          v-model="formData.ParentOccupation"
+          placeholder="Parent Occupation"
+          :required="true"
+          iconClass="icon fas fa-briefcase"
+        />
+        <FormInput
+          label="Workplace"
+          type="text"
+          id="ParentWorkplace"
+          v-model="formData.ParentWorkplace"
+          placeholder="Parent Workplace"
+          :required="true"
+          iconClass="icon fas fa-building"
+        />
+        <FormInput
+          label="Email"
+          type="email"
+          id="ParentEmail"
+          v-model="formData.ParentEmail"
+          placeholder="Parent Email"
+          :required="true"
+          iconClass="icon fas fa-envelope"
+        />
+        <FormInput
+          label="Phone Number"
+          type="tel"
+          id="ParentPhoneNumber"
+          v-model="formData.ParentPhoneNumber"
+          placeholder="Parent Phone Number"
+          :required="true"
+          iconClass="icon fas fa-phone"
+        />
+        <FormInput
+          label="Relationship to Child"
+          type="select"
+          id="RelationshipToChild"
+          v-model="formData.RelationshipToChild"
+          :required="true"
+          :selectOptions="['Mother', 'Father', 'Grandparent', 'Related Guardian', 'Unrelated Guardian']"
+          iconClass="icon fas fa-users"
+        />
         <div class="input-container">
-          <label for="ParentFirstName">First Name</label>
-          <input type="text" v-model="ParentFirstName" id="ParentFirstName" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentMiddleName">Middle Name</label>
-          <input type="text" v-model="ParentMiddleName" id="ParentMiddleName" />
-        </div>
-        <div class="input-container">
-          <label for="ParentLastName">Last Name</label>
-          <input type="text" v-model="ParentLastName" id="ParentLastName" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentOccupation">Occupation</label>
-          <input type="text" v-model="ParentOccupation" id="ParentOccupation" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentWorkplace">Workplace</label>
-          <input type="text" v-model="ParentWorkplace" id="ParentWorkplace" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentEmail">Email Address</label>
-          <input type="email" v-model="ParentEmail" id="ParentEmail" required />
-        </div>
-        <div class="input-container">
-          <label for="ParentPhoneNumber">Phone Number</label>
-          <input type="tel" v-model="ParentPhoneNumber" id="ParentPhoneNumber" required />
-        </div>
-        <div class="input-container">
-          <label for="RelationshipToChild">Relationship to Child</label>
-          <select v-model="RelationshipToChild" id="RelationshipToChild" required>
-            <option value="" disabled>Select Relationship</option>
-            <option value="mother">Mother</option>
-            <option value="father">Father</option>
-            <option value="grandparent">Grandparent</option>
-            <option value="related_guardian">Related Guardian</option>
-            <option value="unrelated_guardian">Unrelated Guardian</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <label for="RelationshipDocument">Upload Relationship Document</label>
-          <input type="file" @change="handleFileUpload" id="RelationshipDocument" required />
+          <label>Relationship Document</label>
+          <FileUpload
+            id="RelationshipDocument"
+            buttonText="Browse"
+            accept=".pdf,.jpg,.png"
+            @file-uploaded="handleFileUpload"
+          />
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -59,61 +98,93 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
   name: 'ParentGuardianInformation',
+  components: {
+    FormInput,
+    FileUpload
+  },
   setup() {
     const router = useRouter();
+    const store = useDemoStore();
+    const formData = ref({
+      ParentFirstName: '',
+      ParentMiddleName: '',
+      ParentLastName: '',
+      ParentOccupation: '',
+      ParentWorkplace: '',
+      ParentEmail: '',
+      ParentPhoneNumber: '',
+      RelationshipToChild: '',
+      RelationshipDocument: null
+    });
 
-    const ParentFirstName = ref('');
-    const ParentMiddleName = ref('');
-    const ParentLastName = ref('');
-    const ParentOccupation = ref('');
-    const ParentWorkplace = ref('');
-    const ParentEmail = ref('');
-    const ParentPhoneNumber = ref('');
-    const RelationshipToChild = ref('');
-    const RelationshipDocument = ref(null);
-
-    const handleFileUpload = (event) => {
-      RelationshipDocument.value = event.target.files[0];
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
     };
 
-    const submitForm = () => {
-      // Perform form validation and API call here
-      console.log('Form submitted', {
-        ParentFirstName: ParentFirstName.value,
-        ParentMiddleName: ParentMiddleName.value,
-        ParentLastName: ParentLastName.value,
-        ParentOccupation: ParentOccupation.value,
-        ParentWorkplace: ParentWorkplace.value,
-        ParentEmail: ParentEmail.value,
-        ParentPhoneNumber: ParentPhoneNumber.value,
-        RelationshipToChild: RelationshipToChild.value,
-        RelationshipDocument: RelationshipDocument.value
-      });
+    const handleFileUpload = (event) => {
+      formData.value.RelationshipDocument = event.target.files[0];
+    };
 
-      // Navigate to the next page
-      router.push({ name: 'IdInformation' });
+    const submitForm = async () => {
+      try {
+        const formDataObj = new FormData();
+        for (const key in formData.value) {
+          formDataObj.append(key, formData.value[key]);
+        }
+
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/parent-guardian-information`, formDataObj, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        console.log('Response:', response.data);
+        store.setParentGuardianInfo(formData.value);
+        router.push({ name: 'IdInformation' });
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        // Continue with navigation even if API fails
+        store.setParentGuardianInfo(formData.value);
+        router.push({ name: 'IdInformation' });
+      }
     };
 
     const navigateToPrevious = () => {
       router.push({ name: 'ChildIdInformation' });
     };
 
+    const formatPlaceholder = (key) => {
+      return key
+        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+        .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
+        .trim(); // Remove any leading/trailing spaces
+    };
+
+    const getInputType = (key) => {
+      return key.includes('Email') ? 'email' : key.includes('Phone') ? 'tel' : 'text';
+    };
+
+    const triggerFileUpload = () => {
+      // Implementation of triggerFileUpload method
+    };
+
     return {
-      ParentFirstName,
-      ParentMiddleName,
-      ParentLastName,
-      ParentOccupation,
-      ParentWorkplace,
-      ParentEmail,
-      ParentPhoneNumber,
-      RelationshipToChild,
-      RelationshipDocument,
+      formData,
       handleFileUpload,
       submitForm,
-      navigateToPrevious
+      navigateToPrevious,
+      formatPlaceholder,
+      getInputType,
+      triggerFileUpload
     };
   }
 };
@@ -124,30 +195,58 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
   background: #f4f4f4;
   padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 15px;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
-  text-align: center;
+  max-width: 350px;
+  height: 90%;
   overflow-y: auto;
-  max-height: 90vh;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
 }
 
 h1 {
-  font-size: 22px;
-  color: #333;
+  font-size: 24px;
   margin-bottom: 20px;
+  color: #FFBC2D;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
@@ -161,151 +260,56 @@ label {
   font-weight: 600;
 }
 
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
-
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .submit-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
-}
-
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
-}
-
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
+.back-button {
+  background-color: #f15539ea;
   color: white;
 }
 
-.agree-button:hover {
-  background-color: #0056b3;
+.back-button:hover {
+  background-color: #f38b79ea;
 }
 
-.disagree-button {
-  background-color: #6c757d;
+.submit-button {
+  background-color: #FFBC2D;
   color: white;
 }
 
-.disagree-button:hover {
-  background-color: #5a6268;
+.submit-button:hover {
+  background-color: #9e79da;
 }
 
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>

@@ -1,54 +1,50 @@
 <template>
   <div class="container">
     <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
-      <h1>Politically Exposed Persons</h1>
+      <h1>Politically <br>Exposed Persons</h1>
       <div class="text-container">
         <div class="text-content">
           <p>In accordance with the Proceeds of Crime Act 2000 (as amended) and the Financial Obligations (Amendment) Regulations 2014, Regulation 20(3), there is an obligation for Financial Institutions to undertake Enhanced Customer Due Diligence on clients who are classified as a PEP. 
              As defined by these Acts and adopted within the Cathedral Credit Union, a PEP shall be considered as an individual 
             who is or has been entrusted with a prominent function either locally or in a foreign country.</p>
-         <div class="input-container">
-          <label for="pepAssociate">Are you a politically exposed person (PEP) or associated with one?</label>
-          <select v-model="pepAssociate" id="pepAssociate" required>
-            <option value="" disabled>Select an option</option>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
         </div>
-        
-            <div class="button-group">
-            <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Domestic Pep or Foreign PEP</button>
-            <button @click="showModal('Interntional Organization PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Interntional Organization PEP</button>
-            <button @click="showModal('Immediate Family member of a PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Immediate Family member of a PEP</button>
-          </div>
-        </div>
+        <FormInput
+          label="Are you a politically exposed person (PEP) or associated with one?"
+          type="select"
+          id="pepAssociate"
+          v-model="pepAssociate"
+          :required="true"
+          :selectOptions="['Yes', 'No']"
+          iconClass="icon fas fa-user-tie"
+        />
       </div>
-      <form @submit.prevent="handleSubmit">
-        
-       
-        <h3 v-if="pepAssociate === 'yes'">You are a politically exposed person.</h3>
-        <h3 v-else-if="pepAssociate === 'no'">You are not a politically exposed person.</h3>
-        
-        <div class="navigation-buttons">
-          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="next-button">Next</button>
-        </div>
-      </form>
-      <div v-if="modalVisible" class="modal">
-        <div class="modal-content">
-          <h2>Select an Option</h2>
-          <div class="radio-group">
-            <label v-for="option in options" :key="option">
-              <input type="radio" v-model="selectedOption" :value="option" />
-              {{ option }}
-            </label>
-          </div>
-          <div class="modal-buttons">
-            <button @click="closeModal" class="modal-button">Close</button>
-            <button @click="confirmSelection" class="modal-button">Confirm</button>
+      <div class="button-group">
+        <button @click="showModal('Domestic Pep or Foreign PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Domestic Pep or Foreign PEP</button>
+        <button @click="showModal('International Organization PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select International Organization PEP</button>
+        <button @click="showModal('Immediate Family member of a PEP')" class="stretch-button" :disabled="pepAssociate === 'no'">Select Immediate Family member of a PEP</button>
+      </div>
+
+      <!-- Modal inside the form-container -->
+      <transition name="slide">
+        <div v-if="modalVisible" class="modal">
+          <div class="modal-content">
+            <h2>Select Options</h2>
+            <div class="checkbox-group">
+              <label v-for="option in options" :key="option">
+                <input type="checkbox" v-model="selectedOptions" :value="option" />
+                {{ option }}
+              </label>
+            </div>
+            <div class="modal-buttons">
+              <button @click="closeModal" class="modal-button">Close</button>
+              <button @click="confirmSelection" class="modal-button">Confirm</button>
+            </div>
           </div>
         </div>
+      </transition>
+      <div class="navigation-buttons">
+        <button class="back-button" @click="navigateToPrevious">Back</button>
+        <button class="next-button" @click="submitPepInfo">Next</button>
       </div>
     </div>
   </div>
@@ -59,8 +55,12 @@ import { useDemoStore } from '@/store/demoStore';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
+  components: {
+    FormInput
+  },
   setup() {
     const store = useDemoStore();
     const router = useRouter();
@@ -70,56 +70,51 @@ export default {
     const pepName = ref('');
     const jobTitle = ref('');
     const modalVisible = ref(false);
-    const selectedOption = ref('');
-    const options = ref([
-      'Domestic Pep or Foreign PEP',
-      'Interntional Organization PEP',
-      'Immediate Family member of a PEP'
-    ]);
+    const selectedOptions = ref([]);
+    const options = ref([]);
+    const isPep = ref('');
+    const pepDetails = ref('');
+    const errorMessage = ref('');
 
     onMounted(() => {
+      // Load state from Pinia store
       pepAssociate.value = store.pepAssociate;
       relationshipToPep.value = store.relationshipToPep;
       pepName.value = store.pepName;
       jobTitle.value = store.jobTitle;
+      selectedOptions.value = store.selectedOptions || [];
     });
 
-    const handleSubmit = async () => {
-  if (pepAssociate.value === 'no') {
-    router.push({ name: 'PoliticallyExposedPersons2' });
-    return;
-  }
-
-  try {
-    const formData = {
-      pepAssociate: pepAssociate.value,
-      relationshipToPep: relationshipToPep.value,
-      pepName: pepName.value,
-      jobTitle: jobTitle.value
-    };
-
-    const response = await axios.post('http://localhost:3000/politically-exposed-persons', formData, {
-      headers: {
-        'Content-Type': 'application/json'
+    const showModal = (button) => {
+      if (button === 'Domestic Pep or Foreign PEP') {
+        options.value = [
+          'Head of State',
+          'Senior Member of the Legislature',
+          'Military Official',
+          'Senior Government Official',
+          'Senior Politician',
+          'Senior Executive of State-Owned Corporation',
+          'Head of Government'
+        ];
+      } else if (button === 'International Organization PEP') {
+        options.value = [
+          'United Nations and Affiliated International Organizations',
+          'InterAmerican Development Bank',
+          'Caribbean Financial Action Task Force',
+          'Organization of American States'
+        ];
+      } else if (button === 'Immediate Family member of a PEP') {
+        options.value = [
+          'Spouse/Ex-Spouse',
+          'Child',
+          'Parent',
+          'Sibling',
+          'Half-Sibling',
+          'Other Child of PEP Spouse'
+        ];
       }
-    });
 
-        console.log('PEP information submitted:', response.data);
-
-        // Navigate to the next page
-        router.push({ name: 'PoliticallyExposedPersons2' }); // Replace with the actual next page route
-      } catch (error) {
-        console.error('Error submitting PEP information:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
-      }
-    };
-
-    const navigateToPrevious = () => {
-      router.go(-1);
-    };
-
-    const showModal = (option) => {
-      selectedOption.value = option;
+      selectedOptions.value = [];
       modalVisible.value = true;
     };
 
@@ -128,8 +123,65 @@ export default {
     };
 
     const confirmSelection = () => {
-      // Handle the selection confirmation logic here
+      // Save selected options to Pinia store
+      store.setSelectedOptions(selectedOptions.value);
       closeModal();
+    };
+
+    const navigateToPrevious = () => {
+      // Save state to Pinia before navigating back
+      store.setPepInfo({
+        pepAssociate: pepAssociate.value,
+        relationshipToPep: relationshipToPep.value,
+        pepName: pepName.value,
+        jobTitle: jobTitle.value,
+        selectedOptions: selectedOptions.value
+      });
+      router.push({ name: 'MembershipDeclarationAgreement' });
+    };
+
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
+
+    const submitPepInfo = async () => {
+      if (isPep.value === '') {
+        errorMessage.value = 'Please select an option.';
+        return;
+      }
+
+      if (isPep.value === 'yes' && !pepDetails.value) {
+        errorMessage.value = 'Please provide details about your politically exposed status.';
+        return;
+      }
+
+      const formData = {
+        isPep: isPep.value,
+        pepDetails: pepDetails.value
+      };
+
+      try {
+        // Update store
+        store.setPepInfo(formData);
+        
+        // Submit to API
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/politically-exposed-persons`, formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log('PEP information submitted:', response.data);
+        router.push('/politically-exposed-persons-2');
+      } catch (error) {
+        console.error('Error submitting PEP information:', error);
+        
+        // Continue with navigation even if API fails
+        router.push('/politically-exposed-persons-2');
+      }
     };
 
     return {
@@ -138,13 +190,16 @@ export default {
       pepName,
       jobTitle,
       modalVisible,
-      selectedOption,
+      selectedOptions,
       options,
-      handleSubmit,
-      navigateToPrevious,
       showModal,
       closeModal,
-      confirmSelection
+      confirmSelection,
+      navigateToPrevious,
+      submitPepInfo,
+      isPep,
+      pepDetails,
+      errorMessage
     };
   }
 };
@@ -152,26 +207,42 @@ export default {
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
-  background: linear-gradient(45deg, #d4a5ff, #a5d4ff);
-  background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
+  background-color: #ffffff;
+  background-image: url('@/assets/back.jpg');
+  background-size: cover;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 100vh;
+}
+
+.form-container::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes gradientAnimation {
@@ -185,19 +256,44 @@ export default {
     background-position: 0% 50%;
   }
 }
+.form-container::-webkit-scrollbar {
+  display: none;
+}
 
+.select-container select,
+.text-container textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+  align-content: center;
+}
 h1 {
   margin-bottom: 20px;
   font-size: 24px;
 }
 
+.select-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
 .text-container {
   width: 100%;
   margin-bottom: 20px;
+  text-align: center;
+  font-size: 16px;
 }
 
 .text-content {
   text-align: left;
+  font-size: 12px;
+  text-align:center;
+  margin-bottom: 20px;
 }
 
 input[type="text"] {
@@ -213,72 +309,63 @@ input[type="text"] {
 .button-group {
   display: flex;
   flex-direction: column;
+  gap: 20px;
   width: 100%;
-}
-
-.stretch-button {
-  width: 100%;
-  padding: 15px;
-  margin-bottom: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.stretch-button:hover {
-  background-color: #0056b3;
+  margin-bottom: 30px;
 }
 
 .navigation-buttons {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
 .back-button, .next-button {
-  padding: 10px 20px;
+  width: 100%;
+  padding: 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
   transition: background-color 0.3s ease;
-  width: 48%; /* Adjust width to fit two buttons side by side */
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
 .next-button {
-  background-color: #007bff;
+  background-color: #FFBC2D;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
+.stretch-button {
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  background-color: #2d5ad4;
+  color: white;
+}
+
+.stretch-button:hover {
+  background-color: #9e79da;
 }
 
 .modal-content {
@@ -287,7 +374,7 @@ input[type="text"] {
   border-radius: 10px;
   width: 90%;
   max-width: 400px;
-  text-align: center;
+  text-align: left;
 }
 
 .radio-group {
@@ -297,33 +384,103 @@ input[type="text"] {
   margin-bottom: 20px;
 }
 
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: transform 0.5s ease;
+}
+
+.slide-enter, .slide-leave-to {
+  transform: translateY(100%);
+}
+
 .radio-group label {
   margin-bottom: 10px;
 }
 
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
+.modal {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 50%;
+  max-width: 420px;
+  background: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  z-index: 10;
 }
-
 .modal-button {
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  background-color: #007bff;
-  color: white;
+  font-weight: 600;
   transition: background-color 0.3s ease;
+  background-color: #FFBC2D;
+  color: white;
+  margin: 0 10px;
 }
 
 .modal-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
+
+.modal-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: transform 3s ease-in-out;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  transform: translateY(100%) translateX(-50%);
+}
+
+.modal-enter-to,
+.modal-leave-from {
+  transform: translateY(0) translateX(-50%);
+}
+
+.form-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.label {
+  font-size: 14px;
+  color: rgb(69, 97, 190);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-align: left;
 }
 
 .shake {

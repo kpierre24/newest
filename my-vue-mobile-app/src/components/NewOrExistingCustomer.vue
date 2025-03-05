@@ -47,10 +47,10 @@ export default {
     const loading = ref(false);
     const isNewCustomer = ref(false);
 
-    const handleApiCall = async (endpoint) => {
+    const handleApiCall = async (endpoint, customerType) => {
       try {
-        const response = await axios.post(`http://localhost:3000/new-or-existing-customer/`);
-        return response.data;
+        // Mock a successful response (temporary fix)
+        return { data: { success: true } };
       } catch (error) {
         console.error('API Error:', error);
         throw error;
@@ -58,38 +58,42 @@ export default {
     };
 
     const handleNewCustomer = async () => {
+      console.log('New Customer clicked');
       loading.value = true;
       isNewCustomer.value = true;
       try {
-        await handleApiCall('new');
-        setExistingCustomer(false);
+        await handleApiCall('new', 'new_customer');
+        store.setExistingCustomer(false);
+        console.log('Store state:', store.isExistingCustomer);
       } catch (error) {
-        // Handle error
+        console.error('Error handling new customer:', error);
       } finally {
         loading.value = false;
+        navigateToGettingReady();
       }
     };
 
     const handleExistingCustomer = async () => {
+      console.log('Existing Customer clicked');
       loading.value = true;
       isNewCustomer.value = false;
       try {
-        await handleApiCall('existing');
-        setExistingCustomer(true);
+        await handleApiCall('existing', 'existing_customer');
+        store.setExistingCustomer(true);
+        console.log('Store state:', store.isExistingCustomer);
       } catch (error) {
-        // Handle error
+        console.error('Error handling existing customer:', error);
       } finally {
         loading.value = false;
+        navigateToGettingReady();
       }
     };
 
-    const setExistingCustomer = (isExisting) => {
-      store.isExistingCustomer = isExisting;
-      navigateToGettingReady();
-    };
-
     const navigateToGettingReady = () => {
-      router.push('/getting-ready');
+      console.log('Navigating to Getting Ready');
+      router.push('/getting-ready').catch((err) => {
+        console.error('Navigation error:', err);
+      });
     };
 
     const navigateToHome = () => {
@@ -101,7 +105,6 @@ export default {
       isNewCustomer,
       handleNewCustomer,
       handleExistingCustomer,
-      setExistingCustomer,
       navigateToHome
     };
   }
@@ -197,8 +200,8 @@ p {
 .customer-button {
   width: 80%;
   padding: 15px;
-  margin: 20px 0;  /* Increased margin to spread out buttons */
-  background-color: #5a67d8;
+  margin: 20px 0;
+  background-color: #FFBC2D;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -208,7 +211,7 @@ p {
 }
 
 .customer-button:hover {
-  background-color: #434190;
+  background-color: #9e79da;
 }
 
 .footer {

@@ -1,17 +1,21 @@
 <template>
   <div class="container">
-    <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Branch</h1>
       <h2>Choose which branch you would like your account managed at</h2>
       <form @submit.prevent="submitBranch">
-        <div class="input-container">
-          <select v-model="selectedBranch" required>
-            <option value="" disabled>Select Branch</option>
-            <option value="Port of Spain">Port of Spain</option>
-            <option value="Milford Rd, Tobago">Milford Rd, Tobago</option>
-          </select>
-        </div>
+        <FormInput
+          label="Branch"
+          type="select"
+          id="branch"
+          v-model="selectedBranch"
+          :required="true"
+          :selectOptions="['Port of Spain', 'Milford Rd, Tobago']"
+          iconClass="icon fas fa-building"
+        />
         <div class="contact-method-container">
           <p>Choose which is your preferred method of contact</p>
           <hr />
@@ -55,9 +59,13 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
   name: 'Branch',
+  components: {
+    FormInput
+  },
   setup() {
     const router = useRouter();
     const store = useDemoStore();
@@ -65,6 +73,13 @@ export default {
     const preferredContactMethod = ref('');
     const bestContactTime = ref('');
     const errorMessage = ref('');
+
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
 
     const submitBranch = async () => {
       const formData = {
@@ -79,18 +94,23 @@ export default {
       }
 
       store.setBranchInfo(formData);
+      console.log('Branch info saved to store:', formData);
 
       try {
-        const response = await axios.post('http://localhost:3000/branch', formData, {
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/branch`, formData, {
           headers: {
             'Content-Type': 'application/json',
           },
         });
         console.log('Branch information submitted:', response.data);
+        console.log('Navigating to /success');
         router.push('/success');
       } catch (error) {
         console.error('Error submitting branch information:', error);
-        errorMessage.value = 'An error occurred. Please try again later.'; // More user-friendly
+        errorMessage.value = 'An error occurred. Please try again later.';
+        
+        // Log detailed error information for debugging
         if (error.response) {
           console.error('Response data:', error.response.data);
           console.error('Response status:', error.response.status);
@@ -100,6 +120,10 @@ export default {
         } else {
           console.error('Error message:', error.message);
         }
+        
+        // Continue with navigation even if API fails
+        console.log('API failed but continuing navigation to /success');
+        router.push('/success');
       }
     };
 
@@ -125,76 +149,81 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4; /* Light background for the page */
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
+  background: #f4f4f4;
   padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-  background: linear-gradient(to right, #a8c0ff, #3f2b96); /* Light purple gradient */
-  padding: 40px;
-  border-radius: 20px; /* Rounded corners */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px; /* Narrower width for consistency */
-  text-align: center;
+  max-width: 350px;
+  height: 90%;
   overflow-y: auto;
-  max-height: 90vh;
-  color: white; /* White text for contrast */
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
 }
 
 h1 {
   font-size: 24px;
   margin-bottom: 10px;
+  color: #FFBC2D;
 }
 
 h2 {
   font-size: 16px;
   margin-bottom: 20px;
-  color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  color: #333;
+  text-align: center;
 }
 
 .input-container {
   width: 100%;
   margin-bottom: 20px;
-  text-align: left;
-}
-
-.input-container select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-  transition: 0.3s ease;
-}
-
-.input-container select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .contact-method-container,
 .contact-time-container {
-  margin-bottom: 20px;
   text-align: left;
-}
-
-.contact-method-container p,
-.contact-time-container p {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
 hr {
   border: 0;
   height: 1px;
-  background: rgba(255, 255, 255, 0.2); /* Light divider line */
-  margin-bottom: 15px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 15px 0;
 }
 
 .radio-container {
@@ -206,14 +235,20 @@ hr {
 .radio-container input[type="radio"] {
   width: 16px;
   height: 16px;
-  accent-color: #007bff; /* Custom radio button color */
+  accent-color: #FFBC2D;
   margin-right: 10px;
 }
 
 .radio-container label {
   font-size: 14px;
-  color: white; /* White text for contrast */
+  color: #000;
   cursor: pointer;
+}
+
+.error-message {
+  color: #ff4d4d;
+  font-size: 12px;
+  margin-top: 20px;
 }
 
 .button-group {
@@ -223,46 +258,48 @@ hr {
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .submit-button {
+  width: 48%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.submit-button {
+  background-color: #FFBC2D;
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
+.submit-button:hover {
+  background-color: #9e79da;
 }
 
-.logo {
-  width: 157.5px;
-  height: auto;
-  margin-bottom: 20px;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-.error-message {
-  color: #ff4d4d; /* Red for error messages */
-  font-size: 12px;
-  margin-top: 20px;
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>

@@ -22,6 +22,11 @@ import Branch from '@/components/Branch.vue';
 import Success from '@/components/Success.vue';
 import ParentGuardianInformation from '@/components/ParentGuardianInformation.vue';
 import AccountNumber from '@/components/AccountNumber.vue';
+import EmailVerSuccessful from '@/components/EmailVerSuccessful.vue';
+import MobileVerSuccessful from '@/components/MobileVerSuccessful.vue';
+import ChildIdInformation from '@/components/ChildIdInformation.vue';
+import IdInformation from '@/components/IdInformation.vue';
+import PromiseExample from '@/components/PromiseExample.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -29,11 +34,11 @@ const routes = [
   { path: '/basic-info', name: 'BasicInfo', component: BasicInfo },
   { path: '/address', component: Address },
   { path: '/new-or-existing-customer', component: NewOrExistingCustomer },
-  { path: '/getting-ready', component: GettingReady },
+  { path: '/getting-ready', name: 'GettingReady', component: GettingReady },
   { path: '/email-verification', name: 'EmailVerification', component: EmailVerification },
   { path: '/id-information', name: 'IdInformation', component: IDInformation },
   { path: '/child-id-information', name: 'ChildIdInformation', component: ChildIDInformation },
-  { path: '/mobile-verification', component: MobileVerification },
+  { path: '/mobile-verification', name: 'MobileVerification', component: MobileVerification },
   { path: '/membership-declaration-agreement', name: 'MembershipDeclarationAgreement', component: MembershipDeclarationAgreement },
   { path: '/due-diligence', name: 'DueDiligence', component: DueDiligence },
   { path: '/mailing-address', name: 'MailingAddress', component: MailingAddress },
@@ -44,9 +49,20 @@ const routes = [
   { path: '/designation-of-beneficiary', name: 'DesignationOfBeneficiary', component: DesignationOfBeneficiary },
   { path: '/power-of-attorney', name: 'PowerofAttorney', component: PowerofAttorney },
   { path: '/branch', name: 'Branch', component: Branch },
+  { path: '/promise-example', name: 'PromiseExample', component: PromiseExample },
   { path: '/success', name: 'Success', component: Success },
   { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
-  { path: '/account-number', name: 'AccountNumber', component: AccountNumber }
+  { path: '/account-number', name: 'AccountNumber', component: AccountNumber },
+  {
+    path: '/email-verification-successful',
+    name: 'EmailVerSuccessful',
+    component: EmailVerSuccessful,
+  },
+  {
+    path: '/mobile-verification-successful',
+    name: 'MobileVerSuccessful',
+    component: MobileVerSuccessful,
+  },
 ];
 
 const router = createRouter({

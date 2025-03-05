@@ -4,37 +4,69 @@
     <div class="form-container">
       <h1>Foreign National Bank Information</h1>
       <form @submit.prevent="handleSubmit">
-        <div class="input-container">
-          <label for="bankName">Bank Name</label>
-          <input type="text" v-model="bankName" id="bankName" placeholder="Enter bank name" required />
-        </div>
-        <div class="input-container">
-          <label for="bankAddressLine1">Address Line 1</label>
-          <input type="text" v-model="bankAddressLine1" id="bankAddressLine1" placeholder="Enter address line 1" required />
-        </div>
-        <div class="input-container">
-          <label for="bankCity">City</label>
-          <input type="text" v-model="bankCity" id="bankCity" placeholder="Enter city" required />
-        </div>
-        <div class="input-container">
-          <label for="bankCountry">Country</label>
-          <select v-model="bankCountry" id="bankCountry" required>
-            <option value="" disabled>Select country</option>
-            <option v-for="country in countryList" :key="country" :value="country">{{ country }}</option>
-          </select>
-        </div>
-        <div class="input-container">
-          <label for="bankAccountNumber">Account Number</label>
-          <input type="text" v-model="bankAccountNumber" id="bankAccountNumber" placeholder="Enter account number" required />
-        </div>
-        <div class="input-container">
-          <label for="swiftCode">SWIFT Code</label>
-          <input type="text" v-model="swiftCode" id="swiftCode" placeholder="Enter SWIFT code" required />
-        </div>
-        <div class="input-container">
-          <label for="bankTelephoneNumber">Bank Telephone Number</label>
-          <input type="text" v-model="bankTelephoneNumber" id="bankTelephoneNumber" placeholder="Enter bank telephone number" required />
-        </div>
+        <FormInput
+          label="Bank Name"
+          type="text"
+          id="bankName"
+          v-model="bankName"
+          placeholder="Bank name"
+          :required="true"
+          iconClass="icon fas fa-university"
+        />
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="bankAddressLine1"
+          v-model="bankAddressLine1"
+          placeholder="Address line 1"
+          :required="true"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="City"
+          type="text"
+          id="bankCity"
+          v-model="bankCity"
+          placeholder="City"
+          :required="true"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          label="Country"
+          type="select"
+          id="bankCountry"
+          v-model="bankCountry"
+          :required="true"
+          :selectOptions="countryList"
+          iconClass="icon fas fa-globe"
+        />
+        <FormInput
+          label="Account Number"
+          type="text"
+          id="bankAccountNumber"
+          v-model="bankAccountNumber"
+          placeholder="Account number"
+          :required="true"
+          iconClass="icon fas fa-credit-card"
+        />
+        <FormInput
+          label="SWIFT Code"
+          type="text"
+          id="swiftCode"
+          v-model="swiftCode"
+          placeholder="SWIFT code"
+          :required="true"
+          iconClass="icon fas fa-code"
+        />
+        <FormInput
+          label="Telephone Number"
+          type="text"
+          id="bankTelephoneNumber"
+          v-model="bankTelephoneNumber"
+          placeholder="Bank telephone number"
+          :required="true"
+          iconClass="icon fas fa-phone"
+        />
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
           <button type="submit" class="next-button">Next</button>
@@ -50,8 +82,12 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { countries } from 'countries-list';
+import FormInput from '@/props/FormInput.vue';
 
 export default {
+  components: {
+    FormInput
+  },
   setup() {
     const store = useDemoStore();
     const router = useRouter();
@@ -64,6 +100,8 @@ export default {
     const swiftCode = ref('');
     const bankTelephoneNumber = ref('');
     const countryList = ref(Object.values(countries).map(country => country.name));
+    const formError = ref('');
+    const isLoading = ref(false);
 
     onMounted(() => {
       bankName.value = store.bankName;
@@ -74,6 +112,13 @@ export default {
       swiftCode.value = store.swiftCode;
       bankTelephoneNumber.value = store.bankTelephoneNumber;
     });
+
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
 
     const handleSubmit = async () => {
       if (validateForm()) {
@@ -94,7 +139,8 @@ export default {
           // Debugging logs to check form data
           console.log('Bank Information Data:', formData);
 
-          const response = await axios.post('http://localhost:3000/foreign-national-bank-information', formData, {
+          const baseURL = getBaseURL();
+          const response = await axios.post(`${baseURL}/foreign-national-bank-information`, formData, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -134,29 +180,43 @@ export default {
       navigateToPrevious
     };
   }
-};
+}
 </script>
 
 <style scoped>
 .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #f4f4f4;
+  justify-content: flex-start; /* Adjust to start the content from the top */
+  height: 100vh;  /* Adjusted height */
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  backdrop-filter: blur(5px);
+   /* Start hidden */
+  animation: fadeIn 1s ease-in-out forwards;
 }
 
 .form-container {
-  background-color: #ffffff;
+  background-image: url("@/assets/back.jpg");
+  background-size: contain;
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
+  height: 100vh;
   text-align: center;
   overflow-y: auto;
-  max-height: 90vh;
+  max-height: 100vh;
 }
 
 h1 {
@@ -165,79 +225,91 @@ h1 {
   margin-bottom: 20px;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
   margin-bottom: 20px;
-  text-align: left;
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .next-button, .submit-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
-.submit-button, .next-button {
+.next-button {
+  background-color: #FFBC2D;
+  color: white;
+}
+
+.next-button:hover {
+  background-color: #9e79da;
+}
+
+.submit-button {
   background-color: #007bff;
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
+.submit-button:hover {
   background-color: #0056b3;
 }
 
+.error-message {
+  color: #ff4d4d;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
 .logo {
-  width: 157.5px; 
+  width: 157.5px;
   height: auto;
   margin-bottom: 20px;
+}
+
+.fas {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+.fas.fa-user {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  transform: translateY(-10px);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  transform: translateY(-10px);
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .modal {
@@ -313,17 +385,8 @@ input:focus, select:focus {
 }
 
 .common-icon {
-  /* Add your CSS adjustments here */
   width: 24px;
   height: 24px;
   color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
 }
 </style>

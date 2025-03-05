@@ -1,78 +1,115 @@
 <template>
   <div class="container">
-    <div class="form-container">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>ID Information</h1>
       <form @submit.prevent="submitIDInformation">
+        <div v-if="formError" class="error-message">{{ formError }}</div>
         <div class="id-box">
           <div class="id-container">
             <h2>First Form of ID</h2>
-            <div class="input-container">
-              <label for="firstIdType">Type of ID</label>
-              <select v-model="firstIdType" id="firstIdType" @change="updateSecondIdOptions">
-                <option value="" disabled>Select ID Type</option>
-                <option value="National ID">National ID</option>
-                <option value="Driver's Permit">Driver's Permit</option>
-                <option value="Passport">Passport</option>
-              </select>
-            </div>
-            <div class="input-container">
-              <label for="firstIdNumber">ID Number</label>
-              <input type="text" v-model="firstIdNumber" id="firstIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
-            </div>
-            <div class="input-container">
-              <label for="firstExpiryDate">Expiry Date</label>
-              <input type="date" v-model="firstExpiryDate" id="firstExpiryDate" :max="maxExpiryDate" />
-            </div>
-            <div class="input-container">
-              <label for="firstIdDocument">Upload Document</label>
-              <button class="browse-button" @click="triggerFileInput('firstIdDocument')">Browse</button>
-              <input type="file" id="firstIdDocument" @change="handleFileUpload($event, 'first')" accept=".jpg, .png, .pdf" style="display: none;" />
-            </div>
+            <FormInput
+              label="Type of ID"
+              type="select"
+              id="firstIdType"
+              v-model="firstIdType"
+              @change="updateSecondIdOptions"
+              :selectOptions="['ID Card', 'Passport', 'Driver\'s Permit', 'Birthpaper']"
+              iconClass="icon fas fa-id-card"
+            />
+            <FormInput
+              label="ID Number"
+              type="text"
+              id="firstIdNumber"
+              v-model="firstIdNumber"
+              placeholder="Enter 12-digit ID number"
+              :maxlength="12"
+              iconClass="icon fas fa-hashtag"
+            />
+            <FormInput
+              label="Expiry Date"
+              type="date"
+              id="firstExpiryDate"
+              v-model="firstExpiryDate"
+              :min="minDate"
+              :max="maxExpiryDate"
+              :error="firstExpiryDateError"
+              :disabled="firstIdType === 'Birthpaper'"
+              @validation="validateFirstExpiryDate"
+              iconClass="icon fas fa-calendar-alt"
+            />
+            <FileUpload
+              id="firstIdDocument"
+              buttonText="Upload ID"
+              accept=".pdf,.jpg,.png"
+              @file-uploaded="handleFileUpload($event, 'first')"
+            />
           </div>
         </div>
         <div class="id-box">
           <div class="id-container">
             <h2>Second Form of ID</h2>
-            <div class="input-container">
-              <label for="secondIdType">Type of ID</label>
-              <select v-model="secondIdType" id="secondIdType">
-                <option value="" disabled>Select ID Type</option>
-                <option v-for="option in secondIdOptions" :key="option" :value="option">{{ option }}</option>
-              </select>
-            </div>
-            <div class="input-container">
-              <label for="secondIdNumber">ID Number</label>
-              <input type="text" v-model="secondIdNumber" id="secondIdNumber" placeholder="Enter 12-digit ID number" maxlength="12" />
-            </div>
-            <div class="input-container">
-              <label for="secondExpiryDate">Expiry Date</label>
-              <input type="date" v-model="secondExpiryDate" id="secondExpiryDate" :max="maxExpiryDate" />
-            </div>
-            <div class="input-container">
-              <label for="secondIdDocument">Upload Document</label>
-              <button class="browse-button" @click="triggerFileInput('secondIdDocument')">Browse</button>
-              <input type="file" id="secondIdDocument" @change="handleFileUpload($event, 'second')" accept=".jpg, .png, .pdf" style="display: none;" />
-            </div>
+            <FormInput
+              label="Type of ID"
+              type="select"
+              id="secondIdType"
+              v-model="secondIdType"
+              :selectOptions="secondIdOptions"
+              iconClass="icon fas fa-id-card"
+            />
+            <FormInput
+              label="ID Number"
+              type="text"
+              id="secondIdNumber"
+              v-model="secondIdNumber"
+              placeholder="Enter 12-digit ID number"
+              :maxlength="12"
+              iconClass="icon fas fa-hashtag"
+            />
+            <FormInput
+              label="Expiry Date"
+              type="date"
+              id="secondExpiryDate"
+              v-model="secondExpiryDate"
+              :min="minDate"
+              :max="maxExpiryDate"
+              :error="secondExpiryDateError"
+              :disabled="secondIdType === 'Birthpaper'"
+              @validation="validateSecondExpiryDate"
+              iconClass="icon fas fa-calendar-alt"
+            />
+            <FileUpload
+              id="secondIdDocument"
+              buttonText="Upload ID"
+              accept=".pdf,.jpg,.png"
+              @file-uploaded="handleFileUpload($event, 'second')"
+            />
           </div>
         </div>
         <div class="id-box">
           <div class="id-container">
             <h2>Marital Status</h2>
-            <div class="input-container">
-              <select v-model="maritalStatus" id="maritalStatus" required>
-                <option value="" disabled>Select Marital Status</option>
-                <option value="Married">Married</option>
-                <option value="Divorced">Divorced</option>
-                <option value="Single">Single</option>
-                <option value="Widowed">Widowed</option>
-              </select>
-            </div>
+            <FormInput
+              label="Marital Status"
+              type="select"
+              id="maritalStatus"
+              v-model="maritalStatus"
+              :required="true"
+              :selectOptions="['Married', 'Divorced', 'Single', 'Widowed']"
+              iconClass="icon fas fa-heart"
+            />
           </div>
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="submit-button">Next</button>
+          <button type="submit" class="next-button" :disabled="isLoading">
+            <span v-if="isLoading">
+              <i class="fas fa-spinner fa-spin"></i> Processing...
+            </span>
+            <span v-else>Next</span>
+          </button>
         </div>
       </form>
     </div>
@@ -82,101 +119,214 @@
 <script>
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
+import { useDateValidation } from '@/composables/useDateValidation';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router'; // Import useRouter
+import FormInput from '@/props/FormInput.vue';
+import FileUpload from '@/props/FileUpload.vue'; // Ensure this import is correct
 
 export default {
   name: 'IDInformation',
-  data() {
-    return {
-      firstIdType: '',
-      firstIdNumber: '',
-      firstExpiryDate: '',
-      firstIdDocument: null,
-      secondIdType: '',
-      secondIdNumber: '',
-      secondExpiryDate: '',
-      secondIdDocument: null,
-      secondIdOptions: ['National ID', "Driver's Permit", 'Passport'],
-      maritalStatus: ''
-    };
+  components: {
+    FormInput,
+    FileUpload // Ensure this component is registered
   },
-  computed: {
-    maxExpiryDate() {
+  setup() {
+    const { 
+      minDate, 
+      validateExpiryDate, 
+      validateDOB, 
+      dob, 
+      dobError 
+    } = useDateValidation();
+
+    const firstIdType = ref('');
+    const firstIdNumber = ref('');
+    const firstExpiryDate = ref('');
+    const firstExpiryDateError = ref('');
+    const firstIdDocument = ref(null);
+    const secondIdType = ref('');
+    const secondIdNumber = ref('');
+    const secondExpiryDate = ref('');
+    const secondExpiryDateError = ref('');
+    const secondIdDocument = ref(null);
+    const secondIdOptions = ref(['National ID', "Driver's Permit", 'Passport']);
+    const maritalStatus = ref('');
+    const router = useRouter(); // Use useRouter
+    const isLoading = ref(false);
+    const formError = ref('');
+
+    // Calculate max expiry date (today + 20 years)
+    const maxExpiryDate = computed(() => {
       const today = new Date();
-      const maxDate = new Date(today.setFullYear(today.getFullYear() + 20));
+      const maxDate = new Date(today.getFullYear() + 20, today.getMonth(), today.getDate());
       return maxDate.toISOString().split('T')[0];
-    }
-  },
-  methods: {
-    updateSecondIdOptions() {
-      if (this.firstIdType === 'National ID') {
-        this.secondIdOptions = ["Driver's Permit", 'Passport'];
-      } else {
-        this.secondIdOptions = ['National ID', "Driver's Permit", 'Passport'];
+    });
+
+    const validateFirstExpiryDate = () => {
+      if (firstIdType.value === 'Birthpaper') {
+        firstExpiryDateError.value = '';
+        return true;
       }
-    },
-    handleFileUpload(event, idType) {
-      const file = event.target.files[0];
-      if (idType === 'first') {
-        this.firstIdDocument = file;
-      } else {
-        this.secondIdDocument = file;
+      
+      if (!firstExpiryDate.value) {
+        firstExpiryDateError.value = 'Expiry date is required';
+        return false;
       }
-    },
-    triggerFileInput(id) {
-      document.getElementById(id).click();
-    },
-    navigateToPrevious() {
-      this.$router.go(-1);
-    },
-    async submitIDInformation() {
+      
+      if (!validateExpiryDate(firstExpiryDate.value)) {
+        firstExpiryDateError.value = 'Expiry date must be today or in the future';
+        return false;
+      }
+      
+      firstExpiryDateError.value = '';
+      return true;
+    };
+
+    const validateSecondExpiryDate = () => {
+      if (secondIdType.value === 'Birthpaper') {
+        secondExpiryDateError.value = '';
+        return true;
+      }
+      
+      if (!secondExpiryDate.value) {
+        secondExpiryDateError.value = 'Expiry date is required';
+        return false;
+      }
+      
+      if (!validateExpiryDate(secondExpiryDate.value)) {
+        secondExpiryDateError.value = 'Expiry date must be today or in the future';
+        return false;
+      }
+      
+      secondExpiryDateError.value = '';
+      return true;
+    };
+
+    const validateIdType = () => {
+      return firstIdType.value !== '' && secondIdType.value !== '';
+    };
+
+    const submitIDInformation = async () => {
+      isLoading.value = true;
+      formError.value = '';
+      
       try {
+        // Validate all required fields
+        if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value || 
+            !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value || 
+            !maritalStatus.value) {
+          formError.value = 'Please fill in all required fields';
+          return;
+        }
+        
+        // Validate expiry dates
+        if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
+          return;
+        }
+        
         const idInfoData = {
-          firstIdType: this.firstIdType,
-          firstIdNumber: this.firstIdNumber,
-          firstExpiryDate: this.firstExpiryDate,
-          firstIdDocument: this.firstIdDocument,
-          secondIdType: this.secondIdType,
-          secondIdNumber: this.secondIdNumber,
-          secondExpiryDate: this.secondExpiryDate,
-          secondIdDocument: this.secondIdDocument,
-          maritalStatus: this.maritalStatus
+          firstIdType: firstIdType.value,
+          firstIdNumber: firstIdNumber.value,
+          firstExpiryDate: firstExpiryDate.value,
+          firstIdDocument: firstIdDocument.value,
+          secondIdType: secondIdType.value,
+          secondIdNumber: secondIdNumber.value,
+          secondExpiryDate: secondExpiryDate.value,
+          secondIdDocument: secondIdDocument.value,
+          maritalStatus: maritalStatus.value
         };
 
         console.log('ID Info Data:', idInfoData);
 
-        const response = await axios.post('http://localhost:3000/id-information', idInfoData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log('ID info submitted:', response.data);
-
+        // Save to store first
         const store = useDemoStore();
-        // Navigate to account number if existing customer, otherwise to due diligence
+        store.setIdInfo(idInfoData);
+
+        // Get the base URL dynamically
+        const baseURL = getBaseURL();
+        
+        try {
+          const response = await axios.post(`${baseURL}/id-information`, idInfoData, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('ID info submitted:', response.data);
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Continue with navigation even if API fails
+        }
+
         if (store.isExistingCustomer) {
-          this.$router.push('/account-number');
+          router.push('/account-number'); // Use router for navigation
         } else {
-          this.$router.push('/due-diligence');
+          router.push('/employment-information'); // Use router for navigation
         }
       } catch (error) {
-        console.error('Error submitting ID info:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
-      }
-    }
-  },
-  setup() {
-    const store = useDemoStore();
-
-    const navigateToNext = () => {
-      if (store.isExistingCustomer) {
-        this.$router.push('/account-number');
-      } else {
-        this.$router.push('/basic-info');
+        console.error('Error submitting ID information:', error);
+        formError.value = 'An error occurred while submitting your information';
+      } finally {
+        isLoading.value = false;
       }
     };
 
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
+
+    const handleFileUpload = (file, idType) => {
+      if (idType === 'first') {
+        firstIdDocument.value = file;
+      } else if (idType === 'second') {
+        secondIdDocument.value = file;
+      } else {
+        console.error('Invalid idType:', idType);
+      }
+    };
+
+    const updateSecondIdOptions = () => {
+      if (firstIdType.value === 'National ID') {
+        secondIdOptions.value = ["Driver's Permit", 'Birthpaper', 'Passport'];
+      } else {
+        secondIdOptions.value = ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
+      }
+    };
+
+    const navigateToPrevious = () => {
+      router.go(-1);
+    };
+
     return {
-      navigateToNext
+      firstIdType,
+      firstIdNumber,
+      firstExpiryDate,
+      firstExpiryDateError,
+      firstIdDocument,
+      secondIdType,
+      secondIdNumber,
+      secondExpiryDate,
+      secondExpiryDateError,
+      secondIdDocument,
+      secondIdOptions,
+      maritalStatus,
+      minDate,
+      maxExpiryDate,
+      validateExpiryDate,
+      validateFirstExpiryDate,
+      validateSecondExpiryDate,
+      dob,
+      dobError,
+      submitIDInformation,
+      validateIdType,
+      handleFileUpload,
+      updateSecondIdOptions,
+      navigateToPrevious,
+      isLoading,
+      formError
     };
   }
 };
@@ -187,188 +337,144 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
   background: #f4f4f4;
   padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 15px;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 420px;
-  text-align: center;
+  max-width: 350px;
+  height: 90%;
   overflow-y: auto;
-  max-height: 90vh;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
 }
 
 h1 {
-  font-size: 22px;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #FFBC2D;
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
   color: #333;
-  margin-bottom: 20px;
 }
 
-.input-group, .input-container {
+.id-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
   width: 100%;
-  margin-bottom: 20px;
-  text-align: left;
 }
 
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-input, select {
+.id-container {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
-  padding: 12px 0;
+.back-button, .next-button {
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.back-button {
-  background-color: #6c757d;
-  color: white;
-  margin-right: 10px;
-}
-
-.back-button:hover {
-  background-color: #5a6268;
-}
-
-.submit-button, .next-button {
-  background-color: #007bff;
-  color: white;
-  margin-left: 10px;
-}
-
-.submit-button:hover, .next-button:hover {
-  background-color: #0056b3;
-}
-
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
+.back-button {
+  background-color: #f15539ea;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #f38b79ea;
+}
+
+.next-button {
+  background-color: #FFBC2D;
+  color: white;
+}
+
+.next-button:hover {
+  background-color: #9e79da;
+}
+
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
   margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
+  font-size: 14px;
+  border-left: 4px solid #d32f2f;
 }
 
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
+.next-button:disabled:hover {
+  background-color: #cccccc;
 }
 </style>

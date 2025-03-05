@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -23,14 +23,14 @@ export default {
 }
 
 body {
-  font-family: 'Asap', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Asap', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 button {
-  font-family: 'Asap', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 </style>
