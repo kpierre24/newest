@@ -44,7 +44,7 @@
       </transition>
       <div class="navigation-buttons">
         <button class="back-button" @click="navigateToPrevious">Back</button>
-        <button class="next-button" @click="navigateToNext">Next</button>
+        <button class="next-button" @click="submitPepInfo">Next</button>
       </div>
     </div>
   </div>
@@ -72,6 +72,9 @@ export default {
     const modalVisible = ref(false);
     const selectedOptions = ref([]);
     const options = ref([]);
+    const isPep = ref('');
+    const pepDetails = ref('');
+    const errorMessage = ref('');
 
     onMounted(() => {
       // Load state from Pinia store
@@ -137,39 +140,47 @@ export default {
       router.push({ name: 'MembershipDeclarationAgreement' });
     };
 
-    const navigateToNext = async () => {
-      // Save state to Pinia before navigating forward
-      store.setPepInfo({
-        pepAssociate: pepAssociate.value,
-        relationshipToPep: relationshipToPep.value,
-        pepName: pepName.value,
-        jobTitle: jobTitle.value,
-        selectedOptions: selectedOptions.value
-      });
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
 
-      // Make API call
+    const submitPepInfo = async () => {
+      if (isPep.value === '') {
+        errorMessage.value = 'Please select an option.';
+        return;
+      }
+
+      if (isPep.value === 'yes' && !pepDetails.value) {
+        errorMessage.value = 'Please provide details about your politically exposed status.';
+        return;
+      }
+
+      const formData = {
+        isPep: isPep.value,
+        pepDetails: pepDetails.value
+      };
+
       try {
-        const formData = {
-          pepAssociate: pepAssociate.value,
-          relationshipToPep: relationshipToPep.value,
-          pepName: pepName.value,
-          jobTitle: jobTitle.value,
-          selectedOptions: selectedOptions.value
-        };
-
-        const response = await axios.post('http://localhost:3000/politically-exposed-persons', formData, {
+        // Update store
+        store.setPepInfo(formData);
+        
+        // Submit to API
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/politically-exposed-persons`, formData, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
         console.log('PEP information submitted:', response.data);
-
-        // Navigate to the next page
-        router.push({ name: 'PoliticallyExposedPersons2' });
+        router.push('/politically-exposed-persons-2');
       } catch (error) {
         console.error('Error submitting PEP information:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
+        
+        // Continue with navigation even if API fails
+        router.push('/politically-exposed-persons-2');
       }
     };
 
@@ -185,7 +196,10 @@ export default {
       closeModal,
       confirmSelection,
       navigateToPrevious,
-      navigateToNext
+      submitPepInfo,
+      isPep,
+      pepDetails,
+      errorMessage
     };
   }
 };
@@ -303,8 +317,9 @@ input[type="text"] {
 .navigation-buttons {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   width: 100%;
+  margin-top: 20px;
 }
 
 .back-button, .next-button {
@@ -328,7 +343,7 @@ input[type="text"] {
 }
 
 .next-button {
-  background-color: #FFBC2D ;
+  background-color: #FFBC2D;
   color: white;
 }
 
@@ -337,25 +352,20 @@ input[type="text"] {
 }
 
 .stretch-button {
-  background-color: #2d5ad4;
-  color: white;
-  font-size: 12px;
   width: 100%;
   padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
   font-weight: 600;
   transition: background-color 0.3s ease;
+  background-color: #2d5ad4;
+  color: white;
 }
 
 .stretch-button:hover {
   background-color: #9e79da;
-}
-
-.stretch-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 
 .modal-content {
@@ -424,18 +434,20 @@ input[type="text"] {
   z-index: 10;
 }
 .modal-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
   transition: background-color 0.3s ease;
-  margin-right: 10px;
-  margin-left: 10px;
-  align-self: center;
+  background-color: #FFBC2D;
+  color: white;
+  margin: 0 10px;
+}
+
+.modal-button:hover {
+  background-color: #9e79da;
 }
 
 .modal-content {

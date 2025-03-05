@@ -1,11 +1,13 @@
 <template>
   <div class="container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
     <div class="content">
       <h1>Getting Ready</h1>
       <h5>Before going forward, here are some of the things you should have on hand that are required:</h5>
       <div class="text-container">
         <div class="text-content">
-        
           <h3>1. Personal Identification</h3>
           <p>
             Government-issued ID (e.g., driver's license, passport, ID card, birth paper (Under 16))<br>
@@ -54,7 +56,7 @@
           the signup process before it will need to be restarted.</p>
         </div>
       </div>
-      <div class="customer-button">
+      <div class="button-group">
         <button class="back-button" @click="navigateToPrevious">Back</button>
         <button class="next-button" @click="navigateToNext">Next</button>
       </div>
@@ -63,189 +65,177 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'GettingReady',
-  methods: {
-    navigateToPrevious() {
-      this.$router.go(-1); // Navigate to the previous page
-    },
-    navigateToNext() {
-      this.$router.push('/basic-info'); // Navigate to the BasicInfo component
-    }
+  setup() {
+    const router = useRouter();
+    
+    const navigateToPrevious = () => {
+      router.go(-1); // Navigate to the previous page
+    };
+    
+    const navigateToNext = () => {
+      router.push('/basic-info'); // Navigate to the BasicInfo component
+    };
+    
+    return {
+      navigateToPrevious,
+      navigateToNext
+    };
   }
 };
 </script>
 
 <style scoped>
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  };
-}
-  .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.container {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
+  justify-content: center;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
+  background: #f4f4f4;
   padding: 20px;
-  border-radius: 10px;
+  margin: 0 auto; /* Center the container horizontally */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
-
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-image: url('@/assets/background.png');
   background-size: cover;
   padding: 30px;
-  border-radius: 20px; /* Rounded corners */
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px; /* Narrower width for consistency */
-  max-height: 100vh; /* Set max height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-width: 350px;
+  height: 90%;
+  overflow-y: auto;
   color: rgb(12, 12, 12);
-   /* White text for contrast */
-}
-.p{
-  font-size: 10px;
-  color: rgba(0, 0, 0, 0.1)
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
 }
 
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
 
-h5{
-  font-size: 12px;
-  margin-bottom: 10px;
-  color: rgb(20, 42, 163);
+.back-icon {
+  font-size: 24px;
 }
 
 h1 {
-  font-size: 20px;
-  margin-bottom: 20px;
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-h3{
+h5 {
   font-size: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  color: rgb(20, 42, 163);
+}
+
+h3 {
+  font-size: 14px;
+  margin-bottom: 5px;
+  margin-top: 10px;
   color: rgb(20, 42, 163);
 }
 
 .text-container {
   margin-bottom: 20px;
-  border-radius: 10px; /* Rounded corners */
-  background: rgb(248, 245, 245); /* Semi-transparent white background */
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
   padding: 15px;
+  width: 100%;
 }
 
 .text-content {
   text-align: left;
-  max-height: 30vh; /* Set max height for text content */
-  overflow-y: auto; /* Enable vertical scrolling */
-  font-size: 12px; /* Reduce text size */
+  font-size: 12px;
+  overflow-y: auto;
+}
+
+.placeholder-container {
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .placeholder-content {
   text-align: center;
-  max-height: 30vh; /* Set max height for text content */
-  overflow-y: auto; /* Enable vertical scrolling */
-  font-size: 10px;
-  background: rgb(211, 205, 205); /* Semi-transparent white background */
+  font-size: 12px;
+  background: rgba(211, 205, 205, 0.7);
   padding: 15px;
-  border-radius: 10px; /* Rounded corners */
-}
-
-.text-content p, .text-content h3, .placeholder-content p {
-  margin: 10px 0;
-}
-
-.text-content a {
-  color: #007bff;
-  text-decoration: underline;
+  border-radius: 10px;
 }
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
 .back-button, .next-button {
-  padding: 10px 20px;
   width: 100%;
-  gap: 10px;
+  padding: 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
   transition: background-color 0.3s ease;
-  
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #f15539ea;
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #f38b79ea;
 }
 
 .next-button {
-  background-color: #007bff;
+  background-color: #FFBC2D;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-.text-content::-webkit-scrollbar, .placeholder-content::-webkit-scrollbar {
-  width: 0;
-  background: transparent; /* Optional: just make scrollbar invisible */
+.text-content::-webkit-scrollbar, .content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+/* Style scrollbar thumb for Chrome, Safari and Opera */
+.text-content::-webkit-scrollbar-thumb, .content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-.text-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.text-content, .content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
-
-.placeholder-content {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none; 
-}
-  
-  .customer-button {
-  width: 100%;
-  margin: 20px 0;
-  flex-direction: column;
-  gap: 15px;
-  justify-content: space-between;
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  display: flex;
-}
-
 </style>

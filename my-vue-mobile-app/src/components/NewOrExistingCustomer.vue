@@ -200,8 +200,8 @@ p {
 .customer-button {
   width: 80%;
   padding: 15px;
-  margin: 20px 0;  /* Increased margin to spread out buttons */
-  background-color: #FFBC2D ;
+  margin: 20px 0;
+  background-color: #FFBC2D;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -211,7 +211,7 @@ p {
 }
 
 .customer-button:hover {
-  background-color: #434190;
+  background-color: #9e79da;
 }
 
 .footer {

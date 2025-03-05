@@ -2,21 +2,21 @@
   <div class="container">
     <div class="form-container">
       <h1>Mailing Address</h1>
-      <form @submit.prevent="submitMailingAddress">
+      <form @submit.prevent="submitForm">
         <FormInput
           label=""
           type="text"
           id="AddressLine1"
-          v-model="AddressLine1"
+          v-model="addressLine1"
           placeholder="Mailing Address line 1"
-          :required="!sameAsHomeAddress"
+          :required="!sameAsResidential"
           iconClass="icon fas fa-map-marker-alt"
         />
         <FormInput
           label=""
           type="text"
           id="AddressLine2"
-          v-model="AddressLine2"
+          v-model="addressLine2"
           placeholder="Mailing Address line 2"
           iconClass="icon fas fa-map-marker-alt"
         />
@@ -24,27 +24,35 @@
           label=""
           type="text"
           id="City"
-          v-model="City"
+          v-model="city"
           placeholder="Mailing City"
-          :required="!sameAsHomeAddress"
+          :required="!sameAsResidential"
           iconClass="icon fas fa-city"
         />
         <FormInput
           label=""
           type="select"
           id="Country"
-          v-model="Country"
-          :required="!sameAsHomeAddress"
-          :selectOptions="countries"
+          v-model="country"
+          :required="!sameAsResidential"
+          :selectOptions="countriesList"
           iconClass="icon fas fa-globe"
         />
         <div class="checkbox-container">
-          <input type="checkbox" v-model="sameAsHomeAddress" id="sameAsHomeAddress" />
-          <label for="sameAsHomeAddress">Same as Home Address</label>
+          <input type="checkbox" v-model="sameAsResidential" id="sameAsResidential" @change="useResidentialAddress" />
+          <label for="sameAsResidential">Same as Residential Address</label>
         </div>
+        
+        <!-- Error message display -->
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="submit-button">Submit</button>
+          <button type="submit" class="submit-button" :disabled="isLoading">
+            {{ isLoading ? 'Submitting...' : 'Submit' }}
+          </button>
         </div>
       </form>
     </div>
@@ -52,87 +60,158 @@
 </template>
 
 <script>
-import { countries } from 'countries-list';
-import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
+import { countries } from 'countries-list';
 import FormInput from '@/props/FormInput.vue';
 
 export default {
+  name: 'MailingAddress',
   components: {
     FormInput
   },
   setup() {
-    const store = useDemoStore();
     const router = useRouter();
-    const AddressLine1 = ref('');
-    const AddressLine2 = ref('');
-    const City = ref('');
-    const Country = ref('');
-    const sameAsHomeAddress = ref(false);
+    const store = useDemoStore();
+    const sameAsResidential = ref(false);
+    const addressLine1 = ref('');
+    const addressLine2 = ref('');
+    const city = ref('');
+    const state = ref('');
+    const zipCode = ref('');
+    const country = ref('');
+    const errorMessage = ref('');
+    const isLoading = ref(false);
     const countriesList = ref(Object.values(countries).map(country => country.name));
 
-    onMounted(() => {
-      Country.value = store.Country;
-    });
-
-    const validateForm = () => {
-      return AddressLine1.value && City.value && Country.value;
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
     };
 
-    const submitMailingAddress = async () => {
-      if (validateForm() || sameAsHomeAddress.value) {
-        try {
-          const formData = {
-            AddressLine1: AddressLine1.value,
-            AddressLine2: AddressLine2.value,
-            City: City.value,
-            Country: Country.value
-          };
-
-          // Save mailing address info to the store
-          store.setMailingAddressInfo(formData);
-
-          // Debugging logs to check form data
-          console.log('Mailing Address Data:', formData);
-
-          const response = await axios.post('http://localhost:3000/mailing-address', formData, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          console.log('Mailing address info submitted:', response.data);
-          console.log('Store State:', store.$state);
-
-          // Navigate to the appropriate page based on nationality
-          if (store.Nationality === 'Trinidad and Tobago') {
-            router.push('/employment-information');
-          } else {
-            router.push('/foreign-national-bank-information');
-          }
-        } catch (error) {
-          console.error('Error submitting mailing address info:', error);
-          console.error('Error details:', error.response ? error.response.data : error.message);
-        }
+    const useResidentialAddress = () => {
+      if (sameAsResidential.value) {
+        // Copy residential address from store
+        addressLine1.value = store.addressLine1 || '';
+        addressLine2.value = store.addressLine2 || '';
+        city.value = store.city || '';
+        state.value = store.state || '';
+        zipCode.value = store.zipCode || '';
+        country.value = store.country || '';
       } else {
-        alert('Please fill in all required fields.');
+        // Clear the form
+        addressLine1.value = '';
+        addressLine2.value = '';
+        city.value = '';
+        state.value = '';
+        zipCode.value = '';
+        country.value = '';
+      }
+    };
+
+    // Promise-based address validation
+    const validateAddress = () => {
+      return new Promise((resolve, reject) => {
+        // Reset error message
+        errorMessage.value = '';
+        
+        // Check if using residential address or if required fields are filled
+        if (sameAsResidential.value) {
+          resolve({
+            valid: true,
+            message: 'Using residential address'
+          });
+          return;
+        }
+        
+        // Validate required fields
+        if (!addressLine1.value || !city.value || !country.value) {
+          reject({
+            valid: false,
+            message: 'Please fill in all required fields'
+          });
+          return;
+        }
+        
+        // All validations passed
+        resolve({
+          valid: true,
+          message: 'Address is valid'
+        });
+      });
+    };
+
+    const submitForm = async () => {
+      isLoading.value = true;
+      
+      try {
+        // Use the Promise-based validation
+        await validateAddress();
+        
+        const formData = {
+          sameAsResidential: sameAsResidential.value,
+          addressLine1: addressLine1.value,
+          addressLine2: addressLine2.value,
+          city: city.value,
+          state: state.value,
+          zipCode: zipCode.value,
+          country: country.value
+        };
+
+        // Update store
+        store.setMailingAddressInfo(formData);
+        
+        // Submit to API
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/mailing-address`, formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log('Mailing address submitted:', response.data);
+        router.push('/employment-information');
+      } catch (error) {
+        // Handle validation errors
+        if (error && error.message) {
+          errorMessage.value = error.message;
+        } else if (error && typeof error === 'object' && error.valid === false) {
+          errorMessage.value = error.message;
+        } else {
+          console.error('Error submitting mailing address:', error);
+          errorMessage.value = 'An error occurred while submitting your address';
+          
+          // Continue with navigation even if API fails
+          setTimeout(() => {
+            router.push('/employment-information');
+          }, 2000);
+        }
+      } finally {
+        isLoading.value = false;
       }
     };
 
     const navigateToPrevious = () => {
-      router.go(-1);
+      router.push('/address');
     };
 
     return {
-      AddressLine1,
-      AddressLine2,
-      City,
-      Country,
-      sameAsHomeAddress,
-      countries: countriesList,
-      validateForm,
-      submitMailingAddress,
+      sameAsResidential,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      zipCode,
+      country,
+      errorMessage,
+      isLoading,
+      countriesList,
+      useResidentialAddress,
+      submitForm,
       navigateToPrevious
     };
   }
@@ -140,8 +219,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 .input-group, .input-container {
   width: 100%;
   
@@ -177,10 +254,11 @@ input:focus, select:focus {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%; /* Ensure buttons take full width */
+  width: 100%;
+  margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
+.back-button, .submit-button {
   width: 100%;
   padding: 15px;
   border: none;
@@ -200,12 +278,12 @@ input:focus, select:focus {
   background-color: #f38b79ea;
 }
 
-.next-button , .submit-button {
-  background-color: #FFBC2D ;
+.submit-button {
+  background-color: #FFBC2D;
   color: white;
 }
 
-.next-button:hover , .submit-button:hover {
+.submit-button:hover {
   background-color: #9e79da;
 }
 
@@ -227,8 +305,6 @@ input:focus, select:focus {
   justify-content: center;
 }
 
-
-
 .agree-button, .disagree-button {
   padding: 10px 20px;
   border: none;
@@ -242,14 +318,11 @@ input:focus, select:focus {
 .checkbox-container {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
+  margin: 15px 0;
 }
 
 .checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+  margin-right: 10px;
 }
 
 .agree-button {
@@ -284,5 +357,16 @@ input:focus, select:focus {
   display: inline-block;
   vertical-align: middle;
   
+}
+
+.error-message {
+  color: #ff4d4d;
+  background-color: rgba(255, 77, 77, 0.1);
+  border: 1px solid #ff4d4d;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 14px;
+  text-align: center;
 }
 </style>

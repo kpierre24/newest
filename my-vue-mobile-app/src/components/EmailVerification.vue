@@ -131,19 +131,19 @@ input:focus {
 }
 
 .verify-button {
-  padding: 12px 0;
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  transition: 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #FFBC2D ;
+  transition: background-color 0.3s ease;
+  background-color: #FFBC2D;
   color: white;
 }
 
 .verify-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
 </style>

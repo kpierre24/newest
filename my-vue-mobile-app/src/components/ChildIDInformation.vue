@@ -1,7 +1,11 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Child ID Information</h1>
+      <div v-if="formError" class="error-message">{{ formError }}</div>
       <div class="id-box">
         <div class="id-container">
           <h2>First Form of ID</h2>
@@ -27,8 +31,11 @@
             type="date"
             id="firstExpiryDate"
             v-model="firstExpiryDate"
+            :min="minDate"
             :max="maxExpiryDate"
+            :error="firstExpiryDateError"
             :disabled="firstIdType === 'Birthpaper'"
+            @validation="validateFirstExpiryDate"
             iconClass="icon fas fa-calendar-alt"
           />
           <FileUpload
@@ -63,8 +70,11 @@
             type="date"
             id="secondExpiryDate"
             v-model="secondExpiryDate"
+            :min="minDate"
             :max="maxExpiryDate"
+            :error="secondExpiryDateError"
             :disabled="secondIdType === 'Birthpaper'"
+            @validation="validateSecondExpiryDate"
             iconClass="icon fas fa-calendar-alt"
           />
           <FileUpload
@@ -86,15 +96,22 @@
         </div>
       </div>
       <div class="button-group">
-        <button class="back-button" @click="navigateToBasicInformation">Back</button>
-        <button class="next-button" @click="navigateToNext">Next</button>
+        <button type="button" class="back-button" @click="navigateToBasicInformation">Back</button>
+        <button type="button" class="next-button" @click="navigateToNext" :disabled="isLoading">
+          <span v-if="isLoading">
+            <i class="fas fa-spinner fa-spin"></i> Processing...
+          </span>
+          <span v-else>Next</span>
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import { useDateValidation } from '@/composables/useDateValidation';
 import FormInput from '@/props/FormInput.vue';
 import FileUpload from '@/props/FileUpload.vue';
@@ -108,6 +125,7 @@ export default {
   },
   setup() {
     const store = useDemoStore();
+    const router = useRouter();
     const { 
       minDate, 
       validateExpiryDate, 
@@ -116,18 +134,67 @@ export default {
       dobError 
     } = useDateValidation();
 
+    // Calculate max expiry date (today + 10 years)
+    const maxExpiryDate = computed(() => {
+      const today = new Date();
+      const maxDate = new Date(today.getFullYear() + 10, today.getMonth(), today.getDate());
+      return maxDate.toISOString().split('T')[0];
+    });
+
     const firstIdType = ref('');
     const firstIdNumber = ref('');
     const firstExpiryDate = ref('');
+    const firstExpiryDateError = ref('');
     const firstIdDocument = ref(null);
     const secondIdType = ref('');
     const secondIdNumber = ref('');
     const secondExpiryDate = ref('');
+    const secondExpiryDateError = ref('');
     const secondIdDocument = ref(null);
     const secondIdOptions = ref(['ID Card', 'Passport', 'Birthpaper']);
     const schoolName = ref('');
-    const expiryDate = ref('');
-    const expiryDateError = ref('');
+    const isLoading = ref(false);
+    const formError = ref('');
+
+    const validateFirstExpiryDate = () => {
+      if (firstIdType.value === 'Birthpaper') {
+        firstExpiryDateError.value = '';
+        return true;
+      }
+      
+      if (!firstExpiryDate.value) {
+        firstExpiryDateError.value = 'Expiry date is required';
+        return false;
+      }
+      
+      if (!validateExpiryDate(firstExpiryDate.value)) {
+        firstExpiryDateError.value = 'Expiry date must be today or in the future';
+        return false;
+      }
+      
+      firstExpiryDateError.value = '';
+      return true;
+    };
+
+    const validateSecondExpiryDate = () => {
+      if (secondIdType.value === 'Birthpaper') {
+        secondExpiryDateError.value = '';
+        return true;
+      }
+      
+      if (!secondExpiryDate.value) {
+        secondExpiryDateError.value = 'Expiry date is required';
+        return false;
+      }
+      
+      if (!validateExpiryDate(secondExpiryDate.value)) {
+        secondExpiryDateError.value = 'Expiry date must be today or in the future';
+        return false;
+      }
+      
+      secondExpiryDateError.value = '';
+      return true;
+    };
 
     const updateSecondIdOptions = () => {
       if (firstIdType.value === 'Birthpaper') {
@@ -140,8 +207,7 @@ export default {
       }
     };
 
-    const handleFileUpload = (event, idType) => {
-      const file = event.target.files[0];
+    const handleFileUpload = (file, idType) => {
       if (idType === 'first') {
         firstIdDocument.value = file;
       } else {
@@ -149,47 +215,69 @@ export default {
       }
     };
 
-    const handleSubmit = () => {
-      const isDOBValid = validateDOB();
-      const isExpiryDateValid = validateExpiryDate(expiryDate.value);
-
-      if (!isExpiryDateValid) {
-        expiryDateError.value = 'Expiry date must be today or in the future';
-      } else {
-        expiryDateError.value = '';
-      }
-
-      if (isDOBValid && isExpiryDateValid) {
-        console.log('Form submitted successfully');
-      } else {
-        console.log('Validation failed');
-      }
-    };
-
     const navigateToNext = async () => {
-      const childIdInfo = {
-        firstIdType: firstIdType.value,
-        firstIdNumber: firstIdNumber.value,
-        firstExpiryDate: firstExpiryDate.value,
-        firstIdDocument: firstIdDocument.value,
-        secondIdType: secondIdType.value,
-        secondIdNumber: secondIdNumber.value,
-        secondExpiryDate: secondExpiryDate.value,
-        secondIdDocument: secondIdDocument.value,
-        schoolName: schoolName.value,
-      };
-
+      isLoading.value = true;
+      formError.value = '';
+      
       try {
-        const response = await axios.post('http://localhost:3000/child-id-information', childIdInfo);
-        console.log('Child ID Info submitted:', response.data);
+        // Validate all required fields
+        if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value || 
+            !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value || 
+            !schoolName.value) {
+          formError.value = 'Please fill in all required fields';
+          return;
+        }
+        
+        // Validate expiry dates
+        if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
+          return;
+        }
+        
+        const childIdInfo = {
+          firstIdType: firstIdType.value,
+          firstIdNumber: firstIdNumber.value,
+          firstExpiryDate: firstExpiryDate.value,
+          firstIdDocument: firstIdDocument.value,
+          secondIdType: secondIdType.value,
+          secondIdNumber: secondIdNumber.value,
+          secondExpiryDate: secondExpiryDate.value,
+          secondIdDocument: secondIdDocument.value,
+          schoolName: schoolName.value,
+        };
 
+        // Save to store first
         store.setChildIdInfo(childIdInfo);
 
+        // Get the base URL dynamically
+        const baseURL = getBaseURL();
+        
+        try {
+          const response = await axios.post(`${baseURL}/child-id-information`, childIdInfo, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('Child ID Info submitted:', response.data);
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Continue with navigation even if API fails
+        }
+
+        // Navigate to parent/guardian information
         router.push('/parent-guardian-information');
       } catch (error) {
         console.error('Error submitting child ID info:', error);
-        alert('An error occurred while saving child ID information.');
+        formError.value = 'An error occurred while submitting your information';
+      } finally {
+        isLoading.value = false;
       }
+    };
+
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
     };
 
     const navigateToBasicInformation = () => {
@@ -197,28 +285,32 @@ export default {
     };
 
     return {
+      maxExpiryDate,
       minDate,
       validateExpiryDate,
       validateDOB,
       dob,
       dobError,
-      expiryDate,
-      expiryDateError,
-      handleSubmit,
       firstIdType,
       firstIdNumber,
       firstExpiryDate,
+      firstExpiryDateError,
       firstIdDocument,
       secondIdType,
       secondIdNumber,
       secondExpiryDate,
+      secondExpiryDateError,
       secondIdDocument,
       secondIdOptions,
       schoolName,
+      validateFirstExpiryDate,
+      validateSecondExpiryDate,
       updateSecondIdOptions,
       handleFileUpload,
       navigateToNext,
       navigateToBasicInformation,
+      isLoading,
+      formError
     };
   }
 };
@@ -226,112 +318,84 @@ export default {
 
 <style scoped>
 .container {
-    position: relative;
-    margin-top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: fit-content; /* Add this line */
-    min-height: calc(100vh - 40px);
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    backdrop-filter: blur(5px);
-    animation: fadeIn 1s ease-in-out forwards;
-    overflow-y: auto; /* Move overflow to container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-    background-image: url('@/assets/back.jpg');
-    background-size: cover;
-    background-position: center;
-    padding: 30px;
-    padding-top: 50px; /* add padding top */
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    width: 420px;
-    max-width: 420px;
-    height: auto;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 350px;
+  height: 90%;
+  overflow-y: auto;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
 }
 
-
-.form-container::-webkit-scrollbar {
-  display: none;
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
 }
 
-h1{
-  color: #FFBC2D ;
-  font-size: 25px;
-  font-style: regular;
-  font-family: roboto;
+.back-icon {
+  font-size: 24px;
+}
+
+h1 {
+  font-size: 24px;
   margin-bottom: 20px;
-  margin-top: 50px;
+  color: #FFBC2D;
 }
 
-.input-group, .input-container {
+h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.id-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
   width: 100%;
-  margin-bottom: 20px;
-  text-align: left;
 }
 
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-input, select {
+.id-container {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
-
-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #800080;
-  border-radius: 8px;
-  font-size: 16px;
-  background-color: #ffffff;
-  transition: border-color 0.3s ease;
-}
-
-select:focus {
-  border-color: #4b0082;
-  outline: none;
-  box-shadow: 0 0 5px rgba(128, 0, 128, 0.2);
 }
 
 .button-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 20px;
   width: 100%;
+  margin-top: 20px;
 }
 
 .back-button, .next-button {
@@ -355,7 +419,7 @@ select:focus {
 }
 
 .next-button {
-  background-color: #FFBC2D ;
+  background-color: #FFBC2D;
   color: white;
 }
 
@@ -363,105 +427,38 @@ select:focus {
   background-color: #9e79da;
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.id-box {
-  background-color: #ffffff;
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  min-width:fit-content;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
 }
 
-.id-container {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-.browse-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background-color: #800080;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-left: 4px solid #d32f2f;
 }
 
-.browse-button:hover {
-  background-color: #4b0082;
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover {
+  background-color: #cccccc;
 }
 </style>

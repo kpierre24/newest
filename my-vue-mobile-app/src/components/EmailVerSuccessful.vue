@@ -1,68 +1,74 @@
 <template>
-     <div class="container">
-    <div class="form-container">    
-   </div>
-      <div class="content">
-        <h1>Congratulations</h1>
-        <h6>Compared and verified your details</h6>
-        <div class="image-placeholder">
-          <!-- Placeholder for the image -->
-          <img src="@/assets/Group 5.png" alt="Verification Image" />
-        </div>
-        <p>Verified Email Successfully</p>
-        <button class="next-button" @click="mobileVerification">Next</button>
+  <div class="container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
+      <h1>Congratulations</h1>
+      <h6>Compared and verified your details</h6>
+      <div class="image-placeholder">
+        <!-- Placeholder for the image -->
+        <img src="@/assets/Group 5.png" alt="Verification Image" />
       </div>
+      <p>Verified Email Successfully</p>
+      <button class="next-button" @click="mobileVerification">Next</button>
     </div>
-  </template>
+  </div>
+</template>
 
-  <script>
-  import axios from 'axios';
-  import { useRouter } from 'vue-router';
+<script>
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
-  export default {
-    setup() {
-      const router = useRouter();
+export default {
+  setup() {
+    const router = useRouter();
 
-      const mobileVerification = async () => {
-        try {
-          // Make an API call to verify the email
-          await axios.post('http://localhost:3000/email-verification-successful', { status: 'success' });
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
 
-          // Navigate to the mobile verification page
-          router.push({ name: 'MobileVerification' });
-        } catch (error) {
-          console.error('Error verifying email:', error);
-        }
-      };
+    const mobileVerification = async () => {
+      try {
+        // Make an API call to verify the email
+        const baseURL = getBaseURL();
+        await axios.post(`${baseURL}/email-verification-successful`, { status: 'success' });
 
-      return {
-        mobileVerification,
-      };
-    },
-  };
-  </script>
+        // Navigate to the mobile verification page
+        router.push({ name: 'MobileVerification' });
+      } catch (error) {
+        console.error('Error verifying email:', error);
+        // Continue with navigation even if API fails
+        router.push({ name: 'MobileVerification' });
+      }
+    };
+
+    return {
+      mobileVerification,
+    };
+  },
+};
+</script>
 
 <style scoped>
-
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
+  justify-content: center;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
+  background: #f4f4f4;
   padding: 20px;
-  border-radius: 10px;
+  margin: 0 auto; /* Center the container horizontally */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
 .content {
@@ -76,10 +82,11 @@
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  height: 812px;
+  max-width: 350px;
+  height: 90%; /* Adjusted to prevent overflow */
   overflow-y: auto;
   color: rgb(12, 12, 12);
+  position: relative;
 }
 
 .image-placeholder {
@@ -98,20 +105,21 @@
 }
 
 .next-button {
-  width: 100%; /* Make the button span across the container */
-  background-color: #007bff;
-  color: white;
-  border: none;
+  width: 100%;
   padding: 15px;
-  border-radius: 5px;
-  font-size: 16px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
   transition: background-color 0.3s ease;
-  margin-top: 70px; /* Push the button to the bottom */
+  background-color: #FFBC2D;
+  color: white;
+  margin-top: 70px;
 }
 
 .next-button:hover {
-  background-color: #0056b3;
+  background-color: #9e79da;
 }
 
 .p{
@@ -149,5 +157,18 @@ h3 {
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.back-icon {
+  font-size: 24px;
 }
 </style>

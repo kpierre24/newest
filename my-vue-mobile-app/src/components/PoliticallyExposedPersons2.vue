@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Politically Exposed Persons - Part 2</h1>
       <form @submit.prevent="submitPepInfo">
         <div class="input-container">
@@ -22,7 +25,7 @@
           <label for="relationshipToPep">Relationship to PEP</label>
           <input
             type="text"
-            v-model="relationshipToPep"
+            v-model="pepAssociateDetails"
             id="relationshipToPep"
             placeholder="Enter relationship"
             :disabled="pepAssociate === 'no'"
@@ -48,7 +51,7 @@
 
       <!-- Navigation buttons at the bottom -->
       <div class="button-group">
-        <button class="back-button" @click="navigateToPrevious">Back</button>
+        <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
         <button type="submit" class="next-button">Next</button>
       </div>
       </form>
@@ -67,67 +70,92 @@ export default {
   setup() {
     const router = useRouter();
     const store = useDemoStore();
-
     const pepAssociate = ref('');
-    const relationshipToPep = ref('');
+    const pepAssociateDetails = ref('');
     const pepName = ref('');
     const errorMessage = ref('');
 
-    // Pull date of birth from Pinia store
-    const age = computed(() => store.basicInfo.age);
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
+
+    // Calculate age based on date of birth
+    const age = computed(() => {
+      if (!store.dob) return null;
+      
+      const birthDate = new Date(store.dob);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      return age;
+    });
 
     const submitPepInfo = async () => {
-      if (!pepAssociate.value) {
+      if (pepAssociate.value === '') {
         errorMessage.value = 'Please select an option.';
         return;
       }
-      errorMessage.value = ''
+
+      if (pepAssociate.value === 'yes' && !pepAssociateDetails.value) {
+        errorMessage.value = 'Please provide details about your association with a politically exposed person.';
+        return;
+      }
+
+      const formData = {
+        pepAssociate: pepAssociate.value,
+        pepAssociateDetails: pepAssociateDetails.value,
+        pepName: pepName.value
+      };
 
       try {
-        const formData = {
-          pepAssociate: pepAssociate.value,
-          relationshipToPep: relationshipToPep.value,
-          pepName: pepName.value,
-        };
-
-        // Save data to Pinia store
-        store.setPepInfo(formData);
-
-        // Make API call
-        await axios.post('http://localhost:3000/politically-exposed-persons-2', formData, {
+        // Update store
+        store.setPepInfo2(formData);
+        
+        // Submit to API
+        const baseURL = getBaseURL();
+        await axios.post(`${baseURL}/politically-exposed-persons-2`, formData, {
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
-        // Calculate age and navigate accordingly
-        if (age.value !== null) {
-          if (age.value < 17) {
-            router.push({ name: 'ChildIdInformation' });
-          } else {
-            router.push({ name: 'IdInformation' });
-          }
+        // Navigate based on age
+        if (age.value && age.value < 18) {
+          router.push('/parent-guardian-information');
         } else {
-          router.push({ name: 'IdInformation' }) // navigate to this page even if age is null
-          console.log('Date of birth or age is missing.');
+          router.push('/id-information');
         }
       } catch (error) {
-        console.error('Error submitting form:', error);
-        errorMessage.value = 'An error occurred while submitting the form.';
+        console.error('Error submitting PEP information:', error);
+        
+        // Continue with navigation even if API fails
+        if (age.value && age.value < 18) {
+          router.push('/parent-guardian-information');
+        } else {
+          router.push('/id-information');
+        }
       }
     };
 
     const navigateToPrevious = () => {
-      router.push({ name: 'PoliticallyExposedPersons' }); // Replace with your previous route
+      router.push('/politically-exposed-persons');
     };
 
     return {
       pepAssociate,
-      relationshipToPep,
+      pepAssociateDetails,
       pepName,
       errorMessage,
       submitPepInfo,
-      navigateToPrevious,
+      navigateToPrevious
     };
   }
 };
@@ -138,49 +166,62 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
   background: #f4f4f4;
   padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-  background-color: #ffffff;
-  background-image: url('@/assets/back.jpg');
-  background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
-  height: 90vh; /* Set a fixed height for the form container */
+.content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribute space evenly */
-  align-items: center; /* Center items horizontally */
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 350px;
+  height: 90%;
+  overflow-y: auto;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
 }
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-h1 {
-  font-size: 22px;
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
   color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
+}
+
+h1 {
+  font-size: 24px;
   margin-bottom: 20px;
+  color: #333;
 }
 
 .input-container {
   position: relative;
   margin-bottom: 20px;
   width: 100%; /* Ensure input containers take full width */
-  text-align: center; /* Center text and inputs */
+  text-align: left; /* Align text to the left for better readability */
 }
 
 label {
@@ -204,16 +245,15 @@ input, select {
 }
 
 input:focus, select:focus {
-  border-color: #007bff;
+  border-color: #FFBC2D;
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 0 5px rgba(255, 188, 45, 0.3);
 }
 
 .radio-group {
   display: flex;
   gap: 20px;
   margin-top: 10px;
-  justify-content: center;
 }
 
 .radio-group label {
@@ -227,13 +267,15 @@ input:focus, select:focus {
 .radio-group input[type="radio"] {
   width: 16px;
   height: 16px;
+  accent-color: #FFBC2D;
 }
 
 .button-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%; /* Ensure buttons take full width */
+  width: 100%;
+  margin-top: 20px;
 }
 
 .back-button, .next-button {
@@ -257,7 +299,7 @@ input:focus, select:focus {
 }
 
 .next-button {
-  background-color: #FFBC2D ;
+  background-color: #FFBC2D;
   color: white;
 }
 
@@ -271,94 +313,19 @@ input:focus, select:focus {
   margin-top: 5px;
 }
 
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-.agree-button {
-  background-color: #007bff;
-  color: white;
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #555;
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 10px;
-  }
-
-  .form-container {
-    padding: 20px;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .button-group {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .back-button, .next-button {
-    padding: 10px;
-    font-size: 14px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    width: 100%;
-    height: 100vh;
-    padding: 40px;
-  }
-
-  .form-container {
-    padding: 60px;
-    width: 100%;
-    max-width: 800px;
-    height: auto;
-  }
-
-  .button-group {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .back-button, .next-button {
-    width: 48%;
-    padding: 20px;
-    font-size: 18px;
-  }
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>

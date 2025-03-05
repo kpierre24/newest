@@ -1,10 +1,13 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Designation of Beneficiary</h1>
       <form @submit.prevent="handleSubmit('next')">
         <FormInput
-          
+          label="First Name"
           type="text"
           id="firstName"
           v-model="firstName"
@@ -13,7 +16,7 @@
           iconClass="icon fas fa-user"
         />
         <FormInput
-          
+          label="Last Name"
           type="text"
           id="lastName"
           v-model="lastName"
@@ -22,7 +25,7 @@
           iconClass="icon fas fa-user"
         />
         <FormInput
-          
+          label="Other Name"
           type="text"
           id="otherName"
           v-model="otherName"
@@ -30,7 +33,7 @@
           iconClass="icon fas fa-user"
         />
         <FormInput
-          
+          label="Address Line 1"
           type="text"
           id="addressLine1"
           v-model="addressLine1"
@@ -39,7 +42,7 @@
           iconClass="icon fas fa-map-marker-alt"
         />
         <FormInput
-          
+          label="Address Line 2"
           type="text"
           id="addressLine2"
           v-model="addressLine2"
@@ -47,7 +50,7 @@
           iconClass="icon fas fa-map-marker-alt"
         />
         <FormInput
-          
+          label="City"
           type="text"
           id="city"
           v-model="city"
@@ -56,7 +59,7 @@
           iconClass="icon fas fa-city"
         />
         <FormInput
-          
+          label="Country"
           type="text"
           id="country"
           v-model="country"
@@ -71,6 +74,9 @@
           v-model="dob"
           placeholder="Date of Birth"
           :required="true"
+          :max="today"
+          :error="dobError"
+          @validation="validateDateOfBirth"
           iconClass="icon fas fa-birthday-cake"
         />
         <FormInput
@@ -83,7 +89,7 @@
           iconClass="icon fas fa-venus-mars"
         />
         <FormInput
-          
+          label="Relationship to Beneficiary"
           type="text"
           id="relationshipToBeneficiary"
           v-model="relationshipToBeneficiary"
@@ -101,7 +107,7 @@
           iconClass="icon fas fa-id-card"
         />
         <FormInput
-          
+          label="ID Number"
           type="text"
           id="idNumber"
           v-model="idNumber"
@@ -110,7 +116,7 @@
           iconClass="icon fas fa-id-badge"
         />
         <FormInput
-          
+          label="Percentage of Interest"
           type="number"
           id="percentageOfInterest"
           v-model="percentageOfInterest"
@@ -118,7 +124,7 @@
           :required="true"
           iconClass="icon fas fa-percent"
         />
-        <div class="button-container">
+        <div class="button-group">
           <button type="button" class="add-button" @click="handleSubmit('add')">Add Another Beneficiary</button>
           <a href="#" class="skip-button" @click.prevent="skipAddingBeneficiary">Skip Adding Beneficiary</a>
           <div class="navigation-buttons">
@@ -135,8 +141,9 @@
 import axios from 'axios';
 import FormInput from '@/props/FormInput.vue';
 import { useDemoStore } from '@/store/demoStore';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useDateValidation } from '@/composables/useDateValidation';
 
 export default {
   name: 'DesignationOfBeneficiary',
@@ -161,6 +168,19 @@ export default {
     const idNumber = ref('');
     const percentageOfInterest = ref('');
     const errors = ref({});
+
+    // Get the base URL dynamically
+    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : `http://${window.location.hostname}:3000`;
+
+    const { validateDOB, dobError } = useDateValidation();
+
+    // Get today's date for max DOB
+    const today = computed(() => {
+      const date = new Date();
+      return date.toISOString().split('T')[0];
+    });
 
     const validateForm = () => {
       errors.value = {};
@@ -219,8 +239,13 @@ export default {
         };
 
         try {
-          const response = await axios.post('http://localhost:3000/designation-of-beneficiary', payload);
-          console.log('Success:', response.data);
+          try {
+            const response = await axios.post(`${baseURL}/designation-of-beneficiary`, payload);
+            console.log('Success:', response.data);
+          } catch (apiError) {
+            console.error('API error:', apiError);
+            // Continue with navigation even if API fails
+          }
 
           store.setBeneficiaryInfo(payload);
 
@@ -259,6 +284,26 @@ export default {
       router.push('/power-of-attorney');
     };
 
+    const validateDateOfBirth = () => {
+      if (!dob.value) {
+        dobError.value = 'Date of birth is required';
+        return false;
+      }
+      
+      const selectedDate = new Date(dob.value);
+      selectedDate.setHours(0, 0, 0, 0);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      
+      if (selectedDate >= todayDate) {
+        dobError.value = 'Date of birth cannot be today or in the future';
+        return false;
+      }
+      
+      dobError.value = '';
+      return true;
+    };
+
     return {
       firstName,
       lastName,
@@ -277,71 +322,74 @@ export default {
       handleSubmit,
       clearForm,
       goBack,
-      skipAddingBeneficiary
+      skipAddingBeneficiary,
+      dobError,
+      today,
+      validateDateOfBirth
     };
   },
 };
 </script>
 <style scoped>
 .container {
-    position: relative;
-    margin-top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: fit-content; /* Add this line */
-    min-height: calc(100vh - 40px);
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    backdrop-filter: blur(5px);
-    animation: fadeIn 1s ease-in-out forwards;
-    overflow-y: auto; /* Move overflow to container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
 }
 
-.form-container {
-    background-image: url('@/assets/back.jpg');
-    background-size: cover;
-    background-position: center;
-    padding: 30px;
-    padding-top: 50px; /* add padding top */
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    width: 420px;
-    max-width: 420px;
-    height: auto;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 350px;
+  height: 90%;
+  overflow-y: auto;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
 }
 
-.form-container::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
 }
-.form-container {
-  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
+
+.back-icon {
+  font-size: 24px;
 }
 
 h1 {
-  font-size: 22px;
-  color: #333;
+  font-size: 24px;
   margin-bottom: 20px;
+  color: #FFBC2D;
 }
 
-.input-group, .input-container {
+.input-container {
   width: 100%;
   margin-bottom: 20px;
   text-align: left;
-  
 }
 
 label {
@@ -352,10 +400,10 @@ label {
   font-weight: 600;
 }
 
-.button-container {
+.button-group {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Space between buttons */
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
@@ -364,15 +412,14 @@ label {
 .skip-button,
 .back-button,
 .next-button {
-  width: 100%; /* Stretch buttons to full width */
-  padding: 15px; /* Increase padding for better appearance */
+  width: 100%;
+  padding: 15px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
   transition: background-color 0.3s ease;
-  text-align: center;
 }
 
 .add-button {
@@ -417,115 +464,19 @@ label {
   background-color: #9e79da; /* Lighter purple on hover */
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
 }
 
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.input-container {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.icon {
-  position: absolute;
-  left: 10px; /* Position the icon to the left */
-  top: 50%; /* Center the icon vertically */
-  transform: translateY(-50%);
-  color: #666; /* Icon color */
-  font-size: 16px; /* Icon size */
-}
-
-.input-container input,
-.input-container select {
-  width: 100%;
-  padding: 12px 12px 12px 40px; /* Add padding to the left for the icon */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
-}
-
-.input-container input:focus,
-.input-container select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>

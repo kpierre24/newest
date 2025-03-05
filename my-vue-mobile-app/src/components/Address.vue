@@ -1,8 +1,12 @@
 <template>
   <div class="container">
-    <div class="form-container">
-      <h1>Address Information</h1>
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
+      <h1>Address</h1>
       <form @submit.prevent="handleSubmit">
+        <div v-if="formError" class="error-message">{{ formError }}</div>
         <FormInput
           
           type="text"
@@ -70,7 +74,12 @@
         </div>
         <div class="button-group">
           <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="submit-button">Submit</button>
+          <button type="submit" class="next-button" :disabled="isLoading">
+            <span v-if="isLoading">
+              <i class="fas fa-spinner fa-spin"></i> Processing...
+            </span>
+            <span v-else>Next</span>
+          </button>
         </div>
       </form>
     </div>
@@ -100,6 +109,8 @@ export default {
     const DwellingStatus = ref('');
     const ProofOfAddress = ref(null);
     const errors = ref({});
+    const formError = ref('');
+    const isLoading = ref(false);
 
     const countryList = ref(Object.values(countries).map(country => country.name));
     const dwellingStatusOptions = ref(['Rented', 'Owned', 'Subletting', 'Living with relative']);
@@ -121,6 +132,100 @@ export default {
       document.getElementById('ProofOfAddress').click();
     };
 
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
+
+    // Promise-based form validation
+    const validateForm = () => {
+      return new Promise((resolve, reject) => {
+        formError.value = '';
+        
+        if (!AddressLine1.value || !City.value || !Country.value || 
+            !Nationality.value || !DwellingStatus.value) {
+          reject(new Error('Please fill all required fields'));
+          return;
+        }
+        
+        if (DwellingStatus.value === 'Rented' && !ProofOfAddress.value) {
+          reject(new Error('Proof of address is required for rented accommodations'));
+          return;
+        }
+        
+        resolve({
+          AddressLine1: AddressLine1.value,
+          AddressLine2: AddressLine2.value,
+          City: City.value,
+          Country: Country.value,
+          Nationality: Nationality.value,
+          DwellingStatus: DwellingStatus.value,
+          ProofOfAddress: ProofOfAddress.value
+        });
+      });
+    };
+
+    const submitForm = async () => {
+      isLoading.value = true;
+      formError.value = '';
+      
+      try {
+        // Validate form using Promise-based validation
+        const addressData = await validateForm();
+        
+        // Create FormData object
+        const formData = new FormData();
+        formData.append('AddressLine1', addressData.AddressLine1);
+        formData.append('AddressLine2', addressData.AddressLine2);
+        formData.append('City', addressData.City);
+        formData.append('Country', addressData.Country);
+        formData.append('Nationality', addressData.Nationality);
+        formData.append('DwellingStatus', addressData.DwellingStatus);
+        if (addressData.ProofOfAddress) {
+          formData.append('ProofOfAddress', addressData.ProofOfAddress);
+        }
+
+        // Save address info to the store
+        store.setAddressInfo({
+          AddressLine1: addressData.AddressLine1,
+          AddressLine2: addressData.AddressLine2,
+          City: addressData.City,
+          Country: addressData.Country,
+          Nationality: addressData.Nationality,
+          DwellingStatus: addressData.DwellingStatus
+        });
+
+        // Get the base URL dynamically
+        const baseURL = getBaseURL();
+        
+        try {
+          const response = await axios.post(`${baseURL}/address`, formData, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('Address information submitted:', response.data);
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Continue with navigation even if API fails
+        }
+
+        // Navigate to the next page
+        router.push('/mailing-address');
+      } catch (error) {
+        console.error('Error submitting address information:', error);
+        if (error.message) {
+          formError.value = error.message;
+        } else {
+          formError.value = 'An error occurred while submitting your information';
+        }
+      } finally {
+        isLoading.value = false;
+      }
+    };
+
     const handleSubmit = async () => {
       // Validation logic
       if (!AddressLine1.value) errors.value.addressLine1 = 'Address Line 1 is required';
@@ -130,39 +235,7 @@ export default {
       if (!Nationality.value) errors.value.nationality = 'Nationality is required';
 
       if (Object.keys(errors.value).length === 0) {
-        try {
-          const formData = new FormData();
-          formData.append('AddressLine1', AddressLine1.value);
-          formData.append('AddressLine2', AddressLine2.value);
-          formData.append('City', City.value);
-          formData.append('Country', Country.value);
-          formData.append('Nationality', Nationality.value);
-          formData.append('DwellingStatus', DwellingStatus.value);
-          formData.append('ProofOfAddress', ProofOfAddress.value);
-
-          // Save address info to the store
-          store.setAddressInfo({
-            AddressLine1: AddressLine1.value,
-            AddressLine2: AddressLine2.value,
-            City: City.value,
-            Country: Country.value,
-            Nationality: Nationality.value,
-            DwellingStatus: DwellingStatus.value
-          });
-
-          const response = await axios.post('http://localhost:3000/address', formData, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          console.log('Address information submitted:', response.data);
-
-          // Navigate to the next page
-          router.push('/mailing-address');
-        } catch (error) {
-          console.error('Error submitting address information:', error);
-          console.error('Error details:', error.response ? error.response.data : error.message);
-        }
+        await submitForm();
       }
     };
 
@@ -181,6 +254,8 @@ export default {
       countryList,
       dwellingStatusOptions,
       errors,
+      formError,
+      isLoading,
       handleFileUpload,
       triggerFileUpload,
       handleSubmit,
@@ -191,9 +266,6 @@ export default {
 </script>
 
 <style scoped>
- 
-
-
 .input-container {
   width: 100%;
   margin-bottom: 20px;
@@ -223,12 +295,14 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-
-
 .error-message {
-  color: #ff4d4d; /* Red for error messages */
-  font-size: 12px;
-  margin-top: 5px;
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border-left: 4px solid #d32f2f;
 }
 
 .select-input {
@@ -247,5 +321,66 @@ input:focus, select:focus {
   box-shadow: 0 0 5px rgba(120, 56, 221, 0.2);
 }
 
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
+}
 
+.back-button, .next-button, .submit-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.back-button {
+  background-color: #f15539ea;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #f38b79ea;
+}
+
+.next-button, .submit-button {
+  background-color: #FFBC2D;
+  color: white;
+}
+
+.next-button:hover, .submit-button:hover {
+  background-color: #9e79da;
+}
+
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover {
+  background-color: #cccccc;
+}
+
+.upload-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #7838dd;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #9e79da;
+}
 </style>

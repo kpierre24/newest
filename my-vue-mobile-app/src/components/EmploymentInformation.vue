@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Employment Information</h1>
       <form @submit.prevent="handleSubmit">
         <FormInput
@@ -111,6 +114,11 @@ export default {
     const employmentType = ref('');
     const proofOfEmploymentFile = ref(null);
     const countryList = ref(Object.values(countries).map(country => country.name));
+    
+    // Get the base URL dynamically
+    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : `http://${window.location.hostname}:3000`;
 
     onMounted(() => {
       employerName.value = store.employerName;
@@ -123,7 +131,12 @@ export default {
     });
 
     const handleFileUpload = (event) => {
-      proofOfEmploymentFile.value = event.target.files[0];
+      if (event && event.target && event.target.files && event.target.files.length > 0) {
+        const file = event.target.files[0];
+        proofOfEmploymentFile.value = file;
+      } else {
+        console.warn('No file selected or file input event is invalid');
+      }
     };
 
     const handleSubmit = async () => {
@@ -155,12 +168,17 @@ export default {
           console.log(`${key}: ${value}`);
         }
 
-        const response = await axios.post('http://localhost:3000/employment-information', formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log('Employment information submitted:', response.data);
+        try {
+          const response = await axios.post(`${baseURL}/employment-information`, formData, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('Employment information submitted:', response.data);
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Continue with navigation even if API fails
+        }
 
         // Navigate to the next page
         router.push('/designation-of-beneficiary'); // Replace with the actual next page route
@@ -172,10 +190,6 @@ export default {
 
     const goBack = () => {
       router.go(-1);
-    };
-
-    const triggerFileUpload = () => {
-      document.getElementById('proofOfEmploymentFile').click();
     };
 
     return {
@@ -190,8 +204,7 @@ export default {
       countryList,
       handleFileUpload,
       handleSubmit,
-      goBack,
-      triggerFileUpload
+      goBack
     };
   }
 };
@@ -199,56 +212,72 @@ export default {
 
 <style scoped>
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
+}
+
+.content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+  width: 100%;
+  max-width: 350px;
+  height: 90%;
+  overflow-y: auto;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
 }
 
-.form-container {
-  background-image: url('@/assets/back.jpg');
-  background-size: cover;
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-  overflow-y: auto;
-  max-height: 90vh;
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
 }
-.form-container::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for WebKit browsers (Chrome, Safari) */
-}
-.form-container {
-  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
+
+.back-icon {
+  font-size: 24px;
 }
 
 h1 {
-  font-size: 22px;
-  color: #333;
+  font-size: 24px;
   margin-bottom: 20px;
+  color: #FFBC2D;
 }
 
 .input-container {
   width: 100%;
   margin-bottom: 20px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 .button-group {
@@ -259,7 +288,7 @@ h1 {
   margin-top: 20px;
 }
 
-.back-button, .next-button, .submit-button {
+.back-button, .next-button {
   width: 100%;
   padding: 15px;
   border: none;
@@ -279,121 +308,28 @@ h1 {
   background-color: #f38b79ea;
 }
 
-.next-button, .submit-button {
-  background-color: #FFBC2D ;
+.next-button {
+  background-color: #FFBC2D;
   color: white;
 }
 
-.next-button:hover , .submit-button:hover{
+.next-button:hover {
   background-color: #9e79da;
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  text-align: left;
 }
 
-.modal-content h2 {
-  margin-top: 0;
-}
-
-.modal-content textarea {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 20px;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 5px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.common-icon {
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.browse-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  background-color: #7838dd;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.browse-button:hover {
-  background-color: #9e79da;
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>

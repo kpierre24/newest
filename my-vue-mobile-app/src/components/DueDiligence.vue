@@ -146,7 +146,8 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%; /* Ensure buttons take full width */
+  width: 100%;
+  margin-top: 20px;
 }
 
 .back-button, .next-button {
@@ -170,7 +171,7 @@ a:hover {
 }
 
 .next-button {
-  background-color: #FFBC2D ;
+  background-color: #FFBC2D;
   color: white;
 }
 

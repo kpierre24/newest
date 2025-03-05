@@ -26,6 +26,7 @@ import EmailVerSuccessful from '@/components/EmailVerSuccessful.vue';
 import MobileVerSuccessful from '@/components/MobileVerSuccessful.vue';
 import ChildIdInformation from '@/components/ChildIdInformation.vue';
 import IdInformation from '@/components/IdInformation.vue';
+import PromiseExample from '@/components/PromiseExample.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -48,6 +49,7 @@ const routes = [
   { path: '/designation-of-beneficiary', name: 'DesignationOfBeneficiary', component: DesignationOfBeneficiary },
   { path: '/power-of-attorney', name: 'PowerofAttorney', component: PowerofAttorney },
   { path: '/branch', name: 'Branch', component: Branch },
+  { path: '/promise-example', name: 'PromiseExample', component: PromiseExample },
   { path: '/success', name: 'Success', component: Success },
   { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
   { path: '/account-number', name: 'AccountNumber', component: AccountNumber },

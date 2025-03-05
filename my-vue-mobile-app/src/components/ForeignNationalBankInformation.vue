@@ -100,6 +100,8 @@ export default {
     const swiftCode = ref('');
     const bankTelephoneNumber = ref('');
     const countryList = ref(Object.values(countries).map(country => country.name));
+    const formError = ref('');
+    const isLoading = ref(false);
 
     onMounted(() => {
       bankName.value = store.bankName;
@@ -110,6 +112,13 @@ export default {
       swiftCode.value = store.swiftCode;
       bankTelephoneNumber.value = store.bankTelephoneNumber;
     });
+
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
 
     const handleSubmit = async () => {
       if (validateForm()) {
@@ -130,7 +139,8 @@ export default {
           // Debugging logs to check form data
           console.log('Bank Information Data:', formData);
 
-          const response = await axios.post('http://localhost:3000/foreign-national-bank-information', formData, {
+          const baseURL = getBaseURL();
+          const response = await axios.post(`${baseURL}/foreign-national-bank-information`, formData, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -170,7 +180,7 @@ export default {
       navigateToPrevious
     };
   }
-};
+}
 </script>
 
 <style scoped>
@@ -248,19 +258,58 @@ h1 {
   background-color: #f38b79ea;
 }
 
-.next-button, .submit-button {
-  background-color:#FFBC2D ;
+.next-button {
+  background-color: #FFBC2D;
   color: white;
 }
 
-.next-button:hover, .submit-button:hover {
+.next-button:hover {
   background-color: #9e79da;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: #ff4d4d;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
 .logo {
   width: 157.5px;
   height: auto;
   margin-bottom: 20px;
+}
+
+.fas {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+.fas.fa-user {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  transform: translateY(-10px);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  transform: translateY(-10px);
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .modal {
@@ -339,13 +388,5 @@ h1 {
   width: 24px;
   height: 24px;
   color: #333;
-}
-.icon fas fa-user {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
 }
 </style>

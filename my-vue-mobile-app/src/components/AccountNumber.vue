@@ -1,22 +1,28 @@
 <template>
   <div class="container">
-    <div class="form-container">
+    <a href="/" class="back-icon-link">
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
+    <div class="content">
       <h1>Enter Your Account Number</h1>
       <div class="input-container">
         <label for="accountNumber">Account Number</label>
-        <input
-          type="number"
-          v-model="accountNumber"
-          id="accountNumber"
-          placeholder="Enter your account number"
-        />
+        <div class="input-wrapper">
+          <input
+            type="number"
+            v-model="accountNumber"
+            id="accountNumber"
+            placeholder="Enter your account number"
+          />
+          <i class="icon fas fa-hashtag"></i>
+        </div>
         <div class="error-container" v-if="errorMessage">
           <span class="error">{{ errorMessage }}</span>
         </div>
       </div>
       <div class="button-group">
-        <button @click="goBack" class="button back-button">Back</button>
-        <button @click="verifyAccountNumber" class="button next-button" :disabled="loading">Next</button>
+        <button @click="goBack" class="back-button">Back</button>
+        <button @click="verifyAccountNumber" class="next-button" :disabled="loading">Next</button>
       </div>
       <a href="#" @click.prevent="skipAccountNumber" class="skip-link">Skip adding account number</a>
     </div>
@@ -40,6 +46,13 @@ export default {
 
     const accountNumber = ref(demoStore.bankAccountNumber);
 
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
+    };
+
     watch(
       () => demoStore.bankAccountNumber,
       (newAccountNumber) => {
@@ -59,10 +72,12 @@ export default {
         // Basic validation: Check if it's a 12-digit number
         if (!/^\d{12}$/.test(accountNumberValue)) {
           errorMessage.value = 'Account number must be 12 digits.';
+          loading.value = false;
           return;
         }
 
-        const response = await axios.post('http://localhost:3000/account-number', {
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/account-number`, {
           accountNumber: accountNumberValue,
         });
 
@@ -74,6 +89,8 @@ export default {
       } catch (error) {
         console.error('Error verifying account number:', error);
         errorMessage.value = 'An error occurred. Please try again later.';
+        // Continue with navigation even if API fails
+        router.push('/due-diligence');
       } finally {
         loading.value = false;
       }
@@ -100,13 +117,71 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 812px; /* Typical height for a mobile phone */
+  width: 375px; /* Typical width for a mobile phone */
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0 auto; /* Center the container horizontally */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  position: absolute; /* Change to absolute positioning */
+  top: 50%; /* Position at 50% from the top */
+  left: 50%; /* Position at 50% from the left */
+  transform: translate(-50%, -50%); /* Center the container */
+}
 
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 350px;
+  height: 90%;
+  overflow-y: auto;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px; /* Set a max height to ensure scrollability */
+}
 
-input-group, .input-container {
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #FFBC2D;
+}
+
+.input-container {
   width: 100%;
   position: relative;
   margin-bottom: 20px;
   text-align: left;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
 }
 
 label {
@@ -117,7 +192,7 @@ label {
   font-weight: 600;
 }
 
-input, select {
+input {
   width: 100%;
   padding: 12px;
   padding-left: 40px; /* Adjust padding to make space for the icon */
@@ -129,89 +204,94 @@ input, select {
   transition: 0.3s ease;
 }
 
-input:focus, select:focus {
-  border-color: #007bff;
+input:focus {
+  border-color: #FFBC2D;
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 0 5px rgba(255, 188, 45, 0.3);
 }
 
-error-container {
+.error-container {
   color: red;
   font-size: 12px;
+  margin-top: 5px;
 }
 
 .error {
   display: block;
 }
 
-
-
 .icon {
   position: absolute;
-  left: 10px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
+  color: #666;
+  font-size: 18px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.back-button, .next-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
   font-size: 16px;
-  color: #555;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
-@media (max-width: 600px) {
-  .container {
-    padding: 10px;
-  }
-
-  .form-container {
-    padding: 20px;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .button-group {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .back-button, .next-button, .submit-button {
-    padding: 10px;
-    font-size: 14px;
-  }
+.back-button {
+  background-color: #f15539ea;
+  color: white;
 }
 
-@media (min-width: 1024px) {
-  .container {
-    width: 100%;
-    height: 100vh;
-    padding: 40px;
-  }
+.back-button:hover {
+  background-color: #f38b79ea;
+}
 
-  .form-container {
-    padding: 60px;
-    width: 100%;
-    max-width: 800px;
-    height: auto;
-  }
+.next-button {
+  background-color: #FFBC2D;
+  color: white;
+}
 
-  .button-group {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .back-button, .next-button, .submit-button {
-    width: 48%;
-    padding: 20px;
-    font-size: 18px;
-  }
+.next-button:hover {
+  background-color: #9e79da;
 }
 
 .skip-link {
   display: block;
-  margin-top: 10px;
+  margin-top: 15px;
   color: #007bff;
   text-decoration: none;
   text-align: center;
+  font-size: 14px;
 }
 
 .skip-link:hover {
   text-decoration: underline;
+}
+
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 </style>
