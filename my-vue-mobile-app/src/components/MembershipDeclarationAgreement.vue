@@ -79,7 +79,6 @@ export default {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 420px;
-  text-align: center;
   overflow-y: auto;
   max-height: 90vh;
 }

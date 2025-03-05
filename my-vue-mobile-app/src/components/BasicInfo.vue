@@ -2,6 +2,7 @@
   <div class="container">
     <div class="form-container">
       <h1>Basic Information</h1>
+      <h4 class="subheading">Enter your personal information</h4>
       <form @submit.prevent="navigateToNext" method="post">
         <div class="input-group">
           <div class="input-container">
@@ -54,8 +55,8 @@
              <a href="#" @click.prevent="showFinancialDeclaration">Financial Declaration Agreement</a>
           </div>
           <div class="button-group">
+            <button type="submit" class="submit-button">Next</button>
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-            <button type="submit" class="submit-button">Submit</button>
           </div>
         </div>
       </form>
@@ -203,6 +204,13 @@ export default {
 
 h1 {
   font-size: 24px;
+  margin-bottom: 10px;
+  color: #4b0082; /* Dark purple color */
+}
+
+.subheading {
+  font-size: 18px;
+  color: black;
   margin-bottom: 20px;
 }
 
@@ -282,13 +290,13 @@ h1 {
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
 }
 
-.back-button, .submit-button, .next-button {
-  flex: 1;
+.back-button, .submit-button {
   padding: 12px 0;
   border: none;
   border-radius: 8px;
@@ -296,25 +304,24 @@ h1 {
   font-size: 16px;
   font-weight: 600;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .back-button {
-  background-color: #6c757d;
+  background-color: #ff9800; /* Orange color */
   color: white;
-  margin-right: 10px;
 }
 
 .back-button:hover {
-  background-color: #5a6268;
+  background-color: #e68900;
 }
 
-.submit-button, .next-button {
-  background-color: #007bff;
+.submit-button {
+  background-color: #007bff; /* Blue color */
   color: white;
-  margin-left: 10px;
 }
 
-.submit-button:hover, .next-button:hover {
+.submit-button:hover {
   background-color: #0056b3;
 }
 
