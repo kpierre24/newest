@@ -121,27 +121,46 @@ export default {
         
         // Submit to API
         const baseURL = getBaseURL();
-        await axios.post(`${baseURL}/politically-exposed-persons-2`, formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
+        await axios.post(`${baseURL}/politically-exposed-persons-2`, formData);
+
+        // Get age from store's basic info
+        const birthDate = new Date(store.basicInfo.dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
 
         // Navigate based on age
-        if (age.value && age.value < 18) {
-          router.push('/parent-guardian-information');
+        if (age < 18) {
+          router.push('/child-id-information');
         } else {
           router.push('/id-information');
         }
       } catch (error) {
         console.error('Error submitting PEP information:', error);
+        errorMessage.value = 'An error occurred while submitting your information';
         
-        // Continue with navigation even if API fails
-        if (age.value && age.value < 18) {
-          router.push('/parent-guardian-information');
-        } else {
-          router.push('/id-information');
+        // Get age from store's basic info for error case navigation
+        const birthDate = new Date(store.basicInfo.dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
         }
+
+        // Continue with navigation even if API fails after a short delay
+        setTimeout(() => {
+          if (age < 18) {
+            router.push('/child-id-information');
+          } else {
+            router.push('/id-information');
+          }
+        }, 2000);
       }
     };
 
@@ -166,17 +185,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 812px; /* Typical height for a mobile phone */
-  width: 375px; /* Typical width for a mobile phone */
+  min-height: 100vh;
+  width: 100%;
   background: #f4f4f4;
   padding: 20px;
-  margin: 0 auto; /* Center the container horizontally */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  position: absolute; /* Change to absolute positioning */
-  top: 50%; /* Position at 50% from the top */
-  left: 50%; /* Position at 50% from the left */
-  transform: translate(-50%, -50%); /* Center the container */
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .content {
@@ -185,89 +199,66 @@ export default {
   align-items: center;
   background-image: url('@/assets/background.png');
   background-size: cover;
-  padding: 30px;
+  padding: 0;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 350px;
-  height: 90%;
-  overflow-y: auto;
+  max-width: 500px;
+  min-height: 600px;
+  max-height: 90vh;
   color: rgb(12, 12, 12);
   position: relative;
-  max-height: 750px; /* Set a max height to ensure scrollability */
+  margin: auto;
 }
 
-.back-icon-link {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
-  z-index: 10;
-}
-
-.back-icon {
-  font-size: 24px;
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(3px);
 }
 
 h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: clamp(20px, 4vw, 24px);
+  color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
 }
 
-.input-container {
-  position: relative;
-  margin-bottom: 20px;
-  width: 100%; /* Ensure input containers take full width */
-  text-align: left; /* Align text to the left for better readability */
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-input, select {
+form {
+  flex: 1;
   width: 100%;
-  padding: 12px;
-  padding-left: 40px; /* Adjust padding to make space for the icon */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
+  overflow-y: auto;
+  padding: 20px 15px 80px;
+  margin-top: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
   box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
 }
 
-input:focus, select:focus {
-  border-color: #FFBC2D;
-  outline: none;
-  box-shadow: 0 0 5px rgba(255, 188, 45, 0.3);
+form::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-.radio-group {
-  display: flex;
-  gap: 20px;
-  margin-top: 10px;
+form::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
-.radio-group label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  color: #555;
-}
-
-.radio-group input[type="radio"] {
-  width: 16px;
-  height: 16px;
-  accent-color: #FFBC2D;
+.input-group {
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .button-group {
@@ -276,15 +267,17 @@ input:focus, select:focus {
   gap: 10px;
   width: 100%;
   margin-top: 20px;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .back-button, .next-button {
   width: 100%;
-  padding: 15px;
+  padding: clamp(12px, 2.5vw, 15px);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   font-weight: 600;
   transition: background-color 0.3s ease;
 }
@@ -307,25 +300,62 @@ input:focus, select:focus {
   background-color: #9e79da;
 }
 
-.error-container {
-  color: red;
-  font-size: 14px;
-  margin-top: 5px;
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 0 15px 15px;
+  font-size: clamp(12px, 2.5vw, 14px);
+  border-left: 4px solid #d32f2f;
 }
 
-/* Scrollbar styling */
-.content::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
-.content::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+.next-button:disabled:hover {
+  background-color: #cccccc;
 }
 
-.content {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+/* Media Queries */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .content h1 {
+    border-radius: 0;
+  }
+  
+  form {
+    padding: 15px 10px 70px;
+  }
+  
+  .input-group {
+    padding: 0 10px;
+  }
+  
+  .button-group {
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .content {
+    max-width: 500px;
+  }
 }
 </style>

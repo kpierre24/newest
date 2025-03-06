@@ -1,8 +1,5 @@
 <template>
   <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
     <div class="content">
       <h1>ID Information</h1>
       <form @submit.prevent="submitIDInformation">
@@ -153,6 +150,7 @@ export default {
     const secondIdOptions = ref(['National ID', "Driver's Permit", 'Passport']);
     const maritalStatus = ref('');
     const router = useRouter(); // Use useRouter
+    const store = useDemoStore(); // Move store initialization to setup level
     const isLoading = ref(false);
     const formError = ref('');
 
@@ -217,11 +215,13 @@ export default {
             !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value || 
             !maritalStatus.value) {
           formError.value = 'Please fill in all required fields';
+          isLoading.value = false;
           return;
         }
         
         // Validate expiry dates
         if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
+          isLoading.value = false;
           return;
         }
         
@@ -240,8 +240,26 @@ export default {
         console.log('ID Info Data:', idInfoData);
 
         // Save to store first
-        const store = useDemoStore();
-        store.setIdInfo(idInfoData);
+        try {
+          console.log('Store before update:', store);
+          store.$patch((state) => {
+            state.firstIdType = idInfoData.firstIdType;
+            state.firstIdNumber = idInfoData.firstIdNumber;
+            state.firstExpiryDate = idInfoData.firstExpiryDate;
+            state.firstIdDocument = idInfoData.firstIdDocument;
+            state.secondIdType = idInfoData.secondIdType;
+            state.secondIdNumber = idInfoData.secondIdNumber;
+            state.secondExpiryDate = idInfoData.secondExpiryDate;
+            state.secondIdDocument = idInfoData.secondIdDocument;
+            state.maritalStatus = idInfoData.maritalStatus;
+          });
+          console.log('Successfully saved to store');
+        } catch (storeError) {
+          console.error('Store error:', storeError);
+          formError.value = 'Error saving data to application state';
+          isLoading.value = false;
+          return;
+        }
 
         // Get the base URL dynamically
         const baseURL = getBaseURL();
@@ -258,10 +276,15 @@ export default {
           // Continue with navigation even if API fails
         }
 
+        // Check if user is existing customer and navigate accordingly
+        console.log('Store state after update:', store.$state);
+        console.log('Customer status:', store.isExistingCustomer ? 'Existing' : 'New');
         if (store.isExistingCustomer) {
-          router.push('/account-number'); // Use router for navigation
+          console.log('Navigating to account number (existing customer)');
+          router.push('/account-number');
         } else {
-          router.push('/employment-information'); // Use router for navigation
+          console.log('Navigating to due diligence (new customer)');
+          router.push('/due-diligence');
         }
       } catch (error) {
         console.error('Error submitting ID information:', error);
@@ -337,17 +360,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 812px; /* Typical height for a mobile phone */
-  width: 375px; /* Typical width for a mobile phone */
+  min-height: 100vh;
+  width: 100%;
   background: #f4f4f4;
   padding: 20px;
-  margin: 0 auto; /* Center the container horizontally */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  position: absolute; /* Change to absolute positioning */
-  top: 50%; /* Position at 50% from the top */
-  left: 50%; /* Position at 50% from the left */
-  transform: translate(-50%, -50%); /* Center the container */
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .content {
@@ -356,54 +374,66 @@ export default {
   align-items: center;
   background-image: url('@/assets/background.png');
   background-size: cover;
-  padding: 30px;
+  padding: 0;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 350px;
-  height: 90%;
-  overflow-y: auto;
+  max-width: 500px;
+  min-height: 600px;
+  max-height: 90vh;
   color: rgb(12, 12, 12);
   position: relative;
-  max-height: 750px; /* Set a max height to ensure scrollability */
+  margin: auto;
 }
 
-.back-icon-link {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
-  z-index: 10;
-}
-
-.back-icon {
-  font-size: 24px;
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(3px);
 }
 
 h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: clamp(20px, 4vw, 24px);
   color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
 }
 
-h2 {
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: #333;
+form {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px 15px 80px;
+  margin-top: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  box-sizing: border-box;
 }
 
-.id-box {
-  background-color: rgba(255, 255, 255, 0.8);
+form::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+form::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
-  width: 100%;
 }
 
-.id-container {
+.input-group {
   width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .button-group {
@@ -412,15 +442,17 @@ h2 {
   gap: 10px;
   width: 100%;
   margin-top: 20px;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .back-button, .next-button {
   width: 100%;
-  padding: 15px;
+  padding: clamp(12px, 2.5vw, 15px);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   font-weight: 600;
   transition: background-color 0.3s ease;
 }
@@ -443,29 +475,13 @@ h2 {
   background-color: #9e79da;
 }
 
-/* Scrollbar styling */
-.content::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-}
-
-.content {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-}
-
 .error-message {
   background-color: #ffebee;
   color: #d32f2f;
   padding: 10px;
   border-radius: 4px;
-  margin-bottom: 15px;
-  font-size: 14px;
+  margin: 0 15px 15px;
+  font-size: clamp(12px, 2.5vw, 14px);
   border-left: 4px solid #d32f2f;
 }
 
@@ -476,5 +492,45 @@ h2 {
 
 .next-button:disabled:hover {
   background-color: #cccccc;
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .content h1 {
+    border-radius: 0;
+  }
+  
+  form {
+    padding: 15px 10px 70px;
+  }
+  
+  .input-group {
+    padding: 0 10px;
+  }
+  
+  .button-group {
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .content {
+    max-width: 500px;
+  }
 }
 </style>

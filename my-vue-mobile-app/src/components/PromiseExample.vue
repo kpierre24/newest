@@ -194,17 +194,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 812px; /* Typical height for a mobile phone */
-  width: 375px; /* Typical width for a mobile phone */
+  min-height: 100vh;
+  width: 100%;
   background: #f4f4f4;
   padding: 20px;
-  margin: 0 auto; /* Center the container horizontally */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  position: absolute; /* Change to absolute positioning */
-  top: 50%; /* Position at 50% from the top */
-  left: 50%; /* Position at 50% from the left */
-  transform: translate(-50%, -50%); /* Center the container */
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .content {
@@ -213,93 +208,137 @@ export default {
   align-items: center;
   background-image: url('@/assets/background.png');
   background-size: cover;
-  padding: 30px;
+  padding: 0;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 350px;
-  height: 90%;
-  overflow-y: auto;
+  max-width: 500px;
+  min-height: 600px;
+  max-height: 90vh;
   color: rgb(12, 12, 12);
   position: relative;
-  max-height: 750px; /* Set a max height to ensure scrollability */
+  margin: auto;
 }
 
-.back-icon-link {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
-  z-index: 10;
-}
-
-.back-icon {
-  font-size: 24px;
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(3px);
 }
 
 h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: clamp(20px, 4vw, 24px);
   color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
 }
 
-h2 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.example-section {
+.example-content {
+  flex: 1;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 20px 15px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  box-sizing: border-box;
 }
 
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-  background-color: #FFBC2D;
-  color: white;
-  margin-top: 10px;
-}
-
-button:hover:not(:disabled) {
-  background-color: #9e79da;
-}
-
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-p {
-  margin: 10px 0;
-  font-size: 14px;
-}
-
-/* Scrollbar styling */
-.content::-webkit-scrollbar {
+.example-content::-webkit-scrollbar {
   width: 5px;
   background: transparent;
 }
 
-.content::-webkit-scrollbar-thumb {
+.example-content::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
 }
 
-.content {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+.example-text {
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.next-button {
+  width: 100%;
+  padding: clamp(12px, 2.5vw, 15px);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: clamp(14px, 3vw, 16px);
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  background-color: #FFBC2D;
+  color: white;
+}
+
+.next-button:hover {
+  background-color: #9e79da;
+}
+
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover {
+  background-color: #cccccc;
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .content h1 {
+    border-radius: 0;
+  }
+  
+  .example-content {
+    padding: 15px 10px;
+  }
+  
+  .button-group {
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .content {
+    max-width: 500px;
+  }
 }
 </style> 

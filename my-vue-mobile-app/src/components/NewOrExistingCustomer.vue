@@ -1,34 +1,27 @@
 <template>
   <div class="container">
     <a href="/" class="back-icon-link">
-    <i class="fas fa-arrow-left back-icon"></i>
-  </a>
-    <div class="form-container"> 
-      
-   </div>
-   <div></div>
-   <div></div>
+      <i class="fas fa-arrow-left back-icon"></i>
+    </a>
     <div class="content">
       <h1>New or Existing Customer?</h1>
       <p>Choose whether you're a new or existing customer</p>
-      <button 
-        class="customer-button" 
-        @click="handleNewCustomer"
-        :disabled="loading"
-      >
-        {{ loading && isNewCustomer ? 'Processing...' : 'New Customer' }}
-      </button>
-      <button 
-        class="customer-button" 
-        @click="handleExistingCustomer"
-        :disabled="loading"
-      >
-        {{ loading && !isNewCustomer ? 'Processing...' : 'Existing Customer' }}
-      </button>
-    </div>
-    <div class="footer">
-      <p>powered by:</p>
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+      <div class="button-group">
+        <button 
+          class="next-button" 
+          @click="handleNewCustomer"
+          :disabled="loading"
+        >
+          {{ loading && isNewCustomer ? 'Processing...' : 'New Customer' }}
+        </button>
+        <button 
+          class="back-button" 
+          @click="handleExistingCustomer"
+          :disabled="loading"
+        >
+          {{ loading && !isNewCustomer ? 'Processing...' : 'Existing Customer' }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -113,136 +106,117 @@ export default {
 
 <style scoped>
 .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 812px;
+  width: 375px;
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0 auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  background-image: url('@/assets/bg.png');
-  background-size: cover;
-  background-position: center;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-  color: #fff;
-  opacity: 0; /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -55%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-.form-container {
-  background: rgba(255, 255, 255, 0);
-  padding: 20px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 1px;
-  text-align: center;
-  margin-top: auto;  /* Pushes content down */
-}
-
-.header {
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  padding: 10px;
-}
-
-.back-button {
-  background: none;
-  border: none;
-  color: #5c65e2;
-  font-size: 30px;  /* Increased font size */
-  cursor: pointer;
-  padding: 12px 20px;  /* Increased padding for better size */
-  transition: color 0.3s ease;
-}
-
-.back-button:hover {
-  color: #434190;
 }
 
 .content {
-  text-align: center;
-  margin-top: 30px;  /* Increased margin-top to push content lower */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 350px;
+  height: 90%;
+  overflow-y: auto;
+  color: rgb(12, 12, 12);
+  position: relative;
+  max-height: 750px;
 }
 
-h1 {
-  font-size: 24px; 
-  margin-top: 80px; /* Larger font size */
-  margin-bottom: 15px;  /* Adjusted margin */
-  color: #5c65e2;
-}
-
-p {
-  font-size: 14px;  /* Slightly bigger text */
-  margin-bottom: 30px;  /* Increased space below */
-  color: #030303;
-}
-
-.customer-button {
-  width: 80%;
-  padding: 15px;
-  margin: 20px 0;
-  background-color: #FFBC2D;
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.customer-button:hover {
-  background-color: #9e79da;
-}
-
-.footer {
-  text-align: center;
-  margin-top: auto;  /* Ensures footer stays at the bottom */
-}
-
-.logo {
-  width: 100px;
-  margin-top: 10px;
-}
 .back-icon-link {
-  position: absolute; /* Position the link relative to the form container */
-  top: 27px; /* Adjust the top position as needed */
-  left: 24px; /* Adjust the left position as needed */
-  text-decoration: none; /* Remove the underline from the link */
-  color: inherit; /* Inherit the color from the parent */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  text-decoration: none;
+  color: inherit;
   z-index: 10;
-  display: flex; /* Use flexbox to center the icon */
-  align-items: center; /* Vertically center the icon */
-  justify-content: center; /* Horizontally center the icon */
-  width: 40px; /* Set a fixed width for the circular border */
-  height: 40px; /* Set a fixed height for the circular border */
-  border-radius: 50%; /* Make the border circular */
-  border: 1px solid rgba(0, 0, 0, 0.041); /* Add a border */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.041);
   padding: 5px;
   background-color: rgb(98, 103, 173);
 }
 
 .back-icon {
-  font-size: 24px; /* Adjust the icon size as needed */
+  font-size: 24px;
   color: black;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #4b0082;
+  text-align: center;
+  margin-top: 80px;
+}
+
+p {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #333;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.next-button, .back-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.next-button {
+  background-color: #FFBC2D;
+  color: white;
+}
+
+.next-button:hover {
+  background-color: #9e79da;
+}
+
+.back-button {
+  background-color: #f15539ea;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #f38b79ea;
+}
+
+.next-button:disabled, .back-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 </style>

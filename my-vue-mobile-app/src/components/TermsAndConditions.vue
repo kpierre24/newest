@@ -59,126 +59,146 @@ export default {
 </script>
 
 <style scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+.container {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
+  min-height: 100vh;
+  width: 100%;
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal-content {
-  background: white;
-  padding: 25px;
-  border-radius: 15px;
-  width: 90%;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 0;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
   max-width: 500px;
-  max-height: 80vh;
+  min-height: 600px;
+  max-height: 90vh;
+  color: rgb(12, 12, 12);
   position: relative;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.3s ease;
+  margin: auto;
 }
 
-@keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(3px);
 }
 
-.modal-text {
+h1 {
+  font-size: clamp(20px, 4vw, 24px);
+  color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
+}
+
+.terms-content {
+  flex: 1;
+  width: 100%;
+  padding: 20px 15px;
   overflow-y: auto;
-  max-height: calc(80vh - 100px);
-  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  box-sizing: border-box;
+}
+
+.terms-content::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+.terms-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.terms-text {
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .close-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
+  width: 100%;
+  padding: clamp(12px, 2.5vw, 15px);
   border: none;
-  font-size: 24px;
+  border-radius: 8px;
   cursor: pointer;
-  color: #333;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background-color 0.3s;
+  font-size: clamp(14px, 3vw, 16px);
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  background-color: #FFBC2D;
+  color: white;
 }
 
 .close-button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: #9e79da;
 }
 
-h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 22px;
-  padding-right: 30px;
+/* Media Queries */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .content h1 {
+    border-radius: 0;
+  }
+  
+  .terms-content {
+    padding: 15px 10px;
+  }
+  
+  .button-group {
+    padding: 0 10px;
+  }
 }
 
-h3 {
-  color: #007bff;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  font-size: 18px;
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    max-width: 450px;
+  }
 }
 
-p {
-  margin-bottom: 15px;
-  line-height: 1.5;
-  color: #555;
-}
-
-strong {
-  color: #333;
-}
-
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Scrollbar styling */
-.modal-text::-webkit-scrollbar {
-  width: 6px;
-}
-
-.modal-text::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.modal-text::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.modal-text::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* For Firefox */
-.modal-text {
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1;
+@media (min-width: 769px) {
+  .content {
+    max-width: 500px;
+  }
 }
 </style>

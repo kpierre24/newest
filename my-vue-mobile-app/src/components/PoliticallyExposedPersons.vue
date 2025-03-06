@@ -147,19 +147,14 @@ export default {
     };
 
     const submitPepInfo = async () => {
-      if (isPep.value === '') {
-        errorMessage.value = 'Please select an option.';
-        return;
-      }
-
-      if (isPep.value === 'yes' && !pepDetails.value) {
-        errorMessage.value = 'Please provide details about your politically exposed status.';
+      if (pepAssociate.value === '') {
+        errorMessage.value = 'Please select whether you are a PEP or associated with one.';
         return;
       }
 
       const formData = {
-        isPep: isPep.value,
-        pepDetails: pepDetails.value
+        pepAssociate: pepAssociate.value,
+        selectedOptions: selectedOptions.value
       };
 
       try {
@@ -168,19 +163,20 @@ export default {
         
         // Submit to API
         const baseURL = getBaseURL();
-        const response = await axios.post(`${baseURL}/politically-exposed-persons`, formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
+        await axios.post(`${baseURL}/politically-exposed-persons`, formData);
 
-        console.log('PEP information submitted:', response.data);
+        console.log('PEP information submitted:', formData);
+        
+        // Navigate to next page
         router.push('/politically-exposed-persons-2');
       } catch (error) {
         console.error('Error submitting PEP information:', error);
+        errorMessage.value = 'An error occurred while submitting your information';
         
-        // Continue with navigation even if API fails
-        router.push('/politically-exposed-persons-2');
+        // Continue with navigation even if API fails after a short delay
+        setTimeout(() => {
+          router.push('/politically-exposed-persons-2');
+        }, 2000);
       }
     };
 
@@ -207,24 +203,181 @@ export default {
 
 <style scoped>
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 0;
+  border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  min-height: 600px;
+  max-height: 90vh;
+  color: rgb(12, 12, 12);
+  position: relative;
+  margin: auto;
+}
+
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  margin: 0;
+  padding: 20px 0;
   text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(3px);
+}
+
+h1 {
+  font-size: clamp(20px, 4vw, 24px);
+  color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
+}
+
+form {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px 15px 80px;
+  margin-top: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  box-sizing: border-box;
+}
+
+form::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+form::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.input-group {
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 20px;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.back-button, .next-button {
+  width: 100%;
+  padding: clamp(12px, 2.5vw, 15px);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: clamp(14px, 3vw, 16px);
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.back-button {
+  background-color: #f15539ea;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #f38b79ea;
+}
+
+.next-button {
+  background-color: #FFBC2D;
+  color: white;
+}
+
+.next-button:hover {
+  background-color: #9e79da;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 0 15px 15px;
+  font-size: clamp(12px, 2.5vw, 14px);
+  border-left: 4px solid #d32f2f;
+}
+
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover {
+  background-color: #cccccc;
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .content h1 {
+    border-radius: 0;
+  }
+  
+  form {
+    padding: 15px 10px 70px;
+  }
+  
+  .input-group {
+    padding: 0 10px;
+  }
+  
+  .button-group {
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .content {
+    max-width: 500px;
+  }
 }
 
 .form-container {
@@ -256,9 +409,6 @@ export default {
     background-position: 0% 50%;
   }
 }
-.form-container::-webkit-scrollbar {
-  display: none;
-}
 
 .select-container select,
 .text-container textarea {
@@ -269,10 +419,6 @@ export default {
   font-size: 16px;
   box-sizing: border-box;
   align-content: center;
-}
-h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
 }
 
 .select-container {
@@ -304,51 +450,6 @@ input[type="text"] {
   font-size: 16px;
   box-sizing: border-box;
   margin-bottom: 20px;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 30px;
-}
-
-.navigation-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-top: 20px;
-}
-
-.back-button, .next-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.back-button {
-  background-color: #f15539ea;
-  color: white;
-}
-
-.back-button:hover {
-  background-color: #f38b79ea;
-}
-
-.next-button {
-  background-color: #FFBC2D;
-  color: white;
-}
-
-.next-button:hover {
-  background-color: #9e79da;
 }
 
 .stretch-button {

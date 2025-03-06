@@ -1,8 +1,5 @@
 <template>
   <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
     <div class="content">
       <h1>Power of Attorney</h1>
       <form @submit.prevent="handleSubmit">
@@ -396,17 +393,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 812px; /* Typical height for a mobile phone */
-  width: 375px; /* Typical width for a mobile phone */
+  min-height: 100vh;
+  width: 100%;
   background: #f4f4f4;
   padding: 20px;
-  margin: 0 auto; /* Center the container horizontally */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  position: absolute; /* Change to absolute positioning */
-  top: 50%; /* Position at 50% from the top */
-  left: 50%; /* Position at 50% from the left */
-  transform: translate(-50%, -50%); /* Center the container */
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .content {
@@ -415,102 +407,85 @@ export default {
   align-items: center;
   background-image: url('@/assets/background.png');
   background-size: cover;
-  padding: 30px;
+  padding: 0;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 350px;
-  height: 90%;
-  overflow-y: auto;
+  max-width: 500px;
+  min-height: 600px;
+  max-height: 90vh;
   color: rgb(12, 12, 12);
   position: relative;
-  max-height: 750px; /* Set a max height to ensure scrollability */
+  margin: auto;
 }
 
-.back-icon-link {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
-  z-index: 10;
-}
-
-.back-icon {
-  font-size: 24px;
-}
-
-.error {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
-.error-message {
-  color: red;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-form {
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.4);
   width: 100%;
-  padding-bottom: 20px; /* Add padding at the bottom for better scrolling experience */
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(3px);
 }
 
 h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: clamp(20px, 4vw, 24px);
   color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
 }
 
-.input-container {
+form {
+  flex: 1;
   width: 100%;
-  margin-bottom: 15px;
-  text-align: left;
+  overflow-y: auto;
+  padding: 20px 15px 80px;
+  margin-top: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  box-sizing: border-box;
 }
 
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
-  font-weight: 600;
+form::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
 }
 
-.skip-link {
-  margin: 15px 0;
-  text-align: center;
+form::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
-.skip-link a {
-  color: #007bff;
-  text-decoration: none;
-  font-size: 14px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.skip-link a:hover {
-  color: #0056b3;
-  text-decoration: underline;
+.input-group {
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .button-group {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
   margin-top: 20px;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .back-button, .next-button {
-  width: 48%;
-  padding: 15px;
+  width: 100%;
+  padding: clamp(12px, 2.5vw, 15px);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   font-weight: 600;
   transition: background-color 0.3s ease;
 }
@@ -533,19 +508,62 @@ label {
   background-color: #9e79da;
 }
 
-/* Scrollbar styling */
-.content::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 0 15px 15px;
+  font-size: clamp(12px, 2.5vw, 14px);
+  border-left: 4px solid #d32f2f;
 }
 
-.content::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
-.content {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+.next-button:disabled:hover {
+  background-color: #cccccc;
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .content h1 {
+    border-radius: 0;
+  }
+  
+  form {
+    padding: 15px 10px 70px;
+  }
+  
+  .input-group {
+    padding: 0 10px;
+  }
+  
+  .button-group {
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .content {
+    max-width: 500px;
+  }
 }
 </style>

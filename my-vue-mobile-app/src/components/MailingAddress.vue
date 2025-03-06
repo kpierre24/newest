@@ -219,35 +219,84 @@ export default {
 </script>
 
 <style scoped>
-.input-group, .input-container {
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   width: 100%;
-  
-  text-align: left;
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 0px;
-  font-weight: 600;
-}
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0;
   box-sizing: border-box;
-  background: #f9f9f9;
-  transition: 0.3s ease;
 }
 
-input:focus, select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  padding: 0;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  min-height: 600px;
+  max-height: 90vh;
+  color: rgb(12, 12, 12);
+  position: relative;
+  margin: auto;
+}
+
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(3px);
+}
+
+h1 {
+  font-size: clamp(20px, 4vw, 24px);
+  color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
+}
+
+form {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  padding: 20px 15px 80px;
+  margin-top: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  box-sizing: border-box;
+}
+
+form::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+form::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.input-group {
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .button-group {
@@ -256,15 +305,17 @@ input:focus, select:focus {
   gap: 10px;
   width: 100%;
   margin-top: 20px;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .back-button, .submit-button {
   width: 100%;
-  padding: 15px;
+  padding: clamp(12px, 2.5vw, 15px);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   font-weight: 600;
   transition: background-color 0.3s ease;
 }
@@ -287,86 +338,62 @@ input:focus, select:focus {
   background-color: #9e79da;
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.agree-button, .disagree-button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  margin: 15px 0;
-}
-
-.checkbox-container input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-.agree-button {
-  background-color: #007bff;
-  color: white;
-}
-
-.agree-button:hover {
-  background-color: #0056b3;
-}
-
-.disagree-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.disagree-button:hover {
-  background-color: #5a6268;
-}
-
-.common-icon {
-  /* Add your CSS adjustments here */
-  width: 24px;
-  height: 24px;
-  color: #333;
-}
-.icon fas fa-map-marker-alt {
-  width: 24px;
-  height: 24px;
-  color: #333;
-  transform: translateY(-10px);
-  display: inline-block;
-  vertical-align: middle;
-  
-}
-
 .error-message {
-  color: #ff4d4d;
-  background-color: rgba(255, 77, 77, 0.1);
-  border: 1px solid #ff4d4d;
-  border-radius: 8px;
+  background-color: #ffebee;
+  color: #d32f2f;
   padding: 10px;
-  margin: 10px 0;
-  font-size: 14px;
-  text-align: center;
+  border-radius: 4px;
+  margin: 0 15px 15px;
+  font-size: clamp(12px, 2.5vw, 14px);
+  border-left: 4px solid #d32f2f;
+}
+
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover {
+  background-color: #cccccc;
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .content h1 {
+    border-radius: 0;
+  }
+  
+  form {
+    padding: 15px 10px 70px;
+  }
+  
+  .input-group {
+    padding: 0 10px;
+  }
+  
+  .button-group {
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .content {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .content {
+    max-width: 500px;
+  }
 }
 </style>

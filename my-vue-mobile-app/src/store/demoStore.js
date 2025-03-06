@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
-export const useDemoStore = defineStore('demo', {
+export const useDemoStore = defineStore({
+  id: 'demo',
   state: () => ({
     firstName: '',
     lastName: '',
@@ -113,6 +114,8 @@ export const useDemoStore = defineStore('demo', {
       relationshipToPep: '',
       pepName: '',
     },
+    pepAssociateDetails: null,
+    maritalStatus: '',
   }),
   actions: {
     setBasicInfo(data) {
@@ -171,9 +174,13 @@ export const useDemoStore = defineStore('demo', {
       this.pepInfo.relationshipToPep = data.relationshipToPep;
       this.pepInfo.pepName = data.pepName;
     },
+    setPepInfo2(data) {
+      this.pepAssociate = data.pepAssociate;
+      this.pepAssociateDetails = data.pepAssociateDetails;
+      this.pepName = data.pepName;
+    },
     setSelectedOptions(options) {
       this.selectedOptions = options;
-    
     },
     setChildIdInfo(info) {
       this.firstIdType = info.firstIdType;
@@ -248,7 +255,17 @@ export const useDemoStore = defineStore('demo', {
     setExistingCustomer(isExisting) {
       this.isExistingCustomer = isExisting;
     },
+    setIdInfo(info) {
+      this.firstIdType = info.firstIdType;
+      this.firstIdNumber = info.firstIdNumber;
+      this.firstExpiryDate = info.firstExpiryDate;
+      this.firstIdDocument = info.firstIdDocument;
+      this.secondIdType = info.secondIdType;
+      this.secondIdNumber = info.secondIdNumber;
+      this.secondExpiryDate = info.secondExpiryDate;
+      this.secondIdDocument = info.secondIdDocument;
+      this.maritalStatus = info.maritalStatus;
+    }
   },
-
   persist: true,
 });
