@@ -152,7 +152,7 @@ h1 {
   box-sizing: border-box;
 }
 
-.home-button {
+.login-button {
   width: 100%;
   padding: clamp(12px, 2.5vw, 15px);
   border: none;
@@ -165,8 +165,8 @@ h1 {
   color: white;
 }
 
-.home-button:hover {
-  background-color: #9e79da;
+.login-button:hover {
+  background-color: #FF883F;
 }
 
 /* Media Queries */

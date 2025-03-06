@@ -160,7 +160,7 @@ h1 {
 }
 
 .next-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
 }
 
 /* Media Queries */

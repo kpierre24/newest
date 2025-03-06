@@ -351,7 +351,7 @@ export default {
 .content h1 {
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.2);
   width: 100%;
   margin: 0;
   padding: 20px 0;
@@ -359,8 +359,8 @@ export default {
   z-index: 2;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(2px);
 }
 
 h1 {
@@ -458,12 +458,12 @@ form::-webkit-scrollbar-thumb {
 }
 
 .back-button {
-  background-color: #f15539ea;
+  background-color: #6362F8;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea;
+  background-color: #FF883F;
 }
 
 .next-button {
@@ -472,7 +472,16 @@ form::-webkit-scrollbar-thumb {
 }
 
 .next-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
+}
+
+.next-button:disabled, .back-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover, .back-button:disabled:hover {
+  background-color: #cccccc;
 }
 
 .error-message {
@@ -483,15 +492,6 @@ form::-webkit-scrollbar-thumb {
   margin: 0 15px 15px;
   font-size: clamp(12px, 2.5vw, 14px);
   border-left: 4px solid #d32f2f;
-}
-
-.next-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.next-button:disabled:hover {
-  background-color: #cccccc;
 }
 
 /* Media Queries */

@@ -227,7 +227,7 @@ export default {
 .content h1 {
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.2);
   width: 100%;
   margin: 0;
   padding: 20px 0;
@@ -235,8 +235,8 @@ export default {
   z-index: 2;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(2px);
 }
 
 h1 {
@@ -247,31 +247,74 @@ h1 {
   padding: 20px 0;
 }
 
-form {
-  flex: 1;
-  width: 100%;
-  overflow-y: auto;
-  padding: 20px 15px 80px;
-  margin-top: 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  box-sizing: border-box;
-}
-
-form::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
-}
-
-form::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+.body-container {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
+  margin: 20px;
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 1.6;
 }
 
-.input-group {
+.form-section {
   width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.form-section p {
+  font-size: clamp(14px, 3vw, 16px);
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(14px, 3vw, 16px);
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+  accent-color: #FFBC2D;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 40px 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: clamp(14px, 3vw, 16px);
+  background: #f9f9f9;
+  transition: 0.3s ease;
+}
+
+.input-wrapper input:focus {
+  border-color: #FFBC2D;
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 188, 45, 0.2);
+}
+
+.input-wrapper .icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
 }
 
 .button-group {
@@ -280,11 +323,11 @@ form::-webkit-scrollbar-thumb {
   gap: 10px;
   width: 100%;
   margin-top: 20px;
-  padding: 0 15px;
+  padding: 0 20px 20px;
   box-sizing: border-box;
 }
 
-.back-button, .next-button {
+.next-button, .disagree-button {
   width: 100%;
   padding: clamp(12px, 2.5vw, 15px);
   border: none;
@@ -295,22 +338,31 @@ form::-webkit-scrollbar-thumb {
   transition: background-color 0.3s ease;
 }
 
-.back-button {
-  background-color: #f15539ea;
-  color: white;
-}
-
-.back-button:hover {
-  background-color: #f38b79ea;
-}
-
 .next-button {
   background-color: #FFBC2D;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
+}
+
+.disagree-button {
+  background-color: #261C6B;
+  color: white;
+}
+
+.disagree-button:hover {
+  background-color: #FF883F;
+}
+
+.next-button:disabled, .disagree-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover, .disagree-button:disabled:hover {
+  background-color: #cccccc;
 }
 
 .error-message {
@@ -318,18 +370,26 @@ form::-webkit-scrollbar-thumb {
   color: #d32f2f;
   padding: 10px;
   border-radius: 4px;
-  margin: 0 15px 15px;
+  margin: 0 20px 15px;
   font-size: clamp(12px, 2.5vw, 14px);
   border-left: 4px solid #d32f2f;
 }
 
-.next-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
 }
 
-.next-button:disabled:hover {
-  background-color: #cccccc;
+.back-icon {
+  color: #FFBC2D;
+  font-size: 20px;
+  transition: color 0.3s ease;
+}
+
+.back-icon:hover {
+  color: #FF883F;
 }
 
 /* Media Queries */
@@ -347,16 +407,18 @@ form::-webkit-scrollbar-thumb {
     border-radius: 0;
   }
   
-  form {
-    padding: 15px 10px 70px;
-  }
-  
-  .input-group {
-    padding: 0 10px;
+  .body-container, .form-section {
+    margin: 10px;
+    padding: 15px;
   }
   
   .button-group {
-    padding: 0 10px;
+    padding: 0 15px 15px;
+  }
+  
+  .radio-group {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 

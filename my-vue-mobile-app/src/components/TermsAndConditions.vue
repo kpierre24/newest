@@ -158,12 +158,12 @@ h1 {
   font-size: clamp(14px, 3vw, 16px);
   font-weight: 600;
   transition: background-color 0.3s ease;
-  background-color: #FFBC2D;
+  background-color: #261C6B;
   color: white;
 }
 
 .close-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
 }
 
 /* Media Queries */
@@ -198,6 +198,99 @@ h1 {
 
 @media (min-width: 769px) {
   .content {
+    max-width: 500px;
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h2 {
+  font-size: clamp(20px, 4vw, 24px);
+  color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding-right: 40px;
+}
+
+.modal-text {
+  font-size: clamp(14px, 3vw, 16px);
+  line-height: 1.6;
+  color: #333;
+}
+
+.modal-text h3 {
+  font-size: clamp(16px, 3.5vw, 18px);
+  color: #FFBC2D;
+  margin: 20px 0 10px;
+}
+
+.modal-text p {
+  margin-bottom: 15px;
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: #FF883F;
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+  .modal-content {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
+  
+  .modal-content h2 {
+    padding-right: 30px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .modal-content {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .modal-content {
     max-width: 500px;
   }
 }

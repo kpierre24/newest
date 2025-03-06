@@ -255,10 +255,87 @@ form::-webkit-scrollbar-thumb {
   border-radius: 10px;
 }
 
-.input-group {
+.input-container {
   width: 100%;
   padding: 0 15px;
   box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.input-container label {
+  display: block;
+  font-size: clamp(14px, 3vw, 16px);
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(14px, 3vw, 16px);
+  color: #333;
+  cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.input-container input[type="text"] {
+  width: 100%;
+  padding: clamp(12px, 2.5vw, 15px);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: clamp(14px, 3vw, 16px);
+  transition: border-color 0.3s ease;
+}
+
+.input-container input[type="text"]:focus {
+  outline: none;
+  border-color: #FFBC2D;
+}
+
+.input-container input[type="text"]:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.error-container {
+  margin-top: 5px;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: clamp(12px, 2.5vw, 14px);
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
+  color: #FFBC2D;
+  transition: color 0.3s ease;
+}
+
+.back-icon:hover {
+  color: #FF883F;
 }
 
 .button-group {
@@ -283,12 +360,12 @@ form::-webkit-scrollbar-thumb {
 }
 
 .back-button {
-  background-color: #f15539ea;
+  background-color: #6362F8;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea;
+  background-color: #FF883F;
 }
 
 .next-button {
@@ -297,17 +374,7 @@ form::-webkit-scrollbar-thumb {
 }
 
 .next-button:hover {
-  background-color: #9e79da;
-}
-
-.error-message {
-  background-color: #ffebee;
-  color: #d32f2f;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 0 15px 15px;
-  font-size: clamp(12px, 2.5vw, 14px);
-  border-left: 4px solid #d32f2f;
+  background-color: #FF883F;
 }
 
 .next-button:disabled {
@@ -334,16 +401,13 @@ form::-webkit-scrollbar-thumb {
     border-radius: 0;
   }
   
-  form {
-    padding: 15px 10px 70px;
-  }
-  
-  .input-group {
+  .input-container {
     padding: 0 10px;
   }
   
-  .button-group {
-    padding: 0 10px;
+  .back-icon-link {
+    top: 15px;
+    left: 15px;
   }
 }
 

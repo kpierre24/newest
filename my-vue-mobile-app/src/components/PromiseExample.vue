@@ -294,7 +294,7 @@ h1 {
 }
 
 .next-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
 }
 
 .next-button:disabled {
@@ -304,6 +304,72 @@ h1 {
 
 .next-button:disabled:hover {
   background-color: #cccccc;
+}
+
+.example-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.example-section h2 {
+  font-size: clamp(16px, 3.5vw, 18px);
+  color: #FFBC2D;
+  margin-bottom: 15px;
+}
+
+.example-section p {
+  font-size: clamp(14px, 3vw, 16px);
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.example-section button {
+  width: 100%;
+  padding: clamp(12px, 2.5vw, 15px);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: clamp(14px, 3vw, 16px);
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  background-color: #FFBC2D;
+  color: white;
+}
+
+.example-section button:hover {
+  background-color: #FF883F;
+}
+
+.example-section button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.example-section button:disabled:hover {
+  background-color: #cccccc;
+}
+
+.back-icon-link {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #333;
+  font-size: 20px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.back-icon {
+  font-size: 24px;
+  color: #FFBC2D;
+  transition: color 0.3s ease;
+}
+
+.back-icon:hover {
+  color: #FF883F;
 }
 
 /* Media Queries */
@@ -321,12 +387,14 @@ h1 {
     border-radius: 0;
   }
   
-  .example-content {
-    padding: 15px 10px;
+  .example-section {
+    margin: 10px;
+    padding: 15px;
   }
   
-  .button-group {
-    padding: 0 10px;
+  .back-icon-link {
+    top: 15px;
+    left: 15px;
   }
 }
 
@@ -334,11 +402,19 @@ h1 {
   .content {
     max-width: 450px;
   }
+  
+  .example-section {
+    margin: 15px;
+  }
 }
 
 @media (min-width: 769px) {
   .content {
     max-width: 500px;
+  }
+  
+  .example-section {
+    margin: 20px;
   }
 }
 </style> 

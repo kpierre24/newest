@@ -1,153 +1,564 @@
 <template>
   <div class="container">
-    <div class="form-container">
-      <img src="@/assets/Logo1.png" alt="Logo" class="logo" />
-      <h2>Welcome to</h2>
-      <h1>Cathedral Online</h1>
-      <h6>If you don't have an online account,
-       <br>click "Don't have an account?" to get started</h6>
-      <div class="button-group">
-        <button @click="navigateToLogin" class="button login-button">Sign In</button>
-        <button @click="navigateToSignup" class="button signup-button">Don't have an account?</button>
+    <div class="login-section">
+      <div class="login-content">
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
+        <div class="brand-text">
+          <h1>Cathedral</h1>
+          <h1>ENGAGE</h1>
+          <p>Better Banking | Service</p>
+        </div>
+        <h2>Welcome to Cathedral Online</h2>
+        <p class="subtitle">If you don't have an online account click, "Don't have an account?", to get started</p>
+        <div class="button-group">
+          <button class="signin-button" @click="$router.push('/login')">Sign In</button>
+          <button class="create-account-button" @click="handleCreateAccount">Don't have an account?</button>
+        </div>
       </div>
-      <div><h5>Powered by</h5></div>
-      <img src="@/assets/Logo.png" alt="Logo" class="logo" />
+    </div>
+    <div class="brand-section">
+      <div class="overlay"></div>
+      <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+    </div>
+    <div class="powered-by-section">
+      <span class="powered-by">powered by</span>
+      <img src="@/assets/logo.png" alt="Cathedral Credit Union" class="cathedral-logo" />
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useField, useForm } from 'vee-validate';
+import * as yup from 'yup';
+import axios from 'axios';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
-  name: 'Home',
   setup() {
     const router = useRouter();
+    const store = useDemoStore();
+    const isLoading = ref(false);
+    const loginError = ref('');
 
-    const navigateToLogin = () => {
-      router.push("/login");
+    // Get the base URL dynamically
+    const getBaseURL = () => {
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000' 
+        : `http://${window.location.hostname}:3000`;
     };
 
-    const navigateToSignup = () => {
-      router.push("/new-or-existing-customer");
+    const { handleSubmit } = useForm({
+      validationSchema: yup.object({
+        email: yup.string().email('Please enter a valid email address').required('This field is required'),
+        password: yup.string().required('This field is required')
+      })
+    });
+
+    const { value: email, errorMessage: emailError } = useField('email');
+    const { value: password, errorMessage: passwordError } = useField('password');
+
+    // Promise-based validation
+    const validateCredentials = () => {
+      return new Promise((resolve, reject) => {
+        loginError.value = '';
+        
+        if (!email.value || !password.value) {
+          reject(new Error('Please enter both email and password'));
+          return;
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+          reject(new Error('Please enter a valid email address'));
+          return;
+        }
+        
+        resolve({
+          email: email.value,
+          password: password.value
+        });
+      });
+    };
+
+    const submitLogin = handleSubmit(async () => {
+      isLoading.value = true;
+      loginError.value = '';
+      
+      try {
+        // Validate credentials
+        const credentials = await validateCredentials();
+        
+        // Make API call
+        const baseURL = getBaseURL();
+        const response = await axios.post(`${baseURL}/login`, credentials);
+
+        console.log('Login successful:', response.data);
+        store.setUserEmail(email.value);
+        router.push('/dashboard');
+      } catch (error) {
+        console.error('Login failed:', error);
+        
+        if (error.message) {
+          loginError.value = error.message;
+        } else if (error.response && error.response.data && error.response.data.message) {
+          loginError.value = error.response.data.message;
+        } else {
+          loginError.value = 'Login failed. Please check your email and password.';
+        }
+      } finally {
+        isLoading.value = false;
+      }
+    });
+
+    // Handle create account button click
+    const handleCreateAccount = () => {
+      // Reset any existing customer state
+      store.setNewCustomer(false);
+      store.setExistingCustomer(false);
+      // Navigate to new or existing customer selection
+      router.push('/new-or-existing-customer');
     };
 
     return {
-      navigateToLogin,
-      navigateToSignup
+      email,
+      emailError,
+      password,
+      passwordError,
+      loginError,
+      isLoading,
+      submitLogin,
+      handleCreateAccount
     };
   }
 };
 </script>
-
 <style scoped>
-.container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.form-container {
-  background-image: url('@/assets/front screen.png');
-  background-size: cover;
-  background-position: center;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 420px;
-  max-width: 420px;
-  height: 100%;
-  text-align: center;
-  overflow-y: auto;
-  height:850.5px;
-  max-height: 100vh;
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #F5F5F5;
+}
+
+.container {
+  height: 100vh;
+  margin-top: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('@/assets/gradient.png') center/cover no-repeat;
+  opacity: 0.9;
+  z-index: 1;
+}
+
+.login-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem;
+  background: white;
+}
+
+.login-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-h1 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-  margin: 0;
-}
-h6 {
-  margin: 0;
-}
-h5 {
-  font-size: 10px;
-  margin: 0;
-}
-h2 {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 20px;
-  margin: 0;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
   width: 100%;
 }
 
-.button {
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
+.engage-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.5rem;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.brand-text h1 {
+  font-size: 42px;
+  color: #6362F8;
   font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.brand-text p {
+  color: #261C6B;
+  font-size: 14px;
+  margin: 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 32px;
+  color: #261C6B;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+.button-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signin-button {
+  width: 100%;
+  padding: 1rem;
+  background: #6362F8;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.login-button {
-  background-color: #FFBC2D;
-  color: #fff;
+.create-account-button {
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  color: #6362F8;
+  border: 2px solid #6362F8;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.login-button:hover {
-  background-color: #9e79da;
+.brand-section {
+  position: relative;
+  background: url('@/assets/happy-person.png') center/cover no-repeat;
+  display: none;
 }
 
-.signup-button {
-  background-color: white;
-  color: #007bff;
-  border: 2px solid #007bff;
+.brand-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/gradient.png') center/cover no-repeat;
+  opacity: 0.9;
+  z-index: 1;
 }
 
-.signup-button:hover {
-  background-color: #e6f0ff;
+.brand-logo {
+  position: relative;
+  z-index: 2;
+  width: 200px;
 }
 
-.logo {
-  width: 157.5px; 
-  height: auto;
-  margin-bottom: 20px;
-  margin: 0;
-  flex-direction: column;
-align-items: center;
-justify-content: center;
-margin-top: 30px;
+.powered-by-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.powered-by {
+  color: #666;
+  font-size: 14px;
+}
+
+.cathedral-logo {
+  height: 24px;
+  width: auto;
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    background: white;
+  }
+
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: url('@/assets/happy-person.png') center/cover no-repeat;
+  }
+
+  .container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: linear-gradient(to bottom, 
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    z-index: 1;
+  }
+
+  .login-section {
+    flex: 1;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+  }
+
+  .login-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .engage-logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+
+  .brand-text {
+    margin-bottom: 2rem;
+  }
+
+  .brand-text h1 {
+    font-size: 36px;
+    color: #6362F8;
+  }
+
+  .brand-text p {
+    color: #261C6B;
+    font-size: 14px;
+    margin-top: 0.5rem;
+  }
+
+  h2 {
+    font-size: 28px;
+    color: #261C6B;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 2rem;
+    max-width: 300px;
+    line-height: 1.5;
+  }
+
+  .button-group {
+    width: 100%;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .powered-by-section {
+    width: 100%;
+    padding: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: white;
+    height: 100vh;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .container::before,
+  .container::after {
+    display: none;
+  }
+
+  .login-section {
+    height: 100vh;
+    width: 100%;
+    background: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .login-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .brand-section {
+    position: relative;
+    display: block;
+    background: url('@/assets/happy-person.png') center/cover no-repeat;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .brand-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: url('@/assets/gradient.png') center/cover no-repeat;
+    opacity: 0.7;
+    z-index: 1;
+  }
+
+  .brand-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+
+  .brand-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 240px;
+    filter: brightness(1.2);
+    z-index: 2;
+  }
+
+  .engage-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+  }
+
+  .brand-text h1 {
+    font-size: 42px;
+  }
+
+  .brand-text p {
+    font-size: 14px;
+  }
+
+  h2 {
+    font-size: 32px;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    margin-bottom: 2rem;
+    max-width: 320px;
+  }
+
+  .button-group {
+    width: 100%;
+    max-width: 320px;
+    gap: 1rem;
+  }
+
+  .powered-by-section {
+    padding: 1.5rem;
+    background: white;
+  }
+}
+
+@media (min-width: 1200px) {
+  .login-content {
+    max-width: 480px;
+  }
+
+  .brand-logo {
+    width: 280px;
+  }
+}
+
+@media (max-height: 700px) {
+  .engage-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .brand-text h1 {
+    font-size: 32px;
+  }
+
+  .brand-text p {
+    font-size: 12px;
+  }
+
+  .subtitle {
+    margin-bottom: 1.5rem;
+  }
+
+  .button-group {
+    gap: 0.75rem;
+  }
 }
 </style>

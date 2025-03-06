@@ -188,11 +188,11 @@ p {
 
 .next-button, .back-button {
   width: 100%;
-  padding: 15px;
+  padding: clamp(12px, 2.5vw, 15px);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   font-weight: 600;
   transition: background-color 0.3s ease;
 }
@@ -203,20 +203,24 @@ p {
 }
 
 .next-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
 }
 
 .back-button {
-  background-color: #f15539ea;
+  background-color: #6362F8;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea;
+  background-color: #FF883F;
 }
 
 .next-button:disabled, .back-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.next-button:disabled:hover, .back-button:disabled:hover {
+  background-color: #cccccc;
 }
 </style>

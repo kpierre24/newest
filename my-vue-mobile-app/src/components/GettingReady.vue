@@ -1,8 +1,5 @@
 <template>
   <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
     <div class="content">
       <h1>Getting Ready</h1>
       <h5>Before going forward, here are some of the things you should have on hand that are required:</h5>
@@ -124,24 +121,27 @@ export default {
   max-height: 750px; /* Set a max height to ensure scrollability */
 }
 
-.back-icon-link {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
-  z-index: 10;
-}
-
-.back-icon {
-  font-size: 24px;
+.content h1 {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  z-index: 2;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(2px);
 }
 
 h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #333;
+  font-size: clamp(20px, 4vw, 24px);
+  color: #FFBC2D;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 20px 0;
 }
 
 h5 {
@@ -190,26 +190,28 @@ h3 {
   gap: 10px;
   width: 100%;
   margin-top: 20px;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .back-button, .next-button {
   width: 100%;
-  padding: 15px;
+  padding: clamp(12px, 2.5vw, 15px);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: clamp(14px, 3vw, 16px);
   font-weight: 600;
   transition: background-color 0.3s ease;
 }
 
 .back-button {
-  background-color: #f15539ea;
+  background-color: #6362F8;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea;
+  background-color: #FF883F;
 }
 
 .next-button {
@@ -218,7 +220,16 @@ h3 {
 }
 
 .next-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
+}
+
+.next-button:disabled, .back-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-button:disabled:hover, .back-button:disabled:hover {
+  background-color: #cccccc;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -237,5 +248,9 @@ h3 {
 .text-content, .content {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.back-icon-link, .back-icon, .back-icon:hover {
+  display: none;
 }
 </style>

@@ -321,12 +321,12 @@ form::-webkit-scrollbar-thumb {
 }
 
 .back-button {
-  background-color: #f15539ea;
+  background-color: #6362F8;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea;
+  background-color: #FF883F;
 }
 
 .submit-button {
@@ -335,7 +335,7 @@ form::-webkit-scrollbar-thumb {
 }
 
 .submit-button:hover {
-  background-color: #9e79da;
+  background-color: #FF883F;
 }
 
 .error-message {
