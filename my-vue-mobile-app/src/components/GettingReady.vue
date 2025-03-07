@@ -17,14 +17,8 @@
           </div>
 
           <div class="requirement-item">
-            <h3>2. Foreign Bank Account Information (For non Trinidad and Tobago Citizens only)</h3>
-            <ul>
-              <li>Bank account number</li>
-              <li>Address</li>
-              <li>Swift code</li>
-              <li>Routing Number</li>
-              <li>Contact Number</li>
-            </ul>
+            <h3>2. Foreign Bank Account Information</h3>
+            <p>For non Trinidad and Tobago Citizens only: Bank account number, Address, Swift code, Routing Number, Contact Number</p>
           </div>
 
           <div class="requirement-item">
@@ -34,23 +28,18 @@
           </div>
 
           <div class="requirement-item">
-            <h3>4. Employment/Source of Funds Information</h3>
-            <ul>
-              <li>Job letter</li>
-              <li>Payslip</li>
-              <li>Business Owners or Self Employed-- Projected Income for 3 years (completed cash flow projection) or Audited Financial</li>
-              <li>Retirees – A letter from National Insurance Board (NIB) or the organisation they worked with advising of the pension to be received.</li>
-            </ul>
+            <h3>4. Employment/Source of Funds</h3>
+            <p>Job letter, Payslip, Business Owners or Self Employed-- Projected Income for 3 years (completed cash flow projection) or Audited Financial, Retirees – A letter from National Insurance Board (NIB)</p>
           </div>
 
           <div class="requirement-item">
-            <h3>5. Valid Email Address and Mobile Number</h3>
+            <h3>5. Valid Email & Mobile</h3>
+            <p>A valid email address and mobile number are required for verification and communication purposes.</p>
           </div>
 
           <div class="requirement-item">
             <h3>6. Saved Progress</h3>
-            <p>Your progress will be saved as you proceed to sign up with a continue link being sent to your email address.</p>
-            <p>You have Forty Eight Hours(48) to complete before sign up must be restarted if not finished</p>
+            <p>Your progress will be saved as you proceed to sign up with a continue link being sent to your email address. You have 48 hours to complete before sign up must be restarted.</p>
           </div>
 
           <div class="requirement-item">
@@ -145,7 +134,7 @@ export default {
   background: white;
   border-radius: 12px;
   padding: 2.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   height: fit-content;
 }
@@ -225,97 +214,102 @@ h1 {
   .container {
     background: #F5F5F5;
     min-height: 100vh;
-    width: 100vw;
-    overflow: hidden;
+    width: 100%;
     display: flex;
     flex-direction: column;
   }
 
   .content {
     flex: 1;
-    padding: 0;
+    padding: 2rem;
     margin-top: 64px;
-    height: calc(100vh - 64px);
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
   }
 
   .info-card {
-    flex: 1;
-    padding: 2rem 4rem;
-    margin: 0;
-    width: 100vw;
     background: white;
-    border-radius: 0;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
   }
 
   h1 {
     font-size: 1.75rem;
     margin-bottom: 1rem;
+    text-align: center;
+    color: #261C6B;
   }
 
   .intro-text {
     font-size: 1rem;
     margin-bottom: 2rem;
-    max-width: none;
+    text-align: center;
+    color: #666;
   }
 
   .requirements-list {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 2rem;
-    width: 100%;
-    flex-wrap: nowrap;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
   .requirement-item {
-    flex: 1;
-    min-width: 0;
-    padding: 1.5rem;
-    background: #f8f8f8;
-    border-radius: 8px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .requirement-item h3 {
     font-size: 1rem;
-    margin-bottom: 0.75rem;
     color: #261C6B;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
   }
 
-  .requirement-item p, 
-  .requirement-item li {
-    font-size: 0.85rem;
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-  }
-
-  .requirement-item ul {
-    padding-left: 1rem;
+  .requirement-item p {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
   }
 
   .button-group {
-    padding: 1.5rem;
-    background: #F5F5F5;
+    margin-top: 2rem;
+    padding: 1rem;
     display: flex;
     justify-content: center;
     gap: 1rem;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    width: 100%;
+    max-width: 900px;
   }
 
   .next-button, 
   .cancel-button {
     width: 180px;
     padding: 0.875rem 0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .next-button {
+    background: #6362F8;
+    color: white;
+  }
+
+  .cancel-button {
+    background: #FF883F;
+    color: white;
   }
 }
 

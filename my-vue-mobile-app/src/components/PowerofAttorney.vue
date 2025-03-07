@@ -225,7 +225,7 @@ export default {
         formData.append('poaGender', values.poaGender);
         formData.append('poaRelationship', values.poaRelationship);
         formData.append('poaIdType', values.poaIdType);
-        
+
         if (poaIdDocument.value) {
           formData.append('poaIdDocument', poaIdDocument.value);
         }
@@ -233,7 +233,7 @@ export default {
         if (poaDocument.value) {
           formData.append('poaDocument', poaDocument.value);
         }
-        
+
         // Update store with POA information
         const poaInfo = {
           poaFirstName: values.poaFirstName,
@@ -390,21 +390,21 @@ export default {
 
 <style scoped>
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   min-height: 100vh;
-  width: 100%;
+    width: 100%;
   background: #f4f4f4;
-  padding: 20px;
+    padding: 20px;
   margin: 0;
   box-sizing: border-box;
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   background-image: url('@/assets/background.png');
   background-size: cover;
   padding: 0;

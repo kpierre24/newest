@@ -220,7 +220,8 @@ body {
 
 h2 {
   font-size: 32px;
-  color: #261C6B;
+  color: #6362F8
+  ;
   margin-bottom: 1rem;
   font-weight: 600;
 }
@@ -243,7 +244,7 @@ h2 {
 .signin-button {
   width: 100%;
   padding: 1rem;
-  background: #6362F8;
+  background: #FFBC2D;
   color: white;
   border: none;
   border-radius: 12px;
