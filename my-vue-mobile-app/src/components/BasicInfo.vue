@@ -449,6 +449,7 @@ export default {
 .container {
   height: 100vh;
   width: 100%;
+  max-width: 1920px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   overflow: hidden;
