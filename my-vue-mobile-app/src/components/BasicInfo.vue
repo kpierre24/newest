@@ -1,10 +1,12 @@
 <template>
   <div class="container">
-    <div class="content">
+    <!-- Mobile View -->
+    <div class="mobile-view">
+      <div class="content">
       <h1>Basic Information</h1>
-      <h4 class="subheading">Enter your personal information</h4>
-      <form @submit.prevent="navigateToNext">
-        <div v-if="formError" class="error-message">{{ formError }}</div>
+        <h4 class="subheading">Enter your personal information</h4>
+        <form @submit.prevent="navigateToNext">
+          <div v-if="formError" class="error-message">{{ formError }}</div>
         <div class="input-group">
           <FormInput
             type="text"
@@ -46,7 +48,7 @@
             id="mobileNumber"
             placeholder="Mobile Number"
             v-model="store.mobileNumber"
-            :maxlength="15"
+              :maxlength="15"
             :required="true"
             iconClass="icon fas fa-phone"
           />
@@ -63,9 +65,9 @@
             id="dob"
             v-model="store.dob"
             :required="true"
-            :max="today"
-            :error="dobError"
-            @validation="validateDateOfBirth"
+              :max="today"
+              :error="dobError"
+              @validation="validateDateOfBirth"
             iconClass="icon fas fa-calendar-alt"
           />
           <FormInput
@@ -88,24 +90,143 @@
           />
           <div class="checkbox-container">
             <input type="checkbox" v-model="store.termsViewed" id="termsViewed" />
-            <a href="#" @click.prevent="openTerms">Terms and Conditions</a>
+              <a href="#" @click.prevent="openTerms">Terms and Conditions</a>
           </div>
           <div class="checkbox-container">
             <input type="checkbox" v-model="store.financialAgreementViewed" id="financialAgreementViewed" />
-            <a href="#" @click.prevent="openFinancialDeclaration">Financial Declaration Agreement</a>
+              <a href="#" @click.prevent="openFinancialDeclaration">Financial Declaration Agreement</a>
           </div>
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-            <button type="submit" class="next-button" :disabled="isLoading">
-              <span v-if="isLoading">
-                <i class="fas fa-spinner fa-spin"></i> Processing...
-              </span>
-              <span v-else>Next</span>
-            </button>
+              <button type="submit" class="next-button" :disabled="isLoading">
+                <span v-if="isLoading">
+                  <i class="fas fa-spinner fa-spin"></i> Processing...
+                </span>
+                <span v-else>Next</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Desktop View -->
+    <div class="login-section">
+      <div class="login-content">
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
+        <div class="brand-text">
+          <h1>Basic Information</h1>
+          <p>Enter your personal information</p>
+        </div>
+        <form @submit.prevent="navigateToNext" class="desktop-form">
+          <div v-if="formError" class="error-message">{{ formError }}</div>
+          <div class="input-group">
+            <FormInput
+              type="text"
+              id="firstName"
+              placeholder="First Name"
+              v-model="store.firstName"
+              :maxlength="50"
+              :required="true"
+              iconClass="icon fas fa-user"
+            />
+            <FormInput
+              type="text"
+              id="lastName"
+              placeholder="Last Name"
+              v-model="store.lastName"
+              :maxlength="50"
+              :required="true"
+              iconClass="icon fas fa-user"
+            />
+            <FormInput
+              type="text"
+              id="otherName"
+              placeholder="Other Name"
+              v-model="store.otherName"
+              :maxlength="50"
+              iconClass="icon fas fa-user"
+            />
+            <FormInput
+              type="email"
+              id="email"
+              placeholder="Email Address"
+              v-model="store.email"
+              :maxlength="50"
+              :required="true"
+              iconClass="icon fas fa-envelope"
+            />
+            <FormInput
+              type="tel"
+              id="mobileNumber"
+              placeholder="Mobile Number"
+              v-model="store.mobileNumber"
+              :maxlength="15"
+              :required="true"
+              iconClass="icon fas fa-phone"
+            />
+            <FormInput
+              type="select"
+              id="gender"
+              v-model="store.gender"
+              :required="true"
+              iconClass="icon fas fa-venus-mars"
+              :selectOptions="['male', 'female']"
+            />
+            <FormInput
+              type="date"
+              id="dob"
+              v-model="store.dob"
+              :required="true"
+              :max="today"
+              :error="dobError"
+              @validation="validateDateOfBirth"
+              iconClass="icon fas fa-calendar-alt"
+            />
+            <FormInput
+              type="password"
+              id="password"
+              placeholder="Password"
+              v-model="store.password"
+              :maxlength="50"
+              :required="true"
+              iconClass="icon fas fa-lock"
+            />
+            <FormInput
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm Password"
+              v-model="store.confirmPassword"
+              :maxlength="50"
+              :required="true"
+              iconClass="icon fas fa-lock"
+            />
+            <div class="checkbox-container">
+              <input type="checkbox" v-model="store.termsViewed" id="termsViewed" />
+              <a href="#" @click.prevent="openTerms">Terms and Conditions</a>
+            </div>
+            <div class="checkbox-container">
+              <input type="checkbox" v-model="store.financialAgreementViewed" id="financialAgreementViewed" />
+              <a href="#" @click.prevent="openFinancialDeclaration">Financial Declaration Agreement</a>
+            </div>
+            <div class="button-group">
+              <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+              <button type="submit" class="next-button" :disabled="isLoading">
+                <span v-if="isLoading">
+                  <i class="fas fa-spinner fa-spin"></i> Processing...
+                </span>
+                <span v-else>Next</span>
+              </button>
           </div>
         </div>
       </form>
+      </div>
     </div>
+    <div class="brand-section">
+      <div class="overlay"></div>
+      <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+    </div>
+
     <TermsAndConditions :visible="showTerms" @close="closeTerms" />
     <FinancialDeclaration :visible="showFinancialDeclaration" @close="closeFinancialDeclaration" />
   </div>
@@ -187,17 +308,17 @@ export default {
       return true;
     };
 
-    const calculateAge = (dob) => {
+  const calculateAge = (dob) => {
       const birthDate = new Date(dob);
-      const today = new Date();
+  const today = new Date();
       
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age;
-    };
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
 
     // Promise-based form validation
     const validateForm = () => {
@@ -208,10 +329,10 @@ export default {
             !store.gender || !store.dob || !store.password || !store.confirmPassword || 
             !store.termsViewed || !store.financialAgreementViewed) {
           reject(new Error('Please fill all required fields and agree to the terms.'));
-          return;
-        }
+        return;
+      }
 
-        if (store.password !== store.confirmPassword) {
+      if (store.password !== store.confirmPassword) {
           reject(new Error('Passwords do not match'));
           return;
         }
@@ -232,8 +353,8 @@ export default {
         // Validate mobile number (simple validation)
         if (!/^\d{7,15}$/.test(store.mobileNumber)) {
           reject(new Error('Please enter a valid mobile number'));
-          return;
-        }
+        return;
+      }
 
         resolve({
           firstName: store.firstName,
@@ -272,15 +393,15 @@ export default {
 
         // Update store
         store.setBasicInfo(basicInfoData);
-        
+
         // Navigate to email verification page
         router.push({ name: 'EmailVerification' });
       } catch (error) {
         console.error('Error submitting basic info:', error);
-        
+
         if (error.message) {
           formError.value = error.message;
-        } else {
+      } else {
           formError.value = 'An error occurred while submitting your information';
           
           // Continue with navigation even if API fails
@@ -318,219 +439,380 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  background: #f4f4f4;
-  padding: 20px;
+/* Reset default styles */
+* {
   margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.content {
+.container {
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+/* Mobile View */
+.mobile-view {
+  display: none;
+}
+
+/* Desktop View */
+.login-section {
+  width: 50vw;
+  height: 100vh;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.login-content {
+  height: 100vh;
+  padding: 0.75rem 0;
+  overflow-y: hidden;
+}
+
+.engage-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.5rem;
+}
+
+.brand-text {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
   width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
-  color: rgb(12, 12, 12);
+}
+
+.brand-text h1 {
+  font-size: clamp(24px, 2.2vw, 28px);
+  color: #261C6B;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.brand-text p {
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: #666;
+  letter-spacing: 0.5px;
+}
+
+.desktop-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-section {
   position: relative;
-  margin: auto;
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  overflow: hidden;
 }
 
-.content h1 {
-  position: sticky;
+.brand-section::before {
+  content: '';
+  position: absolute;
   top: 0;
-  background: rgba(255, 255, 255, 0.2);
+  left: 0;
   width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  text-align: center;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+}
+
+.brand-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+.brand-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  filter: brightness(1) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
   z-index: 2;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-  backdrop-filter: blur(2px);
-}
-
-h1 {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  padding: 20px 0;
-}
-
-.subheading {
-  font-size: clamp(14px, 3vw, 18px);
-  color: #333;
-  margin: 10px 0 20px;
-  text-align: center;
-  padding: 0 20px;
-}
-
-form {
-  flex: 1;
-  width: 100%;
-  overflow-y: auto;
-  padding: 20px 15px 80px;
-  margin-top: 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  box-sizing: border-box;
-}
-
-form::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
-}
-
-form::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
 }
 
 .input-group {
   width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .checkbox-container {
+  margin: 0.5rem 0;
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-  gap: 10px;
-  padding: 0 5px;
+  gap: 0.75rem;
 }
 
 .checkbox-container input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: #FFBC2D;
-  min-width: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkbox-container input[type="checkbox"]:checked {
+  background-color: #6362F8;
+  border-color: #6362F8;
 }
 
 .checkbox-container a {
-  color: #007bff;
+  color: #6362F8;
+  font-size: clamp(12px, 1vw, 14px);
   text-decoration: none;
-  font-size: clamp(12px, 2.5vw, 14px);
-  cursor: pointer;
-  transition: color 0.3s ease;
-  flex: 1;
+  transition: color 0.2s ease;
 }
 
 .checkbox-container a:hover {
-  color: #0056b3;
+  color: #4b4ac0;
   text-decoration: underline;
 }
 
 .button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-top: 20px;
-  padding: 0 15px;
-  box-sizing: border-box;
+  margin-top: 1.5rem;
+  gap: 0.75rem;
 }
 
-.back-button, .next-button {
-  width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
-  border: none;
+.button-group button {
+  padding: 0.75rem;
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 500;
   border-radius: 8px;
-  cursor: pointer;
-  font-size: clamp(14px, 3vw, 16px);
-  font-weight: 600;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .back-button {
-  background-color: #6362F8;
-  color: white;
+  background-color: transparent;
+  border: 1px solid #6362F8;
+  color: #6362F8;
 }
 
 .back-button:hover {
-  background-color: #FF883F;
+  background-color: rgba(99, 98, 248, 0.05);
+  transform: translateY(-1px);
 }
 
 .next-button {
-  background-color: #FFBC2D;
+  background-color: #6362F8;
+  border: none;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #FF883F;
+  background-color: #4b4ac0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.next-button:disabled, .back-button:disabled {
-  background-color: #cccccc;
+.next-button:disabled {
+  background-color: #e0e0e0;
   cursor: not-allowed;
-}
-
-.next-button:disabled:hover, .back-button:disabled:hover {
-  background-color: #cccccc;
+  transform: none;
+  box-shadow: none;
 }
 
 .error-message {
-  background-color: #ffebee;
-  color: #d32f2f;
-  padding: 10px;
+  font-size: clamp(11px, 0.9vw, 13px);
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid #dc3545;
+  padding: 0.75rem;
   border-radius: 4px;
-  margin: 0 15px 15px;
-  font-size: clamp(12px, 2.5vw, 14px);
-  border-left: 4px solid #d32f2f;
+  margin-bottom: 1rem;
 }
 
-/* Media Queries */
-@media (max-width: 480px) {
+/* Mobile Styles */
+@media (max-width: 767px) {
   .container {
-    padding: 10px;
+    display: block;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
   }
-  
-  .content {
-    max-height: 100vh;
-    border-radius: 0;
-  }
-  
-  .content h1 {
-    border-radius: 0;
-  }
-  
-  form {
-    padding: 15px 10px 70px;
-  }
-  
-  .input-group {
-    padding: 0 10px;
-  }
-  
-  .button-group {
-    padding: 0 10px;
-  }
-}
 
-@media (min-width: 481px) and (max-width: 768px) {
-  .content {
-    max-width: 450px;
+  .container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
-}
 
-@media (min-width: 769px) {
+  .mobile-view {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .login-section,
+  .brand-section {
+    display: none;
+  }
+
   .content {
+    min-height: 100vh;
+    padding: 20px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content form {
+    width: 100%;
     max-width: 500px;
+    margin: 0 auto;
+    flex: 1;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  :deep(.form-input-container) {
+    margin-bottom: 0.75rem;
+  }
+
+  .button-group {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+  .container {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .login-section {
+    width: 50vw;
+    height: 100vh;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .login-content {
+    height: 100vh;
+    padding: 0.75rem 0;
+    overflow-y: hidden;
+  }
+
+  .desktop-form {
+    width: 100%;
+    padding: 0 1.5rem;
+    gap: 0.75rem;
+  }
+
+  .input-group {
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-row {
+    gap: 0.75rem;
+  }
+
+  .form-group {
+    gap: 0.5rem;
+  }
+
+  .desktop-title {
+    font-size: clamp(18px, 1.8vw, 22px);
+    margin-bottom: 0.5rem;
+  }
+
+  .desktop-subheading {
+    font-size: clamp(14px, 1.2vw, 16px);
+    margin-bottom: 1rem;
+  }
+
+  :deep(.form-input-container) {
+    margin-bottom: 0.5rem;
+  }
+
+  :deep(label) {
+    font-size: clamp(12px, 1vw, 14px);
+    margin-bottom: 0.25rem;
+  }
+
+  :deep(input), :deep(select) {
+    height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: clamp(13px, 1.1vw, 15px);
+  }
+
+  :deep(input[type="checkbox"]) {
+    height: 16px;
+    width: 16px;
+  }
+
+  .checkbox-container {
+    margin: 0.5rem 0;
+  }
+
+  .checkbox-label {
+    font-size: clamp(12px, 1vw, 14px);
+  }
+
+  .error-message {
+    font-size: clamp(11px, 0.9vw, 13px);
+    margin-top: 0.25rem;
+  }
+
+  .button-group {
+    margin-top: 1rem;
+    gap: 0.75rem;
+  }
+
+  .button-group button {
+    padding: 0.625rem;
+    font-size: clamp(13px, 1.1vw, 15px);
+  }
+
+  .brand-section {
+    width: 50vw;
+    height: 100vh;
+  }
+
+  .brand-logo {
+    width: 150px;
+  }
+
+  .brand-text h1 {
+    font-size: clamp(24px, 2.2vw, 28px);
+  }
+
+  .brand-text p {
+    font-size: clamp(14px, 1.2vw, 16px);
+  }
+
+  .engage-logo {
+    width: 50px;
+    height: 50px;
   }
 }
 </style>
