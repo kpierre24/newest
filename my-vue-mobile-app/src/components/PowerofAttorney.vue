@@ -1,569 +1,631 @@
 <template>
   <div class="container">
-    <div class="content">
-      <h1>Power of Attorney</h1>
-      <form @submit.prevent="handleSubmit">
-        <FormInput
-          label="First Name"
-          type="text"
-          id="poaFirstName"
-          v-model="poaFirstName"
-          placeholder="First Name"
-          :required="true"
-          iconClass="icon fas fa-user"
-        />
-        <ErrorMessage name="poaFirstName" class="error" />
-        <FormInput
-          label="Last Name"
-          type="text"
-          id="poaLastName"
-          v-model="poaLastName"
-          placeholder="Last Name"
-          :required="true"
-          iconClass="icon fas fa-user"
-        />
-        <ErrorMessage name="poaLastName" class="error" />
-        <FormInput
-          label="Other Name"
-          type="text"
-          id="poaOtherName"
-          v-model="poaOtherName"
-          placeholder="Other Name"
-          iconClass="icon fas fa-user"
-        />
-        <ErrorMessage name="poaOtherName" class="error" />
-        <FormInput
-          label="Address Line 1"
-          type="text"
-          id="poaAddressLine1"
-          v-model="poaAddressLine1"
-          placeholder="Address Line 1"
-          :required="true"
-          iconClass="icon fas fa-map-marker-alt"
-        />
-        <ErrorMessage name="poaAddressLine1" class="error" />
-        <FormInput
-          label="Address Line 2"
-          type="text"
-          id="poaAddressLine2"
-          v-model="poaAddressLine2"
-          placeholder="Address Line 2"
-          iconClass="icon fas fa-map-marker-alt"
-        />
-        <ErrorMessage name="poaAddressLine2" class="error" />
-        <FormInput
-          label="City"
-          type="text"
-          id="poaCity"
-          v-model="poaCity"
-          placeholder="City"
-          :required="true"
-          iconClass="icon fas fa-city"
-        />
-        <ErrorMessage name="poaCity" class="error" />
-        <FormInput
-          label="Country"
-          type="text"
-          id="poaCountry"
-          v-model="poaCountry"
-          placeholder="Country"
-          :required="true"
-          iconClass="icon fas fa-globe"
-        />
-        <ErrorMessage name="poaCountry" class="error" />
-        <FormInput
-          label="Date of Birth"
-          type="date"
-          id="poaDob"
-          v-model="poaDob"
-          placeholder="Date of Birth"
-          :required="true"
-          :max="today"
-          :error="dobError"
-          @validation="validateDateOfBirth"
-          iconClass="icon fas fa-birthday-cake"
-        />
-        <ErrorMessage name="poaDob" class="error" />
-        <FormInput
-          label="ID Type"
-          type="select"
-          id="poaIdType"
-          v-model="poaIdType"
-          :required="true"
-          :selectOptions="['National ID', 'Driver\'s Permit', 'Passport']"
-          iconClass="icon fas fa-id-card"
-        />
-        <ErrorMessage name="poaIdType" class="error" />
-        <div class="input-container">
-          <label>POA ID Document</label>
-          <FileUpload
-            id="poaIdDocument"
-            buttonText="Upload ID"
-            accept=".pdf,.jpg,.png"
-            @file-uploaded="handleIdFileUpload"
-          />
+    <!-- Mobile View -->
+    <div class="mobile-view">
+      <div class="form-container">
+        <div class="logo-container">
+          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
         </div>
-        <div class="input-container">
-          <label>POA Document</label>
-          <FileUpload
-            id="poaDocument"
-            buttonText="Upload POA"
-            accept=".pdf,.jpg,.png"
-            @file-uploaded="handleFileUpload"
-          />
+        <h1>Power of Attorney</h1>
+        <form @submit.prevent="submitForm">
+          <div v-if="formError" class="error-message">{{ formError }}</div>
+          <div class="form-box">
+            <div class="form-container">
+              <h2>Attorney Information</h2>
+              <FormInput
+                label="First Name"
+                type="text"
+                id="attorneyFirstName"
+                v-model="formData.attorneyFirstName"
+                placeholder="Attorney First Name"
+                :required="true"
+                iconClass="icon fas fa-user"
+              />
+              <FormInput
+                label="Last Name"
+                type="text"
+                id="attorneyLastName"
+                v-model="formData.attorneyLastName"
+                placeholder="Attorney Last Name"
+                :required="true"
+                iconClass="icon fas fa-user"
+              />
+              <FormInput
+                label="Email"
+                type="email"
+                id="attorneyEmail"
+                v-model="formData.attorneyEmail"
+                placeholder="Attorney Email"
+                :required="true"
+                iconClass="icon fas fa-envelope"
+              />
+              <FormInput
+                label="Phone Number"
+                type="tel"
+                id="attorneyPhone"
+                v-model="formData.attorneyPhone"
+                placeholder="Attorney Phone Number"
+                :required="true"
+                iconClass="icon fas fa-phone"
+              />
+            </div>
+          </div>
+          <div class="form-box">
+            <div class="form-container">
+              <h2>Document Upload</h2>
+              <div class="input-container">
+                <label>Power of Attorney Document</label>
+                <FileUpload
+                  id="poaDocument"
+                  buttonText="Upload Document"
+                  accept=".pdf,.jpg,.png"
+                  @file-uploaded="handleFileUpload"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="button-group">
+            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+            <button type="submit" class="submit-button" :disabled="isLoading">
+              <span v-if="isLoading">
+                <i class="fas fa-spinner fa-spin"></i> Processing...
+              </span>
+              <span v-else>Next</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Desktop View -->
+    <div class="desktop-view">
+      <section class="login-section">
+        <div class="login-content">
+          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
+          <div class="brand-text">
+            <h1>Power of Attorney</h1>
+            <p>Enter the attorney's details and upload required documents</p>
+          </div>
+          <form @submit.prevent="submitForm" class="desktop-form">
+            <div v-if="formError" class="error-message">{{ formError }}</div>
+            <div class="form-box">
+              <div class="form-container">
+                <h2>Attorney Information</h2>
+                <FormInput
+                  label="First Name"
+                  type="text"
+                  id="attorneyFirstName-desktop"
+                  v-model="formData.attorneyFirstName"
+                  placeholder="Attorney First Name"
+                  :required="true"
+                  iconClass="icon fas fa-user"
+                />
+                <FormInput
+                  label="Last Name"
+                  type="text"
+                  id="attorneyLastName-desktop"
+                  v-model="formData.attorneyLastName"
+                  placeholder="Attorney Last Name"
+                  :required="true"
+                  iconClass="icon fas fa-user"
+                />
+                <FormInput
+                  label="Email"
+                  type="email"
+                  id="attorneyEmail-desktop"
+                  v-model="formData.attorneyEmail"
+                  placeholder="Attorney Email"
+                  :required="true"
+                  iconClass="icon fas fa-envelope"
+                />
+                <FormInput
+                  label="Phone Number"
+                  type="tel"
+                  id="attorneyPhone-desktop"
+                  v-model="formData.attorneyPhone"
+                  placeholder="Attorney Phone Number"
+                  :required="true"
+                  iconClass="icon fas fa-phone"
+                />
+              </div>
+            </div>
+            <div class="form-box">
+              <div class="form-container">
+                <h2>Document Upload</h2>
+                <div class="input-container">
+                  <label>Power of Attorney Document</label>
+                  <FileUpload
+                    id="poaDocument-desktop"
+                    buttonText="Upload Document"
+                    accept=".pdf,.jpg,.png"
+                    @file-uploaded="handleFileUpload"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="button-group">
+              <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+              <button type="submit" class="submit-button" :disabled="isLoading">
+                <span v-if="isLoading">
+                  <i class="fas fa-spinner fa-spin"></i> Processing...
+                </span>
+                <span v-else>Next</span>
+              </button>
+            </div>
+          </form>
         </div>
-        <div class="skip-link">
-          <a href="#" @click.prevent="skipToNext">Add Power of Attorney Later</a>
-        </div>
-        <div class="button-group">
-          <button type="button" class="back-button" @click="goBack">Back</button>
-          <button type="submit" class="next-button">Next</button>
-        </div>
-      </form>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </section>
+      <section class="brand-section">
+        <div class="overlay"></div>
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+      </section>
     </div>
   </div>
 </template>
 
 <script>
-import { useDemoStore } from '@/store/demoStore';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { useForm, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
 import FormInput from '@/props/FormInput.vue';
 import FileUpload from '@/props/FileUpload.vue';
-import { useDateValidation } from '@/composables/useDateValidation';
+import { useDemoStore } from '@/store/demoStore';
 
 export default {
-  name: 'PowerofAttorney',
+  name: 'PowerOfAttorney',
   components: {
-    Field,
-    ErrorMessage,
     FormInput,
-    FileUpload,
+    FileUpload
   },
   setup() {
-    const store = useDemoStore();
     const router = useRouter();
-    const errorMessage = ref('');
-    const poaDocument = ref(null);
-    const poaIdDocument = ref(null);
+    const store = useDemoStore();
+    const isLoading = ref(false);
+    const formError = ref('');
 
-    // Validation Schema
-    const validationSchema = yup.object({
-      poaFirstName: yup.string().required('First Name is required'),
-      poaLastName: yup.string().required('Last Name is required'),
-      poaOtherName: yup.string(),
-      poaAddressLine1: yup.string().required('Address Line 1 is required'),
-      poaAddressLine2: yup.string(),
-      poaCity: yup.string().required('City is required'),
-      poaCountry: yup.string().required('Country is required'),
-      poaDob: yup.string().required('Date of Birth is required'),
-      poaIdType: yup.string().required('ID Type is required'),
-    });
-
-    // Form data with ref
-    const poaFirstName = ref('');
-    const poaLastName = ref('');
-    const poaOtherName = ref('');
-    const poaAddressLine1 = ref('');
-    const poaAddressLine2 = ref('');
-    const poaCity = ref('');
-    const poaCountry = ref('');
-    const poaDob = ref('');
-    const poaIdType = ref('');
-
-    // Setup Form with Vee-Validate
-    const { handleSubmit, errors } = useForm({
-      validationSchema,
-    });
-
-    const { validateDOB, dobError } = useDateValidation();
-
-    // Get today's date for max DOB
-    const today = computed(() => {
-      const date = new Date();
-      return date.toISOString().split('T')[0];
+    const formData = ref({
+      attorneyFirstName: '',
+      attorneyLastName: '',
+      attorneyEmail: '',
+      attorneyPhone: '',
+      poaDocument: null
     });
 
     const handleFileUpload = (file) => {
-      poaDocument.value = file;
-      console.log('POA Document uploaded:', file);
+      formData.value.poaDocument = file;
     };
 
-    const handleIdFileUpload = (file) => {
-      poaIdDocument.value = file;
-      console.log('POA ID Document uploaded:', file);
-    };
+    const submitForm = async () => {
+      isLoading.value = true;
+      formError.value = '';
 
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
-
-    const onSubmit = handleSubmit(async (values) => {
-      // Validate date of birth first
-      if (!validateDateOfBirth()) {
-        return; // Stop submission if date validation fails
-      }
-      
       try {
-        // Prepare form data for API submission
-        const formData = new FormData();
-        formData.append('poaFirstName', values.poaFirstName);
-        formData.append('poaLastName', values.poaLastName);
-        formData.append('poaOtherName', values.poaOtherName || '');
-        formData.append('poaAddressLine1', values.poaAddressLine1);
-        formData.append('poaAddressLine2', values.poaAddressLine2 || '');
-        formData.append('poaCity', values.poaCity);
-        formData.append('poaCountry', values.poaCountry);
-        formData.append('poaDob', poaDob.value);
-        formData.append('poaGender', values.poaGender);
-        formData.append('poaRelationship', values.poaRelationship);
-        formData.append('poaIdType', values.poaIdType);
-
-        if (poaIdDocument.value) {
-          formData.append('poaIdDocument', poaIdDocument.value);
-        }
-        
-        if (poaDocument.value) {
-          formData.append('poaDocument', poaDocument.value);
+        // Validate required fields
+        if (!formData.value.attorneyFirstName || !formData.value.attorneyLastName || 
+            !formData.value.attorneyEmail || !formData.value.attorneyPhone) {
+          formError.value = 'Please fill in all required fields';
+          isLoading.value = false;
+          return;
         }
 
-        // Update store with POA information
-        const poaInfo = {
-          poaFirstName: values.poaFirstName,
-          poaLastName: values.poaLastName,
-          poaOtherName: values.poaOtherName || '',
-          poaAddressLine1: values.poaAddressLine1,
-          poaAddressLine2: values.poaAddressLine2 || '',
-          poaCity: values.poaCity,
-          poaCountry: values.poaCountry,
-          poaDob: poaDob.value,
-          poaGender: values.poaGender,
-          poaRelationship: values.poaRelationship,
-          poaIdType: values.poaIdType,
-          poaIdDocument: poaIdDocument.value,
-          poaDocument: poaDocument.value
-        };
-        
-        store.setPowerOfAttorneyInfo(poaInfo);
-        console.log('Store updated with POA info:', poaInfo);
-        
-        // Try to submit to API but don't block navigation if it fails
+        // Get the base URL dynamically
+        const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:3000' 
+          : `http://${window.location.hostname}:3000`;
+
         try {
-          const response = await axios.post(`${getBaseURL()}/api/power-of-attorney`, formData, {
+          const response = await axios.post(`${baseURL}/power-of-attorney`, formData.value, {
             headers: {
-              'Content-Type': 'multipart/form-data'
+              'Content-Type': 'application/json'
             }
           });
-          console.log('Form submitted successfully:', response.data);
-        } catch (error) {
-          console.error('Error submitting form:', error);
+          console.log('Power of Attorney info submitted:', response.data);
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Continue with navigation even if API fails
         }
-        
-        // Navigate to next page regardless of API success
-        console.log('Navigating to /branch');
-        router.push('/branch');
+
+        // Update store with form data (excluding the file)
+        const storeData = { ...formData.value };
+        delete storeData.poaDocument;
+        store.$patch((state) => {
+          Object.assign(state, storeData);
+        });
+
+        router.push('/designation-of-beneficiary');
       } catch (error) {
-        console.error('Error in form submission:', error);
-        errorMessage.value = error.message || 'An error occurred. Please try again.';
+        console.error('Error submitting power of attorney information:', error);
+        formError.value = 'An error occurred while submitting your information';
+      } finally {
+        isLoading.value = false;
       }
-    });
-
-    const goBack = () => {
-      router.go(-1);
     };
 
-    const skipToNext = () => {
-      // Make sure to update the store with empty values
-      store.setPowerOfAttorneyInfo({
-        poaFirstName: '',
-        poaLastName: '',
-        poaOtherName: '',
-        poaAddressLine1: '',
-        poaAddressLine2: '',
-        poaCity: '',
-        poaCountry: '',
-        poaDob: '',
-        poaIdType: '',
-        poaIdDocument: null,
-        poaDocument: null,
-      });
-      
-      console.log('Skipping POA, navigating to /branch');
-      router.push('/branch');
-    };
-
-    const validateDateOfBirth = () => {
-      if (!poaDob.value) {
-        dobError.value = 'Date of birth is required';
-        return false;
-      }
-      
-      const selectedDate = new Date(poaDob.value);
-      selectedDate.setHours(0, 0, 0, 0);
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
-      
-      if (selectedDate >= todayDate) {
-        dobError.value = 'Date of birth cannot be today or in the future';
-        return false;
-      }
-      
-      dobError.value = '';
-      return true;
-    };
-
-    const validateForm = () => {
-      errors.value = {};
-      let isValid = true;
-      
-      if (!poaFirstName.value) {
-        errors.value.poaFirstName = 'First Name is required.';
-        isValid = false;
-      }
-      
-      if (!poaLastName.value) {
-        errors.value.poaLastName = 'Last Name is required.';
-        isValid = false;
-      }
-      
-      if (!poaAddress.value) {
-        errors.value.poaAddress = 'Address is required.';
-        isValid = false;
-      }
-      
-      if (!poaCountry.value) {
-        errors.value.poaCountry = 'Country is required.';
-        isValid = false;
-      }
-      
-      // Use the validateDateOfBirth function
-      if (!validateDateOfBirth()) {
-        isValid = false;
-      }
-      
-      if (!poaGender.value) {
-        errors.value.poaGender = 'Gender is required.';
-        isValid = false;
-      }
-      
-      if (!poaRelationship.value) {
-        errors.value.poaRelationship = 'Relationship is required.';
-        isValid = false;
-      }
-      
-      return isValid;
+    const navigateToPrevious = () => {
+      router.push('/account-number');
     };
 
     return {
-      handleSubmit: onSubmit,
-      errors,
-      errorMessage,
+      formData,
       handleFileUpload,
-      handleIdFileUpload,
-      goBack,
-      skipToNext,
-      poaFirstName,
-      poaLastName,
-      poaOtherName,
-      poaAddressLine1,
-      poaAddressLine2,
-      poaCity,
-      poaCountry,
-      poaDob,
-      poaIdType,
-      poaDocument,
-      poaIdDocument,
-      dobError,
-      today,
-      validateDateOfBirth,
+      submitForm,
+      navigateToPrevious,
+      isLoading,
+      formError
     };
-  },
+  }
 };
 </script>
 
 <style scoped>
-.container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  min-height: 100vh;
-    width: 100%;
-  background: #f4f4f4;
-    padding: 20px;
+* {
   margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+.container {
+  height: 100vh;
   width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
-  color: rgb(12, 12, 12);
-  position: relative;
-  margin: auto;
+  max-width: 1920px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
 }
 
-.content h1 {
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.4);
-  width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  text-align: center;
-  z-index: 2;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
+/* Mobile View */
+.mobile-view {
+  display: none;
 }
 
-h1 {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  padding: 20px 0;
+/* Desktop View */
+.login-section {
+  width: 50vw;
+  height: 100vh;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
-form {
-  flex: 1;
-  width: 100%;
+.login-content {
+  height: 100%;
+  padding: 2rem;
   overflow-y: auto;
-  padding: 20px 15px 80px;
-  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  box-sizing: border-box;
 }
 
-form::-webkit-scrollbar {
-  width: 5px;
+.login-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.login-content::-webkit-scrollbar-track {
   background: transparent;
 }
 
-form::-webkit-scrollbar-thumb {
+.login-content::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
 }
 
-.input-group {
+.login-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.engage-logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.engage-logo:hover {
+  transform: scale(1.05);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
   width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
+  text-align: center;
+}
+
+.brand-text h1 {
+  font-size: clamp(24px, 2.2vw, 32px);
+  color: #261C6B;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.brand-text p {
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: #666;
+  letter-spacing: 0.5px;
+  max-width: 80%;
+  line-height: 1.5;
+}
+
+.desktop-form {
+  width: 100%;
+  max-width: 600px;
+  padding: 0 1.5rem 2rem;
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  margin-top: 1rem;
+}
+
+.brand-section {
+  position: relative;
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  overflow: hidden;
+  width: 50vw;
+}
+
+.brand-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+}
+
+.brand-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+.brand-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  z-index: 2;
+}
+
+.form-box {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+.form-container {
+  width: 100%;
+}
+
+.form-container h2 {
+  font-size: clamp(16px, 1.4vw, 18px);
+  color: #261C6B;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  width: 100%;
 }
 
 .button-group {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.5rem 0;
   width: 100%;
-  margin-top: 20px;
-  padding: 0 15px;
-  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem 0;
 }
 
-.back-button, .next-button {
-  width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
-  border: none;
+.back-button,
+.submit-button {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 500;
   border-radius: 8px;
-  cursor: pointer;
-  font-size: clamp(14px, 3vw, 16px);
-  font-weight: 600;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .back-button {
-  background-color: #f15539ea;
-  color: white;
+  background-color: transparent;
+  border: 1px solid #6362F8;
+  color: #6362F8;
 }
 
 .back-button:hover {
-  background-color: #f38b79ea;
+  background-color: rgba(99, 98, 248, 0.05);
+  transform: translateY(-1px);
 }
 
-.next-button {
-  background-color: #FFBC2D;
+.submit-button {
+  background-color: #6362F8;
+  border: none;
   color: white;
 }
 
-.next-button:hover {
-  background-color: #9e79da;
+.submit-button:hover {
+  background-color: #4b4ac0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.error-message {
-  background-color: #ffebee;
-  color: #d32f2f;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 0 15px 15px;
-  font-size: clamp(12px, 2.5vw, 14px);
-  border-left: 4px solid #d32f2f;
-}
-
-.next-button:disabled {
-  background-color: #cccccc;
+.submit-button:disabled {
+  background-color: #e0e0e0;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.next-button:disabled:hover {
-  background-color: #cccccc;
+/* Desktop Form Input Styles */
+:deep(.form-input-container) {
+  margin-bottom: 1rem;
 }
 
-/* Media Queries */
-@media (max-width: 480px) {
+:deep(label) {
+  font-size: clamp(13px, 1.1vw, 15px);
+  margin-bottom: 0.5rem;
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+:deep(input), 
+:deep(select) {
+  width: 100%;
+  height: 3rem;
+  padding: 0.75rem 1rem;
+  font-size: clamp(14px, 1.2vw, 16px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: white;
+}
+
+:deep(input:focus), 
+:deep(select:focus) {
+  border-color: #6362F8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 98, 248, 0.1);
+}
+
+/* Error Message Styling */
+.error-message {
+  font-size: clamp(11px, 0.9vw, 13px);
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid #dc3545;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
   .container {
-    padding: 10px;
+    display: block;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-view {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .desktop-view {
+    display: none;
+  }
+
   .content {
-    max-height: 100vh;
-    border-radius: 0;
+    min-height: 100vh;
+    padding: 1.5rem;
+    background: white;
   }
-  
+
   .content h1 {
-    border-radius: 0;
+    font-size: clamp(24px, 2.2vw, 28px);
+    color: #261C6B;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
   }
-  
+
   form {
-    padding: 15px 10px 70px;
-  }
-  
-  .input-group {
-    padding: 0 10px;
-  }
-  
-  .button-group {
-    padding: 0 10px;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-  .content {
-    max-width: 450px;
-  }
-}
-
-@media (min-width: 769px) {
-  .content {
+    width: 100%;
     max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .form-box {
+    padding: 1.5rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .back-button,
+  .submit-button {
+    width: 100%;
+  }
+
+  :deep(input), 
+  :deep(select) {
+    height: 3rem;
+    font-size: 16px;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1920px;
+  }
+
+  .mobile-view {
+    display: none;
+  }
+
+  .desktop-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100vw;
+  }
+
+  .login-section {
+    padding: 1.5rem;
+  }
+
+  .login-content {
+    padding: 2rem;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .form-box {
+    margin-bottom: 1.5rem;
+  }
+
+  :deep(.form-input-container) {
+    margin-bottom: 1.5rem;
   }
 }
 </style>

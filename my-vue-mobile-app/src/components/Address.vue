@@ -13,7 +13,7 @@
           id="addressLine1"
           name="addressLine1"
           placeholder="Address line 1"
-          v-model="AddressLine1"
+          v-model="formData.addressLine1"
           :required="true"
           :error="errors.addressLine1"
         />
@@ -23,7 +23,7 @@
           id="addressLine2"
           name="addressLine2"
           placeholder=" Address line 2"
-          v-model="AddressLine2"
+          v-model="formData.addressLine2"
           :error="errors.addressLine2"
         />
         <FormInput
@@ -32,7 +32,7 @@
           id="city"
           name="city"
           placeholder="City"
-          v-model="City"
+          v-model="formData.city"
           :required="true"
           :error="errors.city"
         />
@@ -41,7 +41,7 @@
           type="select"
           id="country"
           name="country"
-          v-model="Country"
+          v-model="formData.country"
           :required="true"
           :selectOptions="countryList"
           :error="errors.country"
@@ -51,7 +51,7 @@
           type="select"
           id="dwellingStatus"
           name="dwellingStatus"
-          v-model="DwellingStatus"
+          v-model="formData.dwellingStatus"
           :required="true"
           :selectOptions="dwellingStatusOptions"
           :error="errors.dwellingStatus"
@@ -61,7 +61,7 @@
           type="select"
           id="nationality"
           name="nationality"
-          v-model="Nationality"
+          v-model="formData.nationality"
           :required="true"
           :selectOptions="countryList"
           :error="errors.nationality"
@@ -96,131 +96,86 @@ import axios from 'axios';
 import { countries } from 'countries-list';
 
 export default {
+  name: 'Address',
   components: { FormInput },
   setup() {
-    const store = useDemoStore();
     const router = useRouter();
-
-    const AddressLine1 = ref('');
-    const AddressLine2 = ref('');
-    const City = ref('');
-    const Country = ref('');
-    const Nationality = ref('');
-    const DwellingStatus = ref('');
-    const ProofOfAddress = ref(null);
-    const errors = ref({});
-    const formError = ref('');
+    const store = useDemoStore();
     const isLoading = ref(false);
+    const formError = ref('');
+
+    const formData = ref({
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: '',
+      dwellingStatus: '',
+      nationality: '',
+      proofOfAddress: null
+    });
 
     const countryList = ref(Object.values(countries).map(country => country.name));
     const dwellingStatusOptions = ref(['Rented', 'Owned', 'Subletting', 'Living with relative']);
 
     onMounted(() => {
-      AddressLine1.value = store.AddressLine1;
-      AddressLine2.value = store.AddressLine2;
-      City.value = store.City;
-      Country.value = store.Country;
-      Nationality.value = store.Nationality;
-      DwellingStatus.value = store.DwellingStatus;
+      formData.value.addressLine1 = store.AddressLine1;
+      formData.value.addressLine2 = store.AddressLine2;
+      formData.value.city = store.City;
+      formData.value.country = store.Country;
+      formData.value.nationality = store.Nationality;
+      formData.value.dwellingStatus = store.DwellingStatus;
     });
 
     const handleFileUpload = (event) => {
-      ProofOfAddress.value = event.target.files[0];
+      formData.value.proofOfAddress = event.target.files[0];
     };
 
     const triggerFileUpload = () => {
       document.getElementById('ProofOfAddress').click();
     };
 
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
-
-    // Promise-based form validation
-    const validateForm = () => {
-      return new Promise((resolve, reject) => {
-        formError.value = '';
-        
-        if (!AddressLine1.value || !City.value || !Country.value || 
-            !Nationality.value || !DwellingStatus.value) {
-          reject(new Error('Please fill all required fields'));
-          return;
-        }
-        
-        if (DwellingStatus.value === 'Rented' && !ProofOfAddress.value) {
-          reject(new Error('Proof of address is required for rented accommodations'));
-          return;
-        }
-        
-        resolve({
-          AddressLine1: AddressLine1.value,
-          AddressLine2: AddressLine2.value,
-          City: City.value,
-          Country: Country.value,
-          Nationality: Nationality.value,
-          DwellingStatus: DwellingStatus.value,
-          ProofOfAddress: ProofOfAddress.value
-        });
-      });
-    };
-
     const submitForm = async () => {
       isLoading.value = true;
       formError.value = '';
-      
+
       try {
-        // Validate form using Promise-based validation
-        const addressData = await validateForm();
-        
-        // Create FormData object
-        const formData = new FormData();
-        formData.append('AddressLine1', addressData.AddressLine1);
-        formData.append('AddressLine2', addressData.AddressLine2);
-        formData.append('City', addressData.City);
-        formData.append('Country', addressData.Country);
-        formData.append('Nationality', addressData.Nationality);
-        formData.append('DwellingStatus', addressData.DwellingStatus);
-        if (addressData.ProofOfAddress) {
-          formData.append('ProofOfAddress', addressData.ProofOfAddress);
+        // Validate required fields
+        if (!formData.value.addressLine1 || !formData.value.city || 
+            !formData.value.state || !formData.value.postalCode || 
+            !formData.value.country) {
+          formError.value = 'Please fill in all required fields';
+          isLoading.value = false;
+          return;
         }
 
-        // Save address info to the store
-        store.setAddressInfo({
-          AddressLine1: addressData.AddressLine1,
-          AddressLine2: addressData.AddressLine2,
-          City: addressData.City,
-          Country: addressData.Country,
-          Nationality: addressData.Nationality,
-          DwellingStatus: addressData.DwellingStatus
-        });
-
         // Get the base URL dynamically
-        const baseURL = getBaseURL();
-        
+        const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:3000' 
+          : `http://${window.location.hostname}:3000`;
+
         try {
-          const response = await axios.post(`${baseURL}/address`, formData, {
+          const response = await axios.post(`${baseURL}/address`, formData.value, {
             headers: {
               'Content-Type': 'application/json'
             }
           });
-          console.log('Address information submitted:', response.data);
+          console.log('Address info submitted:', response.data);
         } catch (apiError) {
           console.error('API error:', apiError);
           // Continue with navigation even if API fails
         }
 
-        // Navigate to the next page
-        router.push('/mailing-address');
+        // Update store with form data
+        store.$patch((state) => {
+          Object.assign(state, formData.value);
+        });
+
+        router.push('/account-number');
       } catch (error) {
         console.error('Error submitting address information:', error);
-        if (error.message) {
-          formError.value = error.message;
-        } else {
-          formError.value = 'An error occurred while submitting your information';
-        }
+        formError.value = 'An error occurred while submitting your information';
       } finally {
         isLoading.value = false;
       }
@@ -228,11 +183,11 @@ export default {
 
     const handleSubmit = async () => {
       // Validation logic
-      if (!AddressLine1.value) errors.value.addressLine1 = 'Address Line 1 is required';
-      if (!City.value) errors.value.city = 'City is required';
-      if (!Country.value) errors.value.country = 'Country is required';
-      if (!DwellingStatus.value) errors.value.dwellingStatus = 'Dwelling Status is required';
-      if (!Nationality.value) errors.value.nationality = 'Nationality is required';
+      if (!formData.value.addressLine1) errors.value.addressLine1 = 'Address Line 1 is required';
+      if (!formData.value.city) errors.value.city = 'City is required';
+      if (!formData.value.country) errors.value.country = 'Country is required';
+      if (!formData.value.dwellingStatus) errors.value.dwellingStatus = 'Dwelling Status is required';
+      if (!formData.value.nationality) errors.value.nationality = 'Nationality is required';
 
       if (Object.keys(errors.value).length === 0) {
         await submitForm();
@@ -240,26 +195,20 @@ export default {
     };
 
     const navigateToPrevious = () => {
-      router.go(-1);
+      router.push('/parent-guardian-information');
     };
 
     return {
-      AddressLine1,
-      AddressLine2,
-      City,
-      Country,
-      Nationality,
-      DwellingStatus,
-      ProofOfAddress,
+      formData,
       countryList,
       dwellingStatusOptions,
-      errors,
-      formError,
       isLoading,
+      formError,
+      submitForm,
+      navigateToPrevious,
       handleFileUpload,
       triggerFileUpload,
-      handleSubmit,
-      navigateToPrevious,
+      handleSubmit
     };
   },
 };

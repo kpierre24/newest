@@ -1,96 +1,209 @@
 <template>
   <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
-    <div class="content">
-      <h1>Parent/Guardian Information</h1>
-      <form @submit.prevent="submitForm">
-        <FormInput
-          label="First Name"
-          type="text"
-          id="ParentFirstName"
-          v-model="formData.ParentFirstName"
-          placeholder="Parent First Name"
-          :required="true"
-          iconClass="icon fas fa-user"
-        />
-        <FormInput
-          label="Middle Name"
-          type="text"
-          id="ParentMiddleName"
-          v-model="formData.ParentMiddleName"
-          placeholder="Parent Middle Name"
-          iconClass="icon fas fa-user"
-        />
-        <FormInput
-          label="Last Name"
-          type="text"
-          id="ParentLastName"
-          v-model="formData.ParentLastName"
-          placeholder="Parent Last Name"
-          :required="true"
-          iconClass="icon fas fa-user"
-        />
-        <FormInput
-          label="Occupation"
-          type="text"
-          id="ParentOccupation"
-          v-model="formData.ParentOccupation"
-          placeholder="Parent Occupation"
-          :required="true"
-          iconClass="icon fas fa-briefcase"
-        />
-        <FormInput
-          label="Workplace"
-          type="text"
-          id="ParentWorkplace"
-          v-model="formData.ParentWorkplace"
-          placeholder="Parent Workplace"
-          :required="true"
-          iconClass="icon fas fa-building"
-        />
-        <FormInput
-          label="Email"
-          type="email"
-          id="ParentEmail"
-          v-model="formData.ParentEmail"
-          placeholder="Parent Email"
-          :required="true"
-          iconClass="icon fas fa-envelope"
-        />
-        <FormInput
-          label="Phone Number"
-          type="tel"
-          id="ParentPhoneNumber"
-          v-model="formData.ParentPhoneNumber"
-          placeholder="Parent Phone Number"
-          :required="true"
-          iconClass="icon fas fa-phone"
-        />
-        <FormInput
-          label="Relationship to Child"
-          type="select"
-          id="RelationshipToChild"
-          v-model="formData.RelationshipToChild"
-          :required="true"
-          :selectOptions="['Mother', 'Father', 'Grandparent', 'Related Guardian', 'Unrelated Guardian']"
-          iconClass="icon fas fa-users"
-        />
-        <div class="input-container">
-          <label>Relationship Document</label>
-          <FileUpload
-            id="RelationshipDocument"
-            buttonText="Browse"
-            accept=".pdf,.jpg,.png"
-            @file-uploaded="handleFileUpload"
+    <!-- Mobile View -->
+    <div class="mobile-view">
+      <div class="form-container">
+        <div class="logo-container">
+          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
+        </div>
+        <h1>Parent/Guardian Information</h1>
+        <form @submit.prevent="submitForm">
+          <div v-if="formError" class="error-message">{{ formError }}</div>
+          <FormInput
+            label="First Name"
+            type="text"
+            id="ParentFirstName"
+            v-model="formData.ParentFirstName"
+            placeholder="Parent First Name"
+            :required="true"
+            iconClass="icon fas fa-user"
           />
+          <FormInput
+            label="Middle Name"
+            type="text"
+            id="ParentMiddleName"
+            v-model="formData.ParentMiddleName"
+            placeholder="Parent Middle Name"
+            iconClass="icon fas fa-user"
+          />
+          <FormInput
+            label="Last Name"
+            type="text"
+            id="ParentLastName"
+            v-model="formData.ParentLastName"
+            placeholder="Parent Last Name"
+            :required="true"
+            iconClass="icon fas fa-user"
+          />
+          <FormInput
+            label="Occupation"
+            type="text"
+            id="ParentOccupation"
+            v-model="formData.ParentOccupation"
+            placeholder="Parent Occupation"
+            :required="true"
+            iconClass="icon fas fa-briefcase"
+          />
+          <FormInput
+            label="Workplace"
+            type="text"
+            id="ParentWorkplace"
+            v-model="formData.ParentWorkplace"
+            placeholder="Parent Workplace"
+            :required="true"
+            iconClass="icon fas fa-building"
+          />
+          <FormInput
+            label="Email"
+            type="email"
+            id="ParentEmail"
+            v-model="formData.ParentEmail"
+            placeholder="Parent Email"
+            :required="true"
+            iconClass="icon fas fa-envelope"
+          />
+          <FormInput
+            label="Phone Number"
+            type="tel"
+            id="ParentPhoneNumber"
+            v-model="formData.ParentPhoneNumber"
+            placeholder="Parent Phone Number"
+            :required="true"
+            iconClass="icon fas fa-phone"
+          />
+          <FormInput
+            label="Relationship to Child"
+            type="select"
+            id="RelationshipToChild"
+            v-model="formData.RelationshipToChild"
+            :required="true"
+            :selectOptions="['Mother', 'Father', 'Grandparent', 'Related Guardian', 'Unrelated Guardian']"
+            iconClass="icon fas fa-users"
+          />
+          <div class="input-container">
+            <label>Relationship Document</label>
+            <FileUpload
+              id="RelationshipDocument"
+              buttonText="Browse"
+              accept=".pdf,.jpg,.png"
+              @file-uploaded="handleFileUpload"
+            />
+          </div>
+          <div class="button-group">
+            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+            <button type="submit" class="submit-button">Next</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Desktop View -->
+    <div class="desktop-view">
+      <section class="login-section">
+        <div class="login-content">
+          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
+          <div class="brand-text">
+            <h1>Parent/Guardian Information</h1>
+            <p>Enter the parent or guardian's details</p>
+          </div>
+          <form @submit.prevent="submitForm" class="desktop-form">
+            <div v-if="formError" class="error-message">{{ formError }}</div>
+            <div class="form-box">
+              
+                <h2>Personal Information</h2>
+                <FormInput
+                  label="First Name"
+                  type="text"
+                  id="ParentFirstName-desktop"
+                  v-model="formData.ParentFirstName"
+                  placeholder="Parent First Name"
+                  :required="true"
+                  iconClass="icon fas fa-user"
+                />
+                <FormInput
+                  label="Middle Name"
+                  type="text"
+                  id="ParentMiddleName-desktop"
+                  v-model="formData.ParentMiddleName"
+                  placeholder="Parent Middle Name"
+                  iconClass="icon fas fa-user"
+                />
+                <FormInput
+                  label="Last Name"
+                  type="text"
+                  id="ParentLastName-desktop"
+                  v-model="formData.ParentLastName"
+                  placeholder="Parent Last Name"
+                  :required="true"
+                  iconClass="icon fas fa-user"
+                />
+                <FormInput
+                  label="Occupation"
+                  type="text"
+                  id="ParentOccupation-desktop"
+                  v-model="formData.ParentOccupation"
+                  placeholder="Parent Occupation"
+                  :required="true"
+                  iconClass="icon fas fa-briefcase"
+                />
+                <FormInput
+                  label="Workplace"
+                  type="text"
+                  id="ParentWorkplace-desktop"
+                  v-model="formData.ParentWorkplace"
+                  placeholder="Parent Workplace"
+                  :required="true"
+                  iconClass="icon fas fa-building"
+                />
+                <FormInput
+                  label="Email"
+                  type="email"
+                  id="ParentEmail-desktop"
+                  v-model="formData.ParentEmail"
+                  placeholder="Parent Email"
+                  :required="true"
+                  iconClass="icon fas fa-envelope"
+                />
+                <FormInput
+                  label="Phone Number"
+                  type="tel"
+                  id="ParentPhoneNumber-desktop"
+                  v-model="formData.ParentPhoneNumber"
+                  placeholder="Parent Phone Number"
+                  :required="true"
+                  iconClass="icon fas fa-phone"
+                />
+                <FormInput
+                  label="Relationship to Child"
+                  type="select"
+                  id="RelationshipToChild-desktop"
+                  v-model="formData.RelationshipToChild"
+                  :required="true"
+                  :selectOptions="['Mother', 'Father', 'Grandparent', 'Related Guardian', 'Unrelated Guardian']"
+                  iconClass="icon fas fa-users"
+                />
+                <div class="input-container">
+                  <label>Relationship Document</label>
+                  <FileUpload
+                    id="RelationshipDocument-desktop"
+                    buttonText="Browse"
+                    accept=".pdf,.jpg,.png"
+                    @file-uploaded="handleFileUpload"
+                  />
+                
+              </div>
+            </div>
+            <div class="button-group">
+              <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+              <button type="submit" class="submit-button">Next</button>
+            </div>
+          </form>
         </div>
-        <div class="button-group">
-          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="submit-button">Next</button>
-        </div>
-      </form>
+      </section>
+      <section class="brand-section">
+        <div class="overlay"></div>
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+      </section>
     </div>
   </div>
 </template>
@@ -112,6 +225,9 @@ export default {
   setup() {
     const router = useRouter();
     const store = useDemoStore();
+    const isLoading = ref(false);
+    const formError = ref('');
+
     const formData = ref({
       ParentFirstName: '',
       ParentMiddleName: '',
@@ -124,59 +240,49 @@ export default {
       RelationshipDocument: null
     });
 
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
-
     const handleFileUpload = (file) => {
-      // Check if file exists and is valid
-      if (file) {
-        formData.value.RelationshipDocument = file;
-        console.log('File uploaded:', file.name);
-      }
+      formData.value.RelationshipDocument = file;
     };
 
     const submitForm = async () => {
+      isLoading.value = true;
+      formError.value = '';
+
       try {
-        // Create FormData object for file upload
-        const formDataObj = new FormData();
-        
-        // Log the form data before submission
-        console.log('Form data before submission:', { ...formData.value });
-        
-        // Add all form fields
-        Object.keys(formData.value).forEach(key => {
-          if (key === 'RelationshipDocument' && formData.value[key]) {
-            console.log('Appending file:', formData.value[key].name);
-            formDataObj.append(key, formData.value[key]);
-          } else {
-            console.log(`Appending field ${key}:`, formData.value[key]);
-            formDataObj.append(key, formData.value[key] || '');
-          }
-        });
+        // Validate required fields
+        if (!formData.value.ParentFirstName || !formData.value.ParentLastName || 
+            !formData.value.ParentOccupation || !formData.value.ParentWorkplace || 
+            !formData.value.ParentEmail || !formData.value.ParentPhoneNumber || 
+            !formData.value.RelationshipToChild) {
+          formError.value = 'Please fill in all required fields';
+          isLoading.value = false;
+          return;
+        }
 
-        const baseURL = getBaseURL();
-        console.log('Submitting to URL:', `${baseURL}/parent-guardian-information`);
-        
-        const response = await axios.post(`${baseURL}/parent-guardian-information`, formDataObj, {
-          headers: { 
-            'Content-Type': 'multipart/form-data'
-          },
-          validateStatus: function (status) {
-            return status >= 200 && status < 300; // Only treat 2xx as success
-          }
-        });
+        // Get the base URL dynamically
+        const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+          ? 'http://localhost:3000' 
+          : `http://${window.location.hostname}:3000`;
 
-        console.log('Server response:', response.data);
-        
+        try {
+          const response = await axios.post(`${baseURL}/parent-guardian-info`, formData.value, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          console.log('Parent/Guardian info submitted:', response.data);
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Continue with navigation even if API fails
+        }
+
         // Update store with form data (excluding the file)
         const storeData = { ...formData.value };
         delete storeData.RelationshipDocument;
-        store.setParentGuardianInfo(storeData);
-        
+        store.$patch((state) => {
+          Object.assign(state, storeData);
+        });
+
         router.push('/id-information');
       } catch (error) {
         console.error('Error details:', {
@@ -213,134 +319,151 @@ export default {
       router.push('/politically-exposed-persons-2');
     };
 
-    const formatPlaceholder = (key) => {
-      return key
-        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-        .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
-        .trim(); // Remove any leading/trailing spaces
-    };
-
-    const getInputType = (key) => {
-      return key.includes('Email') ? 'email' : key.includes('Phone') ? 'tel' : 'text';
-    };
-
-    const triggerFileUpload = () => {
-      // Implementation of triggerFileUpload method
-    };
-
     return {
       formData,
       handleFileUpload,
       submitForm,
       navigateToPrevious,
-      formatPlaceholder,
-      getInputType,
-      triggerFileUpload
+      isLoading,
+      formError
     };
   }
 };
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  background: #f4f4f4;
-  padding: 20px;
+* {
   margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.content {
+.container {
+  height: 100vh;
+  width: 100%;
+  max-width: 1920px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+/* Mobile View */
+.mobile-view {
+  display: none;
+}
+
+/* Desktop View */
+.desktop-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.login-section {
+  width: 50vw;
+  height: 100vh;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
-  color: rgb(12, 12, 12);
-  position: relative;
-  margin: auto;
+  justify-content: center;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.content h1 {
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.4);
+.login-content {
   width: 100%;
-  margin: 0;
-  padding: 20px 0;
+  max-width: 600px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-header {
   text-align: center;
-  z-index: 2;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
+  margin-bottom: 2rem;
 }
 
-h1 {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  padding: 20px 0;
+.form-header h1 {
+  font-size: clamp(24px, 2.5vw, 32px);
+  color: #261C6B;
+  margin-bottom: 0.5rem;
 }
 
-form {
-  flex: 1;
-  width: 100%;
-  overflow-y: auto;
-  padding: 20px 15px 80px;
-  margin-top: 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  box-sizing: border-box;
+.form-header p {
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: #666;
 }
 
-form::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-form::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+.form-grid .input-group {
+  grid-column: span 2;
+}
+
+.form-grid .input-group.half {
+  grid-column: span 1;
 }
 
 .input-group {
   width: 100%;
-  padding: 0 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: #555;
+  font-weight: 500;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: clamp(14px, 1.2vw, 16px);
+  background: #fff;
+  transition: all 0.3s ease;
   box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #6362F8;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 98, 248, 0.1);
+}
+
+.file-upload-section {
+  margin: 2rem 0;
 }
 
 .button-group {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-top: 20px;
-  padding: 0 15px;
-  box-sizing: border-box;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
-.back-button, .submit-button {
-  width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
+.back-button,
+.next-button {
+  flex: 1;
+  padding: 1rem;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-  font-size: clamp(14px, 3vw, 16px);
+  font-size: clamp(14px, 1.2vw, 16px);
   font-weight: 600;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .back-button {
@@ -349,74 +472,121 @@ form::-webkit-scrollbar-thumb {
 }
 
 .back-button:hover {
-  background-color: #FF883F;
+  background-color: #5251d3;
 }
 
-.submit-button {
+.next-button {
   background-color: #FFBC2D;
   color: white;
 }
 
-.submit-button:hover {
-  background-color: #FF883F;
+.next-button:hover {
+  background-color: #e6a928;
 }
 
-.error-message {
-  background-color: #ffebee;
-  color: #d32f2f;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 0 15px 15px;
-  font-size: clamp(12px, 2.5vw, 14px);
-  border-left: 4px solid #d32f2f;
+.brand-section {
+  position: relative;
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  overflow: hidden;
 }
 
-.submit-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.brand-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
 }
 
-.submit-button:disabled:hover {
-  background-color: #cccccc;
+.brand-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
+  mix-blend-mode: overlay;
+  z-index: 1;
 }
 
-/* Media Queries */
-@media (max-width: 480px) {
-  .container {
-    padding: 10px;
+.brand-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  filter: brightness(1) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  z-index: 2;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .desktop-view {
+    display: none;
   }
   
-  .content {
-    max-height: 100vh;
-    border-radius: 0;
+  .mobile-view {
+    display: block;
+    padding: 1rem;
   }
   
-  .content h1 {
-    border-radius: 0;
+  .form-grid {
+    grid-template-columns: 1fr;
   }
   
-  form {
-    padding: 15px 10px 70px;
-  }
-  
-  .input-group {
-    padding: 0 10px;
+  .form-grid .input-group,
+  .form-grid .input-group.half {
+    grid-column: 1;
   }
   
   .button-group {
-    padding: 0 10px;
+    flex-direction: column;
+  }
+  
+  .login-content {
+    padding: 1rem;
   }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
-  .content {
-    max-width: 450px;
+/* Desktop Styles */
+@media (min-width: 768px) {
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1920px;
   }
-}
 
-@media (min-width: 769px) {
-  .content {
-    max-width: 500px;
+  .mobile-view {
+    display: none;
+  }
+
+  .desktop-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100vw;
+  }
+
+  .login-section {
+    padding: 1.5rem;
+  }
+
+  .login-content {
+    padding: 2rem;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .form-box {
+    margin-bottom: 1.5rem;
+  }
+
+  :deep(.form-input-container) {
+    margin-bottom: 1.5rem;
   }
 }
 </style>

@@ -1,77 +1,169 @@
 <!-- filepath: /c:/Users/Administrator/Documents/newest/my-vue-mobile-app/src/components/ForeignNationalBankInformation.vue -->
 <template>
   <div class="container">
-    <div class="content">
-      <h1>Foreign National Bank Information</h1>
-      <form @submit.prevent="handleSubmit">
-        <FormInput
-          label="Bank Name"
-          type="text"
-          id="bankName"
-          v-model="bankName"
-          placeholder="Bank name"
-          :required="true"
-          iconClass="icon fas fa-university"
-        />
-        <FormInput
-          label="Address Line 1"
-          type="text"
-          id="bankAddressLine1"
-          v-model="bankAddressLine1"
-          placeholder="Address line 1"
-          :required="true"
-          iconClass="icon fas fa-map-marker-alt"
-        />
-        <FormInput
-          label="City"
-          type="text"
-          id="bankCity"
-          v-model="bankCity"
-          placeholder="City"
-          :required="true"
-          iconClass="icon fas fa-city"
-        />
-        <FormInput
-          label="Country"
-          type="select"
-          id="bankCountry"
-          v-model="bankCountry"
-          :required="true"
-          :selectOptions="countryList"
-          iconClass="icon fas fa-globe"
-        />
-        <FormInput
-          label="Account Number"
-          type="text"
-          id="bankAccountNumber"
-          v-model="bankAccountNumber"
-          placeholder="Account number"
-          :required="true"
-          iconClass="icon fas fa-credit-card"
-        />
-        <FormInput
-          label="SWIFT Code"
-          type="text"
-          id="swiftCode"
-          v-model="swiftCode"
-          placeholder="SWIFT code"
-          :required="true"
-          iconClass="icon fas fa-code"
-        />
-        <FormInput
-          label="Telephone Number"
-          type="text"
-          id="bankTelephoneNumber"
-          v-model="bankTelephoneNumber"
-          placeholder="Bank telephone number"
-          :required="true"
-          iconClass="icon fas fa-phone"
-        />
-        <div class="button-group">
-          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-          <button type="submit" class="next-button">Next</button>
+    <!-- Mobile View -->
+    <div class="mobile-view">
+      <div class="form-container">
+        <div class="logo-container">
+          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
         </div>
-      </form>
+        <h1>Foreign National Bank Information</h1>
+        <form @submit.prevent="handleSubmit">
+          <FormInput
+            label="Bank Name"
+            type="text"
+            id="bankName"
+            v-model="bankName"
+            placeholder="Bank name"
+            :required="true"
+            iconClass="icon fas fa-university"
+          />
+          <FormInput
+            label="Address Line 1"
+            type="text"
+            id="bankAddressLine1"
+            v-model="bankAddressLine1"
+            placeholder="Address line 1"
+            :required="true"
+            iconClass="icon fas fa-map-marker-alt"
+          />
+          <FormInput
+            label="City"
+            type="text"
+            id="bankCity"
+            v-model="bankCity"
+            placeholder="City"
+            :required="true"
+            iconClass="icon fas fa-city"
+          />
+          <FormInput
+            label="Country"
+            type="select"
+            id="bankCountry"
+            v-model="bankCountry"
+            :required="true"
+            :selectOptions="countryList"
+            iconClass="icon fas fa-globe"
+          />
+          <FormInput
+            label="Account Number"
+            type="text"
+            id="bankAccountNumber"
+            v-model="bankAccountNumber"
+            placeholder="Account number"
+            :required="true"
+            iconClass="icon fas fa-credit-card"
+          />
+          <FormInput
+            label="SWIFT Code"
+            type="text"
+            id="swiftCode"
+            v-model="swiftCode"
+            placeholder="SWIFT code"
+            :required="true"
+            iconClass="icon fas fa-code"
+          />
+          <FormInput
+            label="Telephone Number"
+            type="text"
+            id="bankTelephoneNumber"
+            v-model="bankTelephoneNumber"
+            placeholder="Bank telephone number"
+            :required="true"
+            iconClass="icon fas fa-phone"
+          />
+          <div class="button-group">
+            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+            <button type="submit" class="submit-button">Next</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Desktop View -->
+    <div class="desktop-view">
+      <div class="login-section">
+        <div class="form-container">
+          <div class="logo-container">
+            <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
+          </div>
+          <h1>Foreign National Bank Information</h1>
+          <form @submit.prevent="handleSubmit">
+            <FormInput
+              label="Bank Name"
+              type="text"
+              id="bankName-desktop"
+              v-model="bankName"
+              placeholder="Bank name"
+              :required="true"
+              iconClass="icon fas fa-university"
+            />
+            <FormInput
+              label="Address Line 1"
+              type="text"
+              id="bankAddressLine1-desktop"
+              v-model="bankAddressLine1"
+              placeholder="Address line 1"
+              :required="true"
+              iconClass="icon fas fa-map-marker-alt"
+            />
+            <FormInput
+              label="City"
+              type="text"
+              id="bankCity-desktop"
+              v-model="bankCity"
+              placeholder="City"
+              :required="true"
+              iconClass="icon fas fa-city"
+            />
+            <FormInput
+              label="Country"
+              type="select"
+              id="bankCountry-desktop"
+              v-model="bankCountry"
+              :required="true"
+              :selectOptions="countryList"
+              iconClass="icon fas fa-globe"
+            />
+            <FormInput
+              label="Account Number"
+              type="text"
+              id="bankAccountNumber-desktop"
+              v-model="bankAccountNumber"
+              placeholder="Account number"
+              :required="true"
+              iconClass="icon fas fa-credit-card"
+            />
+            <FormInput
+              label="SWIFT Code"
+              type="text"
+              id="swiftCode-desktop"
+              v-model="swiftCode"
+              placeholder="SWIFT code"
+              :required="true"
+              iconClass="icon fas fa-code"
+            />
+            <FormInput
+              label="Telephone Number"
+              type="text"
+              id="bankTelephoneNumber-desktop"
+              v-model="bankTelephoneNumber"
+              placeholder="Bank telephone number"
+              :required="true"
+              iconClass="icon fas fa-phone"
+            />
+            <div class="button-group">
+              <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+              <button type="submit" class="submit-button">Next</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="brand-section">
+        <div class="brand-content">
+          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -185,104 +277,129 @@ export default {
 
 <style scoped>
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
   width: 100%;
-  background: #f4f4f4;
-  padding: 20px;
+  min-height: 100vh;
   margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+/* Mobile View Styles */
+.mobile-view {
+  display: none;
   width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
-  color: rgb(12, 12, 12);
-  position: relative;
-  margin: auto;
+  min-height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
-.content h1 {
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.4);
+@media (max-width: 768px) {
+  .mobile-view {
+    display: block;
+  }
+  .desktop-view {
+    display: none;
+  }
+}
+
+/* Desktop View Styles */
+.desktop-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .desktop-view {
+    display: none;
+  }
+}
+
+.login-section {
+  grid-column: 1;
   width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.brand-section {
+  grid-column: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.brand-content {
+  position: relative;
   z-index: 2;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
+  text-align: center;
+}
+
+.brand-logo {
+  width: 180px;
+  filter: brightness(1.2);
+}
+
+.form-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  width: 120px;
+  height: auto;
 }
 
 h1 {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  padding: 20px 0;
-}
-
-form {
-  flex: 1;
-  width: 100%;
-  overflow-y: auto;
-  padding: 20px 15px 80px;
-  margin-top: 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  box-sizing: border-box;
-}
-
-form::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
-}
-
-form::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-}
-
-.input-group {
-  width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
+  font-size: clamp(24px, 4vw, 32px);
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .button-group {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  gap: 1rem;
   width: 100%;
-  margin-top: 20px;
-  padding: 0 15px;
-  box-sizing: border-box;
+  margin-top: 2rem;
 }
 
-.back-button, .next-button {
-  width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
+.back-button,
+.submit-button {
+  flex: 1;
+  padding: 1rem;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-  font-size: clamp(14px, 3vw, 16px);
+  font-size: clamp(14px, 2.5vw, 16px);
   font-weight: 600;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .back-button {
@@ -291,74 +408,30 @@ form::-webkit-scrollbar-thumb {
 }
 
 .back-button:hover {
-  background-color: #FF883F;
+  background-color: #5251d3;
 }
 
-.next-button {
+.submit-button {
   background-color: #FFBC2D;
   color: white;
 }
 
-.next-button:hover {
-  background-color: #FF883F;
+.submit-button:hover {
+  background-color: #e6a928;
 }
 
-.error-message {
-  background-color: #ffebee;
-  color: #d32f2f;
-  padding: 10px;
-  border-radius: 4px;
-  margin: 0 15px 15px;
-  font-size: clamp(12px, 2.5vw, 14px);
-  border-left: 4px solid #d32f2f;
-}
-
-.next-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.next-button:disabled:hover {
-  background-color: #cccccc;
-}
-
-/* Media Queries */
 @media (max-width: 480px) {
-  .container {
-    padding: 10px;
-  }
-  
-  .content {
-    max-height: 100vh;
-    border-radius: 0;
-  }
-  
-  .content h1 {
-    border-radius: 0;
-  }
-  
-  form {
-    padding: 15px 10px 70px;
-  }
-  
-  .input-group {
-    padding: 0 10px;
+  .form-container {
+    padding: 1rem;
   }
   
   .button-group {
-    padding: 0 10px;
+    flex-direction: column;
   }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-  .content {
-    max-width: 450px;
-  }
-}
-
-@media (min-width: 769px) {
-  .content {
-    max-width: 500px;
+  
+  .back-button,
+  .submit-button {
+    width: 100%;
   }
 }
 </style>

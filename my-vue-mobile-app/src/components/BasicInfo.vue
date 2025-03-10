@@ -220,7 +220,7 @@
           </div>
         </div>
       </form>
-      </div>
+    </div>
     </div>
     <div class="brand-section">
       <div class="overlay"></div>
@@ -465,8 +465,8 @@ export default {
   width: 50vw;
   height: 100vh;
   padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
   background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -484,9 +484,9 @@ export default {
 }
 
 .brand-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   margin-bottom: 2rem;
   width: 100%;
 }
@@ -674,12 +674,12 @@ export default {
     min-height: 100vh;
     padding: 20px;
     background: white;
-    display: flex;
+  display: flex;
     flex-direction: column;
   }
 
   .content form {
-    width: 100%;
+  width: 100%;
     max-width: 500px;
     margin: 0 auto;
     flex: 1;
@@ -768,7 +768,7 @@ export default {
 
   :deep(input[type="checkbox"]) {
     height: 16px;
-    width: 16px;
+  width: 16px;
   }
 
   .checkbox-container {

@@ -186,6 +186,13 @@
       "creditUnionName": "",
       "isServingOnBoard": "no",
       "creditUnionBoardName": ""
+    },
+    {
+      "id": "bbb2",
+      "isMemberOfAnotherCreditUnion": "yes",
+      "creditUnionName": "dfdfdfd",
+      "isServingOnBoard": "no",
+      "creditUnionBoardName": ""
     }
   ],
   "account-number": [
@@ -255,6 +262,10 @@
     },
     {
       "id": "a445",
+      "accountNumber": 152478888888
+    },
+    {
+      "id": "bdcb",
       "accountNumber": 152478888888
     }
   ],
@@ -871,6 +882,11 @@
       "id": "468d",
       "userId": "12345",
       "message": "User has successfully signed up"
+    },
+    {
+      "id": "a682",
+      "userId": "12345",
+      "message": "User has successfully signed up"
     }
   ],
   "branch": [
@@ -1005,6 +1021,12 @@
     },
     {
       "id": "9d84",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "phone",
+      "bestContactTime": "12:00pm to 4:00pm"
+    },
+    {
+      "id": "d840",
       "selectedBranch": "Port of Spain",
       "preferredContactMethod": "phone",
       "bestContactTime": "12:00pm to 4:00pm"
@@ -1448,6 +1470,22 @@
       "typeOfId": "Driver's Permit",
       "idNumber": "4343434",
       "percentageOfInterest": "10"
+    },
+    {
+      "id": "e8bf",
+      "firstName": "kendell",
+      "lastName": "pierre",
+      "otherName": "",
+      "addressLine1": "Apartment 5",
+      "addressLine2": "church st",
+      "city": "cunupia",
+      "country": "Trinidad & Tobago",
+      "dob": "2025-02-28",
+      "gender": "male",
+      "relationshipToBeneficiary": "ffgfgfgfg",
+      "typeOfId": "Driver's Permit",
+      "idNumber": "454545",
+      "percentageOfInterest": "50"
     }
   ],
   "child-id-information": [
@@ -2266,6 +2304,12 @@
       "pepAssociate": "no",
       "pepAssociateDetails": "",
       "pepName": ""
+    },
+    {
+      "id": "48fb",
+      "pepAssociate": "no",
+      "pepAssociateDetails": "",
+      "pepName": ""
     }
   ],
   "politically-exposed-persons": [
@@ -2899,6 +2943,11 @@
       "id": "e582",
       "pepAssociate": "No",
       "selectedOptions": []
+    },
+    {
+      "id": "846b",
+      "pepAssociate": "No",
+      "selectedOptions": []
     }
   ],
   "employment-information": [
@@ -3350,6 +3399,17 @@
       "employmentStatus": "Unemployed",
       "employmentType": "Full-Time",
       "proofOfEmploymentFile": "null"
+    },
+    {
+      "id": "fe41",
+      "employerName": "er",
+      "employerAddressLine1": "ee",
+      "employerCity": "eeee",
+      "employerCountry": "American Samoa",
+      "workNumber": "3333333",
+      "employmentStatus": "Self-Employed",
+      "employmentType": "Contract",
+      "proofOfEmploymentFile": "null"
     }
   ],
   "mailing-address": [
@@ -3754,6 +3814,16 @@
       "state": "",
       "zipCode": "",
       "country": "Austria"
+    },
+    {
+      "id": "ed77",
+      "sameAsResidential": false,
+      "addressLine1": "O Connor Street",
+      "addressLine2": "woodbrook",
+      "city": "port of spain",
+      "state": "",
+      "zipCode": "",
+      "country": "Aland"
     }
   ],
   "verify-mobile": [
@@ -4770,6 +4840,16 @@
       "Nationality": "American Samoa",
       "DwellingStatus": "Subletting",
       "ProofOfAddress": {}
+    },
+    {
+      "id": "64e6",
+      "AddressLine1": "Apartment 5",
+      "AddressLine2": "church st",
+      "City": "cunupia",
+      "Country": "Angola",
+      "Nationality": "Argentina",
+      "DwellingStatus": "Owned",
+      "ProofOfAddress": {}
     }
   ],
   "basic-info": [
@@ -5142,6 +5222,21 @@
       "gender": "male",
       "dob": "2025-02-03",
       "age": 0,
+      "password": "Rendell1234@",
+      "confirmPassword": "Rendell1234@",
+      "termsViewed": true,
+      "financialAgreementViewed": true
+    },
+    {
+      "id": "0c4f",
+      "firstName": "john michael",
+      "lastName": "aboud",
+      "otherName": "",
+      "email": "kpierre24@gmail.com",
+      "mobileNumber": "8682224706",
+      "gender": "male",
+      "dob": "1992-01-09",
+      "age": 33,
       "password": "Rendell1234@",
       "confirmPassword": "Rendell1234@",
       "termsViewed": true,
@@ -5519,6 +5614,18 @@
       "secondExpiryDate": "2025-03-27",
       "secondIdDocument": {},
       "maritalStatus": "Single"
+    },
+    {
+      "id": "10b6",
+      "firstIdType": "ID Card",
+      "firstIdNumber": "222222222222",
+      "firstExpiryDate": "2025-04-16",
+      "firstIdDocument": null,
+      "secondIdType": "Driver's Permit",
+      "secondIdNumber": "444444444444",
+      "secondExpiryDate": "2025-03-26",
+      "secondIdDocument": {},
+      "maritalStatus": "Divorced"
     }
   ],
   "email-verification-successful": [
@@ -5686,6 +5793,10 @@
     {
       "id": "d198",
       "status": "success"
+    },
+    {
+      "id": "bb80",
+      "status": "success"
     }
   ],
   "mobile-verification-successful": [
@@ -5820,6 +5931,10 @@
     },
     {
       "id": "7040",
+      "status": "success"
+    },
+    {
+      "id": "2a6b",
       "status": "success"
     }
   ]
