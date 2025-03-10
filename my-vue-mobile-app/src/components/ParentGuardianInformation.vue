@@ -101,7 +101,7 @@
     <div class="desktop-view">
       <section class="login-section">
         <div class="login-content">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
+          
           <div class="brand-text">
             <h1>Parent/Guardian Information</h1>
             <p>Enter the parent or guardian's details</p>
@@ -109,8 +109,6 @@
           <form @submit.prevent="submitForm" class="desktop-form">
             <div v-if="formError" class="error-message">{{ formError }}</div>
             <div class="form-box">
-              
-                <h2>Personal Information</h2>
                 <FormInput
                   label="First Name"
                   type="text"
