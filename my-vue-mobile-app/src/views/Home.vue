@@ -220,8 +220,6 @@ body {
 
 h2 {
   font-size: 32px;
-  color: #6362F8
-  ;
   margin-bottom: 1rem;
   font-weight: 600;
 }

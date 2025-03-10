@@ -256,7 +256,7 @@ input:focus {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
   opacity: 0.1;
   mix-blend-mode: overlay;
 }

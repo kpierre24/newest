@@ -2,7 +2,7 @@
   <div class="container">
     <!-- Mobile View -->
     <div class="mobile-view">
-      <div class="form-container">
+     
         <div class="logo-container">
           <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
         </div>
@@ -10,7 +10,6 @@
         <form @submit.prevent="submitForm">
           <div v-if="formError" class="error-message">{{ formError }}</div>
           <div class="form-box">
-            <div class="form-container">
               <h2>Beneficiary Information</h2>
               <FormInput
                 label="First Name"
@@ -50,12 +49,7 @@
                 :max="100"
                 iconClass="icon fas fa-percent"
               />
-            </div>
-          </div>
-          <div class="form-box">
-            <div class="form-container">
-              <h2>Contact Information</h2>
-              <FormInput
+             <FormInput
                 label="Email"
                 type="email"
                 id="beneficiaryEmail"
@@ -73,7 +67,7 @@
                 :required="true"
                 iconClass="icon fas fa-phone"
               />
-            </div>
+
           </div>
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -85,14 +79,13 @@
             </button>
           </div>
         </form>
-      </div>
+
     </div>
 
     <!-- Desktop View -->
     <div class="desktop-view">
-      <section class="login-section">
+      
         <div class="login-content">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
           <div class="brand-text">
             <h1>Designation of Beneficiary</h1>
             <p>Enter your beneficiary's details</p>
@@ -100,8 +93,6 @@
           <form @submit.prevent="submitForm" class="desktop-form">
             <div v-if="formError" class="error-message">{{ formError }}</div>
             <div class="form-box">
-              <div class="form-container">
-                <h2>Beneficiary Information</h2>
                 <FormInput
                   label="First Name"
                   type="text"
@@ -140,11 +131,8 @@
                   :max="100"
                   iconClass="icon fas fa-percent"
                 />
-              </div>
             </div>
             <div class="form-box">
-              <div class="form-container">
-                <h2>Contact Information</h2>
                 <FormInput
                   label="Email"
                   type="email"
@@ -163,7 +151,6 @@
                   :required="true"
                   iconClass="icon fas fa-phone"
                 />
-              </div>
             </div>
             <div class="button-group">
               <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
@@ -176,7 +163,7 @@
             </div>
           </form>
         </div>
-      </section>
+      
       <section class="brand-section">
         <div class="overlay"></div>
         <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />

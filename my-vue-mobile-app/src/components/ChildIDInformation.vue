@@ -112,7 +112,6 @@
     <div class="desktop-view">
       <section class="login-section">
         <div class="login-content">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
           <div class="brand-text">
             <h1>Child ID Information</h1>
             <p>Enter your child's identification details</p>
@@ -619,39 +618,37 @@ export default {
   gap: 1rem;
   margin: 1.5rem 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.9);
   padding: 1rem 0;
 }
 
 .back-button,
 .next-button {
   flex: 1;
-  padding: 0.75rem;
-  font-size: clamp(13px, 1.1vw, 15px);
-  font-weight: 500;
+  padding: 1rem;
+  border: none;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .back-button {
-  background-color: transparent;
-  border: 1px solid #6362F8;
-  color: #6362F8;
+  background-color: #6362F8;
+  color: white;
 }
 
 .back-button:hover {
-  background-color: rgba(99, 98, 248, 0.05);
-  transform: translateY(-1px);
+  background-color: #5251d3;
 }
 
 .next-button {
-  background-color: #6362F8;
   border: none;
   color: white;
 }
 
 .next-button:hover {
-  background-color: #4b4ac0;
+ 
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

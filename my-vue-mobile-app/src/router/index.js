@@ -32,8 +32,8 @@ const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/login', name: 'Login', component: Login },
   { path: '/basic-info', name: 'BasicInfo', component: BasicInfo },
-  { path: '/address', component: Address },
-  { path: '/new-or-existing-customer', component: NewOrExistingCustomer },
+  { path: '/address', name: 'Address', component: Address },
+  { path: '/new-or-existing-customer', name: 'NewOrExistingCustomer', component: NewOrExistingCustomer },
   { path: '/getting-ready', name: 'GettingReady', component: GettingReady },
   { path: '/email-verification', name: 'EmailVerification', component: EmailVerification },
   { path: '/id-information', name: 'IdInformation', component: IDInformation },
@@ -53,16 +53,8 @@ const routes = [
   { path: '/success', name: 'Success', component: Success },
   { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
   { path: '/account-number', name: 'AccountNumber', component: AccountNumber },
-  {
-    path: '/email-verification-successful',
-    name: 'EmailVerSuccessful',
-    component: EmailVerSuccessful,
-  },
-  {
-    path: '/mobile-verification-successful',
-    name: 'MobileVerSuccessful',
-    component: MobileVerSuccessful,
-  },
+  { path: '/email-verification-successful', name: 'EmailVerSuccessful', component: EmailVerSuccessful },
+  { path: '/mobile-verification-successful', name: 'MobileVerSuccessful', component: MobileVerSuccessful }
 ];
 
 const router = createRouter({

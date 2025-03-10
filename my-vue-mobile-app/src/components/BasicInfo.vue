@@ -761,7 +761,7 @@ export default {
   }
 
   :deep(input), :deep(select) {
-    height: 2.5rem;
+    height: 2.7rem;
     padding: 0.5rem 0.75rem;
     font-size: clamp(13px, 1.1vw, 15px);
   }

@@ -2,141 +2,142 @@
   <div class="container">
     <!-- Mobile View -->
     <div class="mobile-view">
-      <div class="form-container">
-        <div class="logo-container">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
-        </div>
-        <h1>Mailing Address</h1>
-        <form @submit.prevent="submitForm">
-          <FormInput
-            label=""
-            type="text"
-            id="AddressLine1"
-            v-model="addressLine1"
-            placeholder="Mailing Address line 1"
-            :required="!sameAsResidential"
-            iconClass="icon fas fa-map-marker-alt"
-          />
-          <FormInput
-            label=""
-            type="text"
-            id="AddressLine2"
-            v-model="addressLine2"
-            placeholder="Mailing Address line 2"
-            iconClass="icon fas fa-map-marker-alt"
-          />
-          <FormInput
-            label=""
-            type="text"
-            id="City"
-            v-model="city"
-            placeholder="Mailing City"
-            :required="!sameAsResidential"
-            iconClass="icon fas fa-city"
-          />
-          <FormInput
-            label=""
-            type="select"
-            id="Country"
-            v-model="country"
-            :required="!sameAsResidential"
-            :selectOptions="countriesList"
-            iconClass="icon fas fa-globe"
-          />
-          <div class="checkbox-container">
-            <input type="checkbox" v-model="sameAsResidential" id="sameAsResidential" @change="useResidentialAddress" />
-            <label for="sameAsResidential">Same as Residential Address</label>
-          </div>
-          
-          <!-- Error message display -->
-          <div v-if="errorMessage" class="error-message">
-            {{ errorMessage }}
-          </div>
-          
-          <div class="button-group">
-            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-            <button type="submit" class="submit-button" :disabled="isLoading">
-              {{ isLoading ? 'Submitting...' : 'Submit' }}
-            </button>
-          </div>
-        </form>
+      <div class="logo-container">
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
       </div>
+      <h1>Mailing Address</h1>
+      <form @submit.prevent="handleSubmit">
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <FormInput
+          label="Address Line 1"
+          type="text"
+          id="AddressLine1"
+          v-model="formData.addressLine1"
+          placeholder="Mailing Address line 1"
+          :required="!formData.sameAsResidential"
+          :error="errors.addressLine1"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="Address Line 2"
+          type="text"
+          id="AddressLine2"
+          v-model="formData.addressLine2"
+          placeholder="Mailing Address line 2"
+          :error="errors.addressLine2"
+          iconClass="icon fas fa-map-marker-alt"
+        />
+        <FormInput
+          label="City"
+          type="text"
+          id="City"
+          v-model="formData.city"
+          placeholder="Mailing City"
+          :required="!formData.sameAsResidential"
+          :error="errors.city"
+          iconClass="icon fas fa-city"
+        />
+        <FormInput
+          label="Country"
+          type="select"
+          id="Country"
+          v-model="formData.country"
+          :required="!formData.sameAsResidential"
+          :selectOptions="countryList"
+          :error="errors.country"
+          iconClass="icon fas fa-globe"
+        />
+        <div class="checkbox-container">
+          <input type="checkbox" v-model="formData.sameAsResidential" id="sameAsResidential" @change="useResidentialAddress" />
+          <label for="sameAsResidential">Same as Residential Address</label>
+        </div>
+        <div class="button-group">
+          <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+          <button type="submit" class="next-button" :disabled="isLoading">
+            <span v-if="isLoading">
+              <i class="fas fa-spinner fa-spin"></i> Processing...
+            </span>
+            <span v-else>Next</span>
+          </button>
+        </div>
+      </form>
     </div>
 
     <!-- Desktop View -->
     <div class="desktop-view">
       <div class="login-section">
-        <div class="form-container">
-          <div class="logo-container">
-            <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
-          </div>
+        <div class="brand-text">
           <h1>Mailing Address</h1>
-          <form @submit.prevent="submitForm">
+          <p>Enter your mailing address information</p>
+        </div>
+        <form @submit.prevent="handleSubmit" class="desktop-form">
+          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+          <div class="form-box">
             <FormInput
-              label=""
+              label="Address Line 1"
               type="text"
               id="AddressLine1-desktop"
-              v-model="addressLine1"
+              v-model="formData.addressLine1"
               placeholder="Mailing Address line 1"
-              :required="!sameAsResidential"
+              :required="!formData.sameAsResidential"
+              :error="errors.addressLine1"
               iconClass="icon fas fa-map-marker-alt"
             />
             <FormInput
-              label=""
+              label="Address Line 2"
               type="text"
               id="AddressLine2-desktop"
-              v-model="addressLine2"
+              v-model="formData.addressLine2"
               placeholder="Mailing Address line 2"
+              :error="errors.addressLine2"
               iconClass="icon fas fa-map-marker-alt"
             />
             <FormInput
-              label=""
+              label="City"
               type="text"
               id="City-desktop"
-              v-model="city"
+              v-model="formData.city"
               placeholder="Mailing City"
-              :required="!sameAsResidential"
+              :required="!formData.sameAsResidential"
+              :error="errors.city"
               iconClass="icon fas fa-city"
             />
             <FormInput
-              label=""
+              label="Country"
               type="select"
               id="Country-desktop"
-              v-model="country"
-              :required="!sameAsResidential"
-              :selectOptions="countriesList"
+              v-model="formData.country"
+              :required="!formData.sameAsResidential"
+              :selectOptions="countryList"
+              :error="errors.country"
               iconClass="icon fas fa-globe"
             />
             <div class="checkbox-container">
-              <input type="checkbox" v-model="sameAsResidential" id="sameAsResidential-desktop" @change="useResidentialAddress" />
+              <input type="checkbox" v-model="formData.sameAsResidential" id="sameAsResidential-desktop" @change="useResidentialAddress" />
               <label for="sameAsResidential-desktop">Same as Residential Address</label>
             </div>
-            
-            <!-- Error message display -->
-            <div v-if="errorMessage" class="error-message">
-              {{ errorMessage }}
-            </div>
-            
-            <div class="button-group">
-              <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-              <button type="submit" class="submit-button" :disabled="isLoading">
-                {{ isLoading ? 'Submitting...' : 'Submit' }}
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div class="button-group">
+            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
+            <button type="submit" class="next-button" :disabled="isLoading">
+              <span v-if="isLoading">
+                <i class="fas fa-spinner fa-spin"></i> Processing...
+              </span>
+              <span v-else>Next</span>
+            </button>
+          </div>
+        </form>
       </div>
-      <div class="brand-section">
-        <div class="brand-content">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
-        </div>
-      </div>
+      <section class="brand-section">
+        <div class="overlay"></div>
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+      </section>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
@@ -151,123 +152,73 @@ export default {
   setup() {
     const router = useRouter();
     const store = useDemoStore();
-    const sameAsResidential = ref(false);
-    const addressLine1 = ref('');
-    const addressLine2 = ref('');
-    const city = ref('');
-    const state = ref('');
-    const zipCode = ref('');
-    const country = ref('');
-    const errorMessage = ref('');
     const isLoading = ref(false);
-    const countriesList = ref(Object.values(countries).map(country => country.name));
+    const formError = ref('');
+    const errors = ref({});
 
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
+    // Initialize formData with default values
+    const formData = ref({
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      country: '',
+      sameAsResidential: false
+    });
 
-    const useResidentialAddress = () => {
-      if (sameAsResidential.value) {
-        // Copy residential address from store
-        addressLine1.value = store.addressLine1 || '';
-        addressLine2.value = store.addressLine2 || '';
-        city.value = store.city || '';
-        state.value = store.state || '';
-        zipCode.value = store.zipCode || '';
-        country.value = store.country || '';
-      } else {
-        // Clear the form
-        addressLine1.value = '';
-        addressLine2.value = '';
-        city.value = '';
-        state.value = '';
-        zipCode.value = '';
-        country.value = '';
+    // Load existing data from store if available
+    onMounted(() => {
+      if (store.addressLine1) formData.value.addressLine1 = store.addressLine1;
+      if (store.addressLine2) formData.value.addressLine2 = store.addressLine2;
+      if (store.city) formData.value.city = store.city;
+      if (store.country) formData.value.country = store.country;
+      if (store.sameAsResidential !== undefined) formData.value.sameAsResidential = store.sameAsResidential;
+    });
+
+    const validateForm = () => {
+      errors.value = {};
+      let isValid = true;
+
+      if (!formData.value.addressLine1) {
+        errors.value.addressLine1 = 'Address Line 1 is required';
+        isValid = false;
       }
-    };
 
-    // Promise-based address validation
-    const validateAddress = () => {
-      return new Promise((resolve, reject) => {
-        // Reset error message
-        errorMessage.value = '';
-        
-        // Check if using residential address or if required fields are filled
-        if (sameAsResidential.value) {
-          resolve({
-            valid: true,
-            message: 'Using residential address'
-          });
-          return;
-        }
-        
-        // Validate required fields
-        if (!addressLine1.value || !city.value || !country.value) {
-          reject({
-            valid: false,
-            message: 'Please fill in all required fields'
-          });
-          return;
-        }
-        
-        // All validations passed
-        resolve({
-          valid: true,
-          message: 'Address is valid'
-        });
-      });
+      if (!formData.value.city) {
+        errors.value.city = 'City is required';
+        isValid = false;
+      }
+
+      if (!formData.value.country) {
+        errors.value.country = 'Country is required';
+        isValid = false;
+      }
+
+      return isValid;
     };
 
     const submitForm = async () => {
       isLoading.value = true;
-      
-      try {
-        // Use the Promise-based validation
-        await validateAddress();
-        
-        const formData = {
-          sameAsResidential: sameAsResidential.value,
-          addressLine1: addressLine1.value,
-          addressLine2: addressLine2.value,
-          city: city.value,
-          state: state.value,
-          zipCode: zipCode.value,
-          country: country.value
-        };
+      formError.value = '';
 
-        // Update store
-        store.setMailingAddressInfo(formData);
-        
-        // Submit to API
-        const baseURL = getBaseURL();
-        const response = await axios.post(`${baseURL}/mailing-address`, formData, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      try {
+        // Update store with form data
+        store.$patch((state) => {
+          Object.assign(state, formData.value);
         });
 
-        console.log('Mailing address submitted:', response.data);
-        router.push('/employment-information');
+        // Navigate to the next page
+        router.push('/foreign-national-bank-information');
       } catch (error) {
-        // Handle validation errors
-        if (error && error.message) {
-          errorMessage.value = error.message;
-        } else if (error && typeof error === 'object' && error.valid === false) {
-          errorMessage.value = error.message;
-        } else {
-          console.error('Error submitting mailing address:', error);
-          errorMessage.value = 'An error occurred while submitting your address';
-          
-          // Continue with navigation even if API fails
-          setTimeout(() => {
-            router.push('/employment-information');
-          }, 2000);
-        }
+        console.error('Error submitting mailing address:', error);
+        formError.value = 'An error occurred while submitting your information';
       } finally {
         isLoading.value = false;
+      }
+    };
+
+    const handleSubmit = async () => {
+      if (validateForm()) {
+        await submitForm();
       }
     };
 
@@ -275,20 +226,33 @@ export default {
       router.push('/address');
     };
 
+    const countryList = ref(Object.values(countries).map(country => country.name));
+
+    const useResidentialAddress = () => {
+      if (formData.value.sameAsResidential) {
+        // Copy residential address from store
+        formData.value.addressLine1 = store.addressLine1 || '';
+        formData.value.addressLine2 = store.addressLine2 || '';
+        formData.value.city = store.city || '';
+        formData.value.country = store.country || '';
+      } else {
+        // Clear the form
+        formData.value.addressLine1 = '';
+        formData.value.addressLine2 = '';
+        formData.value.city = '';
+        formData.value.country = '';
+      }
+    };
+
     return {
-      sameAsResidential,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zipCode,
-      country,
-      errorMessage,
+      formData,
+      countryList,
       isLoading,
-      countriesList,
-      useResidentialAddress,
-      submitForm,
-      navigateToPrevious
+      formError,
+      errors,
+      handleSubmit,
+      navigateToPrevious,
+      useResidentialAddress
     };
   }
 };
@@ -296,63 +260,104 @@ export default {
 
 <style scoped>
 .container {
-  width: 100%;
   min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #f4f4f4;
+  padding: 20px;
   margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
+.checkbox-container {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-/* Mobile View Styles */
+  .checkbox-label {
+    font-size: clamp(12px, 1vw, 14px);
+  }
+
+/* Mobile View */
 .mobile-view {
   display: none;
-  width: 100%;
-  min-height: 100vh;
-  padding: 1rem;
-  box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-  .mobile-view {
-    display: block;
-  }
-  .desktop-view {
-    display: none;
-  }
-}
-
-/* Desktop View Styles */
+/* Desktop View */
 .desktop-view {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100vh;
+  width: 50vw;
 }
 
-@media (max-width: 768px) {
-  .desktop-view {
-    display: none;
-  }
+.login-content {
+  
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+  overflow-y: auto;
 }
 
-.login-section {
-  grid-column: 1;
+.login-content {
+  width: 100%;
+  
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.engage-logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.brand-text {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.brand-text h1 {
+  font-size: clamp(24px, 2.5vw, 32px);
+  color: #261C6B;
+  margin-bottom: 0.5rem;
+}
+
+.brand-text p {
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: #666;
+}
+
+.desktop-form {
   width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
   padding: 2rem;
-  box-sizing: border-box;
+}
+
+.form-box {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .brand-section {
-  grid-column: 2;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
   position: relative;
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
   overflow: hidden;
 }
 
@@ -361,26 +366,38 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+}
+
+.brand-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
+  mix-blend-mode: overlay;
   z-index: 1;
 }
 
-.brand-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-
 .brand-logo {
-  width: 180px;
-  filter: brightness(1.2);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  filter: brightness(1) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  z-index: 2;
 }
 
 .form-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 450px;
   padding: 2rem;
   box-sizing: border-box;
 }
@@ -402,49 +419,43 @@ h1 {
   text-align: center;
 }
 
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 1.5rem 0;
+.input-container {
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
-.checkbox-container input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.checkbox-container label {
-  font-size: clamp(14px, 2.5vw, 16px);
-  color: #444;
-  cursor: pointer;
-}
-
-.error-message {
-  background-color: #ffebee;
-  color: #d32f2f;
+.upload-button {
+  width: 100%;
   padding: 1rem;
+  border: none;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
-  font-size: clamp(12px, 2.5vw, 14px);
-  border-left: 4px solid #d32f2f;
+  background-color: #7838dd;
+  color: white;
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.upload-button:hover {
+  background-color: #9e79da;
 }
 
 .button-group {
   display: flex;
   gap: 1rem;
-  width: 100%;
   margin-top: 2rem;
+  width: 100%;
 }
 
 .back-button,
-.submit-button {
+.next-button {
   flex: 1;
   padding: 1rem;
   border: none;
   border-radius: 8px;
-  font-size: clamp(14px, 2.5vw, 16px);
+  font-size: clamp(14px, 1.2vw, 16px);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -459,25 +470,53 @@ h1 {
   background-color: #5251d3;
 }
 
-.submit-button {
+.next-button {
   background-color: #FFBC2D;
   color: white;
 }
 
-.submit-button:hover {
+.next-button:hover {
   background-color: #e6a928;
 }
 
-.submit-button:disabled {
+.next-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-.submit-button:disabled:hover {
-  background-color: #cccccc;
+.error-message {
+  color: #ff4d4d;
+  font-size: clamp(12px, 1vw, 14px);
+  margin-top: 0.25rem;
+  background-color: rgba(255, 77, 77, 0.1);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }
 
-@media (max-width: 480px) {
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .container {
+    display: block;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-view {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .desktop-view {
+    display: none;
+  }
+
   .form-container {
     padding: 1rem;
   }
@@ -487,8 +526,39 @@ h1 {
   }
   
   .back-button,
-  .submit-button {
+  .next-button {
     width: 100%;
+  }
+}
+
+/* Desktop Styles */
+@media (min-width: 769px) {
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1920px;
+    height: 100vh;
+  }
+
+  .mobile-view {
+    display: none;
+  }
+
+  .desktop-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .login-content {
+    padding: 2rem;
+    height: 100%;
+    overflow-y: inherit;
+  }
+
+  .form-box {
+    margin-bottom: 1.5rem;
   }
 }
 </style>

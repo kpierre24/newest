@@ -29,11 +29,43 @@ body {
   min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1  {
   font-family: 'Roboto', sans-serif;
   color: #FFBC2D;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
+ h2 {
+  font-family: 'Roboto', sans-serif;
+  color: #6362F8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+h3 {
+  font-family: 'Roboto', sans-serif;
+  color: #FF883F;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+h4 {
+  font-family: 'Roboto', sans-serif;
+  color: #261C6B;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+h5 {
+  font-family: 'Roboto', sans-serif;
+  color: #000000;
+  font-style: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+h6 {
+  font-family: 'Roboto', sans-serif;
+  color: #FFBC2D;
+  font-style: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+
 
 button {
   font-family: 'Roboto', sans-serif;
@@ -48,10 +80,10 @@ button {
 }
 
 .back-button:hover {
-  background-color: #FF883F;
+  background-color: #261C6B;
 }
 
-.next-button, .submit-button, .signin-button {
+.next-button, .submit-button,.verify-button, .signin-button {
   background-color: #FFBC2D;
   color: white;
 }

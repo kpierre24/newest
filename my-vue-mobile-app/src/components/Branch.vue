@@ -54,7 +54,7 @@
 
     <!-- Desktop View -->
     <div class="desktop-view">
-      <section class="login-section">
+      
         <div class="login-content">
           <img src="@/assets/cathedral-engage-logo.png" alt="Engage Logo" class="engage-logo" />
           <div class="brand-text">
@@ -106,7 +106,7 @@
             <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
           </form>
         </div>
-      </section>
+      
       <section class="brand-section">
         <img src="@/assets/cathedral-engage-logo.png" alt="Brand Logo" class="brand-logo" />
       </section>
@@ -370,32 +370,31 @@ hr {
 .back-button,
 .submit-button {
   flex: 1;
-  padding: 0.75rem;
-  font-size: clamp(13px, 1.1vw, 15px);
-  font-weight: 500;
+  padding: 1rem;
+  border: none;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .back-button {
-  background-color: transparent;
+  background-color: #6362F8;
   border: 1px solid #6362F8;
-  color: #6362F8;
+  color: white;
 }
 
 .back-button:hover {
-  background-color: rgba(99, 98, 248, 0.05);
-  transform: translateY(-1px);
+  background-color: #5251d3;
 }
 
 .submit-button {
-  background-color: #6362F8;
   border: none;
   color: white;
 }
 
 .submit-button:hover {
-  background-color: #4b4ac0;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -462,6 +461,7 @@ hr {
     display: grid;
     grid-template-columns: 1fr 1fr;
     max-width: 1920px;
+    height: 100vh;
   }
 
   .mobile-view {
@@ -469,18 +469,19 @@ hr {
   }
 
   .desktop-view {
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100vw;
+    height: 100vh;
   }
 
   h1 {
     font-size: clamp(24px, 2.2vw, 28px);
-    color: #261C6B;
     margin-bottom: 1.5rem;
   }
 
   h2 {
     font-size: clamp(16px, 1.4vw, 18px);
-    color: #666;
     margin-bottom: 2rem;
     text-align: center;
   }

@@ -42,8 +42,8 @@
           </div>
           <form @submit.prevent="submitForm" class="desktop-form">
             <div v-if="formError" class="error-message">{{ formError }}</div>
-            <div class="form-box">
-              <div class="form-container">
+            
+             
                 <FormInput
                   label="Account Number"
                   type="text"
@@ -53,8 +53,8 @@
                   :required="true"
                   iconClass="icon fas fa-hashtag"
                 />
-              </div>
-            </div>
+             
+           
             <div class="button-group">
               <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
               <button type="submit" class="submit-button" :disabled="isLoading">
@@ -226,12 +226,14 @@ export default {
 .engage-logo {
   width: 100px;
   height: auto;
+  align-items: center;
   margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
 
 .engage-logo:hover {
   transform: scale(1.05);
+  align-items: center;
 }
 
 .brand-text {
@@ -330,7 +332,6 @@ export default {
   gap: 1rem;
   margin: 1.5rem 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.9);
   padding: 1rem 0;
 }
 
@@ -345,24 +346,24 @@ export default {
 }
 
 .back-button {
-  background-color: transparent;
-  border: 1px solid #6362F8;
-  color: #6362F8;
+  background-color: #6362F8;
+  border: 1px solid #261C6B;
+  
 }
 
 .back-button:hover {
-  background-color: rgba(99, 98, 248, 0.05);
+  background-color: #261C6B;
   transform: translateY(-1px);
 }
 
 .submit-button {
-  background-color: #6362F8;
+  
   border: none;
   color: white;
 }
 
 .submit-button:hover {
-  background-color: #4b4ac0;
+  
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

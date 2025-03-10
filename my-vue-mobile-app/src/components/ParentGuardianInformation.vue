@@ -428,6 +428,7 @@ export default {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid #ddd;
+  height: 2.7rem;
   border-radius: 8px;
   font-size: clamp(14px, 1.2vw, 16px);
   background: #fff;
