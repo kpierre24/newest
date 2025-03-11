@@ -1,11 +1,14 @@
 <template>
   <div class="container">
-    <!-- Mobile View -->
-    <div class="mobile-view">
+    <section class="form-section">
       <div class="content">
-        <h1>Branch</h1>
-        <h2>Choose which branch you would like your account managed at</h2>
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
+        <div class="brand-text">
+          <h1>Branch Selection</h1>
+          <p>Choose your preferred branch and contact preferences</p>
+        </div>
         <form @submit.prevent="handleSubmit">
+          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
           <FormInput
             label="Branch"
             type="select"
@@ -16,7 +19,7 @@
             iconClass="icon fas fa-building"
           />
           <div class="contact-method-container">
-            <p>Choose which is your preferred method of contact</p>
+            <p>Choose your preferred method of contact</p>
             <hr />
             <div class="radio-container">
               <input type="radio" id="phone" value="phone" v-model="preferredContactMethod" />
@@ -45,72 +48,20 @@
           </div>
           <div class="button-group">
             <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-            <button type="submit" class="submit-button">Next</button>
+            <button type="submit" class="next-button" :disabled="isLoading">
+              <span v-if="isLoading">
+                <i class="fas fa-spinner fa-spin"></i> Processing...
+              </span>
+              <span v-else>Next</span>
+            </button>
           </div>
-          <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
         </form>
       </div>
-    </div>
-
-    <!-- Desktop View -->
-    <div class="desktop-view">
-      
-        <div class="login-content">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Engage Logo" class="engage-logo" />
-          <div class="brand-text">
-            <h1>Branch Selection</h1>
-            <p>Choose your preferred branch and contact preferences</p>
-          </div>
-          <form @submit.prevent="handleSubmit">
-            <FormInput
-              label="Branch"
-              type="select"
-              id="branch"
-              v-model="selectedBranch"
-              :required="true"
-              :selectOptions="['Port of Spain', 'Milford Rd, Tobago']"
-              iconClass="icon fas fa-building"
-            />
-            <div class="contact-method-container">
-              <p>Choose which is your preferred method of contact</p>
-              <hr />
-              <div class="radio-container">
-                <input type="radio" id="phone-desktop" value="phone" v-model="preferredContactMethod" />
-                <label for="phone-desktop">Phone</label>
-              </div>
-              <div class="radio-container">
-                <input type="radio" id="email-desktop" value="email" v-model="preferredContactMethod" />
-                <label for="email-desktop">Email</label>
-              </div>
-            </div>
-            <div class="contact-time-container">
-              <p>Please choose the best time to contact you</p>
-              <hr />
-              <div class="radio-container">
-                <input type="radio" id="morning-desktop" value="8:00am to 12:00pm" v-model="bestContactTime" />
-                <label for="morning-desktop">8:00am to 12:00pm</label>
-              </div>
-              <div class="radio-container">
-                <input type="radio" id="afternoon-desktop" value="12:00pm to 4:00pm" v-model="bestContactTime" />
-                <label for="afternoon-desktop">12:00pm to 4:00pm</label>
-              </div>
-              <div class="radio-container">
-                <input type="radio" id="evening-desktop" value="4:00pm to 8:00pm" v-model="bestContactTime" />
-                <label for="evening-desktop">4:00pm to 8:00pm</label>
-              </div>
-            </div>
-            <div class="button-group">
-              <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-              <button type="submit" class="submit-button">Next</button>
-            </div>
-            <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-          </form>
-        </div>
-      
-      <section class="brand-section">
-        <img src="@/assets/cathedral-engage-logo.png" alt="Brand Logo" class="brand-logo" />
-      </section>
-    </div>
+    </section>
+    <section class="brand-section">
+      <div class="overlay"></div>
+      <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+    </section>
   </div>
 </template>
 
@@ -133,6 +84,7 @@ export default {
     const preferredContactMethod = ref('');
     const bestContactTime = ref('');
     const errorMessage = ref('');
+    const isLoading = ref(false);
 
     // Get the base URL dynamically
     const getBaseURL = () => {
@@ -157,6 +109,7 @@ export default {
       console.log('Branch info saved to store:', formData);
 
       try {
+        isLoading.value = true;
         const baseURL = getBaseURL();
         const response = await axios.post(`${baseURL}/branch`, formData, {
           headers: {
@@ -184,6 +137,8 @@ export default {
         // Continue with navigation even if API fails
         console.log('API failed but continuing navigation to /success');
         router.push('/success');
+      } finally {
+        isLoading.value = false;
       }
     };
 
@@ -196,6 +151,7 @@ export default {
       preferredContactMethod,
       bestContactTime,
       errorMessage,
+      isLoading,
       handleSubmit,
       navigateToPrevious,
     };
@@ -203,119 +159,95 @@ export default {
 };
 </script>
 
-
 <style scoped>
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .container {
-  height: 100vh;
   width: 100%;
-  max-width: 1920px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-}
-
-/* Mobile View */
-.mobile-view {
-  display: none;
-}
-
-/* Desktop View */
-.login-section {
-  width: 50vw;
   height: 100vh;
-  padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.login-content {
-  height: 100vh;
-  padding: 0.75rem 0;
-  overflow-y: hidden;
-}
-
-.engage-logo {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 0.5rem;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 2rem;
+.form-section {
   width: 100%;
-}
-
-.brand-text h1 {
-  font-size: clamp(24px, 2.2vw, 28px);
-  color: #261C6B;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  letter-spacing: -0.5px;
-}
-
-.brand-text p {
-  font-size: clamp(14px, 1.2vw, 16px);
-  color: #666;
-  letter-spacing: 0.5px;
+  min-height: 100vh;
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .content {
   width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.brand-section {
-  position: relative;
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  overflow: hidden;
+.logo {
+  width: 80px;
+  margin-bottom: 1.5rem;
 }
 
-.brand-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
+.brand-text {
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-.brand-section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
-  mix-blend-mode: overlay;
-  z-index: 1;
+.brand-text h1 {
+  font-size: 24px;
+  color: #261C6B;
+  margin-bottom: 0.5rem;
 }
 
-.brand-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 150px;
-  filter: brightness(1) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-  z-index: 2;
+.brand-text p {
+  color: #666;
+  font-size: 14px;
 }
 
 form {
   width: 100%;
-  max-width: 450px;
-  margin: 0 auto;
-  padding: 1rem;
+}
+
+/* Form styles */
+:deep(.form-input-container) {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+:deep(input), 
+:deep(select) {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: white;
+}
+:deep(select) {
+  width: 100%;
+  height: 2.7rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: white;
+  
+}
+
+:deep(input:focus), 
+:deep(select:focus) {
+  border-color: #6362F8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 98, 248, 0.1);
 }
 
 .contact-method-container,
@@ -329,7 +261,7 @@ form {
 
 .contact-method-container p,
 .contact-time-container p {
-  font-size: clamp(14px, 1.2vw, 16px);
+  font-size: 14px;
   color: #333;
   margin-bottom: 1rem;
 }
@@ -355,135 +287,134 @@ hr {
 }
 
 .radio-container label {
-  font-size: clamp(13px, 1.1vw, 15px);
+  font-size: 14px;
   color: #333;
 }
 
 .button-group {
   display: flex;
-  justify-content: space-between;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   width: 100%;
 }
 
 .back-button,
-.submit-button {
+.next-button {
   flex: 1;
-  padding: 1rem;
-  border: none;
+  height: 2.5rem;
   border-radius: 8px;
-  font-size: clamp(14px, 1.2vw, 16px);
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .back-button {
   background-color: #6362F8;
-  border: 1px solid #6362F8;
   color: white;
-}
-
-.back-button:hover {
-  background-color: #5251d3;
-}
-
-.submit-button {
   border: none;
-  color: white;
 }
 
-.submit-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.next-button {
+  background-color: #FFBC2D;
+  color: white;
+  border: none;
 }
 
 .error-message {
-  font-size: clamp(11px, 0.9vw, 13px);
-  color: #dc3545;
-  background-color: rgba(220, 53, 69, 0.1);
-  border-left: 3px solid #dc3545;
+  width: 100%;
   padding: 0.75rem;
-  border-radius: 4px;
-  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  font-size: 14px;
 }
 
-/* Mobile Styles */
+/* Mobile specific styles */
 @media (max-width: 767px) {
-  .container {
-    display: block;
-    height: 100vh;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .container::-webkit-scrollbar {
-    display: none;
-  }
-
-  .mobile-view {
-    display: block;
-    min-height: 100vh;
-  }
-
-  .login-section,
-  .brand-section {
-    display: none;
+  .form-section {
+    padding: 20px;
   }
 
   .content {
-    min-height: 100vh;
-    padding: 20px;
-    background: white;
-  }
-
-  form {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
+    padding: 0;
   }
 
   .button-group {
     flex-direction: column;
   }
-
-  .back-button,
-  .submit-button {
-    max-width: 100%;
-  }
 }
 
-/* Desktop Styles */
-@media (min-width: 768px) {
+/* Desktop styles */
+@media (min-width: 1024px) {
   .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    max-width: 1920px;
-    height: 100vh;
-  }
-
-  .mobile-view {
-    display: none;
-  }
-
-  .desktop-view {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    flex-direction: row;
+    overflow: hidden;
     width: 100vw;
     height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
   }
 
-  h1 {
-    font-size: clamp(24px, 2.2vw, 28px);
-    margin-bottom: 1.5rem;
+  .form-section {
+    width: 50%;
+    height: 100vh;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
   }
 
-  h2 {
-    font-size: clamp(16px, 1.4vw, 18px);
-    margin-bottom: 2rem;
-    text-align: center;
+  .form-section::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  .content {
+    max-width: 450px;
+    padding: 2rem;
+  }
+
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .brand-section {
+    display: block;
+    position: relative;
+    width: 50%;
+    height: 100vh;
+    background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+    overflow: hidden;
+  }
+
+  .brand-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('@/assets/background.png') center/cover no-repeat;
+    opacity: 0.1;
+    mix-blend-mode: overlay;
+  }
+
+  .brand-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    filter: brightness(1.2);
+    z-index: 2;
   }
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <!-- Mobile View -->
-    <div class="mobile-view">
-      <div class="form-container">
-        <div class="logo-container">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
+    <section class="form-section">
+      <div class="content">
+        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
+        <div class="brand-text">
+          <h1>Account Number</h1>
+          <p>Please enter your account number</p>
         </div>
-        <h1>Account Number</h1>
         <form @submit.prevent="submitForm">
           <div v-if="formError" class="error-message">{{ formError }}</div>
           <FormInput
@@ -29,49 +29,11 @@
           </div>
         </form>
       </div>
-    </div>
-
-    <!-- Desktop View -->
-    <div class="desktop-view">
-      <section class="login-section">
-        <div class="login-content">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="engage-logo" />
-          <div class="brand-text">
-            <h1>Account Number</h1>
-            <p>Please enter your account number</p>
-          </div>
-          <form @submit.prevent="submitForm" class="desktop-form">
-            <div v-if="formError" class="error-message">{{ formError }}</div>
-            
-             
-                <FormInput
-                  label="Account Number"
-                  type="text"
-                  id="accountNumber-desktop"
-                  v-model="accountNumber"
-                  placeholder="Enter your account number"
-                  :required="true"
-                  iconClass="icon fas fa-hashtag"
-                />
-             
-           
-            <div class="button-group">
-              <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-              <button type="submit" class="submit-button" :disabled="isLoading">
-                <span v-if="isLoading">
-                  <i class="fas fa-spinner fa-spin"></i> Processing...
-                </span>
-                <span v-else>Next</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-      <section class="brand-section">
-        <div class="overlay"></div>
-        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
-      </section>
-    </div>
+    </section>
+    <section class="brand-section">
+      <div class="overlay"></div>
+      <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
+    </section>
   </div>
 </template>
 
@@ -162,14 +124,40 @@ export default {
 }
 
 .container {
-  height: 100vh;
   width: 100%;
-  max-width: 1920px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+.form-section {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.content {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.brand-section {
+  display: none;
+}
+
+/* Form styles remain the same */
 /* Mobile View */
 .mobile-view {
   display: none;
@@ -177,7 +165,7 @@ export default {
 
 /* Desktop View */
 .login-section {
-  width: 50vw;
+  width: 100vw;
   height: 100vh;
   padding: 0.75rem;
   display: flex;
@@ -516,6 +504,92 @@ export default {
 
   :deep(.form-input-container) {
     margin-bottom: 1.5rem;
+  }
+}
+
+/* Responsive Layout */
+@media (min-width: 1024px) {
+  .container {
+    flex-direction: row;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  .form-section {
+    width: 100%;
+    height: 100vh;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .content {
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .brand-section {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+    overflow: hidden;
+  }
+
+  .brand-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('@/assets/background.png') center/cover no-repeat;
+    opacity: 0.1;
+    mix-blend-mode: overlay;
+  }
+
+  .brand-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+
+  .brand-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    z-index: 2;
+  }
+
+  .logo {
+    width: 100px;
+  }
+
+  form {
+    width: 100%;
+    max-width: 400px;
   }
 }
 </style>
