@@ -1038,6 +1038,12 @@
       "selectedBranch": "Port of Spain",
       "preferredContactMethod": "phone",
       "bestContactTime": "12:00pm to 4:00pm"
+    },
+    {
+      "id": "7e08",
+      "selectedBranch": "Port of Spain",
+      "preferredContactMethod": "email",
+      "bestContactTime": "4:00pm to 8:00pm"
     }
   ],
   "power-of-attorney": [

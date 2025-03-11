@@ -1,270 +1,162 @@
 <template>
-  <div class="container">
-    <section class="form-section">
-      <div class="content">
-        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
-        <div class="brand-text">
-          <h1>Account Number</h1>
-          <p>Please enter your account number</p>
-        </div>
-        <form @submit.prevent="submitForm">
-          <div v-if="formError" class="error-message">{{ formError }}</div>
-          <FormInput
-            label="Account Number"
-            type="text"
-            id="accountNumber"
-            v-model="accountNumber"
-            placeholder="Enter your account number"
-            :required="true"
-            iconClass="icon fas fa-hashtag"
-          />
-          <div class="button-group">
-            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-            <button type="submit" class="submit-button" :disabled="isLoading">
-              <span v-if="isLoading">
-                <i class="fas fa-spinner fa-spin"></i> Processing...
-              </span>
-              <span v-else>Next</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
-    <section class="brand-section">
-      <div class="overlay"></div>
-      <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
-    </section>
-  </div>
+  <v-container class="fill-height" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section">
+        <v-container class="form-container">
+          <v-row justify="center" align="center">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-6">
+                <v-img
+                  src="@/assets/cathedral-engage-logo.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-4"
+                  width="80"
+                />
+                <h1 class="text-h4 font-weight-bold text-primary mb-2">Account Number</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Please enter your account number</p>
+              </div>
+
+              <v-form @submit.prevent="submitForm">
+                <v-alert
+                  v-if="formError"
+                  type="error"
+                  variant="tonal"
+                  class="mb-4"
+                >
+                  {{ formError }}
+                </v-alert>
+
+                <v-text-field
+                  v-model="accountNumber"
+                  label="Account Number"
+                  :rules="[v => !!v || 'Account number is required']"
+                  placeholder="Enter your account number"
+                  variant="outlined"
+                  prepend-inner-icon="mdi-pound"
+                  required
+                />
+
+                <v-row class="mt-6">
+                  <v-col cols="12" sm="6">
+                    <v-btn
+                      block
+                      color="primary"
+                      variant="tonal"
+                      @click="navigateToPrevious"
+                    >
+                      Back
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-btn
+                      block
+                      color="primary"
+                      type="submit"
+                      :loading="isLoading"
+                    >
+                      {{ isLoading ? 'Processing...' : 'Next' }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <v-img
+          src="@/assets/cathedral-engage-logo.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import FormInput from '@/props/FormInput.vue';
 import { useDemoStore } from '@/store/demoStore';
 
-export default {
-  name: 'AccountNumber',
-  components: {
-    FormInput
-  },
-  setup() {
-    const router = useRouter();
-    const store = useDemoStore();
-    const accountNumber = ref('');
-    const isLoading = ref(false);
-    const formError = ref('');
+const router = useRouter();
+const store = useDemoStore();
+const accountNumber = ref('');
+const isLoading = ref(false);
+const formError = ref('');
 
-    const submitForm = async () => {
-      isLoading.value = true;
-      formError.value = '';
+const submitForm = async () => {
+  isLoading.value = true;
+  formError.value = '';
 
-      try {
-        if (!accountNumber.value) {
-          formError.value = 'Please enter your account number';
-          isLoading.value = false;
-          return;
+  try {
+    if (!accountNumber.value) {
+      formError.value = 'Please enter your account number';
+      isLoading.value = false;
+      return;
+    }
+
+    // Get the base URL dynamically
+    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : `http://${window.location.hostname}:3000`;
+
+    try {
+      const response = await axios.post(`${baseURL}/account-number`, {
+        accountNumber: accountNumber.value
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
         }
+      });
+      console.log('Account number submitted:', response.data);
+    } catch (apiError) {
+      console.error('API error:', apiError);
+      // Continue with navigation even if API fails
+    }
 
-        // Get the base URL dynamically
-        const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-          ? 'http://localhost:3000' 
-          : `http://${window.location.hostname}:3000`;
+    // Update store
+    store.$patch((state) => {
+      state.accountNumber = accountNumber.value;
+    });
 
-        try {
-          const response = await axios.post(`${baseURL}/account-number`, {
-            accountNumber: accountNumber.value
-          }, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          console.log('Account number submitted:', response.data);
-        } catch (apiError) {
-          console.error('API error:', apiError);
-          // Continue with navigation even if API fails
-        }
-
-        // Update store
-        store.$patch((state) => {
-          state.accountNumber = accountNumber.value;
-        });
-
-        // Navigate to next page
-        router.push('/due-diligence');
-      } catch (error) {
-        console.error('Error submitting account number:', error);
-        formError.value = 'An error occurred while submitting your account number';
-      } finally {
-        isLoading.value = false;
-      }
-    };
-
-    const navigateToPrevious = () => {
-      router.push('/id-information');
-    };
-
-    return {
-      accountNumber,
-      submitForm,
-      navigateToPrevious,
-      isLoading,
-      formError
-    };
+    // Navigate to next page
+    router.push('/due-diligence');
+  } catch (error) {
+    console.error('Error submitting account number:', error);
+    formError.value = 'An error occurred while submitting your account number';
+  } finally {
+    isLoading.value = false;
   }
+};
+
+const navigateToPrevious = () => {
+  router.push('/id-information');
 };
 </script>
 
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.container {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
 .form-section {
-  width: 100%;
-  min-height: 100vh;
-  background: white;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.content {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.logo {
-  width: 80px;
-  height: auto;
-  margin-bottom: 1.5rem;
-}
-
-.brand-section {
-  display: none;
-}
-
-/* Form styles remain the same */
-/* Mobile View */
-.mobile-view {
-  display: none;
-}
-
-/* Desktop View */
-.login-section {
-  width: 100vw;
-  height: 100vh;
-  padding: 0.75rem;
-  display: flex;
-  flex-direction: column;
   background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  min-height: 100vh;
 }
 
-.login-content {
-  height: 100%;
-  padding: 2rem;
-  overflow-y: auto;
+.form-container {
+  max-width: 100%;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  position: relative;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-}
-
-.login-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.login-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.login-content::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-}
-
-.login-content::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-  pointer-events: none;
-}
-
-.engage-logo {
-  width: 100px;
-  height: auto;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  transition: transform 0.3s ease;
-}
-
-.engage-logo:hover {
-  transform: scale(1.05);
-  align-items: center;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 2rem;
-  width: 100%;
-  text-align: center;
-}
-
-.brand-text h1 {
-  font-size: clamp(24px, 2.2vw, 32px);
-  color: #261C6B;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-}
-
-.brand-text p {
-  font-size: clamp(14px, 1.2vw, 16px);
-  color: #666;
-  letter-spacing: 0.5px;
-  max-width: 80%;
-  line-height: 1.5;
-}
-
-.desktop-form {
-  width: 100%;
-  max-width: 600px;
-  padding: 0 1.5rem 2rem;
-  flex: 1;
-  overflow-y: auto;
-  position: relative;
-  margin-top: 1rem;
 }
 
 .brand-section {
-  position: relative;
   background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: relative;
   overflow: hidden;
-  width: 50vw;
 }
 
 .brand-section::before {
@@ -279,317 +171,22 @@ export default {
   mix-blend-mode: overlay;
 }
 
-.brand-section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
-  mix-blend-mode: overlay;
-  z-index: 1;
-}
-
 .brand-logo {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 180px;
-  filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  filter: brightness(1.2);
   z-index: 2;
 }
 
-.form-box {
-  background: rgba(255, 255, 255, 0.8);
-  padding: 1.5rem;
+:deep(.v-field) {
+  border-radius: 8px !important;
+}
+
+:deep(.v-btn) {
+  height: 48px;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  width: 100%;
-}
-
-.form-container {
-  width: 100%;
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 1.5rem 0;
-  width: 100%;
-  padding: 1rem 0;
-}
-
-.back-button,
-.submit-button {
-  flex: 1;
-  padding: 0.75rem;
-  font-size: clamp(13px, 1.1vw, 15px);
-  font-weight: 500;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.back-button {
-  background-color: #6362F8;
-  border: 1px solid #261C6B;
-  
-}
-
-.back-button:hover {
-  background-color: #261C6B;
-  transform: translateY(-1px);
-}
-
-.submit-button {
-  
-  border: none;
-  color: white;
-}
-
-.submit-button:hover {
-  
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.submit-button:disabled {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Desktop Form Input Styles */
-:deep(.form-input-container) {
-  margin-bottom: 1rem;
-}
-
-:deep(label) {
-  font-size: clamp(13px, 1.1vw, 15px);
-  margin-bottom: 0.5rem;
-  display: block;
-  width: 100%;
-  white-space: nowrap;
-  overflow: visible;
-}
-
-:deep(input), 
-:deep(select) {
-  width: 100%;
-  height: 3rem;
-  padding: 0.75rem 1rem;
-  font-size: clamp(14px, 1.2vw, 16px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  background-color: white;
-}
-
-:deep(input:focus), 
-:deep(select:focus) {
-  border-color: #6362F8;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 98, 248, 0.1);
-}
-
-/* Error Message Styling */
-.error-message {
-  font-size: clamp(11px, 0.9vw, 13px);
-  color: #dc3545;
-  background-color: rgba(220, 53, 69, 0.1);
-  border-left: 3px solid #dc3545;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  width: 100%;
-}
-
-/* Mobile Styles */
-@media (max-width: 767px) {
-  .container {
-    display: block;
-    height: 100vh;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .container::-webkit-scrollbar {
-    display: none;
-  }
-
-  .mobile-view {
-    display: block;
-    min-height: 100vh;
-  }
-
-  .desktop-view {
-    display: none;
-  }
-
-  .content {
-    min-height: 100vh;
-    padding: 1.5rem;
-    background: white;
-  }
-
-  .content h1 {
-    font-size: clamp(24px, 2.2vw, 28px);
-    color: #261C6B;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-  }
-
-  form {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .form-box {
-    padding: 1.5rem;
-  }
-
-  .button-group {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .back-button,
-  .submit-button {
-    width: 100%;
-  }
-
-  :deep(input), 
-  :deep(select) {
-    height: 3rem;
-    font-size: 16px;
-  }
-}
-
-/* Desktop Styles */
-@media (min-width: 768px) {
-  .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    max-width: 1920px;
-  }
-
-  .mobile-view {
-    display: none;
-  }
-
-  .desktop-view {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100vw;
-  }
-
-  .login-section {
-    padding: 1.5rem;
-  }
-
-  .login-content {
-    padding: 2rem;
-    max-height: 100vh;
-    overflow-y: auto;
-  }
-
-  .form-box {
-    margin-bottom: 1.5rem;
-  }
-
-  :deep(.form-input-container) {
-    margin-bottom: 1.5rem;
-  }
-}
-
-/* Responsive Layout */
-@media (min-width: 1024px) {
-  .container {
-    flex-direction: row;
-    overflow: hidden;
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-  }
-
-  .form-section {
-    width: 100%;
-    height: 100vh;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .content {
-    width: 100%;
-    max-width: 500px;
-    padding: 40px;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .brand-section {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-    overflow: hidden;
-  }
-
-  .brand-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('@/assets/background.png') center/cover no-repeat;
-    opacity: 0.1;
-    mix-blend-mode: overlay;
-  }
-
-  .brand-section::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(99, 98, 248, 0.4) 0%, rgba(38, 28, 107, 0.4) 100%);
-    mix-blend-mode: overlay;
-    z-index: 1;
-  }
-
-  .brand-logo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 180px;
-    filter: brightness(1.2) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-    z-index: 2;
-  }
-
-  .logo {
-    width: 100px;
-  }
-
-  form {
-    width: 100%;
-    max-width: 400px;
-  }
 }
 </style>
