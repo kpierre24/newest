@@ -29,77 +29,7 @@ body {
   min-height: 100vh;
 }
 
-h1  {
-  font-family: 'Roboto', sans-serif;
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
- h2 {
-  font-family: 'Roboto', sans-serif;
-  color: #6362F8;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-h3 {
-  font-family: 'Roboto', sans-serif;
-  color: #FF883F;
-  font-style: italic;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
 
-h4 {
-  font-family: 'Roboto', sans-serif;
-  color: #261C6B;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-h5 {
-  font-family: 'Roboto', sans-serif;
-  color: #000000;
-  font-style: bold;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-h6 {
-  font-family: 'Roboto', sans-serif;
-  color: #FFBC2D;
-  font-style: bold;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-
-
-
-button {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-/* Global button styles */
-.back-button {
-  background-color: #6362F8;
-  color: white;
-}
-
-.back-button:hover {
-  background-color: #261C6B;
-}
-
-.next-button, .submit-button,.verify-button, .signin-button {
-  background-color: #FFBC2D;
-  color: white;
-}
-
-.next-button:hover, .submit-button:hover, .signin-button:hover {
-  background-color: #FF883F;
-}
-
-.other-button {
-  background-color: #261C6B;
-  color: white;
-}
-
-.other-button:hover {
-  background-color: #FF883F;
-}
 
 /* Global form styles */
 input, select, textarea {

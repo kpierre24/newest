@@ -13,7 +13,7 @@
                   class="mx-auto mb-4"
                   width="80"
                 />
-                <h1 class="text-h4 font-weight-bold text-primary mb-2">Account Number</h1>
+                <h1 class="text-h1 font-weight-bold text-primary mb-2">Account Number</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Please enter your account number</p>
               </div>
 
@@ -42,7 +42,7 @@
                     <v-btn
                       block
                       color="primary"
-                      variant="tonal"
+                      variant="elevated"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -51,7 +51,7 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
+                      color="secondary"
                       type="submit"
                       :loading="isLoading"
                     >

@@ -13,7 +13,7 @@
                   class="mx-auto mb-4"
                   width="80"
                 />
-                <h1 class="text-h4 font-weight-bold text-primary mb-2">Basic Information</h1>
+                <h1 class="text-h4 font-weight-bold text-primary mb-3">Basic Information</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Please enter your personal details</p>
               </div>
 
@@ -142,14 +142,14 @@
                   v-model="store.termsViewed"
                   label="I agree to the Terms and Conditions"
                   :rules="[v => !!v || 'You must agree to continue']"
-                  @click="openTerms"
+                  @click="handleTermsClick"
                 />
 
                 <v-checkbox
                   v-model="store.financialAgreementViewed"
                   label="I agree to the Financial Declaration"
                   :rules="[v => !!v || 'You must agree to continue']"
-                  @click="openFinancialDeclaration"
+                  @click="handleFinancialClick"
                 />
 
                 <v-row class="mt-6">
@@ -157,7 +157,7 @@
                     <v-btn
                       block
                       color="primary"
-                      variant="tonal"
+                      variant="elevated"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -166,7 +166,7 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
+                      color="secondary"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -190,14 +190,50 @@
       </v-col>
     </v-row>
 
+
+
     <!-- Terms Dialog -->
-    <v-dialog v-model="showTerms" max-width="500">
-      <TermsAndConditions @close="closeTerms" />
+    <v-dialog
+      v-model="showTerms"
+      max-width="500"
+      persistent
+    >
+      <v-card>
+        <v-card-title class="text-h5 pa-4">
+          Terms and Conditions
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="closeTerms"
+            class="float-right"
+          />
+        </v-card-title>
+        <v-card-text class="pa-4">
+          <TermsAndConditions @close="closeTerms" />
+        </v-card-text>
+      </v-card>
     </v-dialog>
 
     <!-- Financial Declaration Dialog -->
-    <v-dialog v-model="showFinancialDeclaration" max-width="500">
-      <FinancialDeclaration @close="closeFinancialDeclaration" />
+    <v-dialog
+      v-model="showFinancialDeclaration"
+      max-width="500"
+      persistent
+    >
+      <v-card>
+        <v-card-title class="text-h5 pa-4">
+          Financial Declaration
+          <v-btn
+            icon="mdi-close"
+            variant="text"
+            @click="closeFinancialDeclaration"
+            class="float-right"
+          />
+        </v-card-title>
+        <v-card-text class="pa-4">
+          <FinancialDeclaration @close="closeFinancialDeclaration" />
+        </v-card-text>
+      </v-card>
     </v-dialog>
   </v-container>
 </template>
@@ -241,6 +277,16 @@ const openFinancialDeclaration = () => {
 const closeFinancialDeclaration = () => {
   showFinancialDeclaration.value = false;
   store.financialAgreementViewed = true;
+};
+
+const handleTermsClick = (event) => {
+  event.preventDefault();
+  openTerms();
+};
+
+const handleFinancialClick = (event) => {
+  event.preventDefault();
+  openFinancialDeclaration();
 };
 
 const validateDateOfBirth = () => {
@@ -293,8 +339,8 @@ const navigateToNext = async () => {
       financialAgreementViewed: store.financialAgreementViewed
     };
 
-    const response = await axios.post(`${baseURL}/basic-info`, basicInfoData);
-    console.log('Basic info submitted:', response.data);
+    await axios.post(`${baseURL}/basic-info`, basicInfoData);
+    store.setBasicInfo(basicInfoData);
     router.push({ name: 'EmailVerification' });
   } catch (error) {
     console.error('Error submitting basic info:', error);
@@ -358,5 +404,20 @@ const navigateToPrevious = () => {
 :deep(.v-btn) {
   height: 48px;
   border-radius: 8px;
+}
+
+.v-dialog {
+  border-radius: 8px;
+}
+
+.v-card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.float-right {
+  margin-left: auto;
 }
 </style>

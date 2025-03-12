@@ -13,7 +13,7 @@
                   class="mx-auto mb-4"
                   width="80"
                 />
-                <h1 class="text-h4 font-weight-bold text-primary mb-2">Branch Selection</h1>
+                <h1 class="text-h1 font-weight-bold text-primary mb-2">Branch Selection</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Choose your preferred branch and contact preferences</p>
               </div>
 
@@ -61,7 +61,7 @@
                     <v-btn
                       block
                       color="primary"
-                      variant="tonal"
+                      variant="elevated"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -70,7 +70,7 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
+                      color="secondary"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -214,6 +214,11 @@ const navigateToPrevious = () => {
 
 :deep(.v-field) {
   border-radius: 8px !important;
+}
+
+:deep(.v-card) {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
 :deep(.v-btn) {

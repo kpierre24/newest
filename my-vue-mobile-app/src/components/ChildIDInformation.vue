@@ -8,17 +8,17 @@
             <v-col cols="12" sm="8" md="10" lg="8">
               <div class="text-center mb-6">
                 <v-img
-                  src="@/assets/cathedral-engage-logo.png"
+                  src="@/assets/Logo1.png"
                   alt="Cathedral Engage"
                   class="mx-auto mb-4"
                   width="80"
                 />
-                <h1 class="text-h4 font-weight-bold text-primary mb-2">Cathedral Engage</h1>
-                <h2 class="text-h5 font-weight-bold mb-2">Child ID Information</h2>
-                <p class="text-subtitle-1 text-medium-emphasis">Enter your child's identification details</p>
+                
+                <h1 class="text-h1 font-weight-bold mb-2">Child ID Information</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Please provide the child's identification details</p>
               </div>
 
-              <v-form @submit.prevent="handleSubmit">
+              <v-form @submit.prevent="submitChildIDInformation">
                 <v-alert
                   v-if="formError"
                   type="error"
@@ -28,128 +28,133 @@
                   {{ formError }}
                 </v-alert>
 
+                <!-- Child's First Form of ID -->
+                <v-card class="mb-6" variant="outlined">
+                  <v-card-text>
+                    <h3 class="text-h6 mb-4">Child's First Form of ID</h3>
+                    <v-select
+                      v-model="formData.firstIdType"
+                      label="Type of ID"
+                      :items="['Birth Certificate', 'Passport', 'Student ID']"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-card-account-details"
+                      @update:model-value="updateSecondIdOptions"
+                      :rules="[v => !!v || 'ID type is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.firstIdNumber"
+                      label="ID Number"
+                      placeholder="Enter ID number"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-pound"
+                      :rules="[v => !!v || 'ID number is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.firstExpiryDate"
+                      label="Expiry Date"
+                      type="date"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-calendar"
+                      :min="minDate"
+                      :max="maxExpiryDate"
+                      :error-messages="firstExpiryDateError"
+                      :disabled="formData.firstIdType === 'Birth Certificate'"
+                      @update:model-value="validateFirstExpiryDate"
+                      required
+                    />
+
+                    <v-file-input
+                      v-model="formData.firstIdDocument"
+                      label="Upload ID"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-upload"
+                      accept=".pdf,.jpg,.png"
+                      :rules="[v => !!v || 'ID document is required']"
+                      @change="handleFileUpload($event, 'first')"
+                      required
+                    />
+                  </v-card-text>
+                </v-card>
+
+                <!-- Child's Second Form of ID -->
+                <v-card class="mb-6" variant="outlined">
+                  <v-card-text>
+                    <h3 class="text-h6 mb-4">Child's Second Form of ID</h3>
+                    <v-select
+                      v-model="formData.secondIdType"
+                      label="Type of ID"
+                      :items="secondIdOptions"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-card-account-details"
+                      :rules="[v => !!v || 'ID type is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.secondIdNumber"
+                      label="ID Number"
+                      placeholder="Enter ID number"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-pound"
+                      :rules="[v => !!v || 'ID number is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.secondExpiryDate"
+                      label="Expiry Date"
+                      type="date"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-calendar"
+                      :min="minDate"
+                      :max="maxExpiryDate"
+                      :error-messages="secondExpiryDateError"
+                      :disabled="formData.secondIdType === 'Birth Certificate'"
+                      @update:model-value="validateSecondExpiryDate"
+                      required
+                    />
+
+                    <v-file-input
+                      v-model="formData.secondIdDocument"
+                      label="Upload ID"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-upload"
+                      accept=".pdf,.jpg,.png"
+                      :rules="[v => !!v || 'ID document is required']"
+                      @change="handleFileUpload($event, 'second')"
+                      required
+                    />
+                  </v-card-text>
+                </v-card>
+
                 <!-- School Information -->
                 <v-card class="mb-6" variant="outlined">
-                  <v-card-title class="text-h6 pa-4">School Information</v-card-title>
                   <v-card-text>
+                    <h3 class="text-h6 mb-4">School Information</h3>
                     <v-text-field
-                      v-model="schoolName"
+                      v-model="formData.schoolName"
                       label="School Name"
-                      :rules="[v => !!v || 'School name is required']"
                       placeholder="Enter school name"
                       variant="outlined"
                       prepend-inner-icon="mdi-school"
+                      :rules="[v => !!v || 'School name is required']"
                       required
                     />
                   </v-card-text>
                 </v-card>
 
-                <!-- First Form of ID -->
-                <v-card class="mb-6" variant="outlined">
-                  <v-card-title class="text-h6 pa-4">First Form of ID</v-card-title>
-                  <v-card-text>
-                    <v-select
-                      v-model="firstIdType"
-                      label="Type of ID"
-                      :items="['ID Card', 'Passport', 'Birthpaper']"
-                      :rules="[v => !!v || 'Type of ID is required']"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-card-account-details"
-                      @change="updateSecondIdOptions"
-                      required
-                    />
-
-                    <v-text-field
-                      v-model="firstIdNumber"
-                      label="ID Number"
-                      :rules="[v => !!v || 'ID Number is required']"
-                      placeholder="Enter ID number"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-identifier"
-                      required
-                    />
-
-                    <v-text-field
-                      v-model="firstIdExpiry"
-                      label="ID Expiry Date"
-                      type="date"
-                      :rules="[
-                        v => !!v || 'Expiry date is required',
-                        v => new Date(v) > new Date() || 'ID must not be expired'
-                      ]"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-calendar"
-                      required
-                    />
-
-                    <v-file-input
-                      v-model="firstIdFile"
-                      label="Upload ID"
-                      accept="image/*,.pdf"
-                      :rules="[v => !!v || 'ID upload is required']"
-                      variant="outlined"
-                      prepend-icon="mdi-upload"
-                      required
-                    />
-                  </v-card-text>
-                </v-card>
-
-                <!-- Second Form of ID -->
-                <v-card class="mb-6" variant="outlined">
-                  <v-card-title class="text-h6 pa-4">Second Form of ID</v-card-title>
-                  <v-card-text>
-                    <v-select
-                      v-model="secondIdType"
-                      label="Type of ID"
-                      :items="availableSecondIdOptions"
-                      :rules="[v => !!v || 'Type of ID is required']"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-card-account-details"
-                      required
-                    />
-
-                    <v-text-field
-                      v-model="secondIdNumber"
-                      label="ID Number"
-                      :rules="[v => !!v || 'ID Number is required']"
-                      placeholder="Enter ID number"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-identifier"
-                      required
-                    />
-
-                    <v-text-field
-                      v-model="secondIdExpiry"
-                      label="ID Expiry Date"
-                      type="date"
-                      :rules="[
-                        v => !!v || 'Expiry date is required',
-                        v => new Date(v) > new Date() || 'ID must not be expired'
-                      ]"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-calendar"
-                      required
-                    />
-
-                    <v-file-input
-                      v-model="secondIdFile"
-                      label="Upload ID"
-                      accept="image/*,.pdf"
-                      :rules="[v => !!v || 'ID upload is required']"
-                      variant="outlined"
-                      prepend-icon="mdi-upload"
-                      required
-                    />
-                  </v-card-text>
-                </v-card>
-
-                <v-row class="mt-6">
+                <v-row>
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
                       color="primary"
-                      variant="tonal"
+                      variant="elevated"
                       @click="navigateToPrevious"
+                      :disabled="isLoading"
                     >
                       Back
                     </v-btn>
@@ -157,7 +162,7 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
+                      color="secondary"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -173,10 +178,12 @@
 
       <!-- Brand Section -->
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
         <v-img
-          src="@/assets/cathedral-engage-logo.png"
+          src="@/assets/Logo1.png"
           alt="Cathedral Engage"
           class="brand-logo"
+          contain
         />
       </v-col>
     </v-row>
@@ -184,7 +191,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
@@ -192,77 +199,139 @@ import { useDemoStore } from '@/store/demoStore';
 const router = useRouter();
 const store = useDemoStore();
 
-const schoolName = ref('');
-const firstIdType = ref('');
-const firstIdNumber = ref('');
-const firstIdExpiry = ref('');
-const firstIdFile = ref(null);
-const secondIdType = ref('');
-const secondIdNumber = ref('');
-const secondIdExpiry = ref('');
-const secondIdFile = ref(null);
-const formError = ref('');
-const isLoading = ref(false);
-
-const availableSecondIdOptions = computed(() => {
-  const allOptions = ['ID Card', 'Passport', 'Birthpaper'];
-  return allOptions.filter(option => option !== firstIdType.value);
+// Form data refs
+const formData = ref({
+  firstIdType: '',
+  firstIdNumber: '',
+  firstExpiryDate: '',
+  firstIdDocument: null,
+  secondIdType: '',
+  secondIdNumber: '',
+  secondExpiryDate: '',
+  secondIdDocument: null,
+  schoolName: ''
 });
 
+const formError = ref('');
+const isLoading = ref(false);
+const firstExpiryDateError = ref('');
+const secondExpiryDateError = ref('');
+const secondIdOptions = ref(['Birth Certificate', 'Passport', 'Student ID']);
+
+// Computed properties
+const minDate = computed(() => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+});
+
+const maxExpiryDate = computed(() => {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + 10);
+  return date.toISOString().split('T')[0];
+});
+
+// Methods
 const updateSecondIdOptions = () => {
-  if (secondIdType.value === firstIdType.value) {
-    secondIdType.value = '';
+  if (formData.value.secondIdType === formData.value.firstIdType) {
+    formData.value.secondIdType = '';
   }
 };
 
-const handleSubmit = async (event) => {
+const validateFirstExpiryDate = () => {
+  const today = new Date();
+  const expiry = new Date(formData.value.firstExpiryDate);
+  if (expiry <= today) {
+    firstExpiryDateError.value = 'Expiry date must be in the future';
+  } else {
+    firstExpiryDateError.value = '';
+  }
+};
+
+const validateSecondExpiryDate = () => {
+  const today = new Date();
+  const expiry = new Date(formData.value.secondExpiryDate);
+  if (expiry <= today) {
+    secondExpiryDateError.value = 'Expiry date must be in the future';
+  } else {
+    secondExpiryDateError.value = '';
+  }
+};
+
+const handleFileUpload = (file, type) => {
+  if (type === 'first') {
+    formData.value.firstIdDocument = file;
+  } else if (type === 'second') {
+    formData.value.secondIdDocument = file;
+  }
+};
+
+const getBaseURL = () => {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000' 
+    : `http://${window.location.hostname}:3000`;
+};
+
+const navigateToPrevious = () => {
+  // Save current state before navigating
+  saveToStore();
+  router.go(-1);
+};
+
+const saveToStore = () => {
+  store.$patch((state) => {
+    state.childIdInfo = {
+      firstIdType: formData.value.firstIdType,
+      firstIdNumber: formData.value.firstIdNumber,
+      firstExpiryDate: formData.value.firstExpiryDate,
+      secondIdType: formData.value.secondIdType,
+      secondIdNumber: formData.value.secondIdNumber,
+      secondExpiryDate: formData.value.secondExpiryDate,
+      schoolName: formData.value.schoolName
+    };
+  });
+};
+
+const submitChildIDInformation = async (event) => {
   event.preventDefault();
   isLoading.value = true;
   formError.value = '';
 
-  // Validate required fields
-  if (!schoolName.value ||
-      !firstIdType.value || !firstIdNumber.value || !firstIdExpiry.value || !firstIdFile.value ||
-      !secondIdType.value || !secondIdNumber.value || !secondIdExpiry.value || !secondIdFile.value) {
-    formError.value = 'Please fill in all required fields';
-    isLoading.value = false;
-    return;
-  }
-
-  // Validate expiry dates
-  const today = new Date();
-  const firstExpiry = new Date(firstIdExpiry.value);
-  const secondExpiry = new Date(secondIdExpiry.value);
-
-  if (firstExpiry <= today || secondExpiry <= today) {
-    formError.value = 'IDs must not be expired';
-    isLoading.value = false;
-    return;
-  }
-
   try {
-    const formData = {
-      schoolName: schoolName.value,
-      firstIdType: firstIdType.value,
-      firstIdNumber: firstIdNumber.value,
-      firstIdExpiry: firstIdExpiry.value,
-      firstIdFile: firstIdFile.value,
-      secondIdType: secondIdType.value,
-      secondIdNumber: secondIdNumber.value,
-      secondIdExpiry: secondIdExpiry.value,
-      secondIdFile: secondIdFile.value,
-    };
+    // Validate required fields
+    if (!formData.value.firstIdType || !formData.value.firstIdNumber || !formData.value.firstIdDocument ||
+        !formData.value.secondIdType || !formData.value.secondIdNumber || !formData.value.secondIdDocument ||
+        !formData.value.schoolName) {
+      formError.value = 'Please fill in all required fields';
+      isLoading.value = false;
+      return;
+    }
 
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:3000' 
-      : `http://${window.location.hostname}:3000`;
+    // Validate expiry dates if applicable
+    if (formData.value.firstIdType !== 'Birth Certificate' && !formData.value.firstExpiryDate) {
+      formError.value = 'Please enter expiry date for the first ID';
+      isLoading.value = false;
+      return;
+    }
 
-    await axios.post(`${baseURL}/child-id`, formData);
-    
-    store.$patch((state) => {
-      Object.assign(state, formData);
-    });
+    if (formData.value.secondIdType !== 'Birth Certificate' && !formData.value.secondExpiryDate) {
+      formError.value = 'Please enter expiry date for the second ID';
+      isLoading.value = false;
+      return;
+    }
 
+    // Save to store
+    saveToStore();
+
+    // Make API call
+    try {
+      const baseURL = getBaseURL();
+      await axios.post(`${baseURL}/child-id-information`, formData.value);
+    } catch (apiError) {
+      console.error('API error:', apiError);
+      // Continue with navigation even if API fails
+    }
+
+    // Navigate to next page
     router.push('/parent-guardian-information');
   } catch (error) {
     console.error('Error submitting child ID information:', error);
@@ -272,9 +341,19 @@ const handleSubmit = async (event) => {
   }
 };
 
-const navigateToPrevious = () => {
-  router.push('/basic-info');
-};
+// Initialize component
+onMounted(() => {
+  // Load any existing data from store
+  if (store.childIdInfo) {
+    formData.value.firstIdType = store.childIdInfo.firstIdType || '';
+    formData.value.firstIdNumber = store.childIdInfo.firstIdNumber || '';
+    formData.value.firstExpiryDate = store.childIdInfo.firstExpiryDate || '';
+    formData.value.secondIdType = store.childIdInfo.secondIdType || '';
+    formData.value.secondIdNumber = store.childIdInfo.secondIdNumber || '';
+    formData.value.secondExpiryDate = store.childIdInfo.secondExpiryDate || '';
+    formData.value.schoolName = store.childIdInfo.schoolName || '';
+  }
+});
 </script>
 
 <style scoped>
@@ -296,16 +375,17 @@ const navigateToPrevious = () => {
 .brand-section {
   background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
   min-height: 100vh;
-  position: relative;
-  overflow: hidden;
   position: fixed;
   right: 0;
   top: 0;
   width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-.brand-section::before {
-  content: '';
+.brand-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -314,20 +394,14 @@ const navigateToPrevious = () => {
   background: url('@/assets/background.png') center/cover no-repeat;
   opacity: 0.1;
   mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 .brand-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 180px;
-  filter: brightness(1.2);
+  width: 240px;
+  height: auto;
   z-index: 2;
-}
-
-:deep(.v-field) {
-  border-radius: 8px !important;
+  filter: brightness(1.2);
 }
 
 :deep(.v-btn) {
@@ -345,6 +419,11 @@ const navigateToPrevious = () => {
   .brand-section {
     position: relative;
     width: 100%;
+    min-height: 300px;
+  }
+
+  .brand-logo {
+    width: 180px;
   }
 }
 

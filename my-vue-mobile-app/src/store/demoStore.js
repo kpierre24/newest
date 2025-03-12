@@ -9,7 +9,7 @@ export const useDemoStore = defineStore({
     email: '',
     mobileNumber: '',
     gender: '',
-    dob: '',
+    dob: null,
     age: null,
     password: '',
     confirmPassword: '',
@@ -97,13 +97,13 @@ export const useDemoStore = defineStore({
     },
     isExistingCustomer: false,
     basicInfo: {
+      dob: '',
       firstName: '',
       lastName: '',
       otherName: '',
       email: '',
       mobileNumber: '',
       gender: '',
-      dob: '',
       password: '',
       confirmPassword: '',
       termsViewed: false,
@@ -114,23 +114,55 @@ export const useDemoStore = defineStore({
       relationshipToPep: '',
       pepName: '',
     },
-    pepAssociateDetails: null,
+    pepAssociateDetails: '',
+    pepAssociateName: '',
     maritalStatus: '',
+    isPEP: null,
+    pepPosition: '',
+    pepRelationship: '',
+    pepCountry: '',
+    childIdInfo: {
+      firstIdType: '',
+      firstIdNumber: '',
+      firstExpiryDate: '',
+      secondIdType: '',
+      secondIdNumber: '',
+      secondExpiryDate: '',
+      schoolName: ''
+    },
+    bankInfo: {
+      bankName: '',
+      bankAddressLine1: '',
+      bankCity: '',
+      bankCountry: '',
+      bankAccountNumber: '',
+      swiftCode: '',
+      bankTelephoneNumber: ''
+    },
+    employmentInfo: {
+      employerName: '',
+      employerAddressLine1: '',
+      employerCity: '',
+      employerCountry: '',
+      workNumber: '',
+      employmentStatus: '',
+      employmentType: ''
+    },
+    beneficiaryInfo: {
+      beneficiaryFirstName: '',
+      beneficiaryLastName: '',
+      beneficiaryEmail: '',
+      beneficiaryPhone: '',
+      idType: '',
+      idNumber: '',
+      idExpiry: '',
+      relationship: '',
+      percentage: ''
+    }
   }),
   actions: {
-    setBasicInfo(data) {
-      this.basicInfo.firstName = data.firstName;
-      this.basicInfo.lastName = data.lastName;
-      this.basicInfo.otherName = data.otherName;
-      this.basicInfo.email = data.email;
-      this.basicInfo.mobileNumber = data.mobileNumber;
-      this.basicInfo.gender = data.gender;
-      this.basicInfo.dob = data.dob;
-      this.basicInfo.password = data.password;
-      this.basicInfo.confirmPassword = data.confirmPassword;
-      this.basicInfo.termsViewed = data.termsViewed;
-      this.basicInfo.financialAgreementViewed = data.financialAgreementViewed;
-      this.age = data.age;
+    setBasicInfo(info) {
+      this.basicInfo = { ...this.basicInfo, ...info };
     },
     
     setAddressInfo(info) {

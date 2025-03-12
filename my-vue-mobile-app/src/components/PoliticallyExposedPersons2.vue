@@ -1,272 +1,309 @@
 <template>
-  <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
-    <div class="content">
-      <h1>Politically Exposed Persons - Part 2</h1>
-      <form @submit.prevent="submitPepInfo">
-        <div class="input-container">
-          <label>Are you an associate of a politically exposed person?</label>
-          <div class="radio-group">
-            <label>
-              <input type="radio" v-model="pepAssociate" value="yes" required/> Yes
-            </label>
-            <label>
-              <input type="radio" v-model="pepAssociate" value="no" required/> No
-            </label>
-          </div>
-          <div class="error-container">
-            <span class="error">{{ errorMessage }}</span>
-          </div>
-        </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section">
+        <v-container class="form-container pa-4">
+          <v-row justify="center" align="start">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-6">
+                <v-img
+                  src="@/assets/Logo1.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-4"
+                  width="80"
+                />
+                
+                <h1 class="text-h1 font-weight-bold mb-2">Politically Exposed Persons - Part 2</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Please provide your PEP association details</p>
+              </div>
 
-        <div class="input-container">
-          <label for="relationshipToPep">Relationship to PEP</label>
-          <input
-            type="text"
-            v-model="pepAssociateDetails"
-            id="relationshipToPep"
-            placeholder="Enter relationship"
-            :disabled="pepAssociate === 'no'"
-          />
-          <div class="error-container">
-            <span class="error">{{ errorMessage }}</span>
-          </div>
-        </div>
+              <v-form @submit.prevent="submitPepInfo">
+                <v-alert
+                  v-if="errorMessage"
+                  type="error"
+                  variant="tonal"
+                  class="mb-4"
+                >
+                  {{ errorMessage }}
+                </v-alert>
 
-        <div class="input-container">
-          <label for="pepName">Name of PEP</label>
-          <input
-            type="text"
-            v-model="pepName"
-            id="pepName"
-            placeholder="Enter name of PEP"
-            :disabled="pepAssociate === 'no'"
-          />
-          <div class="error-container">
-            <span class="error">{{ errorMessage }}</span>
-          </div>
-        </div>
+                <v-card class="mb-6" elevation="3">
+                  <v-card-text>
+                    <div class="input-container">
+                      <label>Are you an associate of a politically exposed person?</label>
+                      <div class="radio-group">
+                        <label>
+                          <input type="radio" v-model="formData.pepAssociate" value="yes" required/> Yes
+                        </label>
+                        <label>
+                          <input type="radio" v-model="formData.pepAssociate" value="no" required/> No
+                        </label>
+                      </div>
+                    </div>
 
-      <!-- Navigation buttons at the bottom -->
-      <div class="button-group">
-        <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-        <button type="submit" class="next-button">Next</button>
-      </div>
-      </form>
-    </div>
-  </div>
+                    <div class="input-container">
+                      <label for="relationshipToPep">Relationship to PEP</label>
+                      <input
+                        type="text"
+                        v-model="formData.pepAssociateDetails"
+                        id="relationshipToPep"
+                        placeholder="Enter relationship"
+                        :disabled="formData.pepAssociate === 'no'"
+                      />
+                    </div>
+
+                    <div class="input-container">
+                      <label for="pepName">Name of PEP</label>
+                      <input
+                        type="text"
+                        v-model="formData.pepName"
+                        id="pepName"
+                        placeholder="Enter name of PEP"
+                        :disabled="formData.pepAssociate === 'no'"
+                      />
+                    </div>
+                  </v-card-text>
+                </v-card>
+
+                <!-- Navigation buttons -->
+                <v-row>
+                  <v-col cols="12" sm="6">
+                    <v-btn
+                      block
+                      color="primary"
+                      variant="elevated"
+                      @click="navigateToPrevious"
+                    >
+                      Back
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-btn
+                      block
+                      color="secondary"
+                      type="submit"
+                    >
+                      Next
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import { ref, computed } from 'vue';
+<script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 
-export default {
-  name: 'PoliticallyExposedPersons2',
-  setup() {
-    const router = useRouter();
-    const store = useDemoStore();
-    const pepAssociate = ref('');
-    const pepAssociateDetails = ref('');
-    const pepName = ref('');
-    const errorMessage = ref('');
+const router = useRouter();
+const store = useDemoStore();
+const formData = ref({
+  pepAssociate: '',
+  pepAssociateDetails: '',
+  pepName: ''
+});
+const errorMessage = ref('');
+const isLoading = ref(false);
 
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
+// Calculate age based on DOB from store
+const calculateAge = (dob) => {
+  if (!dob) return 0;
+  
+  const birthDate = new Date(dob);
+  if (isNaN(birthDate.getTime())) {
+    console.error('Invalid date format:', dob);
+    return 0;
+  }
 
-    // Calculate age based on date of birth
-    const age = computed(() => {
-      if (!store.dob) return null;
-      
-      const birthDate = new Date(store.dob);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      
-      return age;
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
+
+const getBaseURL = () => {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000' 
+    : `http://${window.location.hostname}:3000`;
+};
+
+const submitPepInfo = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+
+  try {
+    if (!formData.value.pepAssociate) {
+      errorMessage.value = 'Please select whether you are an associate of a PEP';
+      return;
+    }
+
+    if (formData.value.pepAssociate === 'yes' && 
+        (!formData.value.pepAssociateDetails || !formData.value.pepName)) {
+      errorMessage.value = 'Please provide all PEP association details';
+      return;
+    }
+
+    // Update store
+    store.$patch((state) => {
+      state.pepAssociate = formData.value.pepAssociate;
+      state.pepAssociateDetails = formData.value.pepAssociateDetails;
+      state.pepAssociateName = formData.value.pepName;
     });
 
-    const submitPepInfo = async () => {
-      if (pepAssociate.value === '') {
-        errorMessage.value = 'Please select an option.';
-        return;
-      }
+    // Submit to API
+    try {
+      const baseURL = getBaseURL();
+      await axios.post(`${baseURL}/politically-exposed-persons-2`, formData.value);
+    } catch (apiError) {
+      console.error('API error:', apiError);
+      // Continue with navigation even if API fails
+    }
 
-      if (pepAssociate.value === 'yes' && !pepAssociateDetails.value) {
-        errorMessage.value = 'Please provide details about your association with a politically exposed person.';
-        return;
-      }
+    // Get DOB from store and calculate age
+    const dob = store.basicInfo?.dob;
+    console.log('DOB from store:', dob); // Debug log
 
-      const formData = {
-        pepAssociate: pepAssociate.value,
-        pepAssociateDetails: pepAssociateDetails.value,
-        pepName: pepName.value
-      };
+    if (!dob) {
+      console.error('Date of birth not found in store:', store.basicInfo);
+      errorMessage.value = 'Unable to determine age. Please ensure basic information is complete.';
+      isLoading.value = false;
+      return;
+    }
 
-      try {
-        // Update store
-        store.setPepInfo2(formData);
-        
-        // Submit to API
-        const baseURL = getBaseURL();
-        await axios.post(`${baseURL}/politically-exposed-persons-2`, formData);
+    const age = calculateAge(dob);
+    console.log('Calculated age:', age); // Debug log
 
-        // Get age from store's basic info
-        const birthDate = new Date(store.basicInfo.dob);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-          age--;
-        }
+    // Navigate based on age
+    if (age < 18) {
+      console.log('Navigating to child ID information (age < 18)');
+      router.push('/child-id-information');
+    } else {
+      console.log('Navigating to ID information (age >= 18)');
+      router.push('/id-information');
+    }
 
-        // Navigate based on age
-        if (age < 18) {
-          router.push('/child-id-information');
-        } else {
-          router.push('/id-information');
-        }
-      } catch (error) {
-        console.error('Error submitting PEP information:', error);
-        errorMessage.value = 'An error occurred while submitting your information';
-        
-        // Get age from store's basic info for error case navigation
-        const birthDate = new Date(store.basicInfo.dob);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-          age--;
-        }
-
-        // Continue with navigation even if API fails after a short delay
-        setTimeout(() => {
-          if (age < 18) {
-            router.push('/child-id-information');
-          } else {
-            router.push('/id-information');
-          }
-        }, 2000);
-      }
-    };
-
-    const navigateToPrevious = () => {
-      router.push('/politically-exposed-persons');
-    };
-
-    return {
-      pepAssociate,
-      pepAssociateDetails,
-      pepName,
-      errorMessage,
-      submitPepInfo,
-      navigateToPrevious
-    };
+  } catch (error) {
+    console.error('Error submitting PEP information:', error);
+    errorMessage.value = 'An error occurred while submitting your information';
+  } finally {
+    isLoading.value = false;
   }
 };
+
+const navigateToPrevious = () => {
+  // Save current state before navigating
+  store.$patch((state) => {
+    state.pepAssociate = formData.value.pepAssociate;
+    state.pepAssociateDetails = formData.value.pepAssociateDetails;
+    state.pepAssociateName = formData.value.pepName;
+  });
+  router.push('/politically-exposed-persons');
+};
+
+// Initialize form with stored data
+onMounted(() => {
+  console.log('Store state on mount:', store.basicInfo); // Debug log
+  if (store) {
+    formData.value.pepAssociate = store.pepAssociate || '';
+    formData.value.pepAssociateDetails = store.pepAssociateDetails || '';
+    formData.value.pepName = store.pepAssociateName || '';
+  }
+});
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.form-section {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   min-height: 100vh;
-  width: 100%;
-  background: #f4f4f4;
-  padding: 20px;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
-  color: rgb(12, 12, 12);
-  position: relative;
-  margin: auto;
-}
-
-.content h1 {
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.4);
-  width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  text-align: center;
-  z-index: 2;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
-}
-
-h1 {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  padding: 20px 0;
-}
-
-form {
-  flex: 1;
-  width: 100%;
   overflow-y: auto;
-  padding: 20px 15px 80px;
-  margin-top: 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  box-sizing: border-box;
 }
 
-form::-webkit-scrollbar {
-  width: 5px;
-  background: transparent;
+.form-container {
+  max-width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
-form::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.brand-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.brand-logo {
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  filter: brightness(1.2);
+}
+
+:deep(.v-btn) {
+  height: 48px;
+  border-radius: 8px;
+}
+
+:deep(.v-card) {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+:deep(.v-card-text) {
+  padding: 24px;
 }
 
 .input-container {
-  width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
   margin-bottom: 20px;
 }
 
 .input-container label {
   display: block;
-  font-size: clamp(14px, 3vw, 16px);
-  color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .radio-group {
@@ -279,147 +316,51 @@ form::-webkit-scrollbar-thumb {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: clamp(14px, 3vw, 16px);
-  color: #333;
   cursor: pointer;
 }
 
-.radio-group input[type="radio"] {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-}
-
-.input-container input[type="text"] {
+input[type="text"] {
   width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
+  padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: clamp(14px, 3vw, 16px);
-  transition: border-color 0.3s ease;
+  font-size: 16px;
 }
 
-.input-container input[type="text"]:focus {
-  outline: none;
-  border-color: #FFBC2D;
-}
-
-.input-container input[type="text"]:disabled {
+input[type="text"]:disabled {
   background-color: #f5f5f5;
   cursor: not-allowed;
 }
 
-.error-container {
-  margin-top: 5px;
-}
-
-.error {
-  color: #d32f2f;
-  font-size: clamp(12px, 2.5vw, 14px);
-}
-
-.back-icon-link {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
-  z-index: 10;
-}
-
-.back-icon {
-  font-size: 24px;
-  color: #FFBC2D;
-  transition: color 0.3s ease;
-}
-
-.back-icon:hover {
-  color: #FF883F;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-top: 20px;
-  padding: 0 15px;
-  box-sizing: border-box;
-}
-
-.back-button, .next-button {
-  width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: clamp(14px, 3vw, 16px);
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-}
-
-.back-button {
-  background-color: #6362F8;
-  color: white;
-}
-
-.back-button:hover {
-  background-color: #FF883F;
-}
-
-.next-button {
-  background-color: #FFBC2D;
-  color: white;
-}
-
-.next-button:hover {
-  background-color: #FF883F;
-}
-
-.next-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.next-button:disabled:hover {
-  background-color: #cccccc;
-}
-
-/* Media Queries */
-@media (max-width: 480px) {
-  .container {
-    padding: 10px;
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
-  
-  .content {
-    max-height: 100vh;
-    border-radius: 0;
+
+  .brand-section {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
   }
-  
-  .content h1 {
-    border-radius: 0;
-  }
-  
-  .input-container {
-    padding: 0 10px;
-  }
-  
-  .back-icon-link {
-    top: 15px;
-    left: 15px;
+
+  .brand-logo {
+    width: 180px;
   }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
-  .content {
-    max-width: 450px;
+/* Ensure form content is scrollable on mobile */
+@media (max-width: 600px) {
+  .form-section {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
-}
 
-@media (min-width: 769px) {
-  .content {
-    max-width: 500px;
+  .form-container {
+    min-height: auto;
+    padding: 1rem;
   }
 }
 </style>

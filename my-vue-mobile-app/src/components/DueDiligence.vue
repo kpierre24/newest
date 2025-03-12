@@ -1,73 +1,77 @@
 <template>
-  <v-container class="fill-height" fluid>
+  <v-container class="fill-height pa-0" fluid>
     <v-row no-gutters>
       <!-- Form Section -->
-      <v-col cols="12" md="6" class="form-section">
-        <v-container class="form-container">
-          <v-row justify="center" align="center">
+      <v-col cols="12" md="6" class="form-section d-flex align-center">
+        <v-container class="form-container pa-4">
+          <v-row justify="center">
             <v-col cols="12" sm="8" md="10" lg="8">
-              <div class="text-center mb-6">
+              <div class="text-center mb-4">
                 <v-img
-                  src="@/assets/cathedral-engage-logo.png"
+                  src="@/assets/Logo1.png"
                   alt="Cathedral Engage"
-                  class="mx-auto mb-4"
-                  width="80"
+                  class="mx-auto mb-2"
+                  width="60"
                 />
-                <h1 class="text-h4 font-weight-bold text-primary mb-2">Due Diligence</h1>
-                <p class="text-subtitle-1 text-medium-emphasis">Due Diligence Information</p>
+                <h1 class="text-h4 font-weight-bold text-primary mb-1">Due Diligence</h1>
+                <h2 class="text-h5 font-weight-bold mb-1">Due Diligence Information</h2>
               </div>
 
-              <v-card class="mb-6" variant="outlined">
-                <v-card-text>
+              <v-card class="mb-6" elevation="2">
+                <v-card-text class="pa-4">
                   <p class="text-body-1 mb-4">
                     As part of our commitment to regulatory compliance and ensuring the security of our members, 
                     we may require all foreign nationals to complete additional due diligence procedures which may include:
                   </p>
-                  
-                  <v-list lines="one" class="bg-grey-lighten-4 rounded-lg mb-4">
+
+                  <v-list class="mb-4 bg-grey-lighten-4 rounded-lg">
                     <v-list-item
                       v-for="(item, index) in dueDiligenceItems"
                       :key="index"
-                      :prepend-icon="'mdi-check-circle'"
-                      :title="item"
-                      class="text-primary"
-                    ></v-list-item>
+                      class="py-2"
+                    >
+                      <template v-slot:prepend>
+                        <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
+                      </template>
+                      <v-list-item-title>{{ item }}</v-list-item-title>
+                    </v-list-item>
                   </v-list>
 
                   <v-btn
-                    variant="text"
+                    block
                     color="primary"
+                    variant="elevated"
+                    class="mb-3"
                     href="https://drive.google.com/drive/folders/1t8z2oRVvDwJwXGtKQ7JAQGdsK7-IuZIN"
                     target="_blank"
-                    prepend-icon="mdi-link"
-                    class="text-none"
+                    prepend-icon="mdi-file-document-outline"
                   >
-                    Link to Laws and Regulations
+                    Laws and Regulations
                   </v-btn>
+
+                  <v-row class="mt-6">
+                    <v-col cols="12" sm="6">
+                      <v-btn
+                        block
+                        color="error"
+                        variant="elevated"
+                        @click="navigateToPrevious"
+                      >
+                        Back
+                      </v-btn>
+                    </v-col>
+                    <v-col cols="12" sm="6">
+                      <v-btn
+                        block
+                        color="secondary"
+                        @click="navigateToNext"
+                      >
+                        Next
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-card-text>
               </v-card>
-
-              <v-row class="mt-6">
-                <v-col cols="12" sm="6">
-                  <v-btn
-                    block
-                    color="primary"
-                    variant="tonal"
-                    @click="navigateToPrevious"
-                  >
-                    Back
-                  </v-btn>
-                </v-col>
-                <v-col cols="12" sm="6">
-                  <v-btn
-                    block
-                    color="primary"
-                    @click="navigateToNext"
-                  >
-                    Next
-                  </v-btn>
-                </v-col>
-              </v-row>
             </v-col>
           </v-row>
         </v-container>
@@ -75,10 +79,12 @@
 
       <!-- Brand Section -->
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
         <v-img
-          src="@/assets/cathedral-engage-logo.png"
+          src="@/assets/Logo1.png"
           alt="Cathedral Engage"
           class="brand-logo"
+          contain
         />
       </v-col>
     </v-row>
@@ -86,7 +92,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 
@@ -119,20 +124,22 @@ const navigateToNext = () => {
 
 .form-container {
   max-width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
 }
 
 .brand-section {
   background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
   min-height: 100vh;
-  position: relative;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
-.brand-section::before {
-  content: '';
+.brand-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -141,24 +148,50 @@ const navigateToNext = () => {
   background: url('@/assets/background.png') center/cover no-repeat;
   opacity: 0.1;
   mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 .brand-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 180px;
-  filter: brightness(1.2);
+  width: 240px;
+  height: auto;
   z-index: 2;
+  filter: brightness(1.2);
 }
 
-:deep(.v-field) {
-  border-radius: 8px !important;
+:deep(.v-card) {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+:deep(.v-card:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1) !important;
 }
 
 :deep(.v-btn) {
   height: 48px;
   border-radius: 8px;
+}
+
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding: 1rem;
+  }
+
+  .brand-section {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-section {
+    min-height: calc(100vh - 60px);
+  }
+
+  :deep(.v-card-text) {
+    padding: 16px !important;
+  }
 }
 </style>

@@ -1,465 +1,380 @@
 <template>
-  <div class="container">
-    <!-- Mobile View -->
-    <div class="mobile-view">
-      <div class="form-container">
-        <div class="logo-container">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
-        </div>
-        <h1>Employment Information</h1>
-        <form @submit.prevent="handleSubmit">
-          <FormInput
-            label="Employer Name"
-            type="text"
-            id="employerName"
-            v-model="employerName"
-            placeholder="Enter employer name"
-            :required="true"
-            iconClass="icon fas fa-building"
-          />
-          <FormInput
-            label="Address Line 1"
-            type="text"
-            id="employerAddressLine1"
-            v-model="employerAddressLine1"
-            placeholder="Enter address line 1"
-            :required="true"
-            iconClass="icon fas fa-map-marker-alt"
-          />
-          <FormInput
-            label="City"
-            type="text"
-            id="employerCity"
-            v-model="employerCity"
-            placeholder="Enter city"
-            :required="true"
-            iconClass="icon fas fa-city"
-          />
-          <FormInput
-            label="Country"
-            type="select"
-            id="employerCountry"
-            v-model="employerCountry"
-            :required="true"
-            :selectOptions="countryList"
-            iconClass="icon fas fa-globe"
-          />
-          <FormInput
-            label="Work Number"
-            type="text"
-            id="workNumber"
-            v-model="workNumber"
-            placeholder="Enter work number"
-            :required="true"
-            iconClass="icon fas fa-phone"
-          />
-          <FormInput
-            label="Employment Status"
-            type="select"
-            id="employmentStatus"
-            v-model="employmentStatus"
-            :required="true"
-            :selectOptions="['Employed', 'Self-Employed', 'Unemployed', 'Student', 'Retired']"
-            iconClass="icon fas fa-briefcase"
-          />
-          <FormInput
-            label="Employment Type"
-            type="select"
-            id="employmentType"
-            v-model="employmentType"
-            :required="true"
-            :selectOptions="['Full-Time', 'Part-Time', 'Contract', 'Temporary']"
-            iconClass="icon fas fa-user-tie"
-          />
-          <div class="input-container">
-            <label>Proof of Employment</label>
-            <FileUpload
-              id="proofOfEmploymentFile"
-              buttonText="Upload Proof"
-              accept=".pdf,.jpg,.png"
-              @file-uploaded="handleFileUpload"
-            />
-          </div>
-          <div class="button-group">
-            <button type="button" class="back-button" @click="$router.go(-1)">Back</button>
-            <button type="submit" class="submit-button">Next</button>
-          </div>
-        </form>
-      </div>
-    </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section">
+        <v-container class="form-container pa-4">
+          <v-row justify="center" align="start">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-6">
+                <v-img
+                  src="@/assets/Logo1.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-4"
+                  width="80"
+                />
+                
+                <h1 class="text-h1 font-weight-bold mb-2">Employment Information</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Please provide your employment details</p>
+              </div>
 
-    <!-- Desktop View -->
-    <div class="desktop-view">
-      <div class="login-section">
-        <div class="form-container">
-          <div class="logo-container">
-            <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
-          </div>
-          <h1>Employment Information</h1>
-          <form @submit.prevent="handleSubmit">
-            <FormInput
-              label="Employer Name"
-              type="text"
-              id="employerName-desktop"
-              v-model="employerName"
-              placeholder="Enter employer name"
-              :required="true"
-              iconClass="icon fas fa-building"
-            />
-            <FormInput
-              label="Address Line 1"
-              type="text"
-              id="employerAddressLine1-desktop"
-              v-model="employerAddressLine1"
-              placeholder="Enter address line 1"
-              :required="true"
-              iconClass="icon fas fa-map-marker-alt"
-            />
-            <FormInput
-              label="City"
-              type="text"
-              id="employerCity-desktop"
-              v-model="employerCity"
-              placeholder="Enter city"
-              :required="true"
-              iconClass="icon fas fa-city"
-            />
-            <FormInput
-              label="Country"
-              type="select"
-              id="employerCountry-desktop"
-              v-model="employerCountry"
-              :required="true"
-              :selectOptions="countryList"
-              iconClass="icon fas fa-globe"
-            />
-            <FormInput
-              label="Work Number"
-              type="text"
-              id="workNumber-desktop"
-              v-model="workNumber"
-              placeholder="Enter work number"
-              :required="true"
-              iconClass="icon fas fa-phone"
-            />
-            <FormInput
-              label="Employment Status"
-              type="select"
-              id="employmentStatus-desktop"
-              v-model="employmentStatus"
-              :required="true"
-              :selectOptions="['Employed', 'Self-Employed', 'Unemployed', 'Student', 'Retired']"
-              iconClass="icon fas fa-briefcase"
-            />
-            <FormInput
-              label="Employment Type"
-              type="select"
-              id="employmentType-desktop"
-              v-model="employmentType"
-              :required="true"
-              :selectOptions="['Full-Time', 'Part-Time', 'Contract', 'Temporary']"
-              iconClass="icon fas fa-user-tie"
-            />
-            <div class="input-container">
-              <label>Proof of Employment</label>
-              <FileUpload
-                id="proofOfEmploymentFile-desktop"
-                buttonText="Upload Proof"
-                accept=".pdf,.jpg,.png"
-                @file-uploaded="handleFileUpload"
-              />
-            </div>
-            <div class="button-group">
-              <button type="button" class="back-button" @click="$router.go(-1)">Back</button>
-              <button type="submit" class="submit-button">Next</button>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="brand-section">
-        <div class="brand-content">
-          <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
-        </div>
-      </div>
-    </div>
-  </div>
+              <v-form @submit.prevent="handleSubmit">
+                <v-alert
+                  v-if="formError"
+                  type="error"
+                  variant="tonal"
+                  class="mb-4"
+                >
+                  {{ formError }}
+                </v-alert>
+
+                <v-card class="mb-6" variant="outlined">
+                  <v-card-text>
+                    <v-text-field
+                      v-model="formData.employerName"
+                      label="Employer Name"
+                      placeholder="Enter employer name"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-domain"
+                      :rules="[v => !!v || 'Employer name is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.employerAddressLine1"
+                      label="Address Line 1"
+                      placeholder="Enter address line 1"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-map-marker"
+                      :rules="[v => !!v || 'Address is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.employerCity"
+                      label="City"
+                      placeholder="Enter city"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-city"
+                      :rules="[v => !!v || 'City is required']"
+                      required
+                    />
+
+                    <v-select
+                      v-model="formData.employerCountry"
+                      label="Country"
+                      :items="countryList"
+                      placeholder="Select country"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-earth"
+                      :rules="[v => !!v || 'Country is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.workNumber"
+                      label="Work Number"
+                      placeholder="Enter work number"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-phone"
+                      :rules="[v => !!v || 'Work number is required']"
+                      required
+                    />
+
+                    <v-select
+                      v-model="formData.employmentStatus"
+                      label="Employment Status"
+                      :items="['Employed', 'Self-Employed', 'Unemployed', 'Student', 'Retired']"
+                      placeholder="Select employment status"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-briefcase"
+                      :rules="[v => !!v || 'Employment status is required']"
+                      required
+                    />
+
+                    <v-select
+                      v-model="formData.employmentType"
+                      label="Employment Type"
+                      :items="['Full-Time', 'Part-Time', 'Contract', 'Temporary']"
+                      placeholder="Select employment type"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-account-tie"
+                      :rules="[v => !!v || 'Employment type is required']"
+                      required
+                    />
+
+                    <v-file-input
+                      v-model="formData.proofOfEmploymentFile"
+                      label="Proof of Employment"
+                      accept=".pdf,.jpg,.png"
+                      placeholder="Upload proof of employment"
+                      variant="outlined"
+                      prepend-icon="mdi-upload"
+                      :rules="[v => !!v || 'Proof of employment is required']"
+                      @change="handleFileUpload"
+                      required
+                    >
+                      <template v-slot:selection="{ fileNames }">
+                        <template v-for="fileName in fileNames" :key="fileName">
+                          <v-chip
+                            size="small"
+                            label
+                            color="primary"
+                            class="me-2"
+                          >
+                            {{ fileName }}
+                          </v-chip>
+                        </template>
+                      </template>
+                    </v-file-input>
+
+                    <v-row class="mt-6">
+                      <v-col cols="12" sm="6">
+                        <v-btn
+                          block
+                          color="primary"
+                          variant="elevated"
+                          @click="navigateToPrevious"
+                        >
+                          Back
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="12" sm="6">
+                        <v-btn
+                          block
+                          color="secondary"
+                          type="submit"
+                          :loading="isLoading"
+                        >
+                          {{ isLoading ? 'Processing...' : 'Next' }}
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-form>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import { useDemoStore } from '@/store/demoStore';
+<script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import { countries } from 'countries-list';
-import FormInput from '@/props/FormInput.vue';
-import FileUpload from '@/props/FileUpload.vue';
 
-export default {
-  components: {
-    FormInput,
-    FileUpload
-  },
-  setup() {
-    const store = useDemoStore();
-    const router = useRouter();
+const router = useRouter();
+const store = useDemoStore();
 
-    const employerName = ref('');
-    const employerAddressLine1 = ref('');
-    const employerCity = ref('');
-    const employerCountry = ref('');
-    const workNumber = ref('');
-    const employmentStatus = ref('');
-    const employmentType = ref('');
-    const proofOfEmploymentFile = ref(null);
-    const countryList = ref(Object.values(countries).map(country => country.name));
-    
-    // Get the base URL dynamically
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:3000' 
-      : `http://${window.location.hostname}:3000`;
+// Form data
+const formData = ref({
+  employerName: '',
+  employerAddressLine1: '',
+  employerCity: '',
+  employerCountry: '',
+  workNumber: '',
+  employmentStatus: '',
+  employmentType: '',
+  proofOfEmploymentFile: null
+});
 
-    onMounted(() => {
-      employerName.value = store.employerName;
-      employerAddressLine1.value = store.employerAddressLine1;
-      employerCity.value = store.employerCity;
-      employerCountry.value = store.employerCountry;
-      workNumber.value = store.workNumber;
-      employmentStatus.value = store.employmentStatus;
-      employmentType.value = store.employmentType;
-    });
+// UI state
+const isLoading = ref(false);
+const formError = ref('');
+const countryList = ref(Object.values(countries).map(country => country.name));
 
-    const handleFileUpload = (event) => {
-      if (event && event.target && event.target.files && event.target.files.length > 0) {
-        const file = event.target.files[0];
-        proofOfEmploymentFile.value = file;
-      } else {
-        console.warn('No file selected or file input event is invalid');
-      }
-    };
+const getBaseURL = () => {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000' 
+    : `http://${window.location.hostname}:3000`;
+};
 
-    const handleSubmit = async () => {
-      try {
-        const formData = new FormData();
-        formData.append('employerName', employerName.value);
-        formData.append('employerAddressLine1', employerAddressLine1.value);
-        formData.append('employerCity', employerCity.value);
-        formData.append('employerCountry', employerCountry.value);
-        formData.append('workNumber', workNumber.value);
-        formData.append('employmentStatus', employmentStatus.value);
-        formData.append('employmentType', employmentType.value);
-        formData.append('proofOfEmploymentFile', proofOfEmploymentFile.value);
-
-        // Save employment info to the store
-        store.setEmploymentInfo({
-          employerName: employerName.value,
-          employerAddressLine1: employerAddressLine1.value,
-          employerCity: employerCity.value,
-          employerCountry: employerCountry.value,
-          workNumber: workNumber.value,
-          employmentStatus: employmentStatus.value,
-          employmentType: employmentType.value,
-          proofOfEmploymentFile: proofOfEmploymentFile.value
-        });
-
-        // Debugging logs to check form data
-        for (let [key, value] of formData.entries()) {
-          console.log(`${key}: ${value}`);
-        }
-
-        try {
-          const response = await axios.post(`${baseURL}/employment-information`, formData, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          console.log('Employment information submitted:', response.data);
-        } catch (apiError) {
-          console.error('API error:', apiError);
-          // Continue with navigation even if API fails
-        }
-
-        // Navigate to the next page
-        router.push('/designation-of-beneficiary'); // Replace with the actual next page route
-      } catch (error) {
-        console.error('Error submitting employment information:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
-      }
-    };
-
-    return {
-      employerName,
-      employerAddressLine1,
-      employerCity,
-      employerCountry,
-      workNumber,
-      employmentStatus,
-      employmentType,
-      proofOfEmploymentFile,
-      countryList,
-      handleFileUpload,
-      handleSubmit
-    };
+const handleFileUpload = (event) => {
+  if (event && event.target && event.target.files && event.target.files.length > 0) {
+    formData.value.proofOfEmploymentFile = event.target.files[0];
   }
 };
+
+const handleSubmit = async () => {
+  isLoading.value = true;
+  formError.value = '';
+
+  try {
+    // Validate required fields
+    if (!formData.value.employerName || !formData.value.employerAddressLine1 || 
+        !formData.value.employerCity || !formData.value.employerCountry || 
+        !formData.value.workNumber || !formData.value.employmentStatus || 
+        !formData.value.employmentType || !formData.value.proofOfEmploymentFile) {
+      formError.value = 'Please fill in all required fields';
+      return;
+    }
+
+    // Create FormData for file upload
+    const apiFormData = new FormData();
+    Object.keys(formData.value).forEach(key => {
+      apiFormData.append(key, formData.value[key]);
+    });
+
+    // Save to store (excluding file)
+    store.$patch((state) => {
+      state.employmentInfo = {
+        employerName: formData.value.employerName,
+        employerAddressLine1: formData.value.employerAddressLine1,
+        employerCity: formData.value.employerCity,
+        employerCountry: formData.value.employerCountry,
+        workNumber: formData.value.workNumber,
+        employmentStatus: formData.value.employmentStatus,
+        employmentType: formData.value.employmentType
+      };
+    });
+
+    console.log('Submitting employment information:', formData.value);
+
+    // Make API call
+    const baseURL = getBaseURL();
+    const response = await axios.post(`${baseURL}/employment-information`, apiFormData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('API Response:', response.data);
+
+    router.push('/designation-of-beneficiary');
+  } catch (error) {
+    console.error('Error submitting employment information:', error);
+    formError.value = 'An error occurred while submitting your information. Please try again.';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const navigateToPrevious = () => {
+  // Save current state before navigating
+  store.$patch((state) => {
+    state.employmentInfo = {
+      employerName: formData.value.employerName,
+      employerAddressLine1: formData.value.employerAddressLine1,
+      employerCity: formData.value.employerCity,
+      employerCountry: formData.value.employerCountry,
+      workNumber: formData.value.workNumber,
+      employmentStatus: formData.value.employmentStatus,
+      employmentType: formData.value.employmentType
+    };
+  });
+  router.go(-1);
+};
+
+// Initialize component with stored data
+onMounted(() => {
+  console.log('Initializing component with store data:', store.employmentInfo);
+  if (store.employmentInfo) {
+    formData.value = {
+      ...formData.value,
+      ...store.employmentInfo
+    };
+  }
+});
 </script>
 
 <style scoped>
-.container {
-  width: 100%;
+.form-section {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Mobile View Styles */
-.mobile-view {
-  display: none;
-  width: 100%;
-  min-height: 100vh;
-  padding: 1rem;
-  box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-  .mobile-view {
-    display: block;
-  }
-  .desktop-view {
-    display: none;
-  }
-}
-
-/* Desktop View Styles */
-.desktop-view {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-}
-
-@media (max-width: 768px) {
-  .desktop-view {
-    display: none;
-  }
-}
-
-.login-section {
-  grid-column: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-.brand-section {
-  grid-column: 2;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.brand-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
-  z-index: 1;
-}
-
-.brand-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-
-.brand-logo {
-  width: 180px;
-  filter: brightness(1.2);
+  overflow-y: auto;
 }
 
 .form-container {
-  width: 100%;
-  max-width: 600px;
-  padding: 2rem;
-  box-sizing: border-box;
-}
-
-.logo-container {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.logo {
-  width: 120px;
-  height: auto;
-}
-
-h1 {
-  font-size: clamp(24px, 4vw, 32px);
-  color: #333;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.button-group {
+  max-width: 100%;
+  min-height: 100vh;
   display: flex;
-  gap: 1rem;
+  align-items: flex-start;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.brand-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin-top: 2rem;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
-.back-button,
-.submit-button {
-  flex: 1;
-  padding: 1rem;
-  border: none;
+.brand-logo {
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  filter: brightness(1.2);
+}
+
+:deep(.v-btn) {
+  height: 48px;
   border-radius: 8px;
-  font-size: clamp(14px, 2.5vw, 16px);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-.back-button {
-  background-color: #6362F8;
-  color: white;
-}
-
-.back-button:hover {
-  background-color: #5251d3;
-}
-
-.submit-button {
-  background-color: #FFBC2D;
-  color: white;
-}
-
-.submit-button:hover {
-  background-color: #e6a928;
-}
-
-@media (max-width: 480px) {
+/* Mobile specific styles */
+@media (max-width: 959px) {
   .form-container {
-    padding: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
-  
-  .button-group {
-    flex-direction: column;
-  }
-  
-  .back-button,
-  .submit-button {
+
+  .brand-section {
+    position: relative;
     width: 100%;
+    min-height: 300px;
+  }
+
+  .brand-logo {
+    width: 180px;
+  }
+}
+
+/* Ensure form content is scrollable on mobile */
+@media (max-width: 600px) {
+  .form-section {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .form-container {
+    min-height: auto;
+    padding: 1rem;
   }
 }
 </style>

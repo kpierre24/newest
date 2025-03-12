@@ -1,222 +1,241 @@
 <template>
-  <div class="container">
-    <div class="form-container">
-      <h1>Sign In</h1>
-      <p class="subtitle">Sign In using your Online Account</p>
-      <form @submit.prevent="submitLogin">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" v-model="email" id="email" required />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" v-model="password" id="password" required />
-        </div>
-        <button type="submit" class="signin-button">Sign In</button>
-        <p class="recover-account">Recover your account</p>
-      </form>
-      <p class="powered-by">powered by</p>
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
-    </div>
-  </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section">
+        <v-container class="form-container pa-4">
+          <v-row justify="center" align="start">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-4">
+                <v-img
+                  src="@/assets/Logo1.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-2"
+                  width="60"
+                />
+               
+                <h1 class="text-h1 font-weight-bold mb-1">Sign In</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Sign in using your Online Account</p>
+              </div>
+
+              <v-card class="mb-6" elevation="3">
+                <v-card-text class="pa-4">
+                  <v-form @submit.prevent="submitLogin">
+                    <v-alert
+                      v-if="formError"
+                      type="error"
+                      variant="tonal"
+                      class="mb-4"
+                      density="compact"
+                    >
+                      {{ formError }}
+                    </v-alert>
+
+                    <v-text-field
+                      v-model="formData.email"
+                      label="Email"
+                      type="email"
+                      placeholder="Enter your email"
+                      variant="outlined"
+                      density="comfortable"
+                      prepend-inner-icon="mdi-email"
+                      :rules="[v => !!v || 'Email is required']"
+                      required
+                      class="mb-3"
+                    />
+
+                    <v-text-field
+                      v-model="formData.password"
+                      label="Password"
+                      type="password"
+                      placeholder="Enter your password"
+                      variant="outlined"
+                      density="comfortable"
+                      prepend-inner-icon="mdi-lock"
+                      :rules="[v => !!v || 'Password is required']"
+                      required
+                      class="mb-4"
+                    />
+
+                    <v-btn
+                      type="submit"
+                      color="primary"
+                      variant="elevated"
+                      size="large"
+                      block
+                      :loading="isLoading"
+                      height="44"
+                      class="mb-1"
+                    >
+                      {{ isLoading ? 'Signing in...' : 'Sign In' }}
+                    </v-btn>
+
+                    <div class="text-center">
+                      <v-btn
+                        variant="text"
+                        color="primary"
+                        @click="navigateToRecovery"
+                        class="text-caption"
+                      >
+                        Recover your account
+                      </v-btn>
+                    </div>
+                  </v-form>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useField, useForm } from 'vee-validate';
-import * as yup from 'yup';
+import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 
-export default {
-  setup() {
-    const router = useRouter();
-    const store = useDemoStore();
+const router = useRouter();
+const store = useDemoStore();
 
-    const { handleSubmit } = useForm({
-      validationSchema: yup.object({
-        email: yup.string().email('Please enter a valid email address').required('This field is required'),
-        password: yup.string().required('This field is required')
-      })
+const formData = ref({
+  email: '',
+  password: ''
+});
+
+const formError = ref('');
+const isLoading = ref(false);
+
+const submitLogin = async () => {
+  isLoading.value = true;
+  formError.value = '';
+
+  try {
+    if (!formData.value.email || !formData.value.password) {
+      formError.value = 'Please fill in all required fields';
+      return;
+    }
+
+    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : `http://${window.location.hostname}:3000`;
+
+    const response = await axios.post(`${baseURL}/login`, {
+      email: formData.value.email,
+      password: formData.value.password
     });
 
-    const { value: email, errorMessage: emailError } = useField('email');
-    const { value: password, errorMessage: passwordError } = useField('password');
-
-    const submitLogin = handleSubmit(async () => {
-      try {
-        const response = await axios.post('http://localhost:3000/login', {
-          email: email.value,
-          password: password.value
-        });
-
-        console.log('Login successful:', response.data);
-        store.setUserEmail(email.value);
-        router.push('/dashboard');
-      } catch (error) {
-        console.error('Login failed:', error);
-        alert('Login failed. Please check your email and password.');
-      }
-    });
-
-    return {
-      email,
-      emailError,
-      password,
-      passwordError,
-      submitLogin
-    };
+    store.setUserEmail(formData.value.email);
+    router.push('/dashboard');
+  } catch (error) {
+    console.error('Login failed:', error);
+    formError.value = 'Invalid email or password';
+  } finally {
+    isLoading.value = false;
   }
 };
+
+const navigateToRecovery = () => {
+  router.push('/recover-account');
+};
 </script>
+
 <style scoped>
-.container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* Adjust to start the content from the top */
-  height: 100vh;  /* Adjusted height */
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  backdrop-filter: blur(5px);
-   /* Start hidden */
-  animation: fadeIn 1s ease-in-out forwards;
+
+.form-section {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  min-height: 100vh;
 }
 
 .form-container {
-  background: rgba(255, 255, 255, 0.541); /* Changed to plain white */
-  background-image: url('@/assets/signin.jpg');
-  background-size: cover;
-  background-position: center;
-  margin-top: 20px;
-  position: relative;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  max-width: 100%;
   height: 100vh;
-  max-width: 400px;
-  text-align: center;
+  display: flex;
+  align-items: center;
 }
 
-.form-container::before {
-  content: '';
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.brand-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0) 0%, /* Transparent at the top */
-    rgba(255, 255, 255, 1) 100% /* White at the bottom */
-  );
-  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
-.form-container > * {
-  position: relative;
+.brand-logo {
+  width: 240px;
+  height: auto;
   z-index: 2;
+  filter: brightness(1.2);
 }
 
-.arrow {
-  font-size: 2em;
-  margin-bottom: 5px;
+:deep(.v-card) {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-h1 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 10px;
-  font-weight: bold;
+:deep(.v-card:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1) !important;
 }
 
-.subtitle {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-label {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 6px;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
+:deep(.v-field) {
   border-radius: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  background: #f9f9f9; /* Light gray background */
-  transition: 0.3s ease;
 }
 
-input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-}
-
-.signin-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
+:deep(.v-btn) {
   border-radius: 8px;
-  background-color: #333; /* Dark color for the button */
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  margin-bottom: 10px;
 }
 
-.signin-button:hover {
-  background-color: #555;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding: 1rem;
+  }
+
+  .brand-section {
+    display: none;
+  }
 }
 
-.recover-account {
-  font-size: 14px;
-  color: #007bff;
-  cursor: pointer;
-  margin-bottom: 20px;
-}
+@media (max-width: 600px) {
+  .form-section {
+    min-height: calc(100vh - 60px);
+  }
 
-.powered-by {
-  font-size: 12px;
-  color: #666;
-  margin-top: 20px;
-}
-
-.logo {
-  width: 100px;
-  margin-top: 20px;
-}
-
-.credit-union-name {
-  font-size: 12px;
-  color: #666;
-  margin-top: 5px;
+  :deep(.v-card-text) {
+    padding: 16px !important;
+  }
 }
 </style>

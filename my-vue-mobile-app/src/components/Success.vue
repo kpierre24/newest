@@ -1,207 +1,170 @@
 <template>
-  <div class="container">
-    <div class="content">
-      <h1>Success</h1>
-      <div class="success-icon">
-        <i class="fas fa-check-circle"></i>
-      </div>
-      <p>You have successfully signed up for mobile banking and will be contacted soon by one of our agents.</p>
-      <div class="button-group">
-        <button @click="navigateToLogin" class="login-button">Go to Login</button>
-      </div>
-    </div>
-  </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section">
+        <v-container class="form-container pa-4">
+          <v-row justify="center" align="start">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-4">
+                <v-img
+                  src="@/assets/Logo1.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-2"
+                  width="60"
+                />
+                <h1 class="text-h4 font-weight-bold text-primary mb-1">Cathedral Engage</h1>
+              </div>
+
+              <v-card class="mb-6" elevation="3">
+                <v-card-text class="text-center pa-6">
+                  <v-icon
+                    icon="mdi-check-circle-outline"
+                    color="success"
+                    size="64"
+                    class="mb-4"
+                  />
+                  
+                  <h2 class="text-h5 font-weight-bold mb-4">Success!</h2>
+                  
+                  <p class="text-body-1 mb-6">
+                    You have successfully signed up for mobile banking and will be contacted soon by one of our agents.
+                  </p>
+
+                  <v-btn
+                      block
+                      color="primary"
+                      variant="elevated"
+                      @click="navigateToLogin"
+                      height="44"
+                  >
+                    Go to Login
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
-export default {
-  name: 'Success',
-  setup() {
-    const router = useRouter();
+const router = useRouter();
+
+const navigateToLogin = async () => {
+  try {
+    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : `http://${window.location.hostname}:3000`;
     
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
-    
-    const navigateToLogin = async () => {
-      // Example form data
-      const formData = {
-        userId: '12345',
-        message: 'User has successfully signed up'
-      };
-      
-      try {
-        // Try to submit to API but don't block navigation if it fails
-        const baseURL = getBaseURL();
-        const response = await axios.post(`${baseURL}/success`, formData);
-        console.log('Success data submitted:', response.data);
-      } catch (error) {
-        console.error('Error submitting success data:', error);
-        // Continue with navigation even if API fails
-      }
-      
-      // Navigate to the login screen
-      console.log('Navigating to /login');
-      router.push('/login');
-    };
-    
-    return {
-      navigateToLogin
-    };
+    await axios.post(`${baseURL}/success`, {
+      userId: '12345',
+      message: 'User has successfully signed up'
+    });
+  } catch (error) {
+    console.error('Error submitting success data:', error);
   }
+  
+  router.push('/login');
 };
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.form-section {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   min-height: 100vh;
-  width: 100%;
-  background: #f4f4f4;
-  padding: 20px;
-  margin: 0;
-  box-sizing: border-box;
 }
 
-.content {
+.form-container {
+  max-width: 100%;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
-  color: rgb(12, 12, 12);
-  position: relative;
-  margin: auto;
-}
-
-.content h1 {
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.4);
-  width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  text-align: center;
-  z-index: 2;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
-}
-
-h1 {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  padding: 20px 0;
-}
-
-.success-content {
-  flex: 1;
-  width: 100%;
-  padding: 20px 15px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  box-sizing: border-box;
+  align-items: center;
 }
 
-.success-icon {
-  font-size: clamp(48px, 10vw, 64px);
-  color: #4CAF50;
-  margin-bottom: 20px;
-}
-
-.success-message {
-  font-size: clamp(18px, 4vw, 24px);
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.success-details {
-  font-size: clamp(14px, 3vw, 16px);
-  color: #666;
-  margin-bottom: 30px;
-  padding: 0 20px;
-}
-
-.button-group {
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-.login-button {
+.brand-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
-  border: none;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.brand-logo {
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  filter: brightness(1.2);
+}
+
+:deep(.v-card) {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+:deep(.v-card:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+:deep(.v-btn) {
   border-radius: 8px;
-  cursor: pointer;
-  font-size: clamp(14px, 3vw, 16px);
-  font-weight: 600;
-  transition: background-color 0.3s ease;
   background-color: #FFBC2D;
-  color: white;
 }
 
-.login-button:hover {
-  background-color: #FF883F;
-}
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding: 1rem;
+  }
 
-/* Media Queries */
-@media (max-width: 480px) {
-  .container {
-    padding: 10px;
-  }
-  
-  .content {
-    max-height: 100vh;
-    border-radius: 0;
-  }
-  
-  .content h1 {
-    border-radius: 0;
-  }
-  
-  .success-content {
-    padding: 15px 10px;
-  }
-  
-  .button-group {
-    padding: 0 10px;
+  .brand-section {
+    display: none;
   }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
-  .content {
-    max-width: 450px;
+@media (max-width: 600px) {
+  .form-section {
+    min-height: calc(100vh - 60px);
   }
-}
 
-@media (min-width: 769px) {
-  .content {
-    max-width: 500px;
+  :deep(.v-card-text) {
+    padding: 16px !important;
   }
 }
 </style>

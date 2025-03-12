@@ -1,393 +1,415 @@
 <template>
-  <div class="container">
-    <section class="form-section">
-      <div class="content">
-        <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="logo" />
-        <div class="brand-text">
-          <h1>Designation of Beneficiary</h1>
-          <p>Enter your beneficiary's details</p>
-        </div>
-        <form @submit.prevent="submitForm">
-          <div v-if="formError" class="error-message">{{ formError }}</div>
-          
-            <FormInput
-              label="First Name"
-              type="text"
-              id="beneficiaryFirstName"
-              v-model="formData.beneficiaryFirstName"
-              placeholder="Beneficiary First Name"
-              :required="true"
-              iconClass="icon fas fa-user"
-            />
-            <FormInput
-              label="Last Name"
-              type="text"
-              id="beneficiaryLastName"
-              v-model="formData.beneficiaryLastName"
-              placeholder="Beneficiary Last Name"
-              :required="true"
-              iconClass="icon fas fa-user"
-            />
-            <FormInput
-              label="Relationship"
-              type="select"
-              id="relationship"
-              v-model="formData.relationship"
-              :required="true"
-              :selectOptions="['Parent', 'Spouse', 'Child', 'Sibling', 'Other']"
-              iconClass="icon fas fa-users"
-            />
-            <FormInput
-              label="Percentage"
-              type="number"
-              id="percentage"
-              v-model="formData.percentage"
-              placeholder="Percentage (0-100)"
-              :required="true"
-              :min="0"
-              :max="100"
-              iconClass="icon fas fa-percent"
-            />
-          
-          
-            <FormInput
-              label="Email"
-              type="email"
-              id="beneficiaryEmail"
-              v-model="formData.beneficiaryEmail"
-              placeholder="Beneficiary Email"
-              :required="true"
-              iconClass="icon fas fa-envelope"
-            />
-            <FormInput
-              label="Phone Number"
-              type="tel"
-              id="beneficiaryPhone"
-              v-model="formData.beneficiaryPhone"
-              placeholder="Beneficiary Phone Number"
-              :required="true"
-              iconClass="icon fas fa-phone"
-            />
-          
-          <div class="button-group">
-            <button type="button" class="back-button" @click="navigateToPrevious">Back</button>
-            <button type="submit" class="submit-button" :disabled="isLoading">
-              <span v-if="isLoading">
-                <i class="fas fa-spinner fa-spin"></i> Processing...
-              </span>
-              <span v-else>Next</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
-    <section class="brand-section">
-      <div class="overlay"></div>
-      <img src="@/assets/cathedral-engage-logo.png" alt="Cathedral Engage" class="brand-logo" />
-    </section>
-  </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section">
+        <v-container class="form-container pa-4">
+          <v-row justify="center" align="start">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-6">
+                <v-img
+                  src="@/assets/cathedral-engage-logo.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-4"
+                  width="80"
+                />
+                
+                <h1 class="text-h1 font-weight-bold mb-2">Designation of Beneficiary</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Enter your beneficiary's details</p>
+              </div>
+
+              <v-form @submit.prevent="submitForm">
+                <v-alert
+                  v-if="formError"
+                  type="error"
+                  variant="tonal"
+                  class="mb-4"
+                >
+                  {{ formError }}
+                </v-alert>
+
+                <v-card class="mb-6" variant="outlined">
+                  <v-card-text>
+                    <!-- Personal Information -->
+                    <v-text-field
+                      v-model="formData.beneficiaryFirstName"
+                      label="First Name"
+                      :rules="[v => !!v || 'First name is required']"
+                      placeholder="Beneficiary First Name"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-account"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.beneficiaryLastName"
+                      label="Last Name"
+                      :rules="[v => !!v || 'Last name is required']"
+                      placeholder="Beneficiary Last Name"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-account"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.beneficiaryEmail"
+                      label="Email"
+                      type="email"
+                      :rules="[
+                        v => !!v || 'Email is required',
+                        v => /.+@.+\..+/.test(v) || 'Email must be valid'
+                      ]"
+                      placeholder="Beneficiary Email"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-email"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.beneficiaryPhone"
+                      label="Phone Number"
+                      type="tel"
+                      :rules="[v => !!v || 'Phone number is required']"
+                      placeholder="Beneficiary Phone Number"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-phone"
+                      required
+                    />
+
+                    <!-- ID Information -->
+                    <v-select
+                      v-model="formData.idType"
+                      label="Type of ID"
+                      :items="['National ID', 'Passport', 'Driver\'s License']"
+                      :rules="[v => !!v || 'ID type is required']"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-card-account-details"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.idNumber"
+                      label="ID Number"
+                      :rules="[v => !!v || 'ID number is required']"
+                      placeholder="Enter ID number"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-identifier"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.idExpiry"
+                      label="ID Expiry Date"
+                      type="date"
+                      :rules="[
+                        v => !!v || 'Expiry date is required',
+                        v => new Date(v) > new Date() || 'ID must not be expired'
+                      ]"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-calendar"
+                      required
+                    />
+
+                    <v-file-input
+                      v-model="formData.idFile"
+                      label="Upload ID"
+                      accept="image/*,.pdf"
+                      :rules="[v => !!v || 'ID upload is required']"
+                      variant="outlined"
+                      prepend-icon="mdi-upload"
+                      required
+                    />
+
+                    <!-- Relationship and Percentage -->
+                    <v-select
+                      v-model="formData.relationship"
+                      label="Relationship"
+                      :items="['Parent', 'Spouse', 'Child', 'Sibling', 'Other']"
+                      :rules="[v => !!v || 'Relationship is required']"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-account-group"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.percentage"
+                      label="Percentage"
+                      type="number"
+                      :rules="[
+                        v => !!v || 'Percentage is required',
+                        v => (v >= 0 && v <= 100) || 'Percentage must be between 0 and 100'
+                      ]"
+                      placeholder="Percentage (0-100)"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-percent"
+                      min="0"
+                      max="100"
+                      required
+                    />
+                  </v-card-text>
+                </v-card>
+
+                <v-row class="mt-6">
+                  <v-col cols="12" sm="6">
+                    <v-btn
+                      block
+                      color="primary"
+                      variant="elevated"
+                      @click="navigateToPrevious"
+                    >
+                      Back
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" sm="6">
+                    <v-btn
+                      block
+                      color="secondary"
+                      type="submit"
+                      :loading="isLoading"
+                    >
+                      {{ isLoading ? 'Processing...' : 'Next' }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <v-img
+          src="@src\assets\Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
-import FormInput from '@/props/FormInput.vue';
 import { useDemoStore } from '@/store/demoStore';
+import axios from 'axios';
 
-export default {
-  name: 'DesignationOfBeneficiary',
-  components: {
-    FormInput
-  },
-  setup() {
-    const router = useRouter();
-    const store = useDemoStore();
-    const isLoading = ref(false);
-    const formError = ref('');
+const router = useRouter();
+const store = useDemoStore();
+const isLoading = ref(false);
+const formError = ref('');
 
-    const formData = ref({
-      beneficiaryFirstName: '',
-      beneficiaryLastName: '',
-      relationship: '',
-      percentage: '',
-      beneficiaryEmail: '',
-      beneficiaryPhone: ''
-    });
+const formData = ref({
+  beneficiaryFirstName: '',
+  beneficiaryLastName: '',
+  beneficiaryEmail: '',
+  beneficiaryPhone: '',
+  idType: '',
+  idNumber: '',
+  idExpiry: '',
+  idFile: null,
+  relationship: '',
+  percentage: ''
+});
 
-    const submitForm = async () => {
-      isLoading.value = true;
-      formError.value = '';
+const getBaseURL = () => {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000' 
+    : `http://${window.location.hostname}:3000`;
+};
 
-      try {
-        // Validate required fields
-        if (!formData.value.beneficiaryFirstName || !formData.value.beneficiaryLastName || 
-            !formData.value.relationship || !formData.value.percentage ||
-            !formData.value.beneficiaryEmail || !formData.value.beneficiaryPhone) {
-          formError.value = 'Please fill in all required fields';
-          isLoading.value = false;
-          return;
-        }
-
-        // Validate percentage is between 0 and 100
-        const percentage = parseFloat(formData.value.percentage);
-        if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-          formError.value = 'Percentage must be between 0 and 100';
-          isLoading.value = false;
-          return;
-        }
-
-        // Get the base URL dynamically
-        const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-          ? 'http://localhost:3000' 
-          : `http://${window.location.hostname}:3000`;
-
-        try {
-          const response = await axios.post(`${baseURL}/beneficiary`, formData.value, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          console.log('Beneficiary info submitted:', response.data);
-        } catch (apiError) {
-          console.error('API error:', apiError);
-          // Continue with navigation even if API fails
-        }
-
-        // Update store with form data
-        store.$patch((state) => {
-          Object.assign(state, formData.value);
-        });
-
-        router.push('/review'); // Assuming there's a review page after this
-      } catch (error) {
-        console.error('Error submitting beneficiary information:', error);
-        formError.value = 'An error occurred while submitting your information';
-      } finally {
-        isLoading.value = false;
-      }
-    };
-
-    const navigateToPrevious = () => {
-      router.push('/power-of-attorney');
-    };
-
-    return {
-      formData,
-      submitForm,
-      navigateToPrevious,
-      isLoading,
-      formError
-    };
+const handleFileUpload = (event) => {
+  if (event && event.target && event.target.files && event.target.files.length > 0) {
+    formData.value.idFile = event.target.files[0];
   }
 };
+
+const saveToStore = () => {
+  store.$patch((state) => {
+    state.beneficiaryInfo = {
+      beneficiaryFirstName: formData.value.beneficiaryFirstName,
+      beneficiaryLastName: formData.value.beneficiaryLastName,
+      beneficiaryEmail: formData.value.beneficiaryEmail,
+      beneficiaryPhone: formData.value.beneficiaryPhone,
+      idType: formData.value.idType,
+      idNumber: formData.value.idNumber,
+      idExpiry: formData.value.idExpiry,
+      relationship: formData.value.relationship,
+      percentage: formData.value.percentage
+    };
+  });
+};
+
+const submitForm = async () => {
+  isLoading.value = true;
+  formError.value = '';
+
+  try {
+    // Validate required fields
+    if (!formData.value.beneficiaryFirstName || !formData.value.beneficiaryLastName || 
+        !formData.value.beneficiaryEmail || !formData.value.beneficiaryPhone ||
+        !formData.value.idType || !formData.value.idNumber || 
+        !formData.value.idExpiry || !formData.value.idFile ||
+        !formData.value.relationship || !formData.value.percentage) {
+      formError.value = 'Please fill in all required fields';
+      return;
+    }
+
+    // Validate percentage is between 0 and 100
+    const percentage = parseFloat(formData.value.percentage);
+    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+      formError.value = 'Percentage must be between 0 and 100';
+      return;
+    }
+
+    // Validate ID expiry date
+    if (new Date(formData.value.idExpiry) <= new Date()) {
+      formError.value = 'ID must not be expired';
+      return;
+    }
+
+    // Create FormData for file upload
+    const apiFormData = new FormData();
+    Object.keys(formData.value).forEach(key => {
+      if (key === 'idFile' && formData.value[key]) {
+        apiFormData.append(key, formData.value[key]);
+      } else {
+        apiFormData.append(key, formData.value[key].toString());
+      }
+    });
+
+    // Save to store
+    saveToStore();
+
+    console.log('Submitting beneficiary information:', formData.value);
+
+    // Make API call
+    const baseURL = getBaseURL();
+    const response = await axios.post(`${baseURL}/designation-of-beneficiary`, apiFormData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log('API Response:', response.data);
+
+    router.push('/power-of-attorney');
+  } catch (error) {
+    console.error('Error submitting beneficiary information:', error);
+    formError.value = 'An error occurred while submitting your information';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const navigateToPrevious = () => {
+  saveToStore();
+  router.push('/employment-information');
+};
+
+// Initialize component with stored data
+onMounted(() => {
+  console.log('Initializing component with store data:', store.beneficiaryInfo);
+  if (store.beneficiaryInfo) {
+    formData.value = {
+      ...formData.value,
+      ...store.beneficiaryInfo,
+      idFile: null // Reset file input as it can't be stored
+    };
+  }
+});
 </script>
+
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.container {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
 .form-section {
-  width: 100%;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   min-height: 100vh;
-  background: white;
-  padding: 20px;
-  box-sizing: border-box;
+  overflow-y: auto;
 }
 
-.content {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+.form-container {
+  max-width: 100%;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-.logo {
-  width: 80px;
-  margin-bottom: 1.5rem;
+.brand-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
 }
 
-.brand-text {
-  text-align: center;
-  margin-bottom: 2rem;
+.brand-logo {
+  width: 240px;
+  height: auto;
+  filter: brightness(1.2);
+  z-index: 1;
+  position: relative;
+  margin: auto;
 }
 
-.brand-text h1 {
-  font-size: 24px;
-  color: #261C6B;
-  margin-bottom: 0.5rem;
+:deep(.v-field) {
+  border-radius: 8px !important;
 }
 
-.brand-text p {
-  color: #666;
+:deep(.v-btn) {
+  height: 48px;
+  border-radius: 8px;
 }
 
-/* Desktop styles */
-@media (min-width: 1024px) {
-  .container {
-    flex-direction: row;
-    overflow: hidden;
-  }
-
-  .form-section {
-    width: 50%;
-    height: 100vh;
-    padding: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .form-section::-webkit-scrollbar {
-    display: none;
-  }
-
-  .content {
-    max-width: 450px;
-    padding: 2rem;
-  }
-
-  form {
-    max-width: 400px;
-    margin: 0 auto;
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 
   .brand-section {
-    display: block;
     position: relative;
-    width: 50%;
-    height: 100vh;
-    background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-    overflow: hidden;
-  }
-
-  .brand-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    background: url('@/assets/background.png') center/cover no-repeat;
-    opacity: 0.1;
-    mix-blend-mode: overlay;
+    min-height: 300px;
   }
 
   .brand-logo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     width: 180px;
-    filter: brightness(1.2);
-    z-index: 2;
   }
 }
 
-/* Form field styles */
-.form-box {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  width: 100%;
-}
+/* Ensure form content is scrollable on mobile */
+@media (max-width: 600px) {
+  .form-section {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
-:deep(.form-input-container) {
-  margin-bottom: 1.25rem;
-}
-
-:deep(label) {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 0.5rem;
-}
-
-:deep(input),
-:deep(select) {
-  width: 100%;
-  height: 3rem;
-  padding: 0.75rem 1rem;
-  font-size: 15px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  background-color: white;
-  transition: all 0.2s ease;
-}
-
-:deep(input:focus),
-:deep(select:focus) {
-  border-color: #6362F8;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 98, 248, 0.1);
-}
-
-:deep(input[type="number"]) {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-:deep(input[type="number"]::-webkit-outer-spin-button),
-:deep(input[type="number"]::-webkit-inner-spin-button) {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Button group styling */
-.button-group {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  width: 100%;
-}
-
-.back-button,
-.next-button,
-.submit-button {
-  flex: 1;
-  height: 3rem;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.back-button {
-  background-color: #6362F8;
-  color: white;
-  border: none;
-}
-
-.next-button,
-.submit-button {
-  background-color: #FFBC2D;
-  color: white;
-  border: none;
-}
-
-.back-button:hover,
-.next-button:hover,
-.submit-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  .form-container {
+    min-height: auto;
+    padding: 1rem;
+  }
 }
 </style>

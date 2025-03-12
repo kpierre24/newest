@@ -1,174 +1,170 @@
 <template>
-  <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
-    <div class="content">
-      <h1>Congratulations</h1>
-      <h6>Compared and verified your details</h6>
-      <div class="image-placeholder">
-        <!-- Placeholder for the image -->
-        <img src="@/assets/Group 5.png" alt="Verification Image" />
-      </div>
-      <p>Verified Email Successfully</p>
-      <button class="next-button" @click="mobileVerification">Next</button>
-    </div>
-  </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section d-flex align-center">
+        <v-container class="form-container pa-4">
+          <v-row justify="center">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-6">
+                <v-img
+                  src="@/assets/Logo1.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-4"
+                  width="80"
+                />
+               
+                <h1 class="text-h1 font-weight-bold mb-2">Congratulations</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Your email has been verified successfully</p>
+              </div>
+
+              <v-card class="mb-6 text-center" variant="outlined">
+                <v-card-text>
+                  <v-img
+                    src="@/assets/Group 5.png"
+                    alt="Verification Image"
+                    class="mx-auto mb-4"
+                    max-width="200"
+                    contain
+                  />
+                  <p class="text-h6 mb-6">Verified Email Successfully</p>
+                  
+                  <v-btn
+                    block
+                    color="primary"
+                    size="large"
+                    :loading="isLoading"
+                    @click="mobileVerification"
+                  >
+                    {{ isLoading ? 'Processing...' : 'Next' }}
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
-export default {
-  setup() {
-    const router = useRouter();
+const router = useRouter();
+const isLoading = ref(false);
 
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
+const getBaseURL = () => {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000' 
+    : `http://${window.location.hostname}:3000`;
+};
 
-    const mobileVerification = async () => {
-      try {
-        // Make an API call to verify the email
-        const baseURL = getBaseURL();
-        await axios.post(`${baseURL}/email-verification-successful`, { status: 'success' });
-
-        // Navigate to the mobile verification page
-        router.push({ name: 'MobileVerification' });
-      } catch (error) {
-        console.error('Error verifying email:', error);
-        // Continue with navigation even if API fails
-        router.push({ name: 'MobileVerification' });
-      }
-    };
-
-    return {
-      mobileVerification,
-    };
-  },
+const mobileVerification = async () => {
+  isLoading.value = true;
+  try {
+    const baseURL = getBaseURL();
+    await axios.post(`${baseURL}/email-verification-successful`, { status: 'success' });
+    router.push({ name: 'MobileVerification' });
+  } catch (error) {
+    console.error('Error verifying email:', error);
+    // Continue with navigation even if API fails
+    router.push({ name: 'MobileVerification' });
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 812px; /* Typical height for a mobile phone */
-  width: 375px; /* Typical width for a mobile phone */
-  background: #f4f4f4;
-  padding: 20px;
-  margin: 0 auto; /* Center the container horizontally */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  position: absolute; /* Change to absolute positioning */
-  top: 50%; /* Position at 50% from the top */
-  left: 50%; /* Position at 50% from the left */
-  transform: translate(-50%, -50%); /* Center the container */
+.form-section {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  min-height: 100vh;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Space items evenly */
-  align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 350px;
-  height: 90%; /* Adjusted to prevent overflow */
-  overflow-y: auto;
-  color: rgb(12, 12, 12);
-  position: relative;
-}
-
-.image-placeholder {
-  width: 100%;
-  height: 200px; /* Adjust height as needed */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.image-placeholder img {
+.form-container {
   max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
 }
 
-.next-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-  background-color: #FFBC2D;
-  color: white;
-  margin-top: 70px;
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-.next-button:hover {
-  background-color: #9e79da;
-}
-
-.p{
-  font-size: 10px;
-  color: rgba(0, 0, 0, 0.1)
-}
-
-.logo {
-  width: 165px; /* Slightly larger for better visibility */
-  height: auto;
-  margin-bottom: 20px;
-}
-h5{
-  font-size: 12px;
-  margin-bottom: 10px;
-  color: rgb(20, 42, 163);
-}
-
-h1 {
-  font-size: 24px;
-  position: relative;
-  top: 10%;
-  margin-bottom: 0;
-}
-
-h3 {
-  font-size: 14px;
-  margin-bottom: 10px;
-  color: rgb(20, 42, 163);
-}
-
-.button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-}
-
-.back-icon-link {
+.brand-overlay {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
-.back-icon {
-  font-size: 24px;
+.brand-logo {
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  filter: brightness(1.2);
+}
+
+:deep(.v-btn) {
+  height: 48px;
+  border-radius: 8px;
+}
+
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .brand-section {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+  }
+
+  .brand-logo {
+    width: 180px;
+  }
+}
+
+/* Ensure form content is scrollable on mobile */
+@media (max-width: 600px) {
+  .form-section {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .form-container {
+    min-height: auto;
+    padding: 1rem;
+  }
 }
 </style>

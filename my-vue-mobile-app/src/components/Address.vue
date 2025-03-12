@@ -13,7 +13,7 @@
                   class="mx-auto mb-4"
                   width="80"
                 />
-                <h1 class="text-h4 font-weight-bold text-primary mb-2">Address</h1>
+                <h1 class= font-weight-bold >Address</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Enter your residential address information</p>
               </div>
 
@@ -94,7 +94,8 @@
                 <v-file-input
                   label="Upload Proof of Address"
                   variant="outlined"
-                  prepend-icon="mdi-upload"
+                  prepend-inner-icon="mdi-upload"
+                  required
                   @change="handleFileUpload"
                   accept="image/*,.pdf"
                   class="mt-4"
@@ -105,7 +106,7 @@
                     <v-btn
                       block
                       color="primary"
-                      variant="tonal"
+                      variant="elevated"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -114,7 +115,7 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
+                      color="secondary"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -131,9 +132,10 @@
       <!-- Brand Section -->
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
         <v-img
-          src="@/assets/cathedral-engage-logo.png"
+          src="@/assets/Logo1.png"
           alt="Cathedral Engage"
           class="brand-logo"
+          contain
         />
       </v-col>
     </v-row>
@@ -265,12 +267,17 @@ const navigateToPrevious = () => {
 .brand-section {
   background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
   min-height: 100vh;
-  position: relative;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
-.brand-section::before {
-  content: '';
+.brand-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -279,16 +286,36 @@ const navigateToPrevious = () => {
   background: url('@/assets/background.png') center/cover no-repeat;
   opacity: 0.1;
   mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 .brand-logo {
-  position: absolute;
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  filter: brightness(1.2);
+}
+
+@media (max-width: 959px) {
+  .brand-section {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+  }
+
+  .brand-logo {
+    width: 180px;
+  }
+}
+
+.brand-logo {
+  position: inherit;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   width: 180px;
-  filter: brightness(1.2);
-  z-index: 2;
+  justify-content: center;
+  align-items: center;
+  z-index: 22;
 }
 
 :deep(.v-field) {

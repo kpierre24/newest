@@ -1,259 +1,170 @@
 <template>
-  <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
-    <div class="content">
-      <h1>Congratulations</h1>
-      <h6>Your mobile number has been verified</h6>
-      <div class="image-placeholder">
-        <img src="@/assets/Group 5.png" alt="Verification Image" />
-      </div>
-      <p>Mobile Verification Successful</p>
-      <button class="next-button" @click="navigateToMembershipDeclaration">Next</button>
-    </div>
-  </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section d-flex align-center">
+        <v-container class="form-container pa-4">
+          <v-row justify="center">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-6">
+                <v-img
+                  src="@/assets/Logo1.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-4"
+                  width="80"
+                />
+                
+                <h1 class="text-h1 font-weight-bold mb-2">Congratulations</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">Your mobile number has been verified successfully</p>
+              </div>
+
+              <v-card class="mb-6 text-center" variant="outlined">
+                <v-card-text>
+                  <v-img
+                    src="@/assets/Group 5.png"
+                    alt="Verification Image"
+                    class="mx-auto mb-4"
+                    max-width="200"
+                    contain
+                  />
+                  <p class="text-h6 mb-6">Mobile Verification Successful</p>
+                  
+                  <v-btn
+                  block
+                    color="primary"
+                    variant="elevated"
+                    :loading="isLoading"
+                    @click="navigateToMembershipDeclaration"
+                  >
+                    {{ isLoading ? 'Processing...' : 'Next' }}
+                  </v-btn>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
-export default {
-  setup() {
-    const router = useRouter();
+const router = useRouter();
+const isLoading = ref(false);
 
-    // Get the base URL dynamically
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
-    };
+const getBaseURL = () => {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://localhost:3000' 
+    : `http://${window.location.hostname}:3000`;
+};
 
-    const navigateToMembershipDeclaration = async () => {
-      try {
-        // Make an API call to verify the mobile number
-        const baseURL = getBaseURL();
-        await axios.post(`${baseURL}/mobile-verification-successful`, { status: 'success' });
-
-        // Navigate to the membership declaration page
-        router.push({ name: 'MembershipDeclarationAgreement' });
-      } catch (error) {
-        console.error('Error verifying mobile number:', error);
-        // Continue with navigation even if API fails
-        router.push({ name: 'MembershipDeclarationAgreement' });
-      }
-    };
-
-    return {
-      navigateToMembershipDeclaration,
-    };
-  },
+const navigateToMembershipDeclaration = async () => {
+  isLoading.value = true;
+  try {
+    const baseURL = getBaseURL();
+    await axios.post(`${baseURL}/mobile-verification-successful`, { status: 'success' });
+    router.push({ name: 'MembershipDeclarationAgreement' });
+  } catch (error) {
+    console.error('Error verifying mobile number:', error);
+    // Continue with navigation even if API fails
+    router.push({ name: 'MembershipDeclarationAgreement' });
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.form-section {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   min-height: 100vh;
-  width: 100%;
-  background: #f4f4f4;
-  padding: 20px;
-  margin: 0;
-  box-sizing: border-box;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-image: url('@/assets/background.png');
-  background-size: cover;
-  padding: 0;
-  border-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
-  color: rgb(12, 12, 12);
-  position: relative;
-  margin: auto;
-}
-
-.content h1 {
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.4);
-  width: 100%;
-  margin: 0;
-  padding: 20px 0;
-  text-align: center;
-  z-index: 2;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(3px);
-}
-
-h1 {
-  font-size: clamp(20px, 4vw, 24px);
-  color: #FFBC2D;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0;
-  padding: 20px 0;
-}
-
-.success-content {
-  flex: 1;
-  width: 100%;
-  padding: 20px 15px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-
-.success-icon {
-  font-size: clamp(48px, 10vw, 64px);
-  color: #4CAF50;
-  margin-bottom: 20px;
-}
-
-.success-message {
-  font-size: clamp(18px, 4vw, 24px);
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.success-details {
-  font-size: clamp(14px, 3vw, 16px);
-  color: #666;
-  margin-bottom: 30px;
-  padding: 0 20px;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
-}
-
-.next-button {
-  width: 100%;
-  padding: clamp(12px, 2.5vw, 15px);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: clamp(14px, 3vw, 16px);
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-  background-color: #FFBC2D;
-  color: white;
-}
-
-.next-button:hover {
-  background-color: #FF883F;
-}
-
-/* Media Queries */
-@media (max-width: 480px) {
-  .container {
-    padding: 10px;
-  }
-  
-  .content {
-    max-height: 100vh;
-    border-radius: 0;
-  }
-  
-  .content h1 {
-    border-radius: 0;
-  }
-  
-  .success-content {
-    padding: 15px 10px;
-  }
-  
-  .button-group {
-    padding: 0 10px;
-  }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-  .content {
-    max-width: 450px;
-  }
-}
-
-@media (min-width: 769px) {
-  .content {
-    max-width: 500px;
-  }
-}
-
-.image-placeholder {
-  width: 100%;
-  height: 200px; /* Adjust height as needed */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.image-placeholder img {
+.form-container {
   max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
 }
 
-.p{
-  font-size: 10px;
-  color: rgba(0, 0, 0, 0.1)
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-.logo {
-  width: 165px; /* Slightly larger for better visibility */
-  height: auto;
-  margin-bottom: 20px;
-}
-h5{
-  font-size: 12px;
-  margin-bottom: 10px;
-  color: rgb(20, 42, 163);
-}
-
-h3 {
-  font-size: 14px;
-  margin-bottom: 10px;
-  color: rgb(20, 42, 163);
-}
-
-.button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-}
-
-.back-icon-link {
+.brand-overlay {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #333;
-  font-size: 20px;
-  text-decoration: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
-.back-icon {
-  font-size: 24px;
+.brand-logo {
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  filter: brightness(1.2);
+}
+
+:deep(.v-btn) {
+  height: 48px;
+  border-radius: 8px;
+}
+
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .brand-section {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+  }
+
+  .brand-logo {
+    width: 180px;
+  }
+}
+
+/* Ensure form content is scrollable on mobile */
+@media (max-width: 600px) {
+  .form-section {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .form-container {
+    min-height: auto;
+    padding: 1rem;
+  }
 }
 </style>

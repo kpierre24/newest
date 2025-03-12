@@ -1,332 +1,216 @@
 <template>
-  <div class="container">
-    <a href="/" class="back-icon-link">
-      <i class="fas fa-arrow-left back-icon"></i>
-    </a>
-    <div class="content">
-      <h1>New or Existing Customer?</h1>
-      <p>Choose whether you're a new or existing customer</p>
-      <div class="button-group">
-        <button 
-          class="next-button" 
-          @click="handleNewCustomer"
-          :disabled="loading"
-        >
-          {{ loading && isNewCustomer ? 'Processing...' : 'New Customer' }}
-        </button>
-        <button 
-          class="back-button" 
-          @click="handleExistingCustomer"
-          :disabled="loading"
-        >
-          {{ loading && !isNewCustomer ? 'Processing...' : 'Existing Customer' }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <v-container class="fill-height pa-0" fluid>
+    <v-row no-gutters>
+      <!-- Form Section -->
+      <v-col cols="12" md="6" class="form-section d-flex align-center">
+        <v-container class="form-container pa-4">
+          <v-row justify="center">
+            <v-col cols="12" sm="8" md="10" lg="8">
+              <div class="text-center mb-4">
+                <v-img
+                  src="@/assets/Logo1.png"
+                  alt="Cathedral Engage"
+                  class="mx-auto mb-2"
+                  width="60"
+                />
+                <h1 class="text-h4 font-weight-bold text-primary mb-1">Cathedral Engage</h1>
+                <h2 class="text-h5 font-weight-bold mb-1">Welcome!</h2>
+                <p class="text-subtitle-1 text-medium-emphasis">Choose whether you're a new or existing customer</p>
+              </div>
+
+              <v-card class="mb-6" elevation="3">
+                <v-card-text class="pa-4">
+                  <v-row>
+                    <v-col cols="12">
+                      <v-btn
+                        block
+                        color="primary"
+                        size="large"
+                        height="56"
+                        class="mb-4"
+                        @click="handleNewCustomer"
+                        :loading="loading && isNewCustomer"
+                        :disabled="loading"
+                      >
+                        <v-icon start icon="mdi-account-plus" class="mr-2" />
+                        {{ loading && isNewCustomer ? 'Processing...' : 'New Customer' }}
+                      </v-btn>
+
+                      <v-btn
+                        block
+                        color="secondary"
+                        size="large"
+                        height="56"
+                        variant="tonal"
+                        @click="handleExistingCustomer"
+                        :loading="loading && !isNewCustomer"
+                        :disabled="loading"
+                      >
+                        <v-icon start icon="mdi-account" class="mr-2" />
+                        {{ loading && !isNewCustomer ? 'Processing...' : 'Existing Customer' }}
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+
+      <!-- Brand Section -->
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
-import { useDemoStore } from '@/store/demoStore';
 import { useRouter } from 'vue-router';
+import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 
-export default {
-  name: 'NewOrExistingCustomer',
-  setup() {
-    const store = useDemoStore();
-    const router = useRouter();
-    const loading = ref(false);
-    const isNewCustomer = ref(false);
+const router = useRouter();
+const store = useDemoStore();
+const loading = ref(false);
+const isNewCustomer = ref(false);
 
-    const handleApiCall = async (endpoint, customerType) => {
-      try {
-        // Mock a successful response (temporary fix)
-        return { data: { success: true } };
-      } catch (error) {
-        console.error('API Error:', error);
-        throw error;
-      }
-    };
-
-    const handleNewCustomer = async () => {
-      console.log('New Customer clicked');
-      loading.value = true;
-      isNewCustomer.value = true;
-      try {
-        await handleApiCall('new', 'new_customer');
-        store.setExistingCustomer(false);
-        console.log('Store state:', store.isExistingCustomer);
-      } catch (error) {
-        console.error('Error handling new customer:', error);
-      } finally {
-        loading.value = false;
-        navigateToGettingReady();
-      }
-    };
-
-    const handleExistingCustomer = async () => {
-      console.log('Existing Customer clicked');
-      loading.value = true;
-      isNewCustomer.value = false;
-      try {
-        await handleApiCall('existing', 'existing_customer');
-        store.setExistingCustomer(true);
-        console.log('Store state:', store.isExistingCustomer);
-      } catch (error) {
-        console.error('Error handling existing customer:', error);
-      } finally {
-        loading.value = false;
-        navigateToGettingReady();
-      }
-    };
-
-    const navigateToGettingReady = () => {
-      console.log('Navigating to Getting Ready');
-      router.push('/getting-ready').catch((err) => {
-        console.error('Navigation error:', err);
-      });
-    };
-
-    const navigateToHome = () => {
-      router.push('/');
-    };
-
-    return {
-      loading,
-      isNewCustomer,
-      handleNewCustomer,
-      handleExistingCustomer,
-      navigateToHome
-    };
+const handleApiCall = async (endpoint, customerType) => {
+  try {
+    // Mock a successful response (temporary fix)
+    return { data: { success: true } };
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
   }
+};
+
+const handleNewCustomer = async () => {
+  console.log('New Customer clicked');
+  loading.value = true;
+  isNewCustomer.value = true;
+  try {
+    await handleApiCall('new', 'new_customer');
+    store.setExistingCustomer(false);
+    console.log('Store state:', store.isExistingCustomer);
+  } catch (error) {
+    console.error('Error handling new customer:', error);
+  } finally {
+    loading.value = false;
+    navigateToGettingReady();
+  }
+};
+
+const handleExistingCustomer = async () => {
+  console.log('Existing Customer clicked');
+  loading.value = true;
+  isNewCustomer.value = false;
+  try {
+    await handleApiCall('existing', 'existing_customer');
+    store.setExistingCustomer(true);
+    console.log('Store state:', store.isExistingCustomer);
+  } catch (error) {
+    console.error('Error handling existing customer:', error);
+  } finally {
+    loading.value = false;
+    navigateToGettingReady();
+  }
+};
+
+const navigateToGettingReady = () => {
+  console.log('Navigating to Getting Ready');
+  router.push('/getting-ready').catch((err) => {
+    console.error('Navigation error:', err);
+  });
 };
 </script>
 
 <style scoped>
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100vh;
-  width: 100vw;
+.form-section {
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+  min-height: 100vh;
+}
+
+.form-container {
   max-width: 100%;
-  margin: 0;
+}
+
+.brand-section {
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
+  min-height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
-.content {
-  background: white;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(1rem, 2vw, 2rem);
-  position: relative;
-  height: 100%;
-  overflow-y: auto;
-  justify-content: center;
-}
-
-.content {
-  flex: 0 1 auto;
-  display: flex;
-  flex-direction: column;
-  width: min(100%, 400px);
-  margin: auto;
-  padding: 0 clamp(0.5rem, 1vw, 1rem);
-}
-
-.back-icon-link {
+.brand-overlay {
   position: absolute;
-  top: 40px;
-  left: 40px;
-  text-decoration: none;
-  color: white;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #6362F8;
-}
-
-.back-icon {
-  font-size: 20px;
-  color: white;
-}
-
-h1 {
-  font-size: 32px;
-  color: #261C6B;
-  margin-bottom: 8px;
-  font-weight: 600;
-  text-align: center;
-}
-
-p {
-  color: #666;
-  margin-bottom: 32px;
-  font-size: 16px;
-  text-align: center;
-}
-
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin-top: 20px;
+  height: 100%;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
-.next-button, .back-button {
-  width: 100%;
-  padding: 16px;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+.brand-logo {
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  filter: brightness(1.2);
 }
 
-/* Desktop Styles */
-@media (min-width: 768px) {
-  .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    background: white;
-    height: 100vh;
-    max-width: 100%;
-    width: 100%;
+:deep(.v-card) {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+:deep(.v-card:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+:deep(.v-btn) {
+  border-radius: 8px;
+  text-transform: none;
+  font-size: 1.1rem;
+  letter-spacing: 0;
+}
+
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding: 1rem;
   }
 
-  .content {
-    height: 100vh;
-    width: 100%;
-    background: white;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 400px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  /* Right side background */
-  .container::before {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 50%;
-    height: 100%;
-    background: url('@/assets/BG pic.png') center/cover no-repeat;
-    opacity: 0.6;
-  }
-
-  /* Gradient overlay */
-  .container::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 50%;
-    height: 100%;
-    background: url('@/assets/gradient.png') center/cover no-repeat;
-    opacity: 4;
-    mix-blend-mode: soft-light;
-    z-index: 1;
-  }
-
-  /* Logo overlay */
   .brand-section {
-    position: relative;
-    background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    height: 100%;
-  }
-
-  .engage-logo {
-    width: clamp(200px, 30vw, 280px);
-    position: relative;
-    z-index: 2;
-    filter: brightness(1.2);
+    display: none;
   }
 }
 
-/* Mobile Styles */
-@media (max-width: 767px) {
-  .container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    height: auto;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-y: auto;
-    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+@media (max-width: 600px) {
+  .form-section {
+    min-height: calc(100vh - 60px);
   }
 
-  .content {
-    min-height: 100vh;
-    height: auto;
-    padding: 1.5rem;
-    background: transparent;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  :deep(.v-card-text) {
+    padding: 16px !important;
   }
-
-  h1 {
-    font-size: 28px;
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
-    color: #261C6B;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  p {
-    font-size: 16px;
-    margin-bottom: 2rem;
-    color: #666;
-    text-align: center;
-  }
-
-  .button-group {
-    width: 100%;
-    margin-top: 1rem;
-  }
-}
-
-/* Maintain existing button colors and states */
-.next-button {
-  background-color: #FFBC2D;
-  color: white;
-}
-
-.back-button {
-  background-color: #6362F8;
-  color: white;
-}
-
-.next-button:disabled, .back-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
 }
 </style>
