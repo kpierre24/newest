@@ -8,10 +8,11 @@
             <v-col cols="12" sm="8" md="10" lg="8">
               <div class="text-center mb-6">
                 <v-img
-                  src="@/assets/Logo1.png"
+                  :src="logoImage"
                   alt="Cathedral Engage"
-                  class="mx-auto mb-4"
-                  width="80"
+                  class="mx-auto mb-2"
+                  width="120"
+                  height="120"
                 />
                 
                 <h1 class="text-h1 font-weight-bold mb-2">Parent/Guardian Information</h1>
@@ -163,7 +164,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
-
+import logoImage from '../assets/Logo1.png';
 const router = useRouter();
 const store = useDemoStore();
 

@@ -8,10 +8,11 @@
             <v-col cols="12" sm="8" md="10" lg="8">
               <div class="text-center mb-6">
                 <v-img
-                  src="@/assets/cathedral-engage-logo.png"
+                  :src="logoImage"
                   alt="Cathedral Engage"
-                  class="mx-auto mb-4"
-                  width="80"
+                  class="mx-auto mb-2"
+                  width="120"
+                  height="120"
                 />
                 <h1 class="text-h1 font-weight-bold mb-2">Email Verification</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Enter the verification code sent to your email</p>
@@ -46,8 +47,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
-                      variant="elevated"
+                      color="secondary"
+                      density="default"
+                      variant="flat"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -56,7 +58,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="secondary"
+                      color="primary"
+                      density="default"
+                      variant="flat"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -72,6 +76,7 @@
 
       <!-- Brand Section -->
       <v-col cols="12" md="6" class="brand-section  ">
+        <div class="brand-overlay"></div>
         <v-img
           src="@/assets/cathedral-engage-logo.png"
           alt="Cathedral Engage"
@@ -86,6 +91,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
+import logoImage from '../assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -131,38 +137,7 @@ const navigateToPrevious = () => {
   max-width: 100%;
 }
 
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: relative;
-  overflow: hidden;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-}
 
-.brand-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-}
-
-.brand-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 180px;
-  filter: brightness(1.2);
-  z-index: 2;
-}
 
 :deep(.v-field) {
   border-radius: 8px !important;

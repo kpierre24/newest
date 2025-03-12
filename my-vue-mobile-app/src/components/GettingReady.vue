@@ -8,7 +8,7 @@
             <v-col cols="12" sm="8" md="10" lg="8">
               <div class="text-center mb-6">
                 <v-img
-                  src="@/assets/Logo1.png"
+                  :src="logoImage"
                   alt="Cathedral Engage"
                   class="mx-auto mb-4"
                   width="80"
@@ -45,8 +45,9 @@
                     <v-col cols="12" sm="6">
                       <v-btn
                         block
-                        color="primary"
-                        variant="elevated"
+                        color="secondary"
+                        density="default"
+                        variant="flat"
                         @click="handleCancel"
                       >
                         Cancel
@@ -55,7 +56,9 @@
                     <v-col cols="12" sm="6">
                       <v-btn
                         block
-                        color="secondary"
+                        color="primary"
+                        density="default"
+                        variant="flat"
                         @click="handleNext"
                       >
                         Next
@@ -85,7 +88,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-
+import logoImage from '@/assets/Logo1.png';
 const router = useRouter();
 
 const handleNext = () => {
@@ -152,41 +155,6 @@ const items = [
   padding-bottom: 2rem;
 }
 
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.brand-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.brand-logo {
-  width: 240px;
-  height: auto;
-  z-index: 3;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  filter: brightness(1.2);
-}
 
 /* Accordion Customization */
 :deep(.v-card) {

@@ -7,12 +7,12 @@
           <v-row justify="center" align="start">
             <v-col cols="12" sm="8" md="10" lg="8">
               <!-- Header Section -->
-              <div class="text-center mb-4">
+              <div class="text-center mb-6">
                 <v-img
-                  src="@/assets/Logo1.png"
+                  :src="logoImage"
                   alt="Cathedral Engage"
-                  class="mx-auto mb-2"
-                  width="60"
+                  class="mx-auto mb-4"
+                  width="80"
                 />
                 
                 <h1 class="text-h1 font-weight-bold mb-1">ID Information</h1>
@@ -212,7 +212,7 @@
   </v-container>
 </template>
 
-<script>
+<script >
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import { useDateValidation } from '@/composables/useDateValidation';
@@ -220,6 +220,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router'; // Import useRouter
 import FormInput from '@/props/FormInput.vue';
 import FileUpload from '@/props/FileUpload.vue'; // Ensure this import is correct
+import logoImage from '@/assets/Logo1.png';
 
 export default {
   name: 'IDInformation',
@@ -228,12 +229,12 @@ export default {
     FileUpload // Ensure this component is registered
   },
   setup() {
-    const { 
-      minDate, 
-      validateExpiryDate, 
-      validateDOB, 
-      dob, 
-      dobError 
+    const {
+      minDate,
+      validateExpiryDate,
+      validateDateOfBirth,
+      dateOfBirth,
+      dateOfBirthError,
     } = useDateValidation();
 
     const firstIdType = ref('');
@@ -246,14 +247,13 @@ export default {
     const secondExpiryDate = ref('');
     const secondExpiryDateError = ref('');
     const secondIdDocument = ref(null);
-    const secondIdOptions = ref(['National ID', "Driver's Permit", 'Passport']);
+    const secondIdOptions = ref(['National ID', "Driver's Permit", 'Birthpaper', 'Passport']);
     const maritalStatus = ref('');
-    const router = useRouter(); // Use useRouter
-    const store = useDemoStore(); // Move store initialization to setup level
+    const router = useRouter();
+    const store = useDemoStore();
     const isLoading = ref(false);
     const formError = ref('');
 
-    // Calculate max expiry date (today + 20 years)
     const maxExpiryDate = computed(() => {
       const today = new Date();
       const maxDate = new Date(today.getFullYear() + 20, today.getMonth(), today.getDate());
@@ -265,17 +265,17 @@ export default {
         firstExpiryDateError.value = '';
         return true;
       }
-      
+
       if (!firstExpiryDate.value) {
         firstExpiryDateError.value = 'Expiry date is required';
         return false;
       }
-      
+
       if (!validateExpiryDate(firstExpiryDate.value)) {
         firstExpiryDateError.value = 'Expiry date must be today or in the future';
         return false;
       }
-      
+
       firstExpiryDateError.value = '';
       return true;
     };
@@ -285,17 +285,17 @@ export default {
         secondExpiryDateError.value = '';
         return true;
       }
-      
+
       if (!secondExpiryDate.value) {
         secondExpiryDateError.value = 'Expiry date is required';
         return false;
       }
-      
+
       if (!validateExpiryDate(secondExpiryDate.value)) {
         secondExpiryDateError.value = 'Expiry date must be today or in the future';
         return false;
       }
-      
+
       secondExpiryDateError.value = '';
       return true;
     };
@@ -307,23 +307,23 @@ export default {
     const submitIDInformation = async () => {
       isLoading.value = true;
       formError.value = '';
-      
+
       try {
         // Validate all required fields
-        if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value || 
-            !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value || 
-            !maritalStatus.value) {
+        if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value ||
+          !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value ||
+          !maritalStatus.value) {
           formError.value = 'Please fill in all required fields';
           isLoading.value = false;
           return;
         }
-        
+
         // Validate expiry dates
         if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
           isLoading.value = false;
           return;
         }
-        
+
         const idInfoData = {
           firstIdType: firstIdType.value,
           firstIdNumber: firstIdNumber.value,
@@ -336,11 +336,8 @@ export default {
           maritalStatus: maritalStatus.value
         };
 
-        console.log('ID Info Data:', idInfoData);
-
         // Save to store first
         try {
-          console.log('Store before update:', store);
           store.$patch((state) => {
             state.firstIdType = idInfoData.firstIdType;
             state.firstIdNumber = idInfoData.firstIdNumber;
@@ -352,7 +349,6 @@ export default {
             state.secondIdDocument = idInfoData.secondIdDocument;
             state.maritalStatus = idInfoData.maritalStatus;
           });
-          console.log('Successfully saved to store');
         } catch (storeError) {
           console.error('Store error:', storeError);
           formError.value = 'Error saving data to application state';
@@ -362,7 +358,7 @@ export default {
 
         // Get the base URL dynamically
         const baseURL = getBaseURL();
-        
+
         try {
           const response = await axios.post(`${baseURL}/id-information`, idInfoData, {
             headers: {
@@ -376,8 +372,6 @@ export default {
         }
 
         // Check if user is existing customer and navigate accordingly
-        console.log('Store state after update:', store.$state);
-        console.log('Customer status:', store.isExistingCustomer ? 'Existing' : 'New');
         if (store.isExistingCustomer) {
           console.log('Navigating to account number (existing customer)');
           router.push('/account-number');
@@ -393,11 +387,10 @@ export default {
       }
     };
 
-    // Get the base URL dynamically
     const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? 'http://localhost:3000' 
-        : `http://${window.location.hostname}:3000`;
+      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ?
+        'http://localhost:3000' :
+        `http://${window.location.hostname}:3000`;
     };
 
     const handleFileUpload = (file, idType) => {
@@ -440,15 +433,15 @@ export default {
       validateExpiryDate,
       validateFirstExpiryDate,
       validateSecondExpiryDate,
-      dob,
-      dobError,
+      dateOfBirth,
+      dateOfBirthError,
       submitIDInformation,
       validateIdType,
       handleFileUpload,
       updateSecondIdOptions,
       navigateToPrevious,
       isLoading,
-      formError
+      formError,
     };
   }
 };

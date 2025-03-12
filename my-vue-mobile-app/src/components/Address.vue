@@ -8,10 +8,12 @@
             <v-col cols="12" sm="8" md="10" lg="8">
               <div class="text-center mb-6">
                 <v-img
-                  src="@/assets/cathedral-engage-logo.png"
+                  :src="logoImage"
                   alt="Cathedral Engage"
-                  class="mx-auto mb-4"
-                  width="80"
+                  class="mx-auto mb-2"
+                  width="120"
+                  height="120"
+                />
                 />
                 <h1 class= font-weight-bold >Address</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Enter your residential address information</p>
@@ -148,6 +150,7 @@ import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import { countries } from 'countries-list';
+import logoImage from '../assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -264,37 +267,7 @@ const navigateToPrevious = () => {
   align-items: center;
 }
 
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
 
-.brand-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.brand-logo {
-  width: 240px;
-  height: auto;
-  z-index: 2;
-  filter: brightness(1.2);
-}
 
 @media (max-width: 959px) {
   .brand-section {

@@ -8,8 +8,8 @@ export default createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#FFBC2D',        // Next and Submit buttons
-          secondary: '#6362F8',      // Back button
+          primary: '#6362F8',        // Next and Submit buttons
+          secondary: '#FFBC2D',      // Back button
           tertiary: '#261C6B',       // Other buttons
           accent: '#FF883F',         // Highlight color
           error: '#FF5252',          // Error color
