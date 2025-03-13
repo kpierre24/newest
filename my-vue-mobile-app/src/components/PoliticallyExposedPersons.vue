@@ -98,6 +98,7 @@
                       block
                       color="secondary"
                       density="default"
+                      size="large"
                       variant="flat"
                       @click="navigateToPrevious"
                       :disabled="isLoading"
@@ -111,6 +112,7 @@
                       color="primary"
                       density="default"
                       variant="flat"
+                      size="large"
                       type="submit"
                       :loading="isLoading"
                     >

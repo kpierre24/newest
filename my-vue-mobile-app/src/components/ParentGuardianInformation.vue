@@ -10,9 +10,8 @@
                 <v-img
                   :src="logoImage"
                   alt="Cathedral Engage"
-                  class="mx-auto mb-2"
-                  width="120"
-                  height="120"
+                  class="mx-auto mb-4"
+                  width="80"
                 />
                 
                 <h1 class="text-h1 font-weight-bold mb-2">Parent/Guardian Information</h1>
@@ -120,8 +119,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
-                      variant="elevated"
+                      color="secondary"
+                      variant="flat"
+                      size="large"
                       @click="navigateToPrevious"
                       :disabled="isLoading"
                     >
@@ -131,7 +131,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="secondary"
+                      color="primary"
+                      variant="flat"
+                      size="large"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -164,7 +166,8 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
-import logoImage from '../assets/Logo1.png';
+import logoImage from '@/assets/Logo1.png';
+
 const router = useRouter();
 const store = useDemoStore();
 

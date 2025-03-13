@@ -362,18 +362,26 @@ const navigateToPrevious = () => {
 .form-section {
   background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   min-height: 100vh;
+  overflow-y: auto;
 }
 
 .form-container {
   max-width: 100%;
-  height: 100vh;
-  display: flex;
-  align-items: center;
+  padding: 2rem 1rem;
 }
 
+/* Mobile specific styles */
+@media (max-width: 600px) {
+  .form-section {
+    height: auto;
+    min-height: 100vh;
+  }
 
-
-
+  .form-container {
+    padding: 1rem;
+    height: auto;
+  }
+}
 
 :deep(.v-field) {
   border-radius: 8px !important;

@@ -11,8 +11,7 @@
                   :src="logoImage"
                   alt="Cathedral Engage"
                   class="mx-auto mb-2"
-                  width="120"
-                  height="120"
+                  width="60"
                 />
                
                 <h1 class="text-h1 font-weight-bold mb-1">Sign In</h1>
@@ -93,9 +92,9 @@
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
         <div class="brand-overlay"></div>
         <v-img
-          src="@/assets/Logo1.png"
+          :src="frontImage"
           alt="Cathedral Engage"
-          class="brand-logo"
+          class="brand-img"
           contain
         />
       </v-col>
@@ -108,7 +107,8 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
-import logoImage from '../assets/Logo1.png';
+import frontImage from '@/assets/BG Pic.png';
+import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -168,7 +168,6 @@ const navigateToRecovery = () => {
   display: flex;
   align-items: center;
 }
-
 
 
 :deep(.v-card) {

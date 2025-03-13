@@ -166,7 +166,7 @@
               </div>
 
               <!-- Navigation Buttons - Fixed at bottom -->
-              <div class="navigation-buttons">
+              
                 <v-row>
                   <v-col cols="12" sm="6">
                     <v-btn
@@ -192,7 +192,6 @@
                     </v-btn>
                   </v-col>
                 </v-row>
-              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -212,237 +211,189 @@
   </v-container>
 </template>
 
-<script >
+<script setup>
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import { useDateValidation } from '@/composables/useDateValidation';
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router'; // Import useRouter
 import FormInput from '@/props/FormInput.vue';
-import FileUpload from '@/props/FileUpload.vue'; // Ensure this import is correct
+import FileUpload from '@/props/FileUpload.vue';
 import logoImage from '@/assets/Logo1.png';
 
-export default {
-  name: 'IDInformation',
-  components: {
-    FormInput,
-    FileUpload // Ensure this component is registered
-  },
-  setup() {
-    const {
-      minDate,
-      validateExpiryDate,
-      validateDateOfBirth,
-      dateOfBirth,
-      dateOfBirthError,
-    } = useDateValidation();
+const router = useRouter();
+const store = useDemoStore();
+const { minDate, validateExpiryDate } = useDateValidation();
 
-    const firstIdType = ref('');
-    const firstIdNumber = ref('');
-    const firstExpiryDate = ref('');
-    const firstExpiryDateError = ref('');
-    const firstIdDocument = ref(null);
-    const secondIdType = ref('');
-    const secondIdNumber = ref('');
-    const secondExpiryDate = ref('');
-    const secondExpiryDateError = ref('');
-    const secondIdDocument = ref(null);
-    const secondIdOptions = ref(['National ID', "Driver's Permit", 'Birthpaper', 'Passport']);
-    const maritalStatus = ref('');
-    const router = useRouter();
-    const store = useDemoStore();
-    const isLoading = ref(false);
-    const formError = ref('');
+// Form data refs
+const firstIdType = ref('');
+const firstIdNumber = ref('');
+const firstExpiryDate = ref('');
+const firstExpiryDateError = ref('');
+const firstIdDocument = ref(null);
+const secondIdType = ref('');
+const secondIdNumber = ref('');
+const secondExpiryDate = ref('');
+const secondExpiryDateError = ref('');
+const secondIdDocument = ref(null);
+const secondIdOptions = ref(['National ID', "Driver's Permit", 'Birthpaper', 'Passport']);
+const maritalStatus = ref('');
+const isLoading = ref(false);
+const formError = ref('');
 
-    const maxExpiryDate = computed(() => {
-      const today = new Date();
-      const maxDate = new Date(today.getFullYear() + 20, today.getMonth(), today.getDate());
-      return maxDate.toISOString().split('T')[0];
-    });
+// Computed properties
+const maxExpiryDate = computed(() => {
+  const today = new Date();
+  const maxDate = new Date(today.getFullYear() + 20, today.getMonth(), today.getDate());
+  return maxDate.toISOString().split('T')[0];
+});
 
-    const validateFirstExpiryDate = () => {
-      if (firstIdType.value === 'Birthpaper') {
-        firstExpiryDateError.value = '';
-        return true;
-      }
+// Methods
+const validateFirstExpiryDate = () => {
+  if (firstIdType.value === 'Birthpaper') {
+    firstExpiryDateError.value = '';
+    return true;
+  }
 
-      if (!firstExpiryDate.value) {
-        firstExpiryDateError.value = 'Expiry date is required';
-        return false;
-      }
+  if (!firstExpiryDate.value) {
+    firstExpiryDateError.value = 'Expiry date is required';
+    return false;
+  }
 
-      if (!validateExpiryDate(firstExpiryDate.value)) {
-        firstExpiryDateError.value = 'Expiry date must be today or in the future';
-        return false;
-      }
+  if (!validateExpiryDate(firstExpiryDate.value)) {
+    firstExpiryDateError.value = 'Expiry date must be today or in the future';
+    return false;
+  }
 
-      firstExpiryDateError.value = '';
-      return true;
+  firstExpiryDateError.value = '';
+  return true;
+};
+
+const validateSecondExpiryDate = () => {
+  if (secondIdType.value === 'Birthpaper') {
+    secondExpiryDateError.value = '';
+    return true;
+  }
+
+  if (!secondExpiryDate.value) {
+    secondExpiryDateError.value = 'Expiry date is required';
+    return false;
+  }
+
+  if (!validateExpiryDate(secondExpiryDate.value)) {
+    secondExpiryDateError.value = 'Expiry date must be today or in the future';
+    return false;
+  }
+
+  secondExpiryDateError.value = '';
+  return true;
+};
+
+const handleFileUpload = (file, idType) => {
+  if (idType === 'first') {
+    firstIdDocument.value = file;
+  } else if (idType === 'second') {
+    secondIdDocument.value = file;
+  }
+};
+
+const updateSecondIdOptions = () => {
+  if (firstIdType.value === 'National ID') {
+    secondIdOptions.value = ["Driver's Permit", 'Birthpaper', 'Passport'];
+  } else {
+    secondIdOptions.value = ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
+  }
+};
+
+const getBaseURL = () => {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ?
+    'http://localhost:3000' :
+    `http://${window.location.hostname}:3000`;
+};
+
+const navigateToPrevious = () => {
+  router.go(-1);
+};
+
+const submitIDInformation = async () => {
+  isLoading.value = true;
+  formError.value = '';
+
+  try {
+    // Validate all required fields
+    if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value ||
+      !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value ||
+      !maritalStatus.value) {
+      formError.value = 'Please fill in all required fields';
+      isLoading.value = false;
+      return;
+    }
+
+    // Validate expiry dates
+    if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
+      isLoading.value = false;
+      return;
+    }
+
+    const idInfoData = {
+      firstIdType: firstIdType.value,
+      firstIdNumber: firstIdNumber.value,
+      firstExpiryDate: firstExpiryDate.value,
+      firstIdDocument: firstIdDocument.value,
+      secondIdType: secondIdType.value,
+      secondIdNumber: secondIdNumber.value,
+      secondExpiryDate: secondExpiryDate.value,
+      secondIdDocument: secondIdDocument.value,
+      maritalStatus: maritalStatus.value
     };
 
-    const validateSecondExpiryDate = () => {
-      if (secondIdType.value === 'Birthpaper') {
-        secondExpiryDateError.value = '';
-        return true;
-      }
+    // Save to store
+    try {
+      store.$patch((state) => {
+        state.firstIdType = idInfoData.firstIdType;
+        state.firstIdNumber = idInfoData.firstIdNumber;
+        state.firstExpiryDate = idInfoData.firstExpiryDate;
+        state.firstIdDocument = idInfoData.firstIdDocument;
+        state.secondIdType = idInfoData.secondIdType;
+        state.secondIdNumber = idInfoData.secondIdNumber;
+        state.secondExpiryDate = idInfoData.secondExpiryDate;
+        state.secondIdDocument = idInfoData.secondIdDocument;
+        state.maritalStatus = idInfoData.maritalStatus;
+      });
+    } catch (storeError) {
+      console.error('Store error:', storeError);
+      formError.value = 'Error saving data to application state';
+      isLoading.value = false;
+      return;
+    }
 
-      if (!secondExpiryDate.value) {
-        secondExpiryDateError.value = 'Expiry date is required';
-        return false;
-      }
-
-      if (!validateExpiryDate(secondExpiryDate.value)) {
-        secondExpiryDateError.value = 'Expiry date must be today or in the future';
-        return false;
-      }
-
-      secondExpiryDateError.value = '';
-      return true;
-    };
-
-    const validateIdType = () => {
-      return firstIdType.value !== '' && secondIdType.value !== '';
-    };
-
-    const submitIDInformation = async () => {
-      isLoading.value = true;
-      formError.value = '';
-
-      try {
-        // Validate all required fields
-        if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value ||
-          !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value ||
-          !maritalStatus.value) {
-          formError.value = 'Please fill in all required fields';
-          isLoading.value = false;
-          return;
+    // API call
+    try {
+      const baseURL = getBaseURL();
+      const response = await axios.post(`${baseURL}/id-information`, idInfoData, {
+        headers: {
+          'Content-Type': 'application/json'
         }
+      });
+      console.log('ID info submitted:', response.data);
+    } catch (apiError) {
+      console.error('API error:', apiError);
+      // Continue with navigation even if API fails
+    }
 
-        // Validate expiry dates
-        if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
-          isLoading.value = false;
-          return;
-        }
-
-        const idInfoData = {
-          firstIdType: firstIdType.value,
-          firstIdNumber: firstIdNumber.value,
-          firstExpiryDate: firstExpiryDate.value,
-          firstIdDocument: firstIdDocument.value,
-          secondIdType: secondIdType.value,
-          secondIdNumber: secondIdNumber.value,
-          secondExpiryDate: secondExpiryDate.value,
-          secondIdDocument: secondIdDocument.value,
-          maritalStatus: maritalStatus.value
-        };
-
-        // Save to store first
-        try {
-          store.$patch((state) => {
-            state.firstIdType = idInfoData.firstIdType;
-            state.firstIdNumber = idInfoData.firstIdNumber;
-            state.firstExpiryDate = idInfoData.firstExpiryDate;
-            state.firstIdDocument = idInfoData.firstIdDocument;
-            state.secondIdType = idInfoData.secondIdType;
-            state.secondIdNumber = idInfoData.secondIdNumber;
-            state.secondExpiryDate = idInfoData.secondExpiryDate;
-            state.secondIdDocument = idInfoData.secondIdDocument;
-            state.maritalStatus = idInfoData.maritalStatus;
-          });
-        } catch (storeError) {
-          console.error('Store error:', storeError);
-          formError.value = 'Error saving data to application state';
-          isLoading.value = false;
-          return;
-        }
-
-        // Get the base URL dynamically
-        const baseURL = getBaseURL();
-
-        try {
-          const response = await axios.post(`${baseURL}/id-information`, idInfoData, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          console.log('ID info submitted:', response.data);
-        } catch (apiError) {
-          console.error('API error:', apiError);
-          // Continue with navigation even if API fails
-        }
-
-        // Check if user is existing customer and navigate accordingly
-        if (store.isExistingCustomer) {
-          console.log('Navigating to account number (existing customer)');
-          router.push('/account-number');
-        } else {
-          console.log('Navigating to due diligence (new customer)');
-          router.push('/due-diligence');
-        }
-      } catch (error) {
-        console.error('Error submitting ID information:', error);
-        formError.value = 'An error occurred while submitting your information';
-      } finally {
-        isLoading.value = false;
-      }
-    };
-
-    const getBaseURL = () => {
-      return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ?
-        'http://localhost:3000' :
-        `http://${window.location.hostname}:3000`;
-    };
-
-    const handleFileUpload = (file, idType) => {
-      if (idType === 'first') {
-        firstIdDocument.value = file;
-      } else if (idType === 'second') {
-        secondIdDocument.value = file;
-      } else {
-        console.error('Invalid idType:', idType);
-      }
-    };
-
-    const updateSecondIdOptions = () => {
-      if (firstIdType.value === 'National ID') {
-        secondIdOptions.value = ["Driver's Permit", 'Birthpaper', 'Passport'];
-      } else {
-        secondIdOptions.value = ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
-      }
-    };
-
-    const navigateToPrevious = () => {
-      router.go(-1);
-    };
-
-    return {
-      firstIdType,
-      firstIdNumber,
-      firstExpiryDate,
-      firstExpiryDateError,
-      firstIdDocument,
-      secondIdType,
-      secondIdNumber,
-      secondExpiryDate,
-      secondExpiryDateError,
-      secondIdDocument,
-      secondIdOptions,
-      maritalStatus,
-      minDate,
-      maxExpiryDate,
-      validateExpiryDate,
-      validateFirstExpiryDate,
-      validateSecondExpiryDate,
-      dateOfBirth,
-      dateOfBirthError,
-      submitIDInformation,
-      validateIdType,
-      handleFileUpload,
-      updateSecondIdOptions,
-      navigateToPrevious,
-      isLoading,
-      formError,
-    };
+    // Navigate based on customer type
+    if (store.isExistingCustomer) {
+      console.log('Navigating to account number (existing customer)');
+      router.push('/account-number');
+    } else {
+      console.log('Navigating to due diligence (new customer)');
+      router.push('/due-diligence');
+    }
+  } catch (error) {
+    console.error('Error submitting ID information:', error);
+    formError.value = 'An error occurred while submitting your information';
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
@@ -450,30 +401,21 @@ export default {
 <style scoped>
 .form-section {
   background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-  height: 100vh;
+  min-height: 100vh;
   overflow-y: auto;
-  position: relative;
 }
 
 .form-container {
   max-width: 100%;
-  padding-bottom: 120px; /* Space for fixed buttons */
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .form-content {
   margin-bottom: 2rem;
-}
-
-.navigation-buttons {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  padding: 1rem;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-  z-index: 100;
 }
 
 :deep(.v-card) {
@@ -495,21 +437,34 @@ export default {
   font-size: 0.95rem;
 }
 
+:deep(.v-btn) {
+  height: 48px;
+  border-radius: 8px;
+}
+
 /* Mobile specific styles */
 @media (max-width: 959px) {
-  .navigation-buttons {
-    width: 100%;
-    padding: 1rem;
+  .form-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 
-  .form-container {
-    padding-bottom: 100px;
+  .brand-section {
+    display: none; /* Hide brand section on mobile */
   }
 }
 
+/* Ensure form content is scrollable on mobile */
 @media (max-width: 600px) {
   .form-section {
-    height: calc(100vh - 60px); /* Account for mobile browser chrome */
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .form-container {
+    min-height: auto;
+    padding: 1rem;
   }
 
   .navigation-buttons {

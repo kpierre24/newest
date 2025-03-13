@@ -86,8 +86,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
-                      variant="elevated"
+                      color="secondary"
+                      variant="flat"
+                      size="large"
                       @click="navigateToPrevious"
                       :disabled="isLoading"
                     >
@@ -97,7 +98,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="secondary"
+                      color="primary"
+                      variant="flat"
+                      size="large"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -240,37 +243,7 @@ onMounted(() => {
   padding-bottom: 2rem;
 }
 
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
 
-.brand-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.brand-logo {
-  width: 240px;
-  height: auto;
-  z-index: 2;
-  filter: brightness(1.2);
-}
 
 :deep(.v-btn) {
   height: 48px;

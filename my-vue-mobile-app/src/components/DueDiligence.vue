@@ -8,11 +8,10 @@
             <v-col cols="12" sm="8" md="10" lg="8">
               <div class="text-center mb-4">
                 <v-img
-                  :src="logoImage"
+                  :src="LogoImage"
                   alt="Cathedral Engage"
                   class="mx-auto mb-2"
-                  width="120"
-                  height="120"
+                  width="100"
                 />
                 <h1 class="text-h4 font-weight-bold text-primary mb-1">Due Diligence</h1>
                 <h2 class="text-h5 font-weight-bold mb-1">Due Diligence Information</h2>
@@ -41,7 +40,8 @@
                   <v-btn
                     block
                     color="primary"
-                    variant="elevated"
+                    variant="flat"
+                    size="large"
                     class="mb-3"
                     href="https://drive.google.com/drive/folders/1t8z2oRVvDwJwXGtKQ7JAQGdsK7-IuZIN"
                     target="_blank"
@@ -56,7 +56,7 @@
                         block
                         color="secondary"
                         variant="flat"
-                        density="default"
+                        size="large"
                         @click="navigateToPrevious"
                       >
                         Back
@@ -67,7 +67,7 @@
                         block
                         color="primary"
                         variant="flat"
-                        density="default"
+                        size="large"
                         @click="navigateToNext"
                       >
                         Next
@@ -98,8 +98,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
-import logoImage from '../assets/Logo1.png';
-
+import LogoImage from '@/assets/Logo1.png';
 const router = useRouter();
 const store = useDemoStore();
 
@@ -130,6 +129,7 @@ const navigateToNext = () => {
 .form-container {
   max-width: 100%;
 }
+
 
 
 :deep(.v-card) {

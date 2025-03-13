@@ -145,6 +145,9 @@ const handleCreateAccount = () => {
   }
 
   .powered-by-section {
+    background-image: url('@/assets/poweredby.png');
+    background-size: cover;
+    background-position: center;
     width: 100%;
   }
 }

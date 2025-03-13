@@ -3,18 +3,17 @@
     <v-row no-gutters>
       <!-- Form Section -->
       <v-col cols="12" md="6" class="form-section d-flex align-center">
-        <v-container class="form-container pa-4 d-flex flex-column">
-          <v-row justify="center" class="flex-grow-1">
+        <v-container class="form-container pa-4">
+          <v-row justify="center">
             <v-col cols="12" sm="8" md="10" lg="8">
               <div class="text-center mb-4">
                 <v-img
                   :src="logoImage"
                   alt="Cathedral Engage"
                   class="mx-auto mb-2"
-                  width="120"
-                  height="120"
+                  width="60"
                 />
-                
+                <h1 class="text-h4 font-weight-bold text-primary mb-1">Cathedral Engage</h1>
                 <h2 class="text-h5 font-weight-bold mb-1">Welcome!</h2>
                 <p class="text-subtitle-1 text-medium-emphasis">Choose whether you're a new or existing customer</p>
               </div>
@@ -27,8 +26,8 @@
                         block
                         color="primary"
                         size="large"
-                        height="56"
                         variant="flat"
+                        height="56"
                         class="mb-4"
                         @click="handleNewCustomer"
                         :loading="loading && isNewCustomer"
@@ -57,29 +56,18 @@
               </v-card>
             </v-col>
           </v-row>
-          
-          <!-- Powered By Logo -->
-          <v-row justify="center" class="mt-auto">
-            <v-col cols="12" sm="8" md="10" lg="8" class="text-center">
-              <v-img
-                :src="poweredByLogo"
-                alt="Powered By"
-                class="mx-auto"
-                width="120"
-                height="40"
-                contain
-                @error="console.error('Powered by logo failed to load')"
-                @load="console.log('Powered by logo loaded successfully')"
-              />
-            </v-col>
-          </v-row>
         </v-container>
       </v-col>
 
       <!-- Brand Section -->
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
         <div class="brand-overlay"></div>
-        
+        <v-img
+          src="@/assets/Logo1.png"
+          alt="Cathedral Engage"
+          class="brand-logo"
+          contain
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -90,9 +78,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
-import logoImage from '../assets/Logo1.png';
-import poweredByLogo from '../assets/poweredby.png';  // Fixed import path
-
+import logoImage from '@/assets/Logo1.png';
 const router = useRouter();
 const store = useDemoStore();
 const loading = ref(false);
@@ -159,9 +145,9 @@ const navigateToGettingReady = () => {
 }
 
 .brand-section {
-  background: url('../assets/woman background.jpg') center/cover no-repeat;
+  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
   min-height: 100vh;
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   width: 50%;
@@ -177,14 +163,15 @@ const navigateToGettingReady = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(99, 98, 248, 0.9) 0%, rgba(38, 28, 107, 0.9) 100%);
-  opacity: 0.85;
-  mix-blend-mode: multiply;
+  background: url('@/assets/background.png') center/cover no-repeat;
+  opacity: 0.1;
+  mix-blend-mode: overlay;
   pointer-events: none;
 }
 
 .brand-logo {
-  
+  width: 240px;
+  height: auto;
   z-index: 2;
   filter: brightness(1.2);
 }

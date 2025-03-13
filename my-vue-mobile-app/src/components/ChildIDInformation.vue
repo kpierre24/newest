@@ -152,8 +152,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
-                      variant="elevated"
+                      color="secondary"
+                      variant="flat"
+                      size="large"
                       @click="navigateToPrevious"
                       :disabled="isLoading"
                     >
@@ -163,7 +164,8 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="secondary"
+                      color="primary"
+                      size="large"
                       type="submit"
                       :loading="isLoading"
                     >

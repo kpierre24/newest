@@ -49,6 +49,7 @@
                       block
                       color="secondary"
                       density="default"
+                      size="large"
                       variant="flat"
                       @click="navigateToPrevious"
                     >
@@ -61,6 +62,7 @@
                       color="primary"
                       density="default"
                       variant="flat"
+                      size="large"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -137,8 +139,6 @@ const navigateToPrevious = () => {
   max-width: 100%;
 }
 
-
-
 :deep(.v-field) {
   border-radius: 8px !important;
 }
@@ -156,8 +156,7 @@ const navigateToPrevious = () => {
   }
 
   .brand-section {
-    position: relative;
-    width: 100%;
+    display: none; /* Hide brand section on mobile */
   }
 }
 

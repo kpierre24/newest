@@ -90,6 +90,7 @@
                         block
                         color="tertiary"
                         variant="tonal"
+                        size="large"
                         @click="disagree"
                         :disabled="isLoading"
                       >
@@ -100,6 +101,7 @@
                       <v-btn
                         block
                         color="primary"
+                        size="large"
                         variant="elevated"
                         @click="goNext"
                         :loading="isLoading"
@@ -207,17 +209,64 @@ const disagree = () => {
 .form-section {
   background: linear-gradient(to bottom, #ffffff, #f8f9fa);
   min-height: 100vh;
+  overflow-y: auto;
 }
 
 .form-container {
   max-width: 100%;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 2rem 1rem;
 }
 
+/* Mobile specific styles */
+@media (max-width: 959px) {
+  .form-container {
+    padding: 1rem;
+    min-height: auto;
+    margin-bottom: 2rem;
+  }
 
+  .form-section {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2rem 0;
+  }
+
+  .brand-section {
+    display: none; /* Hide brand section on mobile */
+  }
+
+  :deep(.v-card) {
+    margin-bottom: 2rem;
+  }
+
+  :deep(.v-btn) {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Additional mobile adjustments for smaller screens */
+@media (max-width: 600px) {
+  .text-h1 {
+    font-size: 1.75rem !important;
+    line-height: 2rem;
+    margin-bottom: 1rem !important;
+  }
+
+  .v-img.mx-auto {
+    margin-top: 1rem;
+  }
+
+  :deep(.v-card-text) {
+    padding: 1rem;
+  }
+
+  :deep(.v-radio-group) {
+    margin-bottom: 1rem;
+  }
+}
 
 :deep(.v-btn) {
   height: 48px;
@@ -230,36 +279,5 @@ const disagree = () => {
 
 :deep(.v-input--radio-group) {
   margin-top: 12px;
-}
-
-/* Mobile specific styles */
-@media (max-width: 959px) {
-  .form-container {
-    padding: 1rem;
-  }
-
-  .brand-section {
-    position: relative;
-    width: 100%;
-    min-height: 300px;
-  }
-
-  .brand-logo {
-    width: 180px;
-  }
-}
-
-/* Ensure form content is scrollable on mobile */
-@media (max-width: 600px) {
-  .form-section {
-    height: 100vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .form-container {
-    min-height: auto;
-    padding: 1rem;
-  }
 }
 </style>

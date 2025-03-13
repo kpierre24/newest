@@ -63,6 +63,7 @@
                       block
                       color="secondary"
                       variant="flat"
+                      size="large"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -72,6 +73,8 @@
                     <v-btn
                       block
                       color="primary"
+                      variant="flat"
+                      size="large"
                       type="submit"
                       :loading="isLoading"
                     >

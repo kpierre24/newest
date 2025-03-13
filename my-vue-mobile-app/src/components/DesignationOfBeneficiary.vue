@@ -154,8 +154,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
-                      variant="elevated"
+                      color="secondary"
+                      variant="flat"
+                      size="large"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -164,7 +165,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="secondary"
+                      color="primary"
+                      variant="flat"
+                      size="large"
                       type="submit"
                       :loading="isLoading"
                     >
@@ -180,6 +183,7 @@
 
       <!-- Brand Section -->
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
+        <div class="brand-overlay"></div>
         <v-img
           src="@src\assets\Logo1.png"
           alt="Cathedral Engage"

@@ -75,6 +75,7 @@
                       color="secondary"
                       density="default"
                       variant="flat"
+                      size="large"
                       @click="navigateToPrevious"
                     >
                       Back
@@ -85,6 +86,7 @@
                       block
                       color="primary"
                       density="default"
+                      size="large"
                       variant="flat"
                       type="submit"
                     >
