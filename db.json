@@ -5968,6 +5968,21 @@
       "confirmPassword": "Rendell1234@",
       "termsViewed": true,
       "financialAgreementViewed": true
+    },
+    {
+      "id": "da49",
+      "firstName": "",
+      "lastName": "",
+      "otherName": "",
+      "email": "",
+      "mobileNumber": "",
+      "gender": "",
+      "dob": null,
+      "age": 55,
+      "password": "",
+      "confirmPassword": "",
+      "termsViewed": false,
+      "financialAgreementViewed": false
     }
   ],
   "id-information": [
@@ -6623,6 +6638,10 @@
     },
     {
       "id": "dac6",
+      "status": "success"
+    },
+    {
+      "id": "dfa4",
       "status": "success"
     }
   ],

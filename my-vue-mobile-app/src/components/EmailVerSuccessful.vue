@@ -35,7 +35,7 @@
                     color="primary"
                     size="large"
                     :loading="isLoading"
-                    @click="mobileVerification"
+                    @click="router.push({ name: 'MobileVerification' })"
                   >
                     {{ isLoading ? 'Processing...' : 'Next' }}
                   </v-btn>
@@ -63,31 +63,10 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
 import logoImage from '../assets/Logo1.png';
+
 const router = useRouter();
 const isLoading = ref(false);
-
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3000' 
-    : `http://${window.location.hostname}:3000`;
-};
-
-const mobileVerification = async () => {
-  isLoading.value = true;
-  try {
-    const baseURL = getBaseURL();
-    await axios.post(`${baseURL}/email-verification-successful`, { status: 'success' });
-    router.push({ name: 'MobileVerification' });
-  } catch (error) {
-    console.error('Error verifying email:', error);
-    // Continue with navigation even if API fails
-    router.push({ name: 'MobileVerification' });
-  } finally {
-    isLoading.value = false;
-  }
-};
 </script>
 
 <style scoped>
@@ -98,38 +77,6 @@ const mobileVerification = async () => {
 
 .form-container {
   max-width: 100%;
-}
-
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.brand-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.brand-logo {
-  width: 240px;
-  height: auto;
-  z-index: 2;
-  filter: brightness(1.2);
 }
 
 :deep(.v-btn) {

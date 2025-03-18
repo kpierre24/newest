@@ -320,80 +320,101 @@ const submitIDInformation = async () => {
   formError.value = '';
 
   try {
-    // Validate all required fields
-    if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value ||
-      !secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value ||
-      !maritalStatus.value) {
-      formError.value = 'Please fill in all required fields';
-      isLoading.value = false;
-      return;
-    }
+    // Create FormData for file upload
+    const firstIdFormData = new FormData();
+    const secondIdFormData = new FormData();
 
-    // Validate expiry dates
-    if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
-      isLoading.value = false;
-      return;
-    }
-
-    const idInfoData = {
-      firstIdType: firstIdType.value,
-      firstIdNumber: firstIdNumber.value,
-      firstExpiryDate: firstExpiryDate.value,
-      firstIdDocument: firstIdDocument.value,
-      secondIdType: secondIdType.value,
-      secondIdNumber: secondIdNumber.value,
-      secondExpiryDate: secondExpiryDate.value,
-      secondIdDocument: secondIdDocument.value,
-      maritalStatus: maritalStatus.value
+    // First ID submission
+    const firstIdData = {
+      signup_id: store.signupId,
+      id_type: firstIdType.value,
+      id_number: firstIdNumber.value,
+      id_expiry_date: new Date(firstExpiryDate.value).toISOString(),
+      is_primary_id: true
     };
 
-    // Save to store
-    try {
-      store.$patch((state) => {
-        state.firstIdType = idInfoData.firstIdType;
-        state.firstIdNumber = idInfoData.firstIdNumber;
-        state.firstExpiryDate = idInfoData.firstExpiryDate;
-        state.firstIdDocument = idInfoData.firstIdDocument;
-        state.secondIdType = idInfoData.secondIdType;
-        state.secondIdNumber = idInfoData.secondIdNumber;
-        state.secondExpiryDate = idInfoData.secondExpiryDate;
-        state.secondIdDocument = idInfoData.secondIdDocument;
-        state.maritalStatus = idInfoData.maritalStatus;
+    // Second ID submission
+    const secondIdData = {
+      signup_id: store.signupId,
+      id_type: secondIdType.value,
+      id_number: secondIdNumber.value,
+      id_expiry_date: new Date(secondExpiryDate.value).toISOString(),
+      is_primary_id: false
+    };
+
+    // Submit first ID
+    const firstIdResponse = await axios.post('http://127.0.0.1:8000/identifications/', firstIdData);
+    
+    if (firstIdDocument.value) {
+      firstIdFormData.append('file', firstIdDocument.value);
+      firstIdFormData.append('identification_id', firstIdResponse.data.id);
+      await axios.post('http://127.0.0.1:8000/identification-files/', firstIdFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
-    } catch (storeError) {
-      console.error('Store error:', storeError);
-      formError.value = 'Error saving data to application state';
-      isLoading.value = false;
-      return;
     }
 
-    // API call
-    try {
-      const baseURL = getBaseURL();
-      const response = await axios.post(`${baseURL}/id-information`, idInfoData, {
+    // Submit second ID
+    const secondIdResponse = await axios.post('http://127.0.0.1:8000/identifications/', secondIdData);
+    
+    if (secondIdDocument.value) {
+      secondIdFormData.append('file', secondIdDocument.value);
+      secondIdFormData.append('identification_id', secondIdResponse.data.id);
+      await axios.post('http://127.0.0.1:8000/identification-files/', secondIdFormData, {
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      console.log('ID info submitted:', response.data);
-    } catch (apiError) {
-      console.error('API error:', apiError);
-      // Continue with navigation even if API fails
     }
+
+    // Store the data
+    store.$patch((state) => {
+      state.firstIdType = firstIdType.value;
+      state.firstIdNumber = firstIdNumber.value;
+      state.firstExpiryDate = firstExpiryDate.value;
+      state.secondIdType = secondIdType.value;
+      state.secondIdNumber = secondIdNumber.value;
+      state.secondExpiryDate = secondExpiryDate.value;
+    });
 
     // Navigate based on customer type
     if (store.isExistingCustomer) {
-      console.log('Navigating to account number (existing customer)');
       router.push('/account-number');
     } else {
-      console.log('Navigating to due diligence (new customer)');
       router.push('/due-diligence');
     }
+
   } catch (error) {
     console.error('Error submitting ID information:', error);
-    formError.value = 'An error occurred while submitting your information';
+    if (error.response?.data) {
+      console.log('Detailed error:', error.response.data);
+    }
+    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
+  }
+};
+
+const validateForm = () => {
+  formError.value = '';
+
+  if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value || !firstIdDocument.value) {
+    formError.value = 'Please complete all fields for the first ID';
+    return false;
+  }
+
+  if (!secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value || !secondIdDocument.value) {
+    formError.value = 'Please complete all fields for the second ID';
+    return false;
+  }
+
+  return true;
+};
+
+const handleSubmit = async () => {
+  if (validateForm()) {
+    await submitIDInformation();
   }
 };
 </script>

@@ -14,7 +14,6 @@
                   width="120"
                   height="120"
                 />
-                />
                 <h1 class= font-weight-bold >Address</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Enter your residential address information</p>
               </div>
@@ -80,17 +79,6 @@
                   prepend-inner-icon="mdi-home"
                   required
                   :error-messages="errors.dwellingStatus"
-                />
-
-                <v-select
-                  v-model="formData.nationality"
-                  label="Nationality"
-                  :items="countryList"
-                  :rules="[v => !!v || 'Nationality is required']"
-                  variant="outlined"
-                  prepend-inner-icon="mdi-flag"
-                  required
-                  :error-messages="errors.nationality"
                 />
 
                 <v-file-input
@@ -164,7 +152,6 @@ const formData = ref({
   city: '',
   country: '',
   dwellingStatus: '',
-  nationality: '',
   proofOfAddress: null
 });
 
@@ -176,13 +163,13 @@ onMounted(() => {
   if (store.AddressLine2) formData.value.addressLine2 = store.AddressLine2;
   if (store.City) formData.value.city = store.City;
   if (store.Country) formData.value.country = store.Country;
-  if (store.Nationality) formData.value.nationality = store.Nationality;
   if (store.DwellingStatus) formData.value.dwellingStatus = store.DwellingStatus;
 });
 
 const handleFileUpload = (file) => {
   if (file) {
     formData.value.proofOfAddress = file;
+    console.log('File selected:', file.name);
   }
 };
 
@@ -206,10 +193,6 @@ const validateForm = () => {
     errors.value.dwellingStatus = 'Dwelling Status is required';
     isValid = false;
   }
-  if (!formData.value.nationality) {
-    errors.value.nationality = 'Nationality is required';
-    isValid = false;
-  }
 
   return isValid;
 };
@@ -219,25 +202,50 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:3000' 
-      : `http://${window.location.hostname}:3000`;
+    // First, submit the address data
+    const addressData = {
+      signup_id: store.signupId,
+      is_primary_address: true, // This is the residential address
+      address_line_1: formData.value.addressLine1,
+      address_line_2: formData.value.addressLine2 || null,
+      city: formData.value.city,
+      country: formData.value.country,
+      dwelling_status: formData.value.dwellingStatus
+    };
 
-    try {
-      const response = await axios.post(`${baseURL}/address`, formData.value);
-      console.log('Address info submitted:', response.data);
-    } catch (apiError) {
-      console.error('API error:', apiError);
+    console.log('Sending address data:', addressData);
+
+    const addressResponse = await axios.post('http://127.0.0.1:8000/addresses/', addressData);
+
+    // If we have a proof of address file, submit it
+    if (formData.value.proofOfAddress && addressResponse.data.id) {
+      const fileFormData = new FormData();
+      fileFormData.append('file', formData.value.proofOfAddress);
+      fileFormData.append('address_id', addressResponse.data.id);
+
+      await axios.post('http://127.0.0.1:8000/address-files/', fileFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
     }
 
-    store.$patch((state) => {
-      Object.assign(state, formData.value);
+    // Store the address data
+    store.$patch({
+      addressLine1: formData.value.addressLine1,
+      addressLine2: formData.value.addressLine2,
+      city: formData.value.city,
+      country: formData.value.country,
+      dwellingStatus: formData.value.dwellingStatus
     });
 
     router.push('/mailing-address');
   } catch (error) {
-    console.error('Error submitting address information:', error);
-    formError.value = 'An error occurred while submitting your information';
+    console.error('Error submitting address:', error);
+    if (error.response?.data) {
+      console.log('Detailed error:', error.response.data);
+    }
+    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
   }
@@ -266,8 +274,6 @@ const navigateToPrevious = () => {
   display: flex;
   align-items: center;
 }
-
-
 
 @media (max-width: 959px) {
   .brand-section {

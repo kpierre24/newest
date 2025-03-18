@@ -14,20 +14,22 @@
                   width="120"
                   height="120"
                 />
-                <h1 class="text-h1 font-weight-bold mb-2">Email Verification</h1>
-                <p class="text-subtitle-1 text-medium-emphasis">Enter the verification code sent to your email</p>
+                <h1 class="text-h4 font-weight-bold mb-2">Email Verification</h1>
+                <p class="text-subtitle-1 text-medium-emphasis">
+                  Enter the verification code sent to {{ store.email }}
+                </p>
               </div>
 
-              <v-form @submit.prevent="handleSubmit">
-                <v-alert
-                  v-if="errorMessage"
-                  type="error"
-                  variant="tonal"
-                  class="mb-4"
-                >
-                  {{ errorMessage }}
-                </v-alert>
+              <v-alert
+                v-if="errorMessage"
+                type="error"
+                variant="tonal"
+                class="mb-4"
+              >
+                {{ errorMessage }}
+              </v-alert>
 
+              <v-form @submit.prevent="handleSubmit">
                 <v-text-field
                   v-model="verificationCode"
                   label="Verification Code"
@@ -44,14 +46,24 @@
                 />
 
                 <v-row class="mt-6">
+                  <v-col cols="12" class="text-center mb-4">
+                    <v-btn
+                      variant="text"
+                      color="primary"
+                      :loading="isResending"
+                      @click="requestVerificationCode"
+                    >
+                      {{ isResending ? 'Sending...' : 'Resend Code' }}
+                    </v-btn>
+                  </v-col>
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
                       color="secondary"
-                      density="default"
+                      variant="tonal"
                       size="large"
-                      variant="flat"
-                      @click="navigateToPrevious"
+                      @click="router.go(-1)"
+                      :disabled="isLoading"
                     >
                       Back
                     </v-btn>
@@ -60,8 +72,7 @@
                     <v-btn
                       block
                       color="primary"
-                      density="default"
-                      variant="flat"
+                      variant="elevated"
                       size="large"
                       type="submit"
                       :loading="isLoading"
@@ -77,12 +88,12 @@
       </v-col>
 
       <!-- Brand Section -->
-      <v-col cols="12" md="6" class="brand-section  ">
-        <div class="brand-overlay"></div>
+      <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
         <v-img
-          src="@/assets/cathedral-engage-logo.png"
+          src="@/assets/Logo1.png"
           alt="Cathedral Engage"
           class="brand-logo"
+          contain
         />
       </v-col>
     </v-row>
@@ -90,20 +101,89 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
-import logoImage from '../assets/Logo1.png';
+import axios from 'axios';
+import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
 const verificationCode = ref('');
 const errorMessage = ref('');
 const isLoading = ref(false);
+const isResending = ref(false);
 
-const formatInput = (event) => {
+// Function to request a new verification code
+const requestVerificationCode = async () => {
+  isResending.value = true;
+  errorMessage.value = '';
+  
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/device-verifications/send/', {
+      identifier_type: 'email',
+      operation: 'signup',
+      signup_id: store.signupId
+    });
+    
+    if (response.data) {
+      console.log('Verification code sent successfully');
+    }
+  } catch (error) {
+    console.error('Error sending verification code:', error);
+    errorMessage.value = error.response?.data?.detail || 'Failed to send verification code';
+  } finally {
+    isResending.value = false;
+  }
+};
+
+// Function to verify the code
+const verifyCode = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+
+  try {
+    console.log('Sending verification code:', {
+      signup_id: store.signupId,
+      identifier_type: 'email',
+      operation: 'signup',
+      code: verificationCode.value
+    });
+
+    const response = await axios.post('http://127.0.0.1:8000/device-verifications/verify/', {
+      signup_id: store.signupId,
+      identifier_type: 'email',
+      operation: 'signup',
+      code: verificationCode.value
+    });
+
+    if (response.data) {
+      // Update store with verification status
+      store.$patch({
+        isEmailVerified: true,
+        emailVerifiedOn: response.data.verified_on || new Date().toISOString()
+      });
+
+      console.log('Email verification successful, navigating to success page');
+      
+      // Navigate to success component
+      await router.push({ name: 'EmailVerSuccessful' });
+    }
+  } catch (error) {
+    console.error('Verification error:', error);
+    errorMessage.value = error.response?.data?.detail || 'Invalid verification code';
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const formatInput = () => {
   // Remove non-numeric characters
   verificationCode.value = verificationCode.value.replace(/[^0-9]/g, '');
+  // Limit to 6 digits
+  if (verificationCode.value.length > 6) {
+    verificationCode.value = verificationCode.value.slice(0, 6);
+  }
 };
 
 const handleSubmit = async () => {
@@ -111,22 +191,17 @@ const handleSubmit = async () => {
     errorMessage.value = 'Please enter a valid 6-digit code';
     return;
   }
+  await verifyCode();
+};
 
-  isLoading.value = true;
-  try {
-    store.setVerificationCode(verificationCode.value);
-    await router.push('/email-verification-successful');
-  } catch (error) {
-    errorMessage.value = 'An error occurred during verification';
-    console.error('Verification error:', error);
-  } finally {
-    isLoading.value = false;
+// Request verification code when component mounts
+onMounted(async () => {
+  if (!store.signupId || !store.email) {
+    router.push('/basic-info');
+    return;
   }
-};
-
-const navigateToPrevious = () => {
-  router.go(-1);
-};
+  await requestVerificationCode();
+});
 </script>
 
 <style scoped>

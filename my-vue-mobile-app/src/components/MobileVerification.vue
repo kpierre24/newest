@@ -21,12 +21,12 @@
 
               <v-form @submit.prevent="handleSubmit">
                 <v-alert
-                  v-if="formError"
+                  v-if="errorMessage"
                   type="error"
                   variant="tonal"
                   class="mb-4"
                 >
-                  {{ formError }}
+                  {{ errorMessage }}
                 </v-alert>
 
                 <v-card class="mb-6" variant="outlined">
@@ -65,11 +65,22 @@
                           size="large"
                           type="submit"
                           :loading="isLoading"
+                          :disabled="!verificationCode"
                         >
-                          {{ isLoading ? 'Processing...' : 'Next' }}
+                          {{ isLoading ? 'Processing...' : 'Verify' }}
                         </v-btn>
                       </v-col>
                     </v-row>
+
+                    <v-btn
+                      block
+                      color="secondary"
+                      class="mt-4"
+                      @click="requestVerificationCode"
+                      :disabled="countdown > 0 || resendCount >= maxResendAttempts"
+                    >
+                      {{ countdown > 0 ? `Resend code in ${countdown}s` : 'Resend Code' }}
+                    </v-btn>
                   </v-card-text>
                 </v-card>
               </v-form>
@@ -93,43 +104,131 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
-import logoImage from '../assets/Logo1.png';
+import axios from 'axios';
+import logoImage from '@/assets/Logo1.png';
+
 const router = useRouter();
 const store = useDemoStore();
 const verificationCode = ref('');
+const errorMessage = ref('');
 const isLoading = ref(false);
-const formError = ref('');
+const isResending = ref(false);
+const countdown = ref(0);
+const maxResendAttempts = 3;
+const resendCount = ref(0);
 
-const formatInput = (event) => {
-  verificationCode.value = verificationCode.value.replace(/[^0-9]/g, '').slice(0, 6);
-};
-
-const handleSubmit = async () => {
-  if (verificationCode.value.length !== 6) {
-    formError.value = 'Please enter a 6-digit code.';
+// Function to request a new verification code
+const requestVerificationCode = async () => {
+  if (resendCount.value >= maxResendAttempts) {
+    errorMessage.value = 'Maximum resend attempts reached';
     return;
   }
 
+  isResending.value = true;
+  errorMessage.value = '';
+  
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/device-verifications/send/', {
+      identifier_type: 'mobile',
+      operation: 'signup',
+      signup_id: store.signupId
+    });
+    
+    if (response.data) {
+      console.log('Mobile verification code sent successfully');
+      resendCount.value++;
+      startCountdown();
+    }
+  } catch (error) {
+    console.error('Error sending verification code:', error);
+    errorMessage.value = error.response?.data?.detail || 'Failed to send verification code';
+  } finally {
+    isResending.value = false;
+  }
+};
+
+// Function to verify the code
+const verifyCode = async () => {
   isLoading.value = true;
-  formError.value = '';
+  errorMessage.value = '';
 
   try {
-    store.setVerificationCode(verificationCode.value);
-    router.push('/mobile-verification-successful');
+    console.log('Verifying mobile code:', {
+      signup_id: store.signupId,
+      identifier_type: 'mobile',
+      operation: 'signup',
+      code: verificationCode.value
+    });
+
+    const response = await axios.post('http://127.0.0.1:8000/device-verifications/verify/', {
+      signup_id: store.signupId,
+      identifier_type: 'mobile',
+      operation: 'signup',
+      code: verificationCode.value
+    });
+
+    if (response.data) {
+      // Update store with verification status
+      store.$patch({
+        isMobileVerified: true,
+        mobileVerifiedOn: response.data.verified_on || new Date().toISOString()
+      });
+
+      console.log('Mobile verification successful');
+      
+      // Navigate to next step
+      await router.push('/mobile-verification-successful');
+    }
   } catch (error) {
-    console.error('Error submitting verification code:', error);
-    formError.value = 'An error occurred while verifying the code';
+    console.error('Verification error:', error);
+    errorMessage.value = error.response?.data?.detail || 'Invalid verification code';
   } finally {
     isLoading.value = false;
   }
 };
 
+const formatInput = () => {
+  // Remove non-numeric characters
+  verificationCode.value = verificationCode.value.replace(/[^0-9]/g, '');
+  // Limit to 6 digits
+  if (verificationCode.value.length > 6) {
+    verificationCode.value = verificationCode.value.slice(0, 6);
+  }
+};
+
+const startCountdown = () => {
+  countdown.value = 60;
+  const timer = setInterval(() => {
+    countdown.value--;
+    if (countdown.value <= 0) {
+      clearInterval(timer);
+    }
+  }, 1000);
+};
+
+const handleSubmit = async () => {
+  if (verificationCode.value.length !== 6) {
+    errorMessage.value = 'Please enter a valid 6-digit code';
+    return;
+  }
+  await verifyCode();
+};
+
 const navigateToPrevious = () => {
   router.push('/email-verification-successful');
 };
+
+// Request verification code when component mounts
+onMounted(async () => {
+  if (!store.signupId || !store.mobileNumber) {
+    router.push('/signup');
+    return;
+  }
+  await requestVerificationCode();
+});
 </script>
 
 <style scoped>
@@ -142,37 +241,6 @@ const navigateToPrevious = () => {
   max-width: 100%;
 }
 
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.brand-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.brand-logo {
-  width: 240px;
-  height: auto;
-  z-index: 2;
-  filter: brightness(1.2);
-}
 
 :deep(.v-btn) {
   height: 48px;

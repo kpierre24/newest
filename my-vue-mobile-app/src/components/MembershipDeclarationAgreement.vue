@@ -103,7 +103,7 @@
                         color="primary"
                         size="large"
                         variant="elevated"
-                        @click="goNext"
+                        @click="handleSubmit"
                         :loading="isLoading"
                       >
                         {{ isLoading ? 'Processing...' : 'Next' }}
@@ -137,66 +137,88 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import logoImage from '@/assets/Logo1.png';
+
 const router = useRouter();
 const store = useDemoStore();
-
-const isMemberOfAnotherCreditUnion = ref(store.isMemberOfAnotherCreditUnion || 'no');
-const creditUnionName = ref(store.creditUnionName || '');
-const isServingOnBoard = ref(store.isServingOnBoard || 'no');
-const creditUnionBoardName = ref(store.creditUnionBoardName || '');
-const errorMessage = ref('');
 const isLoading = ref(false);
+const errorMessage = ref('');
 
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3000' 
-    : `http://${window.location.hostname}:3000`;
+// Form data with proper initial values
+const isMemberOfAnotherCreditUnion = ref('no');
+const creditUnionName = ref('');
+const isServingOnBoard = ref('no');
+const creditUnionBoardName = ref('');
+
+const submitForm = async () => {
+  isLoading.value = true;
+  errorMessage.value = '';
+
+  try {
+    // Format data to match API model
+    const membershipData = {
+      signup_id: store.signupId,
+      is_member_of_another_credit_union: isMemberOfAnotherCreditUnion.value === 'yes',
+      credit_union_name: isMemberOfAnotherCreditUnion.value === 'yes' ? creditUnionName.value : null,
+      is_serving_on_credit_union_board: isServingOnBoard.value === 'yes',
+      board_credit_union_name: isServingOnBoard.value === 'yes' ? creditUnionBoardName.value : null
+    };
+
+    console.log('Sending membership data:', membershipData);
+
+    const response = await axios.post('http://127.0.0.1:8000/membership-declarations/', membershipData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.data) {
+      console.log('Membership declaration submitted:', response.data);
+      
+      // Store the data in Pinia
+      store.$patch({
+        isMemberOfAnotherCreditUnion: isMemberOfAnotherCreditUnion.value,
+        creditUnionName: creditUnionName.value,
+        isServingOnBoard: isServingOnBoard.value,
+        creditUnionBoardName: creditUnionBoardName.value
+      });
+
+      router.push('/politically-exposed-persons');
+    }
+  } catch (error) {
+    console.error('Error submitting membership declaration:', error);
+    if (error.response?.data) {
+      console.log('Detailed error:', error.response.data);
+    }
+    errorMessage.value = error.response?.data?.detail || 'An error occurred while submitting your information';
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const validateForm = () => {
-  return new Promise((resolve, reject) => {
-    errorMessage.value = '';
-    
-    if (isMemberOfAnotherCreditUnion.value === 'yes' && !creditUnionName.value.trim()) {
-      errorMessage.value = 'Please enter the name of the credit union';
-      reject(new Error(errorMessage.value));
-      return;
-    }
-    
-    if (isServingOnBoard.value === 'yes' && !creditUnionBoardName.value.trim()) {
-      errorMessage.value = 'Please enter the name of the board';
-      reject(new Error(errorMessage.value));
-      return;
-    }
-    
-    resolve({
-      isMemberOfAnotherCreditUnion: isMemberOfAnotherCreditUnion.value,
-      creditUnionName: creditUnionName.value,
-      isServingOnBoard: isServingOnBoard.value,
-      creditUnionBoardName: creditUnionBoardName.value
-    });
-  });
-};
-
-const goNext = async () => {
-  isLoading.value = true;
   errorMessage.value = '';
   
-  try {
-    const formData = await validateForm();
-    store.setMembershipInfo(formData);
+  if (!store.signupId) {
+    errorMessage.value = 'Invalid session. Please start the signup process again.';
+    return false;
+  }
 
-    const baseURL = getBaseURL();
-    await axios.post(`${baseURL}/membership-declaration-agreement`, formData);
-    router.push('/politically-exposed-persons');
-  } catch (error) {
-    console.error('Error submitting membership declaration:', error);
-    
-    if (!errorMessage.value) {
-      errorMessage.value = 'An error occurred. Please try again.';
-    }
-  } finally {
-    isLoading.value = false;
+  if (isMemberOfAnotherCreditUnion.value === 'yes' && !creditUnionName.value.trim()) {
+    errorMessage.value = 'Please enter the name of the credit union';
+    return false;
+  }
+  
+  if (isServingOnBoard.value === 'yes' && !creditUnionBoardName.value.trim()) {
+    errorMessage.value = 'Please enter the name of the board';
+    return false;
+  }
+  
+  return true;
+};
+
+const handleSubmit = async () => {
+  if (validateForm()) {
+    await submitForm();
   }
 };
 

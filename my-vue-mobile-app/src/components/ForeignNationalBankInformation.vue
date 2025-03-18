@@ -16,20 +16,20 @@
                   height="120"
                 />
               
-                <h1 class="text-h1 font-weight-bold mb-2">Foreign National Bank Information</h1>
+                <h1 class="text-h4 font-weight-bold mb-2">Foreign National Bank Information</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Please provide your bank details</p>
               </div>
 
-              <v-form @submit.prevent="handleSubmit">
-                <v-alert
-                  v-if="formError"
-                  type="error"
-                  variant="tonal"
-                  class="mb-4"
-                >
-                  {{ formError }}
-                </v-alert>
+              <v-alert
+                v-if="formError"
+                type="error"
+                variant="tonal"
+                class="mb-4"
+              >
+                {{ formError }}
+              </v-alert>
 
+              <v-form @submit.prevent="handleSubmit">
                 <v-card class="mb-6" variant="outlined">
                   <v-card-text>
                     <v-text-field
@@ -38,18 +38,24 @@
                       placeholder="Enter bank name"
                       variant="outlined"
                       prepend-inner-icon="mdi-bank"
-                      :rules="[v => !!v || 'Bank name is required']"
                       required
                     />
 
                     <v-text-field
                       v-model="bankAddressLine1"
-                      label="Address Line 1"
+                      label="Bank Address Line 1"
                       placeholder="Enter bank address"
                       variant="outlined"
                       prepend-inner-icon="mdi-map-marker"
-                      :rules="[v => !!v || 'Bank address is required']"
                       required
+                    />
+
+                    <v-text-field
+                      v-model="bankAddressLine2"
+                      label="Bank Address Line 2"
+                      placeholder="Enter additional address details (optional)"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-map-marker"
                     />
 
                     <v-text-field
@@ -58,18 +64,15 @@
                       placeholder="Enter city"
                       variant="outlined"
                       prepend-inner-icon="mdi-city"
-                      :rules="[v => !!v || 'City is required']"
                       required
                     />
 
-                    <v-select
+                    <v-text-field
                       v-model="bankCountry"
                       label="Country"
-                      :items="countryList"
-                      placeholder="Select country"
+                      placeholder="Enter country"
                       variant="outlined"
                       prepend-inner-icon="mdi-earth"
-                      :rules="[v => !!v || 'Country is required']"
                       required
                     />
 
@@ -79,17 +82,6 @@
                       placeholder="Enter account number"
                       variant="outlined"
                       prepend-inner-icon="mdi-credit-card"
-                      :rules="[v => !!v || 'Account number is required']"
-                      required
-                    />
-
-                    <v-text-field
-                      v-model="swiftCode"
-                      label="SWIFT Code"
-                      placeholder="Enter SWIFT code"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-code-brackets"
-                      :rules="[v => !!v || 'SWIFT code is required']"
                       required
                     />
 
@@ -99,7 +91,6 @@
                       placeholder="Enter bank telephone number"
                       variant="outlined"
                       prepend-inner-icon="mdi-phone"
-                      :rules="[v => !!v || 'Telephone number is required']"
                       required
                     />
 
@@ -107,10 +98,11 @@
                       <v-col cols="12" sm="6">
                         <v-btn
                           block
-                          color="secondary"
+                          color="primary"
                           variant="flat"
                           size="large"
                           @click="navigateToPrevious"
+                          :disabled="isLoading"
                         >
                           Back
                         </v-btn>
@@ -118,7 +110,7 @@
                       <v-col cols="12" sm="6">
                         <v-btn
                           block
-                          color="primary"
+                          color="secondary"
                           variant="flat"
                           size="large"
                           type="submit"
@@ -155,98 +147,131 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
-import { countries } from 'countries-list';
-import logoImage from '../assets/Logo1.png';
+import logoImage from '@/assets/Logo1.png';
+
 const router = useRouter();
 const store = useDemoStore();
+const isLoading = ref(false);
+const formError = ref('');
 
 // Form data
 const bankName = ref('');
 const bankAddressLine1 = ref('');
+const bankAddressLine2 = ref('');
 const bankCity = ref('');
 const bankCountry = ref('');
 const bankAccountNumber = ref('');
-const swiftCode = ref('');
 const bankTelephoneNumber = ref('');
-const countryList = ref(Object.values(countries).map(country => country.name));
 
-// UI state
-const isLoading = ref(false);
-const formError = ref('');
-
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3000' 
-    : `http://${window.location.hostname}:3000`;
-};
-
-const handleSubmit = async () => {
+const submitForm = async () => {
   isLoading.value = true;
   formError.value = '';
 
   try {
-    // Validate required fields
-    if (!bankName.value || !bankAddressLine1.value || !bankCity.value || 
-        !bankCountry.value || !bankAccountNumber.value || !swiftCode.value || 
-        !bankTelephoneNumber.value) {
-      formError.value = 'Please fill in all required fields';
-      return;
-    }
-
-    const formData = {
-      bankName: bankName.value,
-      bankAddressLine1: bankAddressLine1.value,
-      bankCity: bankCity.value,
-      bankCountry: bankCountry.value,
-      bankAccountNumber: bankAccountNumber.value,
-      swiftCode: swiftCode.value,
-      bankTelephoneNumber: bankTelephoneNumber.value
+    // Format data to match API model
+    const foreignNationalData = {
+      signup_id: store.signupId,
+      bank_name: bankName.value,
+      bank_address_1: bankAddressLine1.value,
+      bank_address_2: bankAddressLine2.value || null,
+      city: bankCity.value,
+      country: bankCountry.value,
+      account_number: bankAccountNumber.value,
+      bank_phone: bankTelephoneNumber.value
     };
 
-    // Save to store
-    store.$patch((state) => {
-      state.bankInfo = formData;
-    });
+    console.log('Sending foreign national bank data:', foreignNationalData);
 
-    // Make API call
-    const baseURL = getBaseURL();
-    await axios.post(`${baseURL}/foreign-national-bank-information`, formData);
+    const response = await axios.post('http://127.0.0.1:8000/foreign-nationals/', foreignNationalData);
 
-    router.push('/employment-information');
+    if (response.data) {
+      console.log('Foreign national bank info submitted:', response.data);
+      
+      // Store the data
+      store.$patch({
+        bankName: bankName.value,
+        bankAddressLine1: bankAddressLine1.value,
+        bankAddressLine2: bankAddressLine2.value,
+        bankCity: bankCity.value,
+        bankCountry: bankCountry.value,
+        bankAccountNumber: bankAccountNumber.value,
+        bankTelephoneNumber: bankTelephoneNumber.value
+      });
+
+      router.push('/employment-information');
+    }
   } catch (error) {
-    console.error('Error submitting bank information:', error);
-    formError.value = 'An error occurred while submitting your information. Please try again.';
+    console.error('Error submitting foreign national bank info:', error);
+    if (error.response?.data) {
+      console.log('Detailed error:', error.response.data);
+    }
+    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
   }
 };
 
-const navigateToPrevious = () => {
-  // Save current state before navigating
-  store.$patch((state) => {
-    state.bankInfo = {
-      bankName: bankName.value,
-      bankAddressLine1: bankAddressLine1.value,
-      bankCity: bankCity.value,
-      bankCountry: bankCountry.value,
-      bankAccountNumber: bankAccountNumber.value,
-      swiftCode: swiftCode.value,
-      bankTelephoneNumber: bankTelephoneNumber.value
-    };
-  });
-  router.go(-1);
+const validateForm = () => {
+  formError.value = '';
+
+  if (!store.signupId) {
+    formError.value = 'Invalid session. Please start the signup process again.';
+    return false;
+  }
+
+  if (!bankName.value?.trim()) {
+    formError.value = 'Bank name is required';
+    return false;
+  }
+
+  if (!bankAddressLine1.value?.trim()) {
+    formError.value = 'Bank address is required';
+    return false;
+  }
+
+  if (!bankCity.value?.trim()) {
+    formError.value = 'City is required';
+    return false;
+  }
+
+  if (!bankCountry.value?.trim()) {
+    formError.value = 'Country is required';
+    return false;
+  }
+
+  if (!bankAccountNumber.value?.trim()) {
+    formError.value = 'Account number is required';
+    return false;
+  }
+
+  if (!bankTelephoneNumber.value?.trim()) {
+    formError.value = 'Bank telephone number is required';
+    return false;
+  }
+
+  return true;
 };
 
-// Initialize component with stored data
+const handleSubmit = async () => {
+  if (validateForm()) {
+    await submitForm();
+  }
+};
+
+const navigateToPrevious = () => {
+  router.push('/identification-information');
+};
+
+// Initialize component with stored data if it exists
 onMounted(() => {
-  if (store.bankInfo) {
-    bankName.value = store.bankInfo.bankName || '';
-    bankAddressLine1.value = store.bankInfo.bankAddressLine1 || '';
-    bankCity.value = store.bankInfo.bankCity || '';
-    bankCountry.value = store.bankInfo.bankCountry || '';
-    bankAccountNumber.value = store.bankInfo.bankAccountNumber || '';
-    swiftCode.value = store.bankInfo.swiftCode || '';
-    bankTelephoneNumber.value = store.bankInfo.bankTelephoneNumber || '';
+  if (store.bankName) {
+    bankName.value = store.bankName;
+    bankAddressLine1.value = store.bankAddressLine1;
+    bankAddressLine2.value = store.bankAddressLine2;
+    bankCity.value = store.bankCity;
+    bankCountry.value = store.bankCountry;
+    bankAccountNumber.value = store.bankAccountNumber;
+    bankTelephoneNumber.value = store.bankTelephoneNumber;
   }
 });
 </script>
@@ -266,8 +291,6 @@ onMounted(() => {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-
-
 
 :deep(.v-btn) {
   height: 48px;

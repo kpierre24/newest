@@ -77,60 +77,48 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
-import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import logoImage from '@/assets/Logo1.png';
+
 const router = useRouter();
 const store = useDemoStore();
 const loading = ref(false);
+const error = ref('');
 const isNewCustomer = ref(false);
 
-const handleApiCall = async (endpoint, customerType) => {
-  try {
-    // Mock a successful response (temporary fix)
-    return { data: { success: true } };
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
-  }
+const initializeSignup = (isExisting) => {
+  const signupId = uuidv4();
+  store.setSignupId(signupId);
+  store.setExistingCustomer(isExisting);
+  console.log('Signup initialized with ID:', signupId);
 };
 
-const handleNewCustomer = async () => {
-  console.log('New Customer clicked');
+const handleNewCustomer = () => {
   loading.value = true;
   isNewCustomer.value = true;
   try {
-    await handleApiCall('new', 'new_customer');
-    store.setExistingCustomer(false);
-    console.log('Store state:', store.isExistingCustomer);
-  } catch (error) {
-    console.error('Error handling new customer:', error);
+    initializeSignup(false);
+    router.push('/getting-ready');
+  } catch (err) {
+    console.error('Error handling new customer:', err);
+    error.value = 'An error occurred. Please try again.';
   } finally {
     loading.value = false;
-    navigateToGettingReady();
   }
 };
 
-const handleExistingCustomer = async () => {
-  console.log('Existing Customer clicked');
+const handleExistingCustomer = () => {
   loading.value = true;
   isNewCustomer.value = false;
   try {
-    await handleApiCall('existing', 'existing_customer');
-    store.setExistingCustomer(true);
-    console.log('Store state:', store.isExistingCustomer);
-  } catch (error) {
-    console.error('Error handling existing customer:', error);
+    initializeSignup(true);
+    router.push('/getting-ready');
+  } catch (err) {
+    console.error('Error handling existing customer:', err);
+    error.value = 'An error occurred. Please try again.';
   } finally {
     loading.value = false;
-    navigateToGettingReady();
   }
-};
-
-const navigateToGettingReady = () => {
-  console.log('Navigating to Getting Ready');
-  router.push('/getting-ready').catch((err) => {
-    console.error('Navigation error:', err);
-  });
 };
 </script>
 
@@ -142,38 +130,6 @@ const navigateToGettingReady = () => {
 
 .form-container {
   max-width: 100%;
-}
-
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.brand-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.brand-logo {
-  width: 240px;
-  height: auto;
-  z-index: 2;
-  filter: brightness(1.2);
 }
 
 :deep(.v-card) {

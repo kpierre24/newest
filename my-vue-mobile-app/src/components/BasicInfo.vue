@@ -18,7 +18,7 @@
                 <p class="text-subtitle-1 text-medium-emphasis">Please enter your personal details</p>
               </div>
 
-              <v-form @submit.prevent="navigateToNext">
+              <v-form @submit.prevent="handleSubmit">
                 <v-alert
                   v-if="formError"
                   type="error"
@@ -108,6 +108,18 @@
                   :max="today"
                   required
                   @input="validateDateOfBirth"
+                />
+
+                <v-select
+                  v-model="store.nationality"
+                  label="Nationality"
+                  :items="countryList"
+                  :rules="[v => !!v || 'Nationality is required']"
+                  placeholder="Select nationality"
+                  variant="outlined"
+                  prepend-inner-icon="mdi-flag"
+                  required
+                  @change="() => console.log('Nationality changed:', store.nationality)"
                 />
 
                 <v-text-field
@@ -241,13 +253,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import TermsAndConditions from '@/components/TermsAndConditions.vue';
 import FinancialDeclaration from '@/components/FinancialDeclaration.vue';
 import logoImage from '../assets/Logo1.png';
+import { countries } from 'countries-list';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -263,6 +276,8 @@ const today = computed(() => {
   const date = new Date();
   return date.toISOString().split('T')[0];
 });
+
+const countryList = ref(Object.values(countries).map(country => country.name));
 
 const openTerms = () => {
   showTerms.value = true;
@@ -318,44 +333,114 @@ const calculateAge = (dob) => {
   return age;
 };
 
-const navigateToNext = async () => {
+const submitForm = async () => {
   isLoading.value = true;
   formError.value = '';
-  
-  try {
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:3000' 
-      : `http://${window.location.hostname}:3000`;
 
-    const basicInfoData = {
-      firstName: store.firstName,
-      lastName: store.lastName,
-      otherName: store.otherName,
+  try {
+    const signupData = {
+      first_name: store.firstName,
+      last_name: store.lastName,
+      middle_name: store.otherName || null,
       email: store.email,
-      mobileNumber: store.mobileNumber,
+      mobile: store.mobileNumber,
+      password: store.password,
+      confirmed_password: store.confirmPassword,
       gender: store.gender,
       dob: store.dob,
-      age: calculateAge(store.dob),
-      password: store.password,
-      confirmPassword: store.confirmPassword,
-      termsViewed: store.termsViewed,
-      financialAgreementViewed: store.financialAgreementViewed
+      nationality: store.nationality,
+      is_existing_customer: store.isExistingCustomer || false
     };
 
-    await axios.post(`${baseURL}/basic-info`, basicInfoData);
-    store.setBasicInfo(basicInfoData);
-    router.push({ name: 'EmailVerification' });
+    const response = await axios.post('http://127.0.0.1:8000/signups/', signupData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.data) {
+      store.$patch((state) => {
+        state.signupId = response.data.id;
+        state.firstName = response.data.first_name;
+        state.lastName = response.data.last_name;
+        state.otherName = response.data.middle_name;
+        state.email = response.data.email;
+        state.mobileNumber = response.data.mobile;
+        state.gender = response.data.gender;
+        state.dob = response.data.dob;
+        state.nationality = response.data.nationality;
+        state.isExistingCustomer = response.data.is_existing_customer;
+      });
+
+      router.push('/email-verification');
+    }
   } catch (error) {
-    console.error('Error submitting basic info:', error);
-    formError.value = error.message || 'An error occurred while submitting your information';
+    console.error('Error submitting signup info:', error);
+    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
+  }
+};
+
+const validateForm = () => {
+  formError.value = '';
+  
+  if (!store.nationality) {
+    formError.value = 'Nationality is required';
+    return false;
+  }
+
+  if (!store.firstName?.trim()) {
+    formError.value = 'First name is required';
+    return false;
+  }
+  if (!store.lastName?.trim()) {
+    formError.value = 'Last name is required';
+    return false;
+  }
+  if (!store.email?.trim() || !/.+@.+\..+/.test(store.email)) {
+    formError.value = 'Valid email is required';
+    return false;
+  }
+  if (!store.mobileNumber?.trim()) {
+    formError.value = 'Mobile number is required';
+    return false;
+  }
+  if (!store.password?.trim()) {
+    formError.value = 'Password is required';
+    return false;
+  }
+  if (store.password !== store.confirmPassword) {
+    formError.value = 'Passwords must match';
+    return false;
+  }
+  if (!store.gender?.trim()) {
+    formError.value = 'Gender is required';
+    return false;
+  }
+  if (!store.dob) {
+    formError.value = 'Date of birth is required';
+    return false;
+  }
+
+  return true;
+};
+
+const handleSubmit = async () => {
+  console.log('Form submission initiated. Current nationality:', store.nationality);
+  
+  if (validateForm()) {
+    await submitForm();
   }
 };
 
 const navigateToPrevious = () => {
   router.push('/getting-ready');
 };
+
+onMounted(() => {
+  console.log('Component mounted. Current nationality:', store.nationality);
+});
 </script>
 
 <style scoped>

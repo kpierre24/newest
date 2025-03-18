@@ -3,14 +3,15 @@ import { defineStore } from 'pinia';
 export const useDemoStore = defineStore({
   id: 'demo',
   state: () => ({
+    signupId: null,
     firstName: '',
     lastName: '',
     otherName: '',
     email: '',
     mobileNumber: '',
     gender: '',
-    dob: null,
-    age: null,
+    dob: '',
+    nationality: '',
     password: '',
     confirmPassword: '',
     termsViewed: false,
@@ -19,7 +20,6 @@ export const useDemoStore = defineStore({
     AddressLine2: '',
     City: '',
     Country: '',
-    Nationality: '',
     DwellingStatus: '',
     branchName: '',
     branchCode: '',
@@ -58,7 +58,6 @@ export const useDemoStore = defineStore({
     bankCity: '',
     bankCountry: '',
     bankAccountNumber: '',
-    swiftCode: '',
     bankTelephoneNumber: '',
     beneficiaryFirstName: '',
     beneficiaryLastName: '',
@@ -104,6 +103,7 @@ export const useDemoStore = defineStore({
       email: '',
       mobileNumber: '',
       gender: '',
+      nationality: '',
       password: '',
       confirmPassword: '',
       termsViewed: false,
@@ -158,7 +158,21 @@ export const useDemoStore = defineStore({
       idExpiry: '',
       relationship: '',
       percentage: ''
-    }
+    },
+    isMemberOfAnotherCreditUnion: 'no',
+    creditUnionName: '',
+    isServingOnBoard: 'no',
+    creditUnionBoardName: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    country: '',
+    dwellingStatus: '',
+    addressId: null,
+    isEmailVerified: false,
+    emailVerifiedOn: null,
+    isMobileVerified: false,
+    mobileVerifiedOn: null,
   }),
   actions: {
     setBasicInfo(info) {
@@ -170,7 +184,6 @@ export const useDemoStore = defineStore({
       this.AddressLine2 = info.AddressLine2;
       this.City = info.City;
       this.Country = info.Country;
-      this.Nationality = info.Nationality;
       this.DwellingStatus = info.DwellingStatus;
     },
     setBranchInfo(info) {
@@ -230,7 +243,6 @@ export const useDemoStore = defineStore({
       this.bankCity = info.bankCity;
       this.bankCountry = info.bankCountry;
       this.bankAccountNumber = info.bankAccountNumber;
-      this.swiftCode = info.swiftCode;
       this.bankTelephoneNumber = info.bankTelephoneNumber;
     },
     setBankAccountNumber(accountNumber) {
@@ -297,7 +309,80 @@ export const useDemoStore = defineStore({
       this.secondExpiryDate = info.secondExpiryDate;
       this.secondIdDocument = info.secondIdDocument;
       this.maritalStatus = info.maritalStatus;
-    }
+    },
+    clearBasicInfo() {
+      this.firstName = '';
+      this.lastName = '';
+      this.otherName = '';
+      this.email = '';
+      this.mobileNumber = '';
+      this.gender = '';
+      this.dob = '';
+      this.nationality = '';
+      this.password = '';
+      this.confirmPassword = '';
+      this.isExistingCustomer = false;
+    },
+    clearAddressInfo() {
+      this.AddressLine1 = '';
+      this.AddressLine2 = '';
+      this.City = '';
+      this.Country = '';
+      this.DwellingStatus = '';
+    },
+    setSignupId(id) {
+      this.signupId = id;
+      console.log('Signup ID set in store:', id);
+    },
+    clearSignupData() {
+      this.signupId = null;
+      this.isExistingCustomer = false;
+      // Clear other signup-related data
+      this.firstName = '';
+      this.lastName = '';
+      this.otherName = '';
+      this.email = '';
+      this.mobileNumber = '';
+      this.password = '';
+      this.confirmPassword = '';
+      this.gender = '';
+      this.dob = '';
+      this.nationality = '';
+    },
+    clearMembershipData() {
+      this.isMemberOfAnotherCreditUnion = 'no';
+      this.creditUnionName = '';
+      this.isServingOnBoard = 'no';
+      this.creditUnionBoardName = '';
+    },
+    clearAddressData() {
+      this.addressLine1 = '';
+      this.addressLine2 = '';
+      this.city = '';
+      this.country = '';
+      this.dwellingStatus = '';
+      this.addressId = null;
+    },
+    clearForeignNationalBankData() {
+      this.bankName = '';
+      this.bankAddressLine1 = '';
+      this.bankAddressLine2 = '';
+      this.bankCity = '';
+      this.bankCountry = '';
+      this.bankAccountNumber = '';
+      this.bankTelephoneNumber = '';
+    },
+    setEmailVerified(status) {
+      this.isEmailVerified = status;
+    },
+    clearEmailVerification() {
+      this.isEmailVerified = false;
+      this.emailVerifiedOn = null;
+    },
+    clearMobileVerification() {
+      this.isMobileVerified = false;
+      this.mobileVerifiedOn = null;
+    },
   },
   persist: true,
 });
