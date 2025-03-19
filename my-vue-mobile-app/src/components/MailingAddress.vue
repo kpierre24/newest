@@ -39,18 +39,18 @@
                     />
 
                     <v-text-field
-                      v-model="formData.addressLine1"
+                      v-model="formData.address_line_1"
                       label="Address Line 1"
                       placeholder="Enter mailing address"
                       variant="outlined"
                       prepend-inner-icon="mdi-map-marker"
-                      :error-messages="errors.addressLine1"
+                      :error-messages="errors.address_line_1"
                       :disabled="formData.sameAsResidential"
                       :required="!formData.sameAsResidential"
                     />
 
                     <v-text-field
-                      v-model="formData.addressLine2"
+                      v-model="formData.address_line_2"
                       label="Address Line 2"
                       placeholder="Apartment, suite, etc."
                       variant="outlined"
@@ -78,6 +78,26 @@
                       :error-messages="errors.country"
                       :disabled="formData.sameAsResidential"
                       :required="!formData.sameAsResidential"
+                    />
+
+                    <v-select
+                      v-model="formData.dwelling_status"
+                      label="Dwelling Status"
+                      :items="dwellingStatusOptions"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-home"
+                      :error-messages="errors.dwelling_status"
+                      :disabled="formData.sameAsResidential"
+                      :required="!formData.sameAsResidential"
+                    />
+
+                    <v-file-input
+                      v-model="formData.proof_of_address_file"
+                      label="Proof of Address"
+                      prepend-icon="mdi-file-document"
+                      @change="handleFileUpload"
+                      :error-messages="errors.proof_of_address_file"
+                      :disabled="formData.sameAsResidential"
                     />
                   </v-card-text>
                 </v-card>
@@ -132,82 +152,126 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
+import axios from 'axios';
 import { countries } from 'countries-list';
 import logoImage from '../assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
+const formError = ref('');
+const isLoading = ref(false);
 
-// Form data refs
 const formData = ref({
-  addressLine1: '',
-  addressLine2: '',
+  address_line_1: '',
+  address_line_2: '',
   city: '',
   country: '',
+  dwelling_status: '',
+  proof_of_address_file: null,
   sameAsResidential: false
 });
 
 const errors = ref({});
-const formError = ref('');
-const isLoading = ref(false);
 const countryList = ref(Object.values(countries).map(country => country.name));
+const dwellingStatusOptions = [
+  'owned',
+  'rented',
+  'living-with-family'
+];
 
-// Methods
-const validateForm = () => {
-  errors.value = {};
-  let isValid = true;
-
-  if (!formData.value.sameAsResidential) {
-    if (!formData.value.addressLine1) {
-      errors.value.addressLine1 = 'Address Line 1 is required';
-      isValid = false;
-    }
-    if (!formData.value.city) {
-      errors.value.city = 'City is required';
-      isValid = false;
-    }
-    if (!formData.value.country) {
-      errors.value.country = 'Country is required';
-      isValid = false;
-    }
-  }
-
-  return isValid;
-};
-
-const useResidentialAddress = () => {
-  if (formData.value.sameAsResidential) {
-    formData.value.addressLine1 = store.residentialAddressLine1 || '';
-    formData.value.addressLine2 = store.residentialAddressLine2 || '';
-    formData.value.city = store.residentialCity || '';
-    formData.value.country = store.residentialCountry || '';
-  } else {
-    formData.value.addressLine1 = '';
-    formData.value.addressLine2 = '';
-    formData.value.city = '';
-    formData.value.country = '';
-  }
-};
-
-const handleSubmit = async () => {
-  if (!validateForm()) return;
-
+const handleSubmit = async (event) => {
+  event.preventDefault();
   isLoading.value = true;
   formError.value = '';
 
   try {
-    // Update store with form data
-    store.$patch((state) => {
-      Object.assign(state, formData.value);
+    if (formData.value.sameAsResidential) {
+      // If same as residential, just store the flag and navigate
+      store.$patch({
+        mailingAddressInfo: {
+          sameAsResidential: true
+        }
+      });
+      router.push('/foreign-national-bank-information');
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.value.address_line_1 || !formData.value.city || 
+        !formData.value.country || !formData.value.dwelling_status ||
+        !formData.value.proof_of_address_file) {
+      formError.value = 'Please fill in all required fields';
+      isLoading.value = false;
+      return;
+    }
+
+    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+
+    // Create FormData for file upload
+    const addressFormData = new FormData();
+    addressFormData.append('signup_id', store.signupId);
+    addressFormData.append('address_line_1', formData.value.address_line_1);
+    addressFormData.append('address_line_2', formData.value.address_line_2 || '');
+    addressFormData.append('city', formData.value.city);
+    addressFormData.append('country', formData.value.country);
+    addressFormData.append('dwelling_status', formData.value.dwelling_status);
+    addressFormData.append('address_type', 'mailing');
+    addressFormData.append('proof_of_address_file', formData.value.proof_of_address_file);
+
+    // Make API call
+    const response = await axios.post(`${baseURL}/addresses/`, addressFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
 
-    // Navigate to the next page
+    // Store the data
+    store.$patch({
+      mailingAddressInfo: {
+        addressLine1: formData.value.address_line_1,
+        addressLine2: formData.value.address_line_2,
+        city: formData.value.city,
+        country: formData.value.country,
+        dwellingStatus: formData.value.dwelling_status,
+        sameAsResidential: false
+      }
+    });
+
+    // Navigate to next page
     router.push('/foreign-national-bank-information');
   } catch (error) {
     console.error('Error submitting mailing address:', error);
-    formError.value = 'An error occurred while submitting your information';
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    } else {
+      formError.value = 'An error occurred while submitting your information';
+    }
   } finally {
     isLoading.value = false;
+  }
+};
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    formData.value.proof_of_address_file = file;
+  }
+};
+
+const useResidentialAddress = () => {
+  if (formData.value.sameAsResidential) {
+    formData.value.address_line_1 = store.residentialAddressInfo?.addressLine1 || '';
+    formData.value.address_line_2 = store.residentialAddressInfo?.addressLine2 || '';
+    formData.value.city = store.residentialAddressInfo?.city || '';
+    formData.value.country = store.residentialAddressInfo?.country || '';
+    formData.value.dwelling_status = store.residentialAddressInfo?.dwellingStatus || '';
+  } else {
+    formData.value.address_line_1 = '';
+    formData.value.address_line_2 = '';
+    formData.value.city = '';
+    formData.value.country = '';
+    formData.value.dwelling_status = '';
   }
 };
 
@@ -215,14 +279,17 @@ const navigateToPrevious = () => {
   router.go(-1);
 };
 
-// Initialize component
 onMounted(() => {
-  if (store) {
-    formData.value.addressLine1 = store.addressLine1 || '';
-    formData.value.addressLine2 = store.addressLine2 || '';
-    formData.value.city = store.city || '';
-    formData.value.country = store.country || '';
-    formData.value.sameAsResidential = store.sameAsResidential || false;
+  if (store.mailingAddressInfo) {
+    formData.value = {
+      address_line_1: store.mailingAddressInfo.addressLine1 || '',
+      address_line_2: store.mailingAddressInfo.addressLine2 || '',
+      city: store.mailingAddressInfo.city || '',
+      country: store.mailingAddressInfo.country || '',
+      dwelling_status: store.mailingAddressInfo.dwellingStatus || '',
+      proof_of_address_file: null,
+      sameAsResidential: store.mailingAddressInfo.sameAsResidential || false
+    };
   }
 });
 </script>
@@ -242,8 +309,6 @@ onMounted(() => {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-
-
 
 :deep(.v-btn) {
   height: 48px;

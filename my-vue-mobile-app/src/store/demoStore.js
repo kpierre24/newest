@@ -184,6 +184,14 @@ export const useDemoStore = defineStore({
       mobile: '',
       relationshipToChild: ''
     },
+    mailingAddressInfo: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      country: '',
+      dwellingStatus: '',
+      sameAsResidential: false
+    },
   }),
   actions: {
     setBasicInfo(info) {

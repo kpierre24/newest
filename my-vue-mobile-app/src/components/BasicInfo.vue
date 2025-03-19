@@ -273,6 +273,7 @@ import TermsAndConditions from '@/components/TermsAndConditions.vue';
 import FinancialDeclaration from '@/components/FinancialDeclaration.vue';
 import logoImage from '../assets/Logo1.png';
 import { countries } from 'countries-list';
+import { config } from '@/config';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -390,7 +391,9 @@ const submitForm = async () => {
     // Debug log the request data
     console.log('Sending signup data:', signupData);
 
-    const response = await axios.post('http://127.0.0.1:8000/signups/', signupData, {
+    const baseURL = config.apiBaseUrl;
+
+    const response = await axios.post(`${baseURL}/signups/`, signupData, {
       headers: {
         'Content-Type': 'application/json',
       },

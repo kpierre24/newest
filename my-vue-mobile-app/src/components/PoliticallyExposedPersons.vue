@@ -124,7 +124,7 @@
                         chips
                         closable-chips
                         item-title="title"
-                        item-value="value"
+                      
                         :return-object="false"
                         :menu-props="{ closeOnContentClick: true }"
                         required
