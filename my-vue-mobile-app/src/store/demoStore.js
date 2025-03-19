@@ -118,9 +118,9 @@ export const useDemoStore = defineStore({
     pepAssociateName: '',
     maritalStatus: '',
     isPEP: null,
-    pepPosition: '',
-    pepRelationship: '',
-    pepCountry: '',
+    pepPosition: [],
+    pepRelationship: [],
+    internationalOrgPEP: [],
     childIdInfo: {
       firstIdType: '',
       firstIdNumber: '',
@@ -173,6 +173,17 @@ export const useDemoStore = defineStore({
     emailVerifiedOn: null,
     isMobileVerified: false,
     mobileVerifiedOn: null,
+    schoolName: '',
+    guardianInfo: {
+      firstName: '',
+      lastName: '',
+      middleName: '',
+      occupation: '',
+      workplace: '',
+      email: '',
+      mobile: '',
+      relationshipToChild: ''
+    },
   }),
   actions: {
     setBasicInfo(info) {
@@ -322,6 +333,7 @@ export const useDemoStore = defineStore({
       this.password = '';
       this.confirmPassword = '';
       this.isExistingCustomer = false;
+      this.schoolName = '';
     },
     clearAddressInfo() {
       this.AddressLine1 = '';
@@ -382,6 +394,27 @@ export const useDemoStore = defineStore({
     clearMobileVerification() {
       this.isMobileVerified = false;
       this.mobileVerifiedOn = null;
+    },
+    clearPEPData() {
+      this.isPEP = null;
+      this.pepPosition = [];
+      this.pepRelationship = [];
+      this.internationalOrgPEP = [];
+      this.pepAssociate = '';
+      this.pepAssociateDetails = '';
+      this.pepAssociateName = '';
+    },
+    clearGuardianInfo() {
+      this.guardianInfo = {
+        firstName: '',
+        lastName: '',
+        middleName: '',
+        occupation: '',
+        workplace: '',
+        email: '',
+        mobile: '',
+        relationshipToChild: ''
+      };
     },
   },
   persist: true,

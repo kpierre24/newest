@@ -74,52 +74,82 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
 const loading = ref(false);
-const error = ref('');
 const isNewCustomer = ref(false);
 
-const initializeSignup = (isExisting) => {
-  const signupId = uuidv4();
-  store.setSignupId(signupId);
-  store.setExistingCustomer(isExisting);
-  console.log('Signup initialized with ID:', signupId);
+const handleApiCall = async (endpoint, customerType) => {
+  try {
+    // Mock a successful response (temporary fix)
+    return { data: { success: true } };
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
 };
 
-const handleNewCustomer = () => {
+const handleNewCustomer = async () => {
+  console.log('New Customer clicked');
   loading.value = true;
   isNewCustomer.value = true;
   try {
-    initializeSignup(false);
-    router.push('/getting-ready');
-  } catch (err) {
-    console.error('Error handling new customer:', err);
-    error.value = 'An error occurred. Please try again.';
+    await handleApiCall('new', 'new_customer');
+    store.setExistingCustomer(false);
+    console.log('Store state:', store.isExistingCustomer);
+  } catch (error) {
+    console.error('Error handling new customer:', error);
   } finally {
     loading.value = false;
+    navigateToGettingReady();
   }
 };
 
-const handleExistingCustomer = () => {
+const handleExistingCustomer = async () => {
+  console.log('Existing Customer clicked');
   loading.value = true;
   isNewCustomer.value = false;
   try {
-    initializeSignup(true);
-    router.push('/getting-ready');
-  } catch (err) {
-    console.error('Error handling existing customer:', err);
-    error.value = 'An error occurred. Please try again.';
+    await handleApiCall('existing', 'existing_customer');
+    store.setExistingCustomer(true);
+    console.log('Store state:', store.isExistingCustomer);
+  } catch (error) {
+    console.error('Error handling existing customer:', error);
   } finally {
     loading.value = false;
+    navigateToGettingReady();
   }
 };
+
+const navigateToGettingReady = () => {
+  console.log('Navigating to Getting Ready');
+  router.push('/getting-ready').catch((err) => {
+    console.error('Navigation error:', err);
+  });
+};
+
+const createInitialSignup = async () => {
+  try {
+    const response = await axios.post('http://127.0.0.1:8000/signups/');
+    store.setSignupId(response.data.id);
+    store.setUserId(response.data.user_id);
+  } catch (error) {
+    console.error('Error creating signup:', error);
+  }
+};
+
+// Call this when the component mounts or when the signup process starts
+onMounted(async () => {
+  if (!store.signupId) {
+    await createInitialSignup();
+  }
+});
 </script>
 
 <style scoped>

@@ -36,7 +36,7 @@
                     <v-select
                       v-model="formData.firstIdType"
                       label="Type of ID"
-                      :items="['Birth Certificate', 'Passport', 'Student ID']"
+                      :items="idTypes"
                       variant="outlined"
                       prepend-inner-icon="mdi-card-account-details"
                       @update:model-value="updateSecondIdOptions"
@@ -88,7 +88,7 @@
                     <v-select
                       v-model="formData.secondIdType"
                       label="Type of ID"
-                      :items="secondIdOptions"
+                      :items="idTypes.filter(type => type !== formData.firstIdType)"
                       variant="outlined"
                       prepend-inner-icon="mdi-card-account-details"
                       :rules="[v => !!v || 'ID type is required']"
@@ -127,22 +127,6 @@
                       accept=".pdf,.jpg,.png"
                       :rules="[v => !!v || 'ID document is required']"
                       @change="handleFileUpload($event, 'second')"
-                      required
-                    />
-                  </v-card-text>
-                </v-card>
-
-                <!-- School Information -->
-                <v-card class="mb-6" variant="outlined">
-                  <v-card-text>
-                    <h3 class="text-h6 mb-4">School Information</h3>
-                    <v-text-field
-                      v-model="formData.schoolName"
-                      label="School Name"
-                      placeholder="Enter school name"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-school"
-                      :rules="[v => !!v || 'School name is required']"
                       required
                     />
                   </v-card-text>
@@ -211,8 +195,7 @@ const formData = ref({
   secondIdType: '',
   secondIdNumber: '',
   secondExpiryDate: '',
-  secondIdDocument: null,
-  schoolName: ''
+  secondIdDocument: null
 });
 
 const formError = ref('');
@@ -288,8 +271,7 @@ const saveToStore = () => {
       firstExpiryDate: formData.value.firstExpiryDate,
       secondIdType: formData.value.secondIdType,
       secondIdNumber: formData.value.secondIdNumber,
-      secondExpiryDate: formData.value.secondExpiryDate,
-      schoolName: formData.value.schoolName
+      secondExpiryDate: formData.value.secondExpiryDate
     };
   });
 };
@@ -302,43 +284,95 @@ const submitChildIDInformation = async (event) => {
   try {
     // Validate required fields
     if (!formData.value.firstIdType || !formData.value.firstIdNumber || !formData.value.firstIdDocument ||
-        !formData.value.secondIdType || !formData.value.secondIdNumber || !formData.value.secondIdDocument ||
-        !formData.value.schoolName) {
+        !formData.value.secondIdType || !formData.value.secondIdNumber || !formData.value.secondIdDocument) {
       formError.value = 'Please fill in all required fields';
       isLoading.value = false;
       return;
     }
 
-    // Validate expiry dates if applicable
-    if (formData.value.firstIdType !== 'Birth Certificate' && !formData.value.firstExpiryDate) {
-      formError.value = 'Please enter expiry date for the first ID';
-      isLoading.value = false;
-      return;
-    }
+    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
 
-    if (formData.value.secondIdType !== 'Birth Certificate' && !formData.value.secondExpiryDate) {
-      formError.value = 'Please enter expiry date for the second ID';
-      isLoading.value = false;
-      return;
-    }
+    // Format expiry dates properly
+    const formatExpiryDate = (date) => {
+      if (!date) return '2099-12-31T23:59:59.999Z';
+      return new Date(date).toISOString();
+    };
+
+    // Format ID type to match allowed types in schema
+    const formatIdType = (type) => {
+      const typeMap = {
+        'birth certificate': 'Birth Certificate',
+        'passport': 'Passport',
+        'student id': 'National ID'
+      };
+      return typeMap[type.toLowerCase()] || type;
+    };
+
+    // Create FormData for first ID (Birth Certificate - Primary ID)
+    const firstIdFormData = new FormData();
+    firstIdFormData.append('signup_id', store.signupId);
+    firstIdFormData.append('id_type', formatIdType(formData.value.firstIdType));
+    firstIdFormData.append('holder_type', 'child');
+    firstIdFormData.append('id_number', formData.value.firstIdNumber);
+    firstIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.firstExpiryDate));
+    firstIdFormData.append('is_primary_id', 'true');
+    firstIdFormData.append('id_file', formData.value.firstIdDocument);
+
+    // Create FormData for second ID
+    const secondIdFormData = new FormData();
+    secondIdFormData.append('signup_id', store.signupId);
+    secondIdFormData.append('id_type', formatIdType(formData.value.secondIdType));
+    secondIdFormData.append('holder_type', 'child');
+    secondIdFormData.append('id_number', formData.value.secondIdNumber);
+    secondIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.secondExpiryDate));
+    secondIdFormData.append('is_primary_id', 'false');
+    secondIdFormData.append('id_file', formData.value.secondIdDocument);
+
+    console.log('Submitting first ID with data:', {
+      signup_id: store.signupId,
+      id_type: formatIdType(formData.value.firstIdType),
+      holder_type: 'child',
+      id_number: formData.value.firstIdNumber,
+      id_expiry_date: formatExpiryDate(formData.value.firstExpiryDate),
+      is_primary_id: true
+    });
+
+    // Submit both IDs
+    await Promise.all([
+      axios.post(`${baseURL}/identifications/`, firstIdFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }),
+      axios.post(`${baseURL}/identifications/`, secondIdFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+    ]);
 
     // Save to store
-    saveToStore();
-
-    // Make API call
-    try {
-      const baseURL = getBaseURL();
-      await axios.post(`${baseURL}/child-id-information`, formData.value);
-    } catch (apiError) {
-      console.error('API error:', apiError);
-      // Continue with navigation even if API fails
-    }
+    store.$patch({
+      childIdInfo: {
+        firstIdType: formData.value.firstIdType,
+        firstIdNumber: formData.value.firstIdNumber,
+        firstExpiryDate: formData.value.firstExpiryDate,
+        secondIdType: formData.value.secondIdType,
+        secondIdNumber: formData.value.secondIdNumber,
+        secondExpiryDate: formData.value.secondExpiryDate
+      }
+    });
 
     // Navigate to next page
     router.push('/parent-guardian-information');
   } catch (error) {
     console.error('Error submitting child ID information:', error);
-    formError.value = 'An error occurred while submitting your information';
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    } else {
+      formError.value = 'An error occurred while submitting your information';
+    }
   } finally {
     isLoading.value = false;
   }
@@ -354,9 +388,15 @@ onMounted(() => {
     formData.value.secondIdType = store.childIdInfo.secondIdType || '';
     formData.value.secondIdNumber = store.childIdInfo.secondIdNumber || '';
     formData.value.secondExpiryDate = store.childIdInfo.secondExpiryDate || '';
-    formData.value.schoolName = store.childIdInfo.schoolName || '';
   }
 });
+
+// Update the ID type options to match the schema
+const idTypes = [
+  'Birth Certificate',
+  'Passport',
+  'National ID'
+];
 </script>
 
 <style scoped>
@@ -374,8 +414,6 @@ onMounted(() => {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-
-
 
 :deep(.v-btn) {
   height: 48px;

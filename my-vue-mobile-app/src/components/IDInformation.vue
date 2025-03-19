@@ -37,20 +37,18 @@
                     <v-card-text class="pa-4">
                       <h3 class="text-h6 mb-3">First Form of ID</h3>
                       <v-select
-                        v-model="firstIdType"
+                        v-model="formData.firstIdType"
                         label="Type of ID"
-                        :items="['ID Card', 'Passport', 'Driver\'s Permit', 'Birthpaper']"
+                        :items="idTypes"
                         variant="outlined"
-                        density="comfortable"
                         prepend-inner-icon="mdi-card-account-details"
                         @update:model-value="updateSecondIdOptions"
                         :rules="[v => !!v || 'ID type is required']"
                         required
-                        class="mb-3"
                       />
 
                       <v-text-field
-                        v-model="firstIdNumber"
+                        v-model="formData.firstIdNumber"
                         label="ID Number"
                         placeholder="Enter 12-digit ID number"
                         variant="outlined"
@@ -63,7 +61,7 @@
                       />
 
                       <v-text-field
-                        v-model="firstExpiryDate"
+                        v-model="formData.firstExpiryDate"
                         label="Expiry Date"
                         type="date"
                         variant="outlined"
@@ -72,14 +70,14 @@
                         :min="minDate"
                         :max="maxExpiryDate"
                         :error-messages="firstExpiryDateError"
-                        :disabled="firstIdType === 'Birthpaper'"
+                        :disabled="formData.firstIdType === 'Birth Certificate'"
                         @update:model-value="validateFirstExpiryDate"
                         required
                         class="mb-3"
                       />
 
                       <v-file-input
-                        v-model="firstIdDocument"
+                        v-model="formData.firstIdDocument"
                         label="Upload ID"
                         variant="outlined"
                         density="comfortable"
@@ -99,9 +97,9 @@
                     <v-card-text>
                       <h3 class="text-h6 mb-4">Second Form of ID</h3>
                       <v-select
-                        v-model="secondIdType"
+                        v-model="formData.secondIdType"
                         label="Type of ID"
-                        :items="secondIdOptions"
+                        :items="updateSecondIdOptions()"
                         variant="outlined"
                         prepend-inner-icon="mdi-card-account-details"
                         :rules="[v => !!v || 'ID type is required']"
@@ -109,7 +107,7 @@
                       />
 
                       <v-text-field
-                        v-model="secondIdNumber"
+                        v-model="formData.secondIdNumber"
                         label="ID Number"
                         placeholder="Enter 12-digit ID number"
                         variant="outlined"
@@ -120,7 +118,7 @@
                       />
 
                       <v-text-field
-                        v-model="secondExpiryDate"
+                        v-model="formData.secondExpiryDate"
                         label="Expiry Date"
                         type="date"
                         variant="outlined"
@@ -128,13 +126,13 @@
                         :min="minDate"
                         :max="maxExpiryDate"
                         :error-messages="secondExpiryDateError"
-                        :disabled="secondIdType === 'Birthpaper'"
+                        :disabled="formData.secondIdType === 'Birth Certificate'"
                         @update:model-value="validateSecondExpiryDate"
                         required
                       />
 
                       <v-file-input
-                        v-model="secondIdDocument"
+                        v-model="formData.secondIdDocument"
                         label="Upload ID"
                         variant="outlined"
                         prepend-inner-icon="mdi-upload"
@@ -225,80 +223,80 @@ const router = useRouter();
 const store = useDemoStore();
 const { minDate, validateExpiryDate } = useDateValidation();
 
-// Form data refs
-const firstIdType = ref('');
-const firstIdNumber = ref('');
-const firstExpiryDate = ref('');
-const firstExpiryDateError = ref('');
-const firstIdDocument = ref(null);
-const secondIdType = ref('');
-const secondIdNumber = ref('');
-const secondExpiryDate = ref('');
-const secondExpiryDateError = ref('');
-const secondIdDocument = ref(null);
+const formData = ref({
+  firstIdType: '',
+  firstIdNumber: '',
+  firstExpiryDate: '',
+  firstIdDocument: null,
+  secondIdType: '',
+  secondIdNumber: '',
+  secondExpiryDate: '',
+  secondIdDocument: null
+});
+
+const formError = ref('');
+const isLoading = ref(false);
 const secondIdOptions = ref(['National ID', "Driver's Permit", 'Birthpaper', 'Passport']);
 const maritalStatus = ref('');
-const isLoading = ref(false);
-const formError = ref('');
 
 // Computed properties
 const maxExpiryDate = computed(() => {
-  const today = new Date();
-  const maxDate = new Date(today.getFullYear() + 20, today.getMonth(), today.getDate());
-  return maxDate.toISOString().split('T')[0];
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + 10);
+  return date.toISOString().split('T')[0];
 });
 
 // Methods
 const validateFirstExpiryDate = () => {
-  if (firstIdType.value === 'Birthpaper') {
-    firstExpiryDateError.value = '';
+  if (formData.value.firstIdType === 'Birth Certificate') {
+    formData.value.firstExpiryDateError = '';
     return true;
   }
 
-  if (!firstExpiryDate.value) {
-    firstExpiryDateError.value = 'Expiry date is required';
+  if (!formData.value.firstExpiryDate) {
+    formData.value.firstExpiryDateError = 'Expiry date is required';
     return false;
   }
 
-  if (!validateExpiryDate(firstExpiryDate.value)) {
-    firstExpiryDateError.value = 'Expiry date must be today or in the future';
+  if (!validateExpiryDate(formData.value.firstExpiryDate)) {
+    formData.value.firstExpiryDateError = 'Expiry date must be today or in the future';
     return false;
   }
 
-  firstExpiryDateError.value = '';
+  formData.value.firstExpiryDateError = '';
   return true;
 };
 
 const validateSecondExpiryDate = () => {
-  if (secondIdType.value === 'Birthpaper') {
-    secondExpiryDateError.value = '';
+  if (formData.value.secondIdType === 'Birth Certificate') {
+    formData.value.secondExpiryDateError = '';
     return true;
   }
 
-  if (!secondExpiryDate.value) {
-    secondExpiryDateError.value = 'Expiry date is required';
+  if (!formData.value.secondExpiryDate) {
+    formData.value.secondExpiryDateError = 'Expiry date is required';
     return false;
   }
 
-  if (!validateExpiryDate(secondExpiryDate.value)) {
-    secondExpiryDateError.value = 'Expiry date must be today or in the future';
+  if (!validateExpiryDate(formData.value.secondExpiryDate)) {
+    formData.value.secondExpiryDateError = 'Expiry date must be today or in the future';
     return false;
   }
 
-  secondExpiryDateError.value = '';
+  formData.value.secondExpiryDateError = '';
   return true;
 };
 
 const handleFileUpload = (file, idType) => {
   if (idType === 'first') {
-    firstIdDocument.value = file;
-  } else if (idType === 'second') {
-    secondIdDocument.value = file;
+    formData.value.firstIdDocument = file;
+  } else {
+    formData.value.secondIdDocument = file;
   }
 };
 
 const updateSecondIdOptions = () => {
-  if (firstIdType.value === 'National ID') {
+  if (formData.value.firstIdType === 'National ID') {
     secondIdOptions.value = ["Driver's Permit", 'Birthpaper', 'Passport'];
   } else {
     secondIdOptions.value = ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
@@ -320,103 +318,107 @@ const submitIDInformation = async () => {
   formError.value = '';
 
   try {
-    // Create FormData for file upload
+    // Validate required fields
+    if (!formData.value.firstIdType || !formData.value.firstIdNumber || !formData.value.firstIdDocument ||
+        !formData.value.secondIdType || !formData.value.secondIdNumber || !formData.value.secondIdDocument) {
+      formError.value = 'Please fill in all required fields';
+      isLoading.value = false;
+      return;
+    }
+
+    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+    const holderType = calculateHolderType();
+
+    // Format expiry dates properly
+    const formatExpiryDate = (date) => {
+      if (!date) return new Date().toISOString();
+      return new Date(date).toISOString();
+    };
+
+    // Create FormData for first ID (National ID - Primary ID)
     const firstIdFormData = new FormData();
+    firstIdFormData.append('signup_id', store.signupId);
+    firstIdFormData.append('id_type', formData.value.firstIdType);
+    firstIdFormData.append('holder_type', holderType);
+    firstIdFormData.append('id_number', formData.value.firstIdNumber);
+    firstIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.firstExpiryDate));
+    firstIdFormData.append('is_primary_id', 'true');
+    firstIdFormData.append('id_file', formData.value.firstIdDocument);
+
+    // Create FormData for second ID
     const secondIdFormData = new FormData();
+    secondIdFormData.append('signup_id', store.signupId);
+    secondIdFormData.append('id_type', formData.value.secondIdType);
+    secondIdFormData.append('holder_type', holderType);
+    secondIdFormData.append('id_number', formData.value.secondIdNumber);
+    secondIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.secondExpiryDate));
+    secondIdFormData.append('is_primary_id', 'false');
+    secondIdFormData.append('id_file', formData.value.secondIdDocument);
 
-    // First ID submission
-    const firstIdData = {
-      signup_id: store.signupId,
-      id_type: firstIdType.value,
-      id_number: firstIdNumber.value,
-      id_expiry_date: new Date(firstExpiryDate.value).toISOString(),
-      is_primary_id: true
-    };
+    console.log('Submitting with holder type:', holderType);
 
-    // Second ID submission
-    const secondIdData = {
-      signup_id: store.signupId,
-      id_type: secondIdType.value,
-      id_number: secondIdNumber.value,
-      id_expiry_date: new Date(secondExpiryDate.value).toISOString(),
-      is_primary_id: false
-    };
-
-    // Submit first ID
-    const firstIdResponse = await axios.post('http://127.0.0.1:8000/identifications/', firstIdData);
-    
-    if (firstIdDocument.value) {
-      firstIdFormData.append('file', firstIdDocument.value);
-      firstIdFormData.append('identification_id', firstIdResponse.data.id);
-      await axios.post('http://127.0.0.1:8000/identification-files/', firstIdFormData, {
+    // Submit both IDs
+    await Promise.all([
+      axios.post(`${baseURL}/identifications/`, firstIdFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      });
-    }
-
-    // Submit second ID
-    const secondIdResponse = await axios.post('http://127.0.0.1:8000/identifications/', secondIdData);
-    
-    if (secondIdDocument.value) {
-      secondIdFormData.append('file', secondIdDocument.value);
-      secondIdFormData.append('identification_id', secondIdResponse.data.id);
-      await axios.post('http://127.0.0.1:8000/identification-files/', secondIdFormData, {
+      }),
+      axios.post(`${baseURL}/identifications/`, secondIdFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      });
-    }
+      })
+    ]);
 
-    // Store the data
-    store.$patch((state) => {
-      state.firstIdType = firstIdType.value;
-      state.firstIdNumber = firstIdNumber.value;
-      state.firstExpiryDate = firstExpiryDate.value;
-      state.secondIdType = secondIdType.value;
-      state.secondIdNumber = secondIdNumber.value;
-      state.secondExpiryDate = secondExpiryDate.value;
+    // Save to store
+    store.$patch({
+      idInfo: {
+        firstIdType: formData.value.firstIdType,
+        firstIdNumber: formData.value.firstIdNumber,
+        firstExpiryDate: formData.value.firstExpiryDate,
+        secondIdType: formData.value.secondIdType,
+        secondIdNumber: formData.value.secondIdNumber,
+        secondExpiryDate: formData.value.secondExpiryDate
+      }
     });
 
-    // Navigate based on customer type
-    if (store.isExistingCustomer) {
-      router.push('/account-number');
-    } else {
-      router.push('/due-diligence');
-    }
-
+    // Navigate to next page
+    router.push('/pep-information');
   } catch (error) {
     console.error('Error submitting ID information:', error);
-    if (error.response?.data) {
-      console.log('Detailed error:', error.response.data);
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    } else {
+      formError.value = 'An error occurred while submitting your information';
     }
-    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
   }
 };
 
-const validateForm = () => {
-  formError.value = '';
-
-  if (!firstIdType.value || !firstIdNumber.value || !firstExpiryDate.value || !firstIdDocument.value) {
-    formError.value = 'Please complete all fields for the first ID';
-    return false;
+// Calculate holder type based on age
+const calculateHolderType = () => {
+  const dob = new Date(store.basicInfo?.dob);
+  const today = new Date();
+  const age = today.getFullYear() - dob.getFullYear();
+  const monthDiff = today.getMonth() - dob.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+    age--;
   }
-
-  if (!secondIdType.value || !secondIdNumber.value || !secondExpiryDate.value || !secondIdDocument.value) {
-    formError.value = 'Please complete all fields for the second ID';
-    return false;
-  }
-
-  return true;
+  
+  return age >= 18 ? 'self' : 'guardian';
 };
 
-const handleSubmit = async () => {
-  if (validateForm()) {
-    await submitIDInformation();
-  }
-};
+// ID types that match the backend schema
+const idTypes = [
+  'National ID',
+  'Passport',
+  "Drivers License",
+  'Birth Certificate'
+];
 </script>
 
 <style scoped>

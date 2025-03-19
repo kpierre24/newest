@@ -36,7 +36,6 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-map-marker"
                   required
-                  :error-messages="errors.addressLine1"
                 />
 
                 <v-text-field
@@ -45,7 +44,6 @@
                   placeholder="Enter address line 2"
                   variant="outlined"
                   prepend-inner-icon="mdi-map-marker"
-                  :error-messages="errors.addressLine2"
                 />
 
                 <v-text-field
@@ -56,7 +54,6 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-city"
                   required
-                  :error-messages="errors.city"
                 />
 
                 <v-select
@@ -67,7 +64,6 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-earth"
                   required
-                  :error-messages="errors.country"
                 />
 
                 <v-select
@@ -78,7 +74,6 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-home"
                   required
-                  :error-messages="errors.dwellingStatus"
                 />
 
                 <v-file-input
@@ -133,18 +128,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import { countries } from 'countries-list';
-import logoImage from '../assets/Logo1.png';
+import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
-const isLoading = ref(false);
 const formError = ref('');
-const errors = ref({});
+const isLoading = ref(false);
 
 const formData = ref({
   addressLine1: '',
@@ -158,102 +152,93 @@ const formData = ref({
 const countryList = ref(Object.values(countries).map(country => country.name));
 const dwellingStatusOptions = ref(['Rented', 'Owned', 'Subletting', 'Living with relative']);
 
-onMounted(() => {
-  if (store.AddressLine1) formData.value.addressLine1 = store.AddressLine1;
-  if (store.AddressLine2) formData.value.addressLine2 = store.AddressLine2;
-  if (store.City) formData.value.city = store.City;
-  if (store.Country) formData.value.country = store.Country;
-  if (store.DwellingStatus) formData.value.dwellingStatus = store.DwellingStatus;
-});
-
-const handleFileUpload = (file) => {
-  if (file) {
-    formData.value.proofOfAddress = file;
-    console.log('File selected:', file.name);
-  }
-};
-
-const validateForm = () => {
-  errors.value = {};
-  let isValid = true;
-
-  if (!formData.value.addressLine1) {
-    errors.value.addressLine1 = 'Address Line 1 is required';
-    isValid = false;
-  }
-  if (!formData.value.city) {
-    errors.value.city = 'City is required';
-    isValid = false;
-  }
-  if (!formData.value.country) {
-    errors.value.country = 'Country is required';
-    isValid = false;
-  }
-  if (!formData.value.dwellingStatus) {
-    errors.value.dwellingStatus = 'Dwelling Status is required';
-    isValid = false;
-  }
-
-  return isValid;
-};
-
-const submitForm = async () => {
+const handleSubmit = async (event) => {
+  event.preventDefault();
   isLoading.value = true;
   formError.value = '';
 
   try {
-    // First, submit the address data
-    const addressData = {
-      signup_id: store.signupId,
-      is_primary_address: true, // This is the residential address
-      address_line_1: formData.value.addressLine1,
-      address_line_2: formData.value.addressLine2 || null,
-      city: formData.value.city,
-      country: formData.value.country,
-      dwelling_status: formData.value.dwellingStatus
-    };
-
-    console.log('Sending address data:', addressData);
-
-    const addressResponse = await axios.post('http://127.0.0.1:8000/addresses/', addressData);
-
-    // If we have a proof of address file, submit it
-    if (formData.value.proofOfAddress && addressResponse.data.id) {
-      const fileFormData = new FormData();
-      fileFormData.append('file', formData.value.proofOfAddress);
-      fileFormData.append('address_id', addressResponse.data.id);
-
-      await axios.post('http://127.0.0.1:8000/address-files/', fileFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+    if (!validateForm()) {
+      isLoading.value = false;
+      return;
     }
+
+    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+
+    // Create FormData for the address submission
+    const addressFormData = new FormData();
+    addressFormData.append('signup_id', store.signupId);
+    addressFormData.append('address_line_1', formData.value.addressLine1);
+    addressFormData.append('address_line_2', formData.value.addressLine2 || '');
+    addressFormData.append('city', formData.value.city);
+    addressFormData.append('country', formData.value.country);
+    addressFormData.append('dwelling_status', formData.value.dwellingStatus.toLowerCase());
+    addressFormData.append('address_type', 'physical');
+    addressFormData.append('proof_of_address_file', formData.value.proofOfAddress);
+
+    // Submit address data
+    const response = await axios.post(`${baseURL}/addresses/`, addressFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Address submission response:', response.data);
 
     // Store the address data
     store.$patch({
-      addressLine1: formData.value.addressLine1,
-      addressLine2: formData.value.addressLine2,
-      city: formData.value.city,
-      country: formData.value.country,
-      dwellingStatus: formData.value.dwellingStatus
+      addressInfo: {
+        addressLine1: formData.value.addressLine1,
+        addressLine2: formData.value.addressLine2,
+        city: formData.value.city,
+        country: formData.value.country,
+        dwellingStatus: formData.value.dwellingStatus
+      }
     });
 
+    // Navigate to next page
     router.push('/mailing-address');
   } catch (error) {
     console.error('Error submitting address:', error);
-    if (error.response?.data) {
-      console.log('Detailed error:', error.response.data);
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    } else {
+      formError.value = 'An error occurred while submitting your information';
     }
-    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
   }
 };
 
-const handleSubmit = async () => {
-  if (validateForm()) {
-    await submitForm();
+const validateForm = () => {
+  if (!formData.value.addressLine1) {
+    formError.value = 'Address Line 1 is required';
+    return false;
+  }
+  if (!formData.value.city) {
+    formError.value = 'City is required';
+    return false;
+  }
+  if (!formData.value.country) {
+    formError.value = 'Country is required';
+    return false;
+  }
+  if (!formData.value.dwellingStatus) {
+    formError.value = 'Dwelling Status is required';
+    return false;
+  }
+  if (!formData.value.proofOfAddress) {
+    formError.value = 'Proof of Address is required';
+    return false;
+  }
+  return true;
+};
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    formData.value.proofOfAddress = file;
   }
 };
 

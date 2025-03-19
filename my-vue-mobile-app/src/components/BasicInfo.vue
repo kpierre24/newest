@@ -110,6 +110,18 @@
                   @input="validateDateOfBirth"
                 />
 
+                <!-- School Name field - only shows after DOB is entered and age is under 18 -->
+                <v-text-field
+                  v-if="isUnder18"
+                  v-model="store.schoolName"
+                  label="School Name"
+                  placeholder="Enter your school name"
+                  variant="outlined"
+                  prepend-inner-icon="mdi-school"
+                  :rules="[v => !isUnder18 || !!v || 'School name is required for minors']"
+                  required
+                />
+
                 <v-select
                   v-model="store.nationality"
                   label="Nationality"
@@ -279,6 +291,21 @@ const today = computed(() => {
 
 const countryList = ref(Object.values(countries).map(country => country.name));
 
+const isUnder18 = computed(() => {
+  if (!store.dob) return false;
+  
+  const birthDate = new Date(store.dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  return age < 18;
+});
+
 const openTerms = () => {
   showTerms.value = true;
 };
@@ -338,6 +365,14 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
+    // Add debug log to check values before submission
+    console.log('Current store state before submission:', {
+      nationality: store.nationality,
+      firstName: store.firstName,
+      lastName: store.lastName,
+      // ... other fields
+    });
+
     const signupData = {
       first_name: store.firstName,
       last_name: store.lastName,
@@ -352,6 +387,9 @@ const submitForm = async () => {
       is_existing_customer: store.isExistingCustomer || false
     };
 
+    // Debug log the request data
+    console.log('Sending signup data:', signupData);
+
     const response = await axios.post('http://127.0.0.1:8000/signups/', signupData, {
       headers: {
         'Content-Type': 'application/json',
@@ -359,6 +397,8 @@ const submitForm = async () => {
     });
 
     if (response.data) {
+      console.log('Signup successful:', response.data);
+      
       store.$patch((state) => {
         state.signupId = response.data.id;
         state.firstName = response.data.first_name;
@@ -376,6 +416,9 @@ const submitForm = async () => {
     }
   } catch (error) {
     console.error('Error submitting signup info:', error);
+    if (error.response?.data) {
+      console.log('Detailed error:', error.response.data);
+    }
     formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
@@ -385,6 +428,7 @@ const submitForm = async () => {
 const validateForm = () => {
   formError.value = '';
   
+  // Add explicit nationality validation
   if (!store.nationality) {
     formError.value = 'Nationality is required';
     return false;

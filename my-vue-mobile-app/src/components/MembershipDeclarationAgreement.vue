@@ -158,9 +158,9 @@ const submitForm = async () => {
     const membershipData = {
       signup_id: store.signupId,
       is_member_of_another_credit_union: isMemberOfAnotherCreditUnion.value === 'yes',
-      credit_union_name: isMemberOfAnotherCreditUnion.value === 'yes' ? creditUnionName.value : null,
+      credit_union_name: isMemberOfAnotherCreditUnion.value === 'yes' ? creditUnionName.value : '',
       is_serving_on_credit_union_board: isServingOnBoard.value === 'yes',
-      board_credit_union_name: isServingOnBoard.value === 'yes' ? creditUnionBoardName.value : null
+      board_credit_union_name: isServingOnBoard.value === 'yes' ? creditUnionBoardName.value : ''
     };
 
     console.log('Sending membership data:', membershipData);

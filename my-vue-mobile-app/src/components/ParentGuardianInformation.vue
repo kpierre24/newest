@@ -31,7 +31,7 @@
                 <v-card class="mb-6" elevation="3">
                   <v-card-text>
                     <v-text-field
-                      v-model="formData.ParentFirstName"
+                      v-model="formData.first_name"
                       label="First Name"
                       placeholder="Parent First Name"
                       variant="outlined"
@@ -40,15 +40,16 @@
                     />
 
                     <v-text-field
-                      v-model="formData.ParentMiddleName"
+                      v-model="formData.middle_name"
                       label="Middle Name"
                       placeholder="Parent Middle Name"
                       variant="outlined"
                       prepend-inner-icon="mdi-account"
+                      required
                     />
 
                     <v-text-field
-                      v-model="formData.ParentLastName"
+                      v-model="formData.last_name"
                       label="Last Name"
                       placeholder="Parent Last Name"
                       variant="outlined"
@@ -57,7 +58,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.ParentOccupation"
+                      v-model="formData.occupation"
                       label="Occupation"
                       placeholder="Parent Occupation"
                       variant="outlined"
@@ -66,7 +67,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.ParentWorkplace"
+                      v-model="formData.workplace"
                       label="Workplace"
                       placeholder="Parent Workplace"
                       variant="outlined"
@@ -75,7 +76,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.ParentEmail"
+                      v-model="formData.email"
                       label="Email"
                       type="email"
                       placeholder="Parent Email"
@@ -85,7 +86,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.ParentPhoneNumber"
+                      v-model="formData.mobile"
                       label="Phone Number"
                       type="tel"
                       placeholder="Parent Phone Number"
@@ -95,7 +96,7 @@
                     />
 
                     <v-select
-                      v-model="formData.RelationshipToChild"
+                      v-model="formData.relationship_to_child"
                       label="Relationship to Child"
                       :items="relationshipOptions"
                       variant="outlined"
@@ -119,7 +120,7 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="secondary"
+                      color="primary"
                       variant="flat"
                       size="large"
                       @click="navigateToPrevious"
@@ -131,7 +132,7 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
+                      color="secondary"
                       variant="flat"
                       size="large"
                       type="submit"
@@ -164,28 +165,25 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
+import axios from 'axios';
 import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
-
-// Form data refs
-const formData = ref({
-  ParentFirstName: '',
-  ParentMiddleName: '',
-  ParentLastName: '',
-  ParentOccupation: '',
-  ParentWorkplace: '',
-  ParentEmail: '',
-  ParentPhoneNumber: '',
-  RelationshipToChild: '',
-  RelationshipDocument: null
-});
-
 const formError = ref('');
 const isLoading = ref(false);
+
+const formData = ref({
+  first_name: '',
+  last_name: '',
+  middle_name: '',
+  occupation: '',
+  workplace: '',
+  email: '',
+  mobile: '',
+  relationship_to_child: ''
+});
 
 const relationshipOptions = [
   'Mother',
@@ -205,105 +203,104 @@ const submitForm = async () => {
 
   try {
     // Validate required fields
-    if (!formData.value.ParentFirstName || !formData.value.ParentLastName || 
-        !formData.value.ParentOccupation || !formData.value.ParentWorkplace || 
-        !formData.value.ParentEmail || !formData.value.ParentPhoneNumber || 
-        !formData.value.RelationshipToChild) {
+    if (!formData.value.first_name || !formData.value.last_name || 
+        !formData.value.middle_name || !formData.value.occupation || 
+        !formData.value.workplace || !formData.value.email || 
+        !formData.value.mobile || !formData.value.relationship_to_child) {
       formError.value = 'Please fill in all required fields';
       isLoading.value = false;
       return;
     }
 
-    // Get the base URL dynamically
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:3000' 
-      : `http://${window.location.hostname}:3000`;
-
-    try {
-      await axios.post(`${baseURL}/parent-guardian-info`, formData.value);
-    } catch (apiError) {
-      console.error('API error:', apiError);
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.value.email)) {
+      formError.value = 'Please enter a valid email address';
+      isLoading.value = false;
+      return;
     }
 
-    // Update store with form data (excluding the file)
-    const storeData = { ...formData.value };
-    delete storeData.RelationshipDocument;
-    store.$patch((state) => {
-      Object.assign(state, storeData);
+    // Validate signup_id exists
+    if (!store.signupId) {
+      formError.value = 'Invalid session. Please start over.';
+      isLoading.value = false;
+      return;
+    }
+
+    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+
+    // Prepare the request data with explicit signup_id
+    const guardianData = {
+      signup_id: store.signupId,
+      first_name: formData.value.first_name,
+      last_name: formData.value.last_name,
+      middle_name: formData.value.middle_name,
+      occupation: formData.value.occupation,
+      workplace: formData.value.workplace,
+      email: formData.value.email,
+      mobile: formData.value.mobile,
+      relationship_to_child: formData.value.relationship_to_child
+    };
+
+    console.log('Submitting guardian data:', guardianData); // Debug log
+
+    // Make the API call
+    const response = await axios.post(`${baseURL}/guardians/`, guardianData);
+
+    // Store the data
+    store.$patch({
+      guardianInfo: {
+        firstName: formData.value.first_name,
+        lastName: formData.value.last_name,
+        middleName: formData.value.middle_name,
+        occupation: formData.value.occupation,
+        workplace: formData.value.workplace,
+        email: formData.value.email,
+        mobile: formData.value.mobile,
+        relationshipToChild: formData.value.relationship_to_child
+      }
     });
 
-    router.push('/id-information');
+    // Navigate to next page
+    router.push('/address');
   } catch (error) {
-    console.error('Error details:', error);
-    formError.value = 'An error occurred while saving your information.';
+    console.error('Error submitting guardian information:', error);
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = Array.isArray(error.response.data) 
+        ? error.response.data.map(err => err.msg).join(', ')
+        : error.response.data.detail || 'An error occurred while submitting your information';
+    } else {
+      formError.value = 'An error occurred while submitting your information';
+    }
   } finally {
     isLoading.value = false;
   }
 };
 
 const navigateToPrevious = () => {
-  router.push('/politically-exposed-persons-2');
+  router.push('/child-id-information');
 };
 
-// Initialize component
+// Initialize component with existing data if available
 onMounted(() => {
-  if (store) {
-    Object.keys(formData.value).forEach(key => {
-      if (key !== 'RelationshipDocument') {
-        formData.value[key] = store[key] || '';
-      }
-    });
+  if (store.guardianInfo) {
+    formData.value = {
+      first_name: store.guardianInfo.firstName || '',
+      last_name: store.guardianInfo.lastName || '',
+      middle_name: store.guardianInfo.middleName || '',
+      occupation: store.guardianInfo.occupation || '',
+      workplace: store.guardianInfo.workplace || '',
+      email: store.guardianInfo.email || '',
+      mobile: store.guardianInfo.mobile || '',
+      relationship_to_child: store.guardianInfo.relationshipToChild || ''
+    };
   }
 });
 </script>
 
 <style scoped>
-.form-section {
-  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-  min-height: 100vh;
-  overflow-y: auto;
-}
 
-.form-container {
-  max-width: 100%;
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.brand-section {
-  background: linear-gradient(135deg, #6362F8 0%, #261C6B 100%);
-  min-height: 100vh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.brand-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('@/assets/background.png') center/cover no-repeat;
-  opacity: 0.1;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.brand-logo {
-  width: 240px;
-  height: auto;
-  z-index: 2;
-  filter: brightness(1.2);
-}
 
 :deep(.v-btn) {
   height: 48px;
