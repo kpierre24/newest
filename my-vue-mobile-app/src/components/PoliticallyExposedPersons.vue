@@ -79,7 +79,7 @@
                                 :model-value="formData.domestic_foreign_roles.includes(item.value)"
                               />
                             </template>
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            
                           </v-list-item>
                         </template>
                       </v-select>
@@ -109,7 +109,7 @@
                                 :model-value="formData.immediate_family_members.includes(item.value)"
                               />
                             </template>
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            
                           </v-list-item>
                         </template>
                       </v-select>
@@ -139,7 +139,7 @@
                                 :model-value="formData.international_roles.includes(item.value)"
                               />
                             </template>
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                           
                           </v-list-item>
                         </template>
                       </v-select>
@@ -280,42 +280,33 @@ const formData = ref({
 });
 
 const pepPositions = [
-  { title: 'Head of State', value: 'Head of State' },
-  { title: 'Senior Politician', value: 'Senior Politician' },
-  { title: 'Senior Government Official', value: 'Senior Government Official' },
-  { title: 'Senior Judicial Official', value: 'Senior Judicial Official' },
-  { title: 'Senior Military Official', value: 'Senior Military Official' },
-  { title: 'Senior Executive of State-Owned Corporation', value: 'Senior Executive of State-Owned Corporation' },
-  { title: 'High-Ranking Political Party Official', value: 'High-Ranking Political Party Official' },
-  { title: 'Other', value: 'Other' }
-].map(item => ({
-  ...item,
-  text: item.title // Remove any potential label
-}));
+  { title: 'Head of State', value: 'head_of_state' },
+  { title: 'Senior Politician', value: 'senior_politician' },
+  { title: 'Senior Government Official', value: 'senior_government_official' },
+  { title: 'Senior Judicial Official', value: 'senior_judicial_official' },
+  { title: 'Senior Military Official', value: 'senior_military_official' },
+  { title: 'Senior Executive of State-Owned Corporation', value: 'senior_executive_soc' },
+  { title: 'High-Ranking Political Party Official', value: 'high_ranking_party_official' },
+  { title: 'Other', value: 'other' }
+];
 
 const pepRelationships = [
-  { title: 'Self', value: 'Self' },
-  { title: 'Spouse', value: 'Spouse' },
-  { title: 'Child', value: 'Child' },
-  { title: 'Parent', value: 'Parent' },
-  { title: 'Sibling', value: 'Sibling' },
-  { title: 'Close Associate', value: 'Close Associate' }
-].map(item => ({
-  ...item,
-  text: item.title // Remove any potential label
-}));
+  { title: 'Self', value: 'self' },
+  { title: 'Spouse', value: 'spouse' },
+  { title: 'Child', value: 'child' },
+  { title: 'Parent', value: 'parent' },
+  { title: 'Sibling', value: 'sibling' },
+  { title: 'Close Associate', value: 'close_associate' }
+];
 
 const internationalOrganizations = [
-  { title: 'InterAmerican Development Bank', value: 'InterAmerican Development Bank' },
-  { title: 'Caribbean Financial Action Task Force', value: 'Caribbean Financial Action Task Force' },
-  { title: 'Organization of American States', value: 'Organization of American States' },
-  { title: 'International Labour Organization', value: 'International Labour Organization' },
-  { title: 'Military Official', value: 'Military Official' },
-  { title: 'Senior Member of the Legislature', value: 'Senior Member of the Legislature' }
-].map(item => ({
-  ...item,
-  text: item.title // Remove any potential label
-}));
+  { title: 'InterAmerican Development Bank', value: 'iadb' },
+  { title: 'Caribbean Financial Action Task Force', value: 'cfatf' },
+  { title: 'Organization of American States', value: 'oas' },
+  { title: 'International Labour Organization', value: 'ilo' },
+  { title: 'Military Official', value: 'military_official' },
+  { title: 'Senior Member of the Legislature', value: 'senior_legislature' }
+];
 
 const handleSubmit = async () => {
   isLoading.value = true;
@@ -337,27 +328,6 @@ const handleSubmit = async () => {
       }
     }
 
-    // Format data for API
-    const pepData = {
-      signup_id: store.signupId,
-      job_title: formData.value.jobTitle,
-      domestic_foreign_roles: formData.value.domestic_foreign_roles,
-      international_roles: formData.value.international_roles,
-      immediate_family_members: formData.value.immediate_family_members,
-      is_close_associate: formData.value.is_close_associate,
-      relationship_type: formData.value.relationship_type,
-      associate_name: formData.value.associate_name,
-      is_confirmed: true
-    };
-
-    try {
-      const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
-      await axios.post(`${baseURL}/peps/`, pepData);
-    } catch (apiError) {
-      console.error('API error:', apiError);
-      throw apiError;
-    }
-
     // Update store
     store.$patch((state) => {
       state.isPEP = formData.value.isPEP;
@@ -371,7 +341,7 @@ const handleSubmit = async () => {
     });
 
     // Get DOB from store and calculate age
-    const dob = store.basicInfo?.dob;
+    const dob = store.dob;
     const age = calculateAge(dob);
 
     // Navigate based on age
@@ -392,7 +362,7 @@ const handleSubmit = async () => {
 // Load existing PEP data if available
 const loadExistingPEPData = async () => {
   try {
-    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const response = await axios.get(`${baseURL}/peps/${store.signupId}`);
     if (response.data && response.data.length > 0) {
       const pepData = response.data[0];
@@ -454,6 +424,16 @@ const navigateToPrevious = () => {
     state.associate_name = formData.value.associate_name;
   });
   router.go(-1);
+};
+
+const submitPEPInfo = async () => {
+  try {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/pep-information/`, pepData);
+    // ... rest of the code
+  } catch (error) {
+    // ... error handling
+  }
 };
 </script>
 

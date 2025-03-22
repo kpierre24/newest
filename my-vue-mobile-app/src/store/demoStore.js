@@ -9,6 +9,7 @@ export const useDemoStore = defineStore({
     otherName: '',
     email: '',
     mobileNumber: '',
+    accountNumber: '',
     gender: '',
     dob: '',
     nationality: '',
@@ -16,6 +17,7 @@ export const useDemoStore = defineStore({
     confirmPassword: '',
     termsViewed: false,
     financialAgreementViewed: false,
+    agreed_to_tc_fa: false,
     AddressLine1: '',
     AddressLine2: '',
     City: '',
@@ -184,6 +186,22 @@ export const useDemoStore = defineStore({
       mobile: '',
       relationshipToChild: ''
     },
+    beneficiary: {
+      signup_id: null,
+      first_name: '',
+      last_name: '',
+      middle_name: '',
+      address_line_1: '',
+      address_line_2: '',
+      city: '',
+      country: '',
+      dob: '',
+      gender: '',
+      relationship_to_beneficiary: '',
+      id_number: '',
+      id_type: '',
+      percent_of_beneficiary_interest: 0
+    },
   }),
   actions: {
     setBasicInfo(info) {
@@ -260,15 +278,10 @@ export const useDemoStore = defineStore({
       this.bankAccountNumber = accountNumber;
     },
     setBeneficiaryInfo(info) {
-      this.beneficiaryFirstName = info.firstName;
-      this.beneficiaryLastName = info.lastName;
-      this.beneficiaryOtherName = info.otherName;
-      this.beneficiaryAddressLine1 = info.addressLine1;
-      this.beneficiaryAddressLine2 = info.addressLine2;
-      this.beneficiaryCity = info.city;
-      this.beneficiaryCountry = info.country;
-      this.beneficiaryDateOfBirth = info.dob;
-      this.beneficiaryGender = info.gender;
+      this.beneficiary = {
+        ...this.beneficiary,
+        ...info
+      };
     },
     setParentGuardianInfo(info) {
       this.parentFirstName = info.parentFirstName;
@@ -321,6 +334,9 @@ export const useDemoStore = defineStore({
       this.secondIdDocument = info.secondIdDocument;
       this.maritalStatus = info.maritalStatus;
     },
+    setAgreementStatus(status) {
+      this.agreed_to_tc_fa = status;
+    },
     clearBasicInfo() {
       this.firstName = '';
       this.lastName = '';
@@ -334,6 +350,9 @@ export const useDemoStore = defineStore({
       this.confirmPassword = '';
       this.isExistingCustomer = false;
       this.schoolName = '';
+      this.termsViewed = false;
+      this.financialAgreementViewed = false;
+      this.agreed_to_tc_fa = false;
     },
     clearAddressInfo() {
       this.AddressLine1 = '';
@@ -349,17 +368,20 @@ export const useDemoStore = defineStore({
     clearSignupData() {
       this.signupId = null;
       this.isExistingCustomer = false;
-      // Clear other signup-related data
       this.firstName = '';
       this.lastName = '';
       this.otherName = '';
       this.email = '';
       this.mobileNumber = '';
+      this.accountNumber = '';
       this.password = '';
       this.confirmPassword = '';
       this.gender = '';
       this.dob = '';
       this.nationality = '';
+      this.termsViewed = false;
+      this.financialAgreementViewed = false;
+      this.agreed_to_tc_fa = false;
     },
     clearMembershipData() {
       this.isMemberOfAnotherCreditUnion = 'no';
@@ -414,6 +436,24 @@ export const useDemoStore = defineStore({
         email: '',
         mobile: '',
         relationshipToChild: ''
+      };
+    },
+    clearBeneficiaryInfo() {
+      this.beneficiary = {
+        signup_id: null,
+        first_name: '',
+        last_name: '',
+        middle_name: '',
+        address_line_1: '',
+        address_line_2: '',
+        city: '',
+        country: '',
+        dob: '',
+        gender: '',
+        relationship_to_beneficiary: '',
+        id_number: '',
+        id_type: '',
+        percent_of_beneficiary_interest: 0
       };
     },
   },

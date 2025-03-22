@@ -77,6 +77,9 @@
                       :rules="[v => !!v || 'ID document is required']"
                       @change="handleFileUpload($event, 'first')"
                       required
+                      :show-size="true"
+                      :multiple="true"
+                      clearable
                     />
                   </v-card-text>
                 </v-card>
@@ -128,6 +131,8 @@
                       :rules="[v => !!v || 'ID document is required']"
                       @change="handleFileUpload($event, 'second')"
                       required
+                      :show-size="true"
+                      :multiple="true"
                     />
                   </v-card-text>
                 </v-card>
@@ -243,25 +248,28 @@ const validateSecondExpiryDate = () => {
   }
 };
 
-const handleFileUpload = (file, type) => {
-  if (type === 'first') {
-    formData.value.firstIdDocument = file;
-  } else if (type === 'second') {
-    formData.value.secondIdDocument = file;
+const handleFileUpload = (event, type) => {
+  const file = event?.target?.files?.[0] || event;
+  console.log(`Handling file upload for ${type}:`, file);
+
+  if (file instanceof File) {
+    if (type === 'first') {
+      formData.value.firstIdDocument = file;
+    } else if (type === 'second') {
+      formData.value.secondIdDocument = file;
+    }
   }
 };
 
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3000' 
-    : `http://${window.location.hostname}:3000`;
-};
+const API_BASE_URL = 'http://127.0.0.1:8000'  ; 
 
 const navigateToPrevious = () => {
   // Save current state before navigating
   saveToStore();
   router.go(-1);
 };
+
+
 
 const saveToStore = () => {
   store.$patch((state) => {
@@ -282,76 +290,14 @@ const submitChildIDInformation = async (event) => {
   formError.value = '';
 
   try {
-    // Validate required fields
-    if (!formData.value.firstIdType || !formData.value.firstIdNumber || !formData.value.firstIdDocument ||
-        !formData.value.secondIdType || !formData.value.secondIdNumber || !formData.value.secondIdDocument) {
-      formError.value = 'Please fill in all required fields';
-      isLoading.value = false;
-      return;
-    }
-
-    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
-
-    // Format expiry dates properly
-    const formatExpiryDate = (date) => {
-      if (!date) return '2099-12-31T23:59:59.999Z';
-      return new Date(date).toISOString();
-    };
-
-    // Format ID type to match allowed types in schema
-    const formatIdType = (type) => {
-      const typeMap = {
-        'birth certificate': 'Birth Certificate',
-        'passport': 'Passport',
-        'student id': 'National ID'
-      };
-      return typeMap[type.toLowerCase()] || type;
-    };
-
-    // Create FormData for first ID (Birth Certificate - Primary ID)
-    const firstIdFormData = new FormData();
-    firstIdFormData.append('signup_id', store.signupId);
-    firstIdFormData.append('id_type', formatIdType(formData.value.firstIdType));
-    firstIdFormData.append('holder_type', 'child');
-    firstIdFormData.append('id_number', formData.value.firstIdNumber);
-    firstIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.firstExpiryDate));
-    firstIdFormData.append('is_primary_id', 'true');
-    firstIdFormData.append('id_file', formData.value.firstIdDocument);
-
-    // Create FormData for second ID
-    const secondIdFormData = new FormData();
-    secondIdFormData.append('signup_id', store.signupId);
-    secondIdFormData.append('id_type', formatIdType(formData.value.secondIdType));
-    secondIdFormData.append('holder_type', 'child');
-    secondIdFormData.append('id_number', formData.value.secondIdNumber);
-    secondIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.secondExpiryDate));
-    secondIdFormData.append('is_primary_id', 'false');
-    secondIdFormData.append('id_file', formData.value.secondIdDocument);
-
-    console.log('Submitting first ID with data:', {
-      signup_id: store.signupId,
-      id_type: formatIdType(formData.value.firstIdType),
-      holder_type: 'child',
-      id_number: formData.value.firstIdNumber,
-      id_expiry_date: formatExpiryDate(formData.value.firstExpiryDate),
-      is_primary_id: true
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    await axios.post(`${baseURL}/child-identifications/`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
 
-    // Submit both IDs
-    await Promise.all([
-      axios.post(`${baseURL}/identifications/`, firstIdFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }),
-      axios.post(`${baseURL}/identifications/`, secondIdFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-    ]);
-
-    // Save to store
+    // Save to store and navigate
     store.$patch({
       childIdInfo: {
         firstIdType: formData.value.firstIdType,
@@ -363,13 +309,18 @@ const submitChildIDInformation = async (event) => {
       }
     });
 
-    // Navigate to next page
     router.push('/parent-guardian-information');
+
   } catch (error) {
     console.error('Error submitting child ID information:', error);
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    console.error('Error response:', error.response?.data);
+    console.error('Error status:', error.response?.status);
+    console.error('Full error object:', JSON.stringify(error, null, 2));
+
+    if (error.response?.data?.detail) {
+      formError.value = Array.isArray(error.response.data.detail)
+        ? error.response.data.detail[0]?.msg
+        : error.response.data.detail;
     } else {
       formError.value = 'An error occurred while submitting your information';
     }

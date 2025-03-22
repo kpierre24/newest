@@ -134,6 +134,7 @@ import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import { countries } from 'countries-list';
 import logoImage from '../assets/Logo1.png';
+import axios from 'axios';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -196,6 +197,15 @@ const handleSubmit = async () => {
   formError.value = '';
 
   try {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/mailing-addresses/`, {
+      addressLine1: formData.value.addressLine1,
+      addressLine2: formData.value.addressLine2,
+      city: formData.value.city,
+      country: formData.value.country,
+      sameAsResidential: formData.value.sameAsResidential
+    });
+
     // Update store with form data
     store.$patch((state) => {
       Object.assign(state, formData.value);
@@ -242,8 +252,6 @@ onMounted(() => {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-
-
 
 :deep(.v-btn) {
   height: 48px;

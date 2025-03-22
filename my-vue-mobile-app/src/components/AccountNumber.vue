@@ -110,26 +110,31 @@ const submitForm = async () => {
       : `http://127.0.0.1:8000`;
 
     try {
-      const response = await axios.post(`${baseURL}/account-number`, {
-        accountNumber: accountNumber.value
+      const response = await axios.post(`${baseURL}/credit-union-accounts/verify`, {
+        account_number: accountNumber.value
       }, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      console.log('Account number submitted:', response.data);
+
+      if (response.data) {
+        // Update store with account number
+        store.$patch((state) => {
+          state.accountNumber = accountNumber.value;
+        });
+
+        // Navigate to next page
+        router.push('/due-diligence');
+      }
     } catch (apiError) {
       console.error('API error:', apiError);
-      // Continue with navigation even if API fails
+      if (apiError.response?.data?.detail) {
+        formError.value = apiError.response.data.detail;
+      } else {
+        formError.value = 'Failed to verify account number. Please try again.';
+      }
     }
-
-    // Update store
-    store.$patch((state) => {
-      state.accountNumber = accountNumber.value;
-    });
-
-    // Navigate to next page
-    router.push('/due-diligence');
   } catch (error) {
     console.error('Error submitting account number:', error);
     formError.value = 'An error occurred while submitting your account number';

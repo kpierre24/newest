@@ -251,8 +251,8 @@ const handleSubmit = async () => {
     console.log('Submitting employment information:', formData.value);
 
     // Make API call
-    const baseURL = getBaseURL();
-    const response = await axios.post(`${baseURL}/employment-information`, apiFormData, {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/employment-information/`, apiFormData, {
       headers: {
         'Content-Type': 'application/json'
       }

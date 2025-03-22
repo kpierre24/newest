@@ -227,7 +227,7 @@ const submitForm = async () => {
       return;
     }
 
-    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     // Prepare the request data with explicit signup_id
     const guardianData = {
@@ -245,7 +245,7 @@ const submitForm = async () => {
     console.log('Submitting guardian data:', guardianData); // Debug log
 
     // Make the API call
-    const response = await axios.post(`${baseURL}/guardians/`, guardianData);
+    const response = await axios.post(`${baseURL}/guardian-information/`, guardianData);
 
     // Store the data
     store.$patch({

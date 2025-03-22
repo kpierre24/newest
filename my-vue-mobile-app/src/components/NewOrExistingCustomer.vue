@@ -85,23 +85,13 @@ const store = useDemoStore();
 const loading = ref(false);
 const isNewCustomer = ref(false);
 
-const handleApiCall = async (endpoint, customerType) => {
-  try {
-    // Mock a successful response (temporary fix)
-    return { data: { success: true } };
-  } catch (error) {
-    console.error('API Error:', error);
-    throw error;
-  }
-};
-
 const handleNewCustomer = async () => {
   console.log('New Customer clicked');
   loading.value = true;
   isNewCustomer.value = true;
   try {
-    await handleApiCall('new', 'new_customer');
     store.setExistingCustomer(false);
+    store.setNewCustomer(true);
     console.log('Store state:', store.isExistingCustomer);
   } catch (error) {
     console.error('Error handling new customer:', error);
@@ -116,8 +106,8 @@ const handleExistingCustomer = async () => {
   loading.value = true;
   isNewCustomer.value = false;
   try {
-    await handleApiCall('existing', 'existing_customer');
     store.setExistingCustomer(true);
+    store.setNewCustomer(false);
     console.log('Store state:', store.isExistingCustomer);
   } catch (error) {
     console.error('Error handling existing customer:', error);
@@ -134,21 +124,11 @@ const navigateToGettingReady = () => {
   });
 };
 
-const createInitialSignup = async () => {
-  try {
-    const response = await axios.post('http://127.0.0.1:8000/signups/');
-    store.setSignupId(response.data.id);
-    store.setUserId(response.data.user_id);
-  } catch (error) {
-    console.error('Error creating signup:', error);
-  }
-};
-
-// Call this when the component mounts or when the signup process starts
-onMounted(async () => {
-  if (!store.signupId) {
-    await createInitialSignup();
-  }
+// Call this when the component mounts
+onMounted(() => {
+  // Reset customer state when component mounts
+  store.setExistingCustomer(false);
+  store.setNewCustomer(false);
 });
 </script>
 

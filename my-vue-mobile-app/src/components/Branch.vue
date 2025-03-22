@@ -139,7 +139,7 @@ const handleSubmit = async () => {
 
   try {
     isLoading.value = true;
-    const baseURL = getBaseURL();
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const response = await axios.post(`${baseURL}/branch`, formData, {
       headers: {
         'Content-Type': 'application/json',

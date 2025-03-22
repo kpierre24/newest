@@ -131,7 +131,18 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-flag"
                   required
-                  @change="() => console.log('Nationality changed:', store.nationality)"
+                />
+
+                <!-- Add marital status field after nationality -->
+                <v-select
+                  v-model="store.maritalStatus"
+                  label="Marital Status"
+                  :items="isAdult ? ['Married', 'Divorced', 'Single', 'Common-Law', 'Widowed'] : ['Single']"
+                  :rules="[v => !isAdult || !!v || 'Marital status is required']"
+                  placeholder="Select marital status"
+                  variant="outlined"
+                  prepend-inner-icon="mdi-heart"
+                  required
                 />
 
                 <v-text-field
@@ -274,6 +285,7 @@ import FinancialDeclaration from '@/components/FinancialDeclaration.vue';
 import logoImage from '../assets/Logo1.png';
 import { countries } from 'countries-list';
 
+
 const router = useRouter();
 const store = useDemoStore();
 const showTerms = ref(false);
@@ -284,6 +296,8 @@ const isLoading = ref(false);
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 
+
+
 const today = computed(() => {
   const date = new Date();
   return date.toISOString().split('T')[0];
@@ -293,17 +307,32 @@ const countryList = ref(Object.values(countries).map(country => country.name));
 
 const isUnder18 = computed(() => {
   if (!store.dob) return false;
-  
+
   const birthDate = new Date(store.dob);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  
+
   return age < 18;
+});
+
+const isAdult = computed(() => {
+  if (!store.dob) return false;
+
+  const birthDate = new Date(store.dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age >= 18;
 });
 
 const openTerms = () => {
@@ -313,6 +342,7 @@ const openTerms = () => {
 const closeTerms = () => {
   showTerms.value = false;
   store.termsViewed = true;
+  checkAgreementStatus();
 };
 
 const openFinancialDeclaration = () => {
@@ -322,6 +352,13 @@ const openFinancialDeclaration = () => {
 const closeFinancialDeclaration = () => {
   showFinancialDeclaration.value = false;
   store.financialAgreementViewed = true;
+  checkAgreementStatus();
+};
+
+const checkAgreementStatus = () => {
+  if (store.termsViewed && store.financialAgreementViewed) {
+    store.setAgreementStatus(true);
+  }
 };
 
 const handleTermsClick = (event) => {
@@ -346,6 +383,12 @@ const validateDateOfBirth = () => {
     dobError.value = 'Date of birth cannot be in the future';
     return false;
   }
+  
+  // Set marital status to "Single" if under 18
+  if (!isAdult.value) {
+    store.maritalStatus = 'Single';
+  }
+  
   return true;
 };
 
@@ -365,14 +408,6 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
-    // Add debug log to check values before submission
-    console.log('Current store state before submission:', {
-      nationality: store.nationality,
-      firstName: store.firstName,
-      lastName: store.lastName,
-      // ... other fields
-    });
-
     const signupData = {
       first_name: store.firstName,
       last_name: store.lastName,
@@ -384,13 +419,21 @@ const submitForm = async () => {
       gender: store.gender,
       dob: store.dob,
       nationality: store.nationality,
-      is_existing_customer: store.isExistingCustomer || false
+      is_existing_customer: store.isExistingCustomer || false,
+      agreed_to_tc_fa: store.agreed_to_tc_fa
     };
+
+    // Conditionally add marital status for adults
+    if (isAdult.value && store.maritalStatus) {
+      signupData.marital_status = store.maritalStatus;
+    }
 
     // Debug log the request data
     console.log('Sending signup data:', signupData);
 
-    const response = await axios.post('http://127.0.0.1:8000/signups/', signupData, {
+    // Replace the direct URL usage with environment variable
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/signups/`, signupData, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -398,7 +441,7 @@ const submitForm = async () => {
 
     if (response.data) {
       console.log('Signup successful:', response.data);
-      
+
       store.$patch((state) => {
         state.signupId = response.data.id;
         state.firstName = response.data.first_name;
@@ -408,6 +451,7 @@ const submitForm = async () => {
         state.mobileNumber = response.data.mobile;
         state.gender = response.data.gender;
         state.dob = response.data.dob;
+        state.maritalStatus = response.data.marital_status;
         state.nationality = response.data.nationality;
         state.isExistingCustomer = response.data.is_existing_customer;
       });
@@ -427,7 +471,7 @@ const submitForm = async () => {
 
 const validateForm = () => {
   formError.value = '';
-  
+
   // Add explicit nationality validation
   if (!store.nationality) {
     formError.value = 'Nationality is required';
@@ -467,12 +511,18 @@ const validateForm = () => {
     return false;
   }
 
+  // Only validate marital status for adults
+  if (isAdult.value && !store.maritalStatus?.trim()) {
+    formError.value = 'Marital status is required for adults';
+    return false;
+  }
+
   return true;
 };
 
 const handleSubmit = async () => {
   console.log('Form submission initiated. Current nationality:', store.nationality);
-  
+
   if (validateForm()) {
     await submitForm();
   }
@@ -486,7 +536,6 @@ onMounted(() => {
   console.log('Component mounted. Current nationality:', store.nationality);
 });
 </script>
-
 <style scoped>
 .form-section {
   background: linear-gradient(to bottom, #ffffff, #f8f9fa);

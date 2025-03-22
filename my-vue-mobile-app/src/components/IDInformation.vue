@@ -42,7 +42,6 @@
                         :items="idTypes"
                         variant="outlined"
                         prepend-inner-icon="mdi-card-account-details"
-                        @update:model-value="updateSecondIdOptions"
                         :rules="[v => !!v || 'ID type is required']"
                         required
                       />
@@ -84,7 +83,7 @@
                         prepend-inner-icon="mdi-upload"
                         accept=".pdf,.jpg,.png"
                         :rules="[v => !!v || 'ID document is required']"
-                        @change="handleFileUpload($event, 'first')"
+                        @change="(file) => handleFileUpload(file, 'first')"
                         required
                         class="mb-2"
                         truncate-length="25"
@@ -99,7 +98,7 @@
                       <v-select
                         v-model="formData.secondIdType"
                         label="Type of ID"
-                        :items="updateSecondIdOptions()"
+                        :items="secondIdTypeOptions"
                         variant="outlined"
                         prepend-inner-icon="mdi-card-account-details"
                         :rules="[v => !!v || 'ID type is required']"
@@ -138,24 +137,7 @@
                         prepend-inner-icon="mdi-upload"
                         accept=".pdf,.jpg,.png"
                         :rules="[v => !!v || 'ID document is required']"
-                        @change="handleFileUpload($event, 'second')"
-                        required
-                      />
-                    </v-card-text>
-                  </v-card>
-
-                  <!-- Marital Status -->
-                  <v-card class="mb-6" elevation="3">
-                    <v-card-text class="pa-4">
-                      <h3 class="text-h6 mb-3">Marital Status</h3>
-                      <v-select
-                        v-model="maritalStatus"
-                        label="Marital Status"
-                        :items="['Married', 'Divorced', 'Single', 'Widowed']"
-                        variant="outlined"
-                        density="comfortable"
-                        prepend-inner-icon="mdi-heart"
-                        :rules="[v => !!v || 'Marital status is required']"
+                        @change="(file) => handleFileUpload(file, 'second')"
                         required
                       />
                     </v-card-text>
@@ -236,8 +218,8 @@ const formData = ref({
 
 const formError = ref('');
 const isLoading = ref(false);
-const secondIdOptions = ref(['National ID', "Driver's Permit", 'Birthpaper', 'Passport']);
-const maritalStatus = ref('');
+const firstExpiryDateError = ref('');
+const secondExpiryDateError = ref('');
 
 // Computed properties
 const maxExpiryDate = computed(() => {
@@ -246,67 +228,63 @@ const maxExpiryDate = computed(() => {
   return date.toISOString().split('T')[0];
 });
 
+// Computed property for second ID type options
+const secondIdTypeOptions = computed(() => {
+  if (formData.value.firstIdType === 'National ID') {
+    return ["Driver's Permit", 'Birthpaper', 'Passport'];
+  }
+  return ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
+});
+
 // Methods
 const validateFirstExpiryDate = () => {
   if (formData.value.firstIdType === 'Birth Certificate') {
-    formData.value.firstExpiryDateError = '';
+    firstExpiryDateError.value = '';
     return true;
   }
 
   if (!formData.value.firstExpiryDate) {
-    formData.value.firstExpiryDateError = 'Expiry date is required';
+    firstExpiryDateError.value = 'Expiry date is required';
     return false;
   }
 
   if (!validateExpiryDate(formData.value.firstExpiryDate)) {
-    formData.value.firstExpiryDateError = 'Expiry date must be today or in the future';
+    firstExpiryDateError.value = 'Expiry date must be today or in the future';
     return false;
   }
 
-  formData.value.firstExpiryDateError = '';
+  firstExpiryDateError.value = '';
   return true;
 };
 
 const validateSecondExpiryDate = () => {
   if (formData.value.secondIdType === 'Birth Certificate') {
-    formData.value.secondExpiryDateError = '';
+    secondExpiryDateError.value = '';
     return true;
   }
 
   if (!formData.value.secondExpiryDate) {
-    formData.value.secondExpiryDateError = 'Expiry date is required';
+    secondExpiryDateError.value = 'Expiry date is required';
     return false;
   }
 
   if (!validateExpiryDate(formData.value.secondExpiryDate)) {
-    formData.value.secondExpiryDateError = 'Expiry date must be today or in the future';
+    secondExpiryDateError.value = 'Expiry date must be today or in the future';
     return false;
   }
 
-  formData.value.secondExpiryDateError = '';
+  secondExpiryDateError.value = '';
   return true;
 };
 
 const handleFileUpload = (file, idType) => {
-  if (idType === 'first') {
-    formData.value.firstIdDocument = file;
-  } else {
-    formData.value.secondIdDocument = file;
+  if (file && file.length > 0) {
+    if (idType === 'first') {
+      formData.value.firstIdDocument = file[0];
+    } else {
+      formData.value.secondIdDocument = file[0];
+    }
   }
-};
-
-const updateSecondIdOptions = () => {
-  if (formData.value.firstIdType === 'National ID') {
-    secondIdOptions.value = ["Driver's Permit", 'Birthpaper', 'Passport'];
-  } else {
-    secondIdOptions.value = ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
-  }
-};
-
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ?
-    'http://localhost:3000' :
-    `http://${window.location.hostname}:3000`;
 };
 
 const navigateToPrevious = () => {
@@ -326,7 +304,14 @@ const submitIDInformation = async () => {
       return;
     }
 
-    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+    // Validate expiry dates
+    if (!validateFirstExpiryDate() || !validateSecondExpiryDate()) {
+      formError.value = 'Please check the expiry dates';
+      isLoading.value = false;
+      return;
+    }
+
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
     const holderType = calculateHolderType();
 
     // Format expiry dates properly
@@ -337,26 +322,32 @@ const submitIDInformation = async () => {
 
     // Create FormData for first ID (National ID - Primary ID)
     const firstIdFormData = new FormData();
-    firstIdFormData.append('signup_id', store.signupId);
+    firstIdFormData.append('signup_id', 'ed870fc3-f084-4be2-b3fe-f097064992ac');
     firstIdFormData.append('id_type', formData.value.firstIdType);
     firstIdFormData.append('holder_type', holderType);
     firstIdFormData.append('id_number', formData.value.firstIdNumber);
     firstIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.firstExpiryDate));
     firstIdFormData.append('is_primary_id', 'true');
-    firstIdFormData.append('id_file', formData.value.firstIdDocument);
+    firstIdFormData.append('id_files', formData.value.firstIdDocument);
 
     // Create FormData for second ID
     const secondIdFormData = new FormData();
-    secondIdFormData.append('signup_id', store.signupId);
+    secondIdFormData.append('signup_id', 'ed870fc3-f084-4be2-b3fe-f097064992ac');
     secondIdFormData.append('id_type', formData.value.secondIdType);
     secondIdFormData.append('holder_type', holderType);
     secondIdFormData.append('id_number', formData.value.secondIdNumber);
     secondIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.secondExpiryDate));
     secondIdFormData.append('is_primary_id', 'false');
-    secondIdFormData.append('id_file', formData.value.secondIdDocument);
-
-    console.log('Submitting with holder type:', holderType);
-
+    secondIdFormData.append('id_files', formData.value.secondIdDocument);
+ 
+    for (let pair of firstIdFormData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+    
+    for (let pair of secondIdFormData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+    
     // Submit both IDs
     await Promise.all([
       axios.post(`${baseURL}/identifications/`, firstIdFormData, {
@@ -383,8 +374,12 @@ const submitIDInformation = async () => {
       }
     });
 
-    // Navigate to next page
-    router.push('/pep-information');
+    // Navigate based on customer type
+    if (store.isExistingCustomer) {
+      router.push('/account-number');
+    } else {
+      router.push('/due-diligence');
+    }
   } catch (error) {
     console.error('Error submitting ID information:', error);
     if (error.response) {
@@ -400,9 +395,9 @@ const submitIDInformation = async () => {
 
 // Calculate holder type based on age
 const calculateHolderType = () => {
-  const dob = new Date(store.basicInfo?.dob);
+  const dob = new Date(store.dob);
   const today = new Date();
-  const age = today.getFullYear() - dob.getFullYear();
+  let age = today.getFullYear() - dob.getFullYear();
   const monthDiff = today.getMonth() - dob.getMonth();
   
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {

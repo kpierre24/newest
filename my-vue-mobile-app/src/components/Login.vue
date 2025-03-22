@@ -126,16 +126,8 @@ const submitLogin = async () => {
   formError.value = '';
 
   try {
-    if (!formData.value.email || !formData.value.password) {
-      formError.value = 'Please fill in all required fields';
-      return;
-    }
-
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:3000' 
-      : `http://${window.location.hostname}:3000`;
-
-    const response = await axios.post(`${baseURL}/login`, {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/auth/login/`, {
       email: formData.value.email,
       password: formData.value.password
     });

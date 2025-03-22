@@ -120,7 +120,8 @@ const requestVerificationCode = async () => {
   errorMessage.value = '';
   
   try {
-    const response = await axios.post('http://127.0.0.1:8000/device-verifications/send/', {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/device-verifications/send/`, {
       identifier_type: 'email',
       operation: 'signup',
       signup_id: store.signupId
@@ -150,7 +151,8 @@ const verifyCode = async () => {
       code: verificationCode.value
     });
 
-    const response = await axios.post('http://127.0.0.1:8000/device-verifications/verify/', {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/device-verifications/verify/`, {
       signup_id: store.signupId,
       identifier_type: 'email',
       operation: 'signup',

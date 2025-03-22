@@ -122,25 +122,19 @@ const resendCount = ref(0);
 
 // Function to request a new verification code
 const requestVerificationCode = async () => {
-  if (resendCount.value >= maxResendAttempts) {
-    errorMessage.value = 'Maximum resend attempts reached';
-    return;
-  }
-
   isResending.value = true;
   errorMessage.value = '';
   
   try {
-    const response = await axios.post('http://127.0.0.1:8000/device-verifications/send/', {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/device-verifications/send/`, {
       identifier_type: 'mobile',
       operation: 'signup',
       signup_id: store.signupId
     });
     
     if (response.data) {
-      console.log('Mobile verification code sent successfully');
-      resendCount.value++;
-      startCountdown();
+      console.log('Verification code sent successfully');
     }
   } catch (error) {
     console.error('Error sending verification code:', error);
@@ -156,14 +150,15 @@ const verifyCode = async () => {
   errorMessage.value = '';
 
   try {
-    console.log('Verifying mobile code:', {
+    console.log('Sending verification code:', {
       signup_id: store.signupId,
       identifier_type: 'mobile',
       operation: 'signup',
       code: verificationCode.value
     });
 
-    const response = await axios.post('http://127.0.0.1:8000/device-verifications/verify/', {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/device-verifications/verify/`, {
       signup_id: store.signupId,
       identifier_type: 'mobile',
       operation: 'signup',
@@ -171,19 +166,11 @@ const verifyCode = async () => {
     });
 
     if (response.data) {
-      // Update store with verification status
-      store.$patch({
-        isMobileVerified: true,
-        mobileVerifiedOn: response.data.verified_on || new Date().toISOString()
-      });
-
-      console.log('Mobile verification successful');
-      
-      // Navigate to next step
-      await router.push('/mobile-verification-successful');
+      console.log('Verification successful:', response.data);
+      router.push('/id-information');
     }
   } catch (error) {
-    console.error('Verification error:', error);
+    console.error('Error verifying code:', error);
     errorMessage.value = error.response?.data?.detail || 'Invalid verification code';
   } finally {
     isLoading.value = false;

@@ -163,7 +163,7 @@ const handleSubmit = async (event) => {
       return;
     }
 
-    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `http://${window.location.hostname}:8000`;
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     // Create FormData for the address submission
     const addressFormData = new FormData();

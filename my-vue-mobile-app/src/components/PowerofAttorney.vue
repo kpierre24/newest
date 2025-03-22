@@ -336,15 +336,8 @@ const submitForm = async () => {
       return;
     }
 
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:3000' 
-      : `http://${window.location.hostname}:3000`;
-
-    try {
-      await axios.post(`${baseURL}/power-of-attorney`, formData.value);
-    } catch (apiError) {
-      console.error('API error:', apiError);
-    }
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/power-of-attorney/`, formData.value);
 
     const storeData = { ...formData.value };
     delete storeData.poaDocument;
@@ -394,8 +387,6 @@ onMounted(() => {
   max-width: 100%;
   padding: 2rem 1.5rem;
 }
-
-
 
 :deep(.v-card) {
   border: none !important;

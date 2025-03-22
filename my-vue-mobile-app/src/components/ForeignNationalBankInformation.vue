@@ -163,6 +163,16 @@ const bankCountry = ref('');
 const bankAccountNumber = ref('');
 const bankTelephoneNumber = ref('');
 
+const submitBankInfo = async () => {
+  try {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/foreign-bank-information/`, bankData);
+    // ... rest of the code
+  } catch (error) {
+    // ... error handling
+  }
+};
+
 const submitForm = async () => {
   isLoading.value = true;
   formError.value = '';
@@ -182,7 +192,8 @@ const submitForm = async () => {
 
     console.log('Sending foreign national bank data:', foreignNationalData);
 
-    const response = await axios.post('http://127.0.0.1:8000/foreign-nationals/', foreignNationalData);
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/foreign-bank-information/`, foreignNationalData);
 
     if (response.data) {
       console.log('Foreign national bank info submitted:', response.data);
