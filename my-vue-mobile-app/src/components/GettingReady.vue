@@ -45,9 +45,10 @@
                     <v-col cols="12" sm="6">
                       <v-btn
                         block
-                        color="secondary"
-                        density="default"
+                        color="primary"
+                        size="large"
                         variant="flat"
+                        height="56"
                         @click="handleCancel"
                       >
                         Cancel
@@ -56,8 +57,9 @@
                     <v-col cols="12" sm="6">
                       <v-btn
                         block
-                        color="primary"
-                        density="default"
+                        color="secondary"
+                        size="large"
+                        height="56"
                         variant="flat"
                         @click="handleNext"
                       >

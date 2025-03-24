@@ -58,10 +58,11 @@
                   </v-col>
                   <v-col cols="12" sm="6">
                     <v-btn
-                      block
-                      color="secondary"
-                      variant="tonal"
-                      size="large"
+                    block
+                     color="primary"
+                        size="large"
+                        variant="flat"
+                        height="56"
                       @click="router.go(-1)"
                       :disabled="isLoading"
                     >
@@ -71,9 +72,10 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
-                      variant="elevated"
+                      color="secondary"
+                      variant="flat"
                       size="large"
+                      height="56"
                       type="submit"
                       :loading="isLoading"
                     >

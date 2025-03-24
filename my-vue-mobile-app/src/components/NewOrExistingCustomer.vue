@@ -28,7 +28,7 @@
                         size="large"
                         variant="flat"
                         height="56"
-                        class="mb-4"
+                        class="mb-4 gradient-btn1"
                         @click="handleNewCustomer"
                         :loading="loading && isNewCustomer"
                         :disabled="loading"
@@ -43,6 +43,7 @@
                         size="large"
                         height="56"
                         variant="flat"
+                        class="gradient-btn"
                         @click="handleExistingCustomer"
                         :loading="loading && !isNewCustomer"
                         :disabled="loading"
@@ -77,7 +78,6 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
-import axios from 'axios';
 import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();
@@ -146,6 +146,7 @@ onMounted(() => {
   border: none !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
   transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 12px !important;
 }
 
 :deep(.v-card:hover) {
@@ -154,10 +155,33 @@ onMounted(() => {
 }
 
 :deep(.v-btn) {
-  border-radius: 8px;
+  border-radius: 12px;
   text-transform: none;
   font-size: 1.1rem;
-  letter-spacing: 0;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.gradient-btn {
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  color: white !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.gradient-btn1 {
+  background: linear-gradient(45deg, #9bce58d8, #FFBC2D);
+  color: white !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.gradient-btn:hover {
+  background: linear-gradient(45deg, #2575fc, #6a11cb);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+.gradient-btn1:hover {
+  background: linear-gradient(45deg, #FFBC2D, #9bce58d8);
+  color: white !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Mobile specific styles */

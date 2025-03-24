@@ -162,7 +162,7 @@ const verifyCode = async () => {
       signup_id: store.signupId,
       identifier_type: 'mobile',
       operation: 'signup',
-      code: verificationCode.value
+      code:   verificationCode.value
     });
 
     if (response.data) {

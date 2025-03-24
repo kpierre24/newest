@@ -150,7 +150,7 @@ const formData = ref({
 });
 
 const countryList = ref(Object.values(countries).map(country => country.name));
-const dwellingStatusOptions = ref(['Rented', 'Owned', 'Subletting', 'Living with relative']);
+const dwellingStatusOptions = ref(['Rented', 'Owned',  'Living with family']);
 
 const handleSubmit = async (event) => {
   event.preventDefault();
@@ -174,12 +174,12 @@ const handleSubmit = async (event) => {
     addressFormData.append('country', formData.value.country);
     addressFormData.append('dwelling_status', formData.value.dwellingStatus.toLowerCase());
     addressFormData.append('address_type', 'physical');
-    addressFormData.append('proof_of_address_file', formData.value.proofOfAddress);
+    addressFormData.append('proof_of_address_files', formData.value.proofOfAddress);
 
     // Submit address data
     const response = await axios.post(`${baseURL}/addresses/`, addressFormData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'multipart/formdata',
       },
     });
 

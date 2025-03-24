@@ -19,7 +19,29 @@
                 <p class="text-subtitle-1 text-medium-emphasis">Enter your beneficiary's details</p>
               </div>
 
-              <v-form @submit.prevent="submitForm">
+              <!-- Beneficiary List -->
+              <div v-if="beneficiaries.length > 0" class="mb-6">
+                <h3 class="text-h6 mb-3">Added Beneficiaries</h3>
+                <v-list>
+                  <v-list-item
+                    v-for="(beneficiary, index) in beneficiaries"
+                    :key="index"
+                    :title="`${beneficiary.first_name} ${beneficiary.last_name}`"
+                    :subtitle="`${beneficiary.relationship_to_beneficiary} - ${beneficiary.percent_of_beneficiary_interest}%`"
+                  >
+                    <template v-slot:append>
+                      <v-btn
+                        icon="mdi-delete"
+                        variant="text"
+                        color="error"
+                        @click="removeBeneficiary(index)"
+                      />
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </div>
+
+              <v-form @submit.prevent="handleSubmitAndNext">
                 <v-alert
                   v-if="formError"
                   type="error"
@@ -173,7 +195,32 @@
                   </v-card-text>
                 </v-card>
 
-                <v-row class="mt-6">
+                <!-- Add Another or Skip Options - Moved Above -->
+                <v-row class="mb-4">
+                  <v-col cols="12" class="d-flex justify-space-between align-center">
+                    <v-btn
+                      v-if="beneficiaries.length > 0"
+                      color="primary"
+                      variant="text"
+                      @click="addAnotherBeneficiary"
+                      class="text-none"
+                      prepend-icon="mdi-plus"
+                    >
+                      Add Another Beneficiary
+                    </v-btn>
+                    <v-btn
+                      color="grey-darken-1"
+                      variant="text"
+                      @click="skipBeneficiary"
+                      class="text-none"
+                    >
+                      Skip Adding Beneficiary
+                    </v-btn>
+                  </v-col>
+                </v-row>
+
+                <!-- Navigation Buttons -->
+                <v-row>
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
@@ -193,6 +240,7 @@
                       size="large"
                       type="submit"
                       :loading="isLoading"
+                      @click="handleSubmitAndNext"
                     >
                       {{ isLoading ? 'Processing...' : 'Next' }}
                     </v-btn>
@@ -228,6 +276,7 @@ const router = useRouter();
 const store = useDemoStore();
 const isLoading = ref(false);
 const formError = ref('');
+const beneficiaries = ref([]);
 
 const formData = ref({
   first_name: '',
@@ -269,6 +318,18 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
+    // Validate total percentage doesn't exceed 100%
+    const totalPercentage = beneficiaries.value.reduce(
+      (sum, b) => sum + parseFloat(b.percent_of_beneficiary_interest),
+      parseFloat(formData.value.percent_of_beneficiary_interest)
+    );
+
+    if (totalPercentage > 100) {
+      formError.value = 'Total beneficiary percentage cannot exceed 100%';
+      isLoading.value = false;
+      return false;
+    }
+
     // Validate required fields
     if (!formData.value.first_name || !formData.value.last_name || 
         !formData.value.address_line_1 || !formData.value.city ||
@@ -277,45 +338,52 @@ const submitForm = async () => {
         !formData.value.id_number || !formData.value.id_type || 
         !formData.value.percent_of_beneficiary_interest) {
       formError.value = 'Please fill in all required fields';
-      return;
+      isLoading.value = false;
+      return false;
     }
 
     // Validate percentage is between 0 and 100
     const percentage = parseFloat(formData.value.percent_of_beneficiary_interest);
     if (isNaN(percentage) || percentage < 0 || percentage > 100) {
       formError.value = 'Percentage must be between 0 and 100';
-      return;
+      return false;
     }
 
     // Validate gender
     if (!['male', 'female'].includes(formData.value.gender.toLowerCase())) {
       formError.value = 'Gender must be either Male or Female';
-      return;
+      return false;
     }
 
     // Validate ID type
     if (!['Passport', 'National ID', 'Drivers License'].includes(formData.value.id_type)) {
       formError.value = 'ID type must be either Passport, National ID, or Drivers License';
-      return;
+      return false;
     }
 
     // Save to store
     saveToStore();
+
+    // Add to beneficiaries array
+    beneficiaries.value.push({ ...formData.value });
 
     // Make API call
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     const response = await axios.post(`${baseURL}/beneficiaries/`, {
       ...formData.value,
       signup_id: store.signupId
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
     });
 
     if (response.data) {
       console.log('Beneficiary created successfully:', response.data);
-      router.push('/power-of-attorney');
+      // Clear form for potential next beneficiary
+      resetForm();
+      
+      // If this was the first beneficiary, show "Add Another" option
+      if (beneficiaries.value.length === 1) {
+        // The form will stay visible for adding another beneficiary
+      }
+      return true;
     }
   } catch (error) {
     console.error('Error submitting beneficiary information:', error);
@@ -324,14 +392,95 @@ const submitForm = async () => {
     } else {
       formError.value = 'An error occurred while submitting your information';
     }
+    return false;
   } finally {
     isLoading.value = false;
   }
 };
 
+const resetForm = () => {
+  formData.value = {
+    first_name: '',
+    last_name: '',
+    middle_name: '',
+    address_line_1: '',
+    address_line_2: '',
+    city: '',
+    country: '',
+    dob: '',
+    gender: '',
+    relationship_to_beneficiary: '',
+    id_number: '',
+    id_type: '',
+    percent_of_beneficiary_interest: 0
+  };
+};
+
+const removeBeneficiary = async (index) => {
+  // Here you might want to add an API call to remove the beneficiary from the backend
+  beneficiaries.value.splice(index, 1);
+};
+
+const addAnotherBeneficiary = async () => {
+  const currentTotal = beneficiaries.value.reduce(
+    (sum, b) => sum + parseFloat(b.percent_of_beneficiary_interest),
+    0
+  );
+
+  if (currentTotal >= 100) {
+    formError.value = 'Total beneficiary percentage has reached 100%. Cannot add more beneficiaries.';
+    return;
+  }
+
+  const remainingPercentage = 100 - currentTotal;
+  if (parseFloat(formData.value.percent_of_beneficiary_interest) > remainingPercentage) {
+    formError.value = `Maximum remaining percentage available is ${remainingPercentage}%`;
+    return;
+  }
+
+  const success = await submitForm();
+  if (success) {
+    // Form is already reset in submitForm
+    formError.value = '';
+  }
+};
+
+const skipBeneficiary = () => {
+  router.push('/power-of-attorney');
+};
+
 const navigateToPrevious = () => {
   saveToStore();
   router.push('/employment-information');
+};
+
+const handleSubmitAndNext = async () => {
+  const currentTotal = beneficiaries.value.reduce(
+    (sum, b) => sum + parseFloat(b.percent_of_beneficiary_interest),
+    0
+  );
+
+  // If there's data in the form, try to submit it first
+  if (formData.value.first_name || formData.value.last_name) {
+    const success = await submitForm();
+    if (!success) return; // Stop if submission failed
+  }
+
+  // Validate total percentage before proceeding
+  if (currentTotal === 0) {
+    // No beneficiaries added, confirm with user
+    if (confirm('No beneficiaries added. Do you want to proceed without adding beneficiaries?')) {
+      router.push('/power-of-attorney');
+    }
+  } else if (currentTotal < 100) {
+    // Warn user about incomplete percentage
+    if (confirm(`Total beneficiary percentage is ${currentTotal}%. Do you want to proceed anyway?`)) {
+      router.push('/power-of-attorney');
+    }
+  } else {
+    // All good, proceed to next page
+    router.push('/power-of-attorney');
+  }
 };
 
 // Initialize component with stored data
@@ -400,5 +549,22 @@ onMounted(() => {
     min-height: auto;
     padding: 1rem;
   }
+}
+
+.v-list-item {
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.text-none {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.error-text {
+  color: #ff5252;
+  font-size: 0.875rem;
+  margin-top: 4px;
 }
 </style>

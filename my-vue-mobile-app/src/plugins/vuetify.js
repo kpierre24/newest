@@ -40,7 +40,9 @@ export default createVuetify({
   defaults: {
     VBtn: {
       color: 'primary', // Default button color
-      height: '48px',
+      height: '56px',
+      variant: 'flat',
+      size: 'large',
       rounded: 'lg',
       style: {
         textTransform: 'none',

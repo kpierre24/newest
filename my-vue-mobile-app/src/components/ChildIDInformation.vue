@@ -14,18 +14,12 @@
                   width="120"
                   height="120"
                 />
-                
                 <h1 class="text-h1 font-weight-bold mb-2">Child ID Information</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Please provide the child's identification details</p>
               </div>
 
               <v-form @submit.prevent="submitChildIDInformation">
-                <v-alert
-                  v-if="formError"
-                  type="error"
-                  variant="tonal"
-                  class="mb-4"
-                >
+                <v-alert v-if="formError" type="error" variant="tonal" class="mb-4">
                   {{ formError }}
                 </v-alert>
 
@@ -39,7 +33,6 @@
                       :items="idTypes"
                       variant="outlined"
                       prepend-inner-icon="mdi-card-account-details"
-                      @update:model-value="updateSecondIdOptions"
                       :rules="[v => !!v || 'ID type is required']"
                       required
                     />
@@ -64,7 +57,7 @@
                       :max="maxExpiryDate"
                       :error-messages="firstExpiryDateError"
                       :disabled="formData.firstIdType === 'Birth Certificate'"
-                      @update:model-value="validateFirstExpiryDate"
+                      @update:model-value="validateExpiryDate('first')"
                       required
                     />
 
@@ -77,8 +70,8 @@
                       :rules="[v => !!v || 'ID document is required']"
                       @change="handleFileUpload($event, 'first')"
                       required
-                      :show-size="true"
-                      :multiple="true"
+                      show-size
+                      multiple
                       clearable
                     />
                   </v-card-text>
@@ -118,7 +111,7 @@
                       :max="maxExpiryDate"
                       :error-messages="secondExpiryDateError"
                       :disabled="formData.secondIdType === 'Birth Certificate'"
-                      @update:model-value="validateSecondExpiryDate"
+                      @update:model-value="validateExpiryDate('second')"
                       required
                     />
 
@@ -131,8 +124,8 @@
                       :rules="[v => !!v || 'ID document is required']"
                       @change="handleFileUpload($event, 'second')"
                       required
-                      :show-size="true"
-                      :multiple="true"
+                      show-size
+                      multiple
                     />
                   </v-card-text>
                 </v-card>
@@ -188,10 +181,11 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
 import logoImage from '../assets/Logo1.png';
+
 const router = useRouter();
 const store = useDemoStore();
 
-// Form data refs
+// Form data
 const formData = ref({
   firstIdType: '',
   firstIdNumber: '',
@@ -200,130 +194,78 @@ const formData = ref({
   secondIdType: '',
   secondIdNumber: '',
   secondExpiryDate: '',
-  secondIdDocument: null
+  secondIdDocument: null,
 });
 
 const formError = ref('');
 const isLoading = ref(false);
 const firstExpiryDateError = ref('');
 const secondExpiryDateError = ref('');
-const secondIdOptions = ref(['Birth Certificate', 'Passport', 'Student ID']);
 
 // Computed properties
-const minDate = computed(() => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
-});
-
+const minDate = computed(() => new Date().toISOString().split('T')[0]);
 const maxExpiryDate = computed(() => {
   const date = new Date();
   date.setFullYear(date.getFullYear() + 10);
   return date.toISOString().split('T')[0];
 });
 
+// ID types
+const idTypes = ['Birth Certificate', 'Passport', 'National ID'];
+
 // Methods
-const updateSecondIdOptions = () => {
-  if (formData.value.secondIdType === formData.value.firstIdType) {
-    formData.value.secondIdType = '';
-  }
-};
-
-const validateFirstExpiryDate = () => {
+const validateExpiryDate = (type) => {
+  const expiry = new Date(formData.value[`${type}ExpiryDate`]);
   const today = new Date();
-  const expiry = new Date(formData.value.firstExpiryDate);
-  if (expiry <= today) {
-    firstExpiryDateError.value = 'Expiry date must be in the future';
-  } else {
-    firstExpiryDateError.value = '';
-  }
-};
+  const errorField = `${type}ExpiryDateError`;
 
-const validateSecondExpiryDate = () => {
-  const today = new Date();
-  const expiry = new Date(formData.value.secondExpiryDate);
   if (expiry <= today) {
-    secondExpiryDateError.value = 'Expiry date must be in the future';
+    formData.value[errorField] = 'Expiry date must be in the future';
   } else {
-    secondExpiryDateError.value = '';
+    formData.value[errorField] = '';
   }
 };
 
 const handleFileUpload = (event, type) => {
   const file = event?.target?.files?.[0] || event;
-  console.log(`Handling file upload for ${type}:`, file);
-
   if (file instanceof File) {
-    if (type === 'first') {
-      formData.value.firstIdDocument = file;
-    } else if (type === 'second') {
-      formData.value.secondIdDocument = file;
-    }
+    formData.value[`${type}IdDocument`] = file;
   }
 };
 
-const API_BASE_URL = 'http://127.0.0.1:8000'  ; 
-
 const navigateToPrevious = () => {
-  // Save current state before navigating
   saveToStore();
   router.go(-1);
 };
 
-
-
 const saveToStore = () => {
-  store.$patch((state) => {
-    state.childIdInfo = {
+  store.$patch({
+    childIdInfo: {
       firstIdType: formData.value.firstIdType,
       firstIdNumber: formData.value.firstIdNumber,
       firstExpiryDate: formData.value.firstExpiryDate,
       secondIdType: formData.value.secondIdType,
       secondIdNumber: formData.value.secondIdNumber,
-      secondExpiryDate: formData.value.secondExpiryDate
-    };
+      secondExpiryDate: formData.value.secondExpiryDate,
+    },
   });
 };
 
-const submitChildIDInformation = async (event) => {
-  event.preventDefault();
+const submitChildIDInformation = async () => {
   isLoading.value = true;
   formError.value = '';
 
   try {
     const baseURL = import.meta.env.VITE_API_BASE_URL;
-    await axios.post(`${baseURL}/child-identifications/`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    await axios.post(`${baseURL}/child-identifications/`, formData.value, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    // Save to store and navigate
-    store.$patch({
-      childIdInfo: {
-        firstIdType: formData.value.firstIdType,
-        firstIdNumber: formData.value.firstIdNumber,
-        firstExpiryDate: formData.value.firstExpiryDate,
-        secondIdType: formData.value.secondIdType,
-        secondIdNumber: formData.value.secondIdNumber,
-        secondExpiryDate: formData.value.secondExpiryDate
-      }
-    });
-
+    saveToStore();
     router.push('/parent-guardian-information');
-
   } catch (error) {
     console.error('Error submitting child ID information:', error);
-    console.error('Error response:', error.response?.data);
-    console.error('Error status:', error.response?.status);
-    console.error('Full error object:', JSON.stringify(error, null, 2));
-
-    if (error.response?.data?.detail) {
-      formError.value = Array.isArray(error.response.data.detail)
-        ? error.response.data.detail[0]?.msg
-        : error.response.data.detail;
-    } else {
-      formError.value = 'An error occurred while submitting your information';
-    }
+    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
   }
@@ -331,23 +273,10 @@ const submitChildIDInformation = async (event) => {
 
 // Initialize component
 onMounted(() => {
-  // Load any existing data from store
   if (store.childIdInfo) {
-    formData.value.firstIdType = store.childIdInfo.firstIdType || '';
-    formData.value.firstIdNumber = store.childIdInfo.firstIdNumber || '';
-    formData.value.firstExpiryDate = store.childIdInfo.firstExpiryDate || '';
-    formData.value.secondIdType = store.childIdInfo.secondIdType || '';
-    formData.value.secondIdNumber = store.childIdInfo.secondIdNumber || '';
-    formData.value.secondExpiryDate = store.childIdInfo.secondExpiryDate || '';
+    formData.value = { ...store.childIdInfo };
   }
 });
-
-// Update the ID type options to match the schema
-const idTypes = [
-  'Birth Certificate',
-  'Passport',
-  'National ID'
-];
 </script>
 
 <style scoped>
@@ -389,7 +318,6 @@ const idTypes = [
   }
 }
 
-/* Ensure form content is scrollable on mobile */
 @media (max-width: 600px) {
   .form-section {
     height: 100vh;

@@ -322,17 +322,17 @@ const submitIDInformation = async () => {
 
     // Create FormData for first ID (National ID - Primary ID)
     const firstIdFormData = new FormData();
-    firstIdFormData.append('signup_id', 'ed870fc3-f084-4be2-b3fe-f097064992ac');
+    firstIdFormData.append('signup_id', formData.value.signupId);
     firstIdFormData.append('id_type', formData.value.firstIdType);
     firstIdFormData.append('holder_type', holderType);
     firstIdFormData.append('id_number', formData.value.firstIdNumber);
-    firstIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.firstExpiryDate));
+    firstIdFormData.append('id_expiry_date', '2025-03-22');
     firstIdFormData.append('is_primary_id', 'true');
     firstIdFormData.append('id_files', formData.value.firstIdDocument);
 
     // Create FormData for second ID
     const secondIdFormData = new FormData();
-    secondIdFormData.append('signup_id', 'ed870fc3-f084-4be2-b3fe-f097064992ac');
+    secondIdFormData.append('signup_id', formData.value.signupId);
     secondIdFormData.append('id_type', formData.value.secondIdType);
     secondIdFormData.append('holder_type', holderType);
     secondIdFormData.append('id_number', formData.value.secondIdNumber);

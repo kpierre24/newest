@@ -23,8 +23,7 @@ import ParentGuardianInformation from '@/components/ParentGuardianInformation.vu
 import AccountNumber from '@/components/AccountNumber.vue';
 import EmailVerSuccessful from '@/components/EmailVerSuccessful.vue';
 import MobileVerSuccessful from '@/components/MobileVerSuccessful.vue';
-import ChildIdInformation from '@/components/ChildIdInformation.vue';
-import IdInformation from '@/components/IdInformation.vue';
+import VerifyMobile from '@/components/VerifyMobile.vue';
 
 
 const routes = [
@@ -51,7 +50,9 @@ const routes = [
   { path: '/parent-guardian-information', name: 'ParentGuardianInformation', component: ParentGuardianInformation },
   { path: '/account-number', name: 'AccountNumber', component: AccountNumber },
   { path: '/email-verification-successful', name: 'EmailVerSuccessful', component: EmailVerSuccessful },
-  { path: '/mobile-verification-successful', name: 'MobileVerSuccessful', component: MobileVerSuccessful }
+  { path: '/mobile-verification-successful', name: 'MobileVerSuccessful', component: MobileVerSuccessful },
+  { path: '/verify-mobile', name: 'VerifyMobile', component: VerifyMobile, meta: { requiresInitialAuth: true } },
+  { path: '/dashboard', name: 'Dashboard', component: () => import('@/components/Dashboard.vue'), meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({

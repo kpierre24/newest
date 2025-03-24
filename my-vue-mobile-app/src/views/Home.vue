@@ -25,8 +25,10 @@
                   <v-col cols="12">
                     <v-btn
                       block
-                      color="primary"
+                      color="secondary"
                       size="large"
+                      height="56"
+                      variant="flat"
                       @click="$router.push('/login')"
                       class="mb-3"
                     >
@@ -36,9 +38,10 @@
                   <v-col cols="12">
                     <v-btn
                       block
-                      color="secondary"
-                      variant="flat"
+                      color="primary"
                       size="large"
+                      variant="flat"
+                      height="56"
                       @click="handleCreateAccount"
                     >
                       Don't have an account?

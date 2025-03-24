@@ -4,134 +4,85 @@ export const useDemoStore = defineStore({
   id: 'demo',
   state: () => ({
     signupId: null,
-    firstName: '',
-    lastName: '',
-    otherName: '',
-    email: '',
-    mobileNumber: '',
-    accountNumber: '',
-    gender: '',
-    dob: '',
-    nationality: '',
-    password: '',
-    confirmPassword: '',
-    termsViewed: false,
-    financialAgreementViewed: false,
-    agreed_to_tc_fa: false,
-    AddressLine1: '',
-    AddressLine2: '',
-    City: '',
-    Country: '',
-    DwellingStatus: '',
-    branchName: '',
-    branchCode: '',
-    branchLocation: '',
-    preferredcontactmethod: '',
-    childId: '',
-    childName: '',
-    childAge: '',
     isNewCustomer: false,
-    mailingAddressLine1: '',
-    mailingAddressLine2: '',
-    mailingCity: '',
-    mailingCountry: '',
-    employerName: '',
-    employerAddressLine1: '',
-    employerAddressLine2: '',
-    employerCity: '',
-    employerCountry: '',
-    workNumber: '',
-    employmentStatus: '',
-    pepAssociate: '',
-    relationshipToPep: '',
-    pepName: '',
-    jobTitle: '',
-    selectedOptions: [],
-    firstIdType: '',
-    firstIdNumber: '',
-    firstExpiryDate: '',
-    firstIdDocument: null,
-    secondIdType: '',
-    secondIdNumber: '',
-    secondExpiryDate: '',
-    secondIdDocument: null,
-    bankName: '',
-    bankAddressLine1: '',
-    bankCity: '',
-    bankCountry: '',
-    bankAccountNumber: '',
-    bankTelephoneNumber: '',
-    beneficiaryFirstName: '',
-    beneficiaryLastName: '',
-    beneficiaryOtherName: '',
-    beneficiaryAddressLine1: '',
-    beneficiaryAddressLine2: '',
-    beneficiaryCity: '',
-    beneficiaryCountry: '',
-    beneficiaryDateOfBirth: '',
-    beneficiaryGender: '',
-    parentFirstName: '',
-    parentMiddleName: '',
-    parentLastName: '',
-    parentOccupation: '',
-    parentWorkplace: '',
-    parentEmail: '',
-    parentPhoneNumber: '',
-    relationshipToChild: '',
-    relationshipDocument: null,
-    verificationCode: '',
-    membershipInfo: {
-      isMemberOfAnotherCreditUnion: null,
-      creditUnionName: null,
-      isServingOnBoard: null,
-      creditUnionBoardName: null,
-      poaFirstName: '',
-    poaLastName: '',
-    poaOtherName: '',
-    poaAddressLine1: '',
-    poaAddressLine2: '',
-    poaCity: '',
-    poaCountry: '',
-    poaDob: '',
-    poaIdDocument: null,
-    poaDocument: null
-    },
     isExistingCustomer: false,
+    isEmailVerified: false,
+    emailVerifiedOn: null,
+    isMobileVerified: false,
+    mobileVerifiedOn: null,
+    verificationCode: '',
+
+    // Basic Information
     basicInfo: {
-      dob: '',
       firstName: '',
       lastName: '',
       otherName: '',
       email: '',
       mobileNumber: '',
       gender: '',
+      dob: '',
       nationality: '',
       password: '',
       confirmPassword: '',
       termsViewed: false,
       financialAgreementViewed: false,
     },
-    pepInfo: {
-      pepAssociate: '',
-      relationshipToPep: '',
-      pepName: '',
+
+    // Address Information
+    addressInfo: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      country: '',
+      dwellingStatus: '',
+      addressId: null,
     },
-    pepAssociateDetails: '',
-    pepAssociateName: '',
-    maritalStatus: '',
-    isPEP: null,
-    pepPosition: [],
-    pepRelationship: [],
-    internationalOrgPEP: [],
-    childIdInfo: {
+
+    // Mailing Address
+    mailingAddress: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      country: '',
+    },
+
+    // Branch Information
+    branchInfo: {
+      branchName: '',
+      branchCode: '',
+      branchLocation: '',
+      preferredcontactmethod: '',
+    },
+
+    // Employment Information
+    employmentInfo: {
+      employerName: '',
+      employerAddressLine1: '',
+      employerAddressLine2: '',
+      employerCity: '',
+      employerCountry: '',
+      workNumber: '',
+      employmentStatus: '',
+      employmentType: '',
+    },
+
+    // Child Information
+    childInfo: {
+      childId: '',
+      childName: '',
+      childAge: '',
+      schoolName: '',
       firstIdType: '',
       firstIdNumber: '',
       firstExpiryDate: '',
+      firstIdDocument: null,
       secondIdType: '',
       secondIdNumber: '',
       secondExpiryDate: '',
-      schoolName: ''
+      secondIdDocument: null,
     },
+
+    // Bank Information
     bankInfo: {
       bankName: '',
       bankAddressLine1: '',
@@ -139,43 +90,43 @@ export const useDemoStore = defineStore({
       bankCountry: '',
       bankAccountNumber: '',
       swiftCode: '',
-      bankTelephoneNumber: ''
+      bankTelephoneNumber: '',
     },
-    employmentInfo: {
-      employerName: '',
-      employerAddressLine1: '',
-      employerCity: '',
-      employerCountry: '',
-      workNumber: '',
-      employmentStatus: '',
-      employmentType: ''
+
+    // PEP Information
+    pepInfo: {
+      isPEP: null,
+      pepPosition: [],
+      pepRelationship: [],
+      internationalOrgPEP: [],
+      pepAssociate: '',
+      pepAssociateDetails: '',
+      pepAssociateName: '',
+      relationshipToPep: '',
+      pepName: '',
     },
+
+    // Beneficiary Information
     beneficiaryInfo: {
-      beneficiaryFirstName: '',
-      beneficiaryLastName: '',
-      beneficiaryEmail: '',
-      beneficiaryPhone: '',
+      firstName: '',
+      lastName: '',
+      otherName: '',
+      email: '',
+      phone: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      country: '',
+      dob: '',
+      gender: '',
+      relationship: '',
       idType: '',
       idNumber: '',
       idExpiry: '',
-      relationship: '',
-      percentage: ''
+      percentage: '',
     },
-    isMemberOfAnotherCreditUnion: 'no',
-    creditUnionName: '',
-    isServingOnBoard: 'no',
-    creditUnionBoardName: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    country: '',
-    dwellingStatus: '',
-    addressId: null,
-    isEmailVerified: false,
-    emailVerifiedOn: null,
-    isMobileVerified: false,
-    mobileVerifiedOn: null,
-    schoolName: '',
+
+    // Guardian Information
     guardianInfo: {
       firstName: '',
       lastName: '',
@@ -184,277 +135,163 @@ export const useDemoStore = defineStore({
       workplace: '',
       email: '',
       mobile: '',
-      relationshipToChild: ''
+      relationshipToChild: '',
+      relationshipDocument: null,
     },
-    beneficiary: {
-      signup_id: null,
-      first_name: '',
-      last_name: '',
-      middle_name: '',
-      address_line_1: '',
-      address_line_2: '',
+
+    // Membership Information
+    membershipInfo: {
+      isMemberOfAnotherCreditUnion: 'no',
+      creditUnionName: '',
+      isServingOnBoard: 'no',
+      creditUnionBoardName: '',
+    },
+
+    // Power of Attorney Information
+    poaInfo: {
+      firstName: '',
+      lastName: '',
+      otherName: '',
+      addressLine1: '',
+      addressLine2: '',
       city: '',
       country: '',
       dob: '',
-      gender: '',
-      relationship_to_beneficiary: '',
-      id_number: '',
-      id_type: '',
-      percent_of_beneficiary_interest: 0
+      idDocument: null,
+      document: null,
     },
+
+    // Agreement Status
+    agreed_to_tc_fa: false,
+
+    // Auth state
+    userId: null,
+    accessToken: null,
+    mobileNumber: null,
+    isAuthenticated: false,
   }),
+
   actions: {
     setBasicInfo(info) {
       this.basicInfo = { ...this.basicInfo, ...info };
     },
     
     setAddressInfo(info) {
-      this.AddressLine1 = info.AddressLine1;
-      this.AddressLine2 = info.AddressLine2;
-      this.City = info.City;
-      this.Country = info.Country;
-      this.DwellingStatus = info.DwellingStatus;
+      this.addressInfo = { ...this.addressInfo, ...info };
     },
+
     setBranchInfo(info) {
-      this.branchName = info.branchName;
-      this.branchCode = info.branchCode;
-      this.branchLocation = info.branchLocation;
-      this.preferredcontactmethod = info.preferredcontactmethod;
+      this.branchInfo = { ...this.branchInfo, ...info };
     },
+
     setChildInfo(info) {
-      this.childId = info.childId;
-      this.childName = info.childName;
-      this.childAge = info.childAge;
+      this.childInfo = { ...this.childInfo, ...info };
     },
-    setMailingAddressInfo(info) {
-      this.mailingAddressLine1 = info.AddressLine1;
-      this.mailingAddressLine2 = info.AddressLine2;
-      this.mailingCity = info.City;
-      this.mailingCountry = info.Country;
+
+    setMailingAddress(info) {
+      this.mailingAddress = { ...this.mailingAddress, ...info };
     },
+
     setEmploymentInfo(info) {
-      this.employerName = info.employerName;
-      this.employerAddressLine1 = info.employerAddressLine1;
-      this.employerAddressLine2 = info.employerAddressLine2;
-      this.employerCity = info.employerCity;
-      this.employerCountry = info.employerCountry;
-      this.workNumber = info.workNumber;
-      this.employmentStatus = info.employmentStatus;
-      this.employmentType = info.employmentType;
-      this.proofOfEmploymentFile = info.proofOfEmploymentFile;
+      this.employmentInfo = { ...this.employmentInfo, ...info };
     },
-    setPepInfo(data) {
-      this.pepInfo.pepAssociate = data.pepAssociate;
-      this.pepInfo.relationshipToPep = data.relationshipToPep;
-      this.pepInfo.pepName = data.pepName;
+
+    setPepInfo(info) {
+      this.pepInfo = { ...this.pepInfo, ...info };
     },
-    setPepInfo2(data) {
-      this.pepAssociate = data.pepAssociate;
-      this.pepAssociateDetails = data.pepAssociateDetails;
-      this.pepName = data.pepName;
-    },
-    setSelectedOptions(options) {
-      this.selectedOptions = options;
-    },
-    setChildIdInfo(info) {
-      this.firstIdType = info.firstIdType;
-      this.firstIdNumber = info.firstIdNumber;
-      this.firstExpiryDate = info.firstExpiryDate;
-      this.firstIdDocument = info.firstIdDocument;
-      this.secondIdType = info.secondIdType;
-      this.secondIdNumber = info.secondIdNumber;
-      this.secondExpiryDate = info.secondExpiryDate;
-      this.secondIdDocument = info.secondIdDocument;
-    },
+
     setBankInfo(info) {
-      this.bankName = info.bankName;
-      this.bankAddressLine1 = info.bankAddressLine1;
-      this.bankCity = info.bankCity;
-      this.bankCountry = info.bankCountry;
-      this.bankAccountNumber = info.bankAccountNumber;
-      this.bankTelephoneNumber = info.bankTelephoneNumber;
+      this.bankInfo = { ...this.bankInfo, ...info };
     },
-    setBankAccountNumber(accountNumber) {
-      this.bankAccountNumber = accountNumber;
-    },
+
     setBeneficiaryInfo(info) {
-      this.beneficiary = {
-        ...this.beneficiary,
-        ...info
-      };
+      this.beneficiaryInfo = { ...this.beneficiaryInfo, ...info };
     },
-    setParentGuardianInfo(info) {
-      this.parentFirstName = info.parentFirstName;
-      this.parentMiddleName = info.parentMiddleName;
-      this.parentLastName = info.parentLastName;
-      this.parentOccupation = info.parentOccupation;
-      this.parentWorkplace = info.parentWorkplace;
-      this.parentEmail = info.parentEmail;
-      this.parentPhoneNumber = info.parentPhoneNumber;
-      this.relationshipToChild = info.relationshipToChild;
-      this.relationshipDocument = info.relationshipDocument;
+
+    setGuardianInfo(info) {
+      this.guardianInfo = { ...this.guardianInfo, ...info };
     },
+
+    setMembershipInfo(info) {
+      this.membershipInfo = { ...this.membershipInfo, ...info };
+    },
+
+    setPowerOfAttorneyInfo(info) {
+      this.poaInfo = { ...this.poaInfo, ...info };
+    },
+
     setVerificationCode(code) {
       this.verificationCode = code;
     },
-    setMembershipInfo(info) {
-      this.isMemberOfAnotherCreditUnion = info.isMemberOfAnotherCreditUnion;
-      this.creditUnionName = info.creditUnionName;
-      this.isServingOnBoard = info.isServingOnBoard;
-      this.creditUnionBoardName = info.creditUnionBoardName;
-      
-    },
-    setPowerOfAttorneyInfo(info) {
-      this.poaFirstName = info.poaFirstName;
-      this.poaLastName = info.poaLastName;
-      this.poaOtherName = info.poaOtherName;
-      this.poaAddressLine1 = info.poaAddressLine1;
-      this.poaAddressLine2 = info.poaAddressLine2;
-      this.poaCity = info.poaCity;
-      this.poaCountry = info.poaCountry;
-      this.poaDob = info.poaDob;
-      this.poaIdType = info.poaIdType;
-      this.poaIdDocument = info.poaIdDocument;
-      this.poaDocument = info.poaDocument;
-    },
-    setNewCustomer(value) {
-      this.isNewCustomer = value;
-    },
-    setExistingCustomer(isExisting) {
-      this.isExistingCustomer = isExisting;
-    },
-    setIdInfo(info) {
-      this.firstIdType = info.firstIdType;
-      this.firstIdNumber = info.firstIdNumber;
-      this.firstExpiryDate = info.firstExpiryDate;
-      this.firstIdDocument = info.firstIdDocument;
-      this.secondIdType = info.secondIdType;
-      this.secondIdNumber = info.secondIdNumber;
-      this.secondExpiryDate = info.secondExpiryDate;
-      this.secondIdDocument = info.secondIdDocument;
-      this.maritalStatus = info.maritalStatus;
-    },
-    setAgreementStatus(status) {
-      this.agreed_to_tc_fa = status;
-    },
-    clearBasicInfo() {
-      this.firstName = '';
-      this.lastName = '';
-      this.otherName = '';
-      this.email = '';
-      this.mobileNumber = '';
-      this.gender = '';
-      this.dob = '';
-      this.nationality = '';
-      this.password = '';
-      this.confirmPassword = '';
-      this.isExistingCustomer = false;
-      this.schoolName = '';
-      this.termsViewed = false;
-      this.financialAgreementViewed = false;
-      this.agreed_to_tc_fa = false;
-    },
-    clearAddressInfo() {
-      this.AddressLine1 = '';
-      this.AddressLine2 = '';
-      this.City = '';
-      this.Country = '';
-      this.DwellingStatus = '';
-    },
+
     setSignupId(id) {
       this.signupId = id;
       console.log('Signup ID set in store:', id);
     },
+
+    setNewCustomer(value) {
+      this.isNewCustomer = value;
+    },
+
+    setExistingCustomer(value) {
+      this.isExistingCustomer = value;
+    },
+
+    setAgreementStatus(status) {
+      this.agreed_to_tc_fa = status;
+    },
+
+    setAuthData(data) {
+      this.userId = data.userId;
+      this.accessToken = data.accessToken;
+      this.mobileNumber = data.mobileNumber;
+    },
+
+    setFinalAuthToken(token) {
+      this.accessToken = token;
+      this.isAuthenticated = true;
+    },
+
+    clearAuth() {
+      this.userId = null;
+      this.accessToken = null;
+      this.mobileNumber = null;
+      this.isAuthenticated = false;
+    },
+
+    // Clear functions
+    clearAll() {
+      this.$reset();
+    },
+
+    clearBasicInfo() {
+      this.basicInfo = this.$state.basicInfo;
+    },
+
+    clearAddressInfo() {
+      this.addressInfo = this.$state.addressInfo;
+    },
+
     clearSignupData() {
       this.signupId = null;
       this.isExistingCustomer = false;
-      this.firstName = '';
-      this.lastName = '';
-      this.otherName = '';
-      this.email = '';
-      this.mobileNumber = '';
-      this.accountNumber = '';
-      this.password = '';
-      this.confirmPassword = '';
-      this.gender = '';
-      this.dob = '';
-      this.nationality = '';
-      this.termsViewed = false;
-      this.financialAgreementViewed = false;
-      this.agreed_to_tc_fa = false;
+      this.basicInfo = this.$state.basicInfo;
     },
+
     clearMembershipData() {
-      this.isMemberOfAnotherCreditUnion = 'no';
-      this.creditUnionName = '';
-      this.isServingOnBoard = 'no';
-      this.creditUnionBoardName = '';
+      this.membershipInfo = this.$state.membershipInfo;
     },
-    clearAddressData() {
-      this.addressLine1 = '';
-      this.addressLine2 = '';
-      this.city = '';
-      this.country = '';
-      this.dwellingStatus = '';
-      this.addressId = null;
-    },
-    clearForeignNationalBankData() {
-      this.bankName = '';
-      this.bankAddressLine1 = '';
-      this.bankAddressLine2 = '';
-      this.bankCity = '';
-      this.bankCountry = '';
-      this.bankAccountNumber = '';
-      this.bankTelephoneNumber = '';
-    },
-    setEmailVerified(status) {
-      this.isEmailVerified = status;
-    },
-    clearEmailVerification() {
-      this.isEmailVerified = false;
-      this.emailVerifiedOn = null;
-    },
-    clearMobileVerification() {
-      this.isMobileVerified = false;
-      this.mobileVerifiedOn = null;
-    },
+
     clearPEPData() {
-      this.isPEP = null;
-      this.pepPosition = [];
-      this.pepRelationship = [];
-      this.internationalOrgPEP = [];
-      this.pepAssociate = '';
-      this.pepAssociateDetails = '';
-      this.pepAssociateName = '';
+      this.pepInfo = this.$state.pepInfo;
     },
+
     clearGuardianInfo() {
-      this.guardianInfo = {
-        firstName: '',
-        lastName: '',
-        middleName: '',
-        occupation: '',
-        workplace: '',
-        email: '',
-        mobile: '',
-        relationshipToChild: ''
-      };
+      this.guardianInfo = this.$state.guardianInfo;
     },
+
     clearBeneficiaryInfo() {
-      this.beneficiary = {
-        signup_id: null,
-        first_name: '',
-        last_name: '',
-        middle_name: '',
-        address_line_1: '',
-        address_line_2: '',
-        city: '',
-        country: '',
-        dob: '',
-        gender: '',
-        relationship_to_beneficiary: '',
-        id_number: '',
-        id_type: '',
-        percent_of_beneficiary_interest: 0
-      };
+      this.beneficiaryInfo = this.$state.beneficiaryInfo;
     },
   },
   persist: true,

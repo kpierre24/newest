@@ -132,13 +132,42 @@ const submitLogin = async () => {
       password: formData.value.password
     });
 
-    store.setUserEmail(formData.value.email);
-    router.push('/dashboard');
+    if (response.data) {
+      // Store the initial auth data
+      store.setAuthData({
+        email: formData.value.email,
+        accessToken: response.data.access_token,
+        userId: response.data.user_id,
+        mobileNumber: response.data.mobile_number
+      });
+
+      // Request mobile verification code
+      await requestMobileCode();
+
+      // Navigate to mobile verification
+      router.push('/verify-mobile');
+    }
   } catch (error) {
     console.error('Login failed:', error);
-    formError.value = 'Invalid email or password';
+    formError.value = error.response?.data?.detail || 'Invalid email or password';
   } finally {
     isLoading.value = false;
+  }
+};
+
+const requestMobileCode = async () => {
+  try {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    await axios.post(`${baseURL}/auth/request-mobile-code/`, {
+      user_id: store.userId
+    }, {
+      headers: {
+        'Authorization': `Bearer ${store.accessToken}`
+      }
+    });
+  } catch (error) {
+    console.error('Failed to request mobile code:', error);
+    throw error;
   }
 };
 

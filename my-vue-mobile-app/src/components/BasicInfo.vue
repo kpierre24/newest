@@ -19,12 +19,7 @@
               </div>
 
               <v-form @submit.prevent="handleSubmit">
-                <v-alert
-                  v-if="formError"
-                  type="error"
-                  variant="tonal"
-                  class="mb-4"
-                >
+                <v-alert v-if="formError" type="error" variant="tonal" class="mb-4">
                   {{ formError }}
                 </v-alert>
 
@@ -110,7 +105,6 @@
                   @input="validateDateOfBirth"
                 />
 
-                <!-- School Name field - only shows after DOB is entered and age is under 18 -->
                 <v-text-field
                   v-if="isUnder18"
                   v-model="store.schoolName"
@@ -133,7 +127,6 @@
                   required
                 />
 
-                <!-- Add marital status field after nationality -->
                 <v-select
                   v-model="store.maritalStatus"
                   label="Marital Status"
@@ -178,22 +171,23 @@
                   v-model="store.termsViewed"
                   label="I agree to the Terms and Conditions"
                   :rules="[v => !!v || 'You must agree to continue']"
-                  @click="handleTermsClick"
+                  @click="openTerms"
                 />
 
                 <v-checkbox
                   v-model="store.financialAgreementViewed"
                   label="I agree to the Financial Declaration"
                   :rules="[v => !!v || 'You must agree to continue']"
-                  @click="handleFinancialClick"
+                  @click="openFinancialDeclaration"
                 />
 
                 <v-row class="mt-6">
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="secondary"
-                      density="default"
+                      color="primary"
+                      size="large"
+                      height="56"
                       variant="flat"
                       @click="navigateToPrevious"
                     >
@@ -203,8 +197,9 @@
                   <v-col cols="12" sm="6">
                     <v-btn
                       block
-                      color="primary"
-                      density="default"
+                      color="secondary"
+                      size="large"
+                      height="56"
                       variant="flat"
                       type="submit"
                       :loading="isLoading"
@@ -222,28 +217,15 @@
       <!-- Brand Section -->
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
         <div class="brand-overlay"></div>
-        
       </v-col>
     </v-row>
-  
-
-
 
     <!-- Terms Dialog -->
-    <v-dialog
-      v-model="showTerms"
-      max-width="500"
-      persistent
-    >
+    <v-dialog v-model="showTerms" max-width="500" persistent>
       <v-card>
         <v-card-title class="text-h5 pa-4">
           Terms and Conditions
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            @click="closeTerms"
-            class="float-right"
-          />
+          <v-btn icon="mdi-close" variant="text" @click="closeTerms" class="float-right" />
         </v-card-title>
         <v-card-text class="pa-4">
           <TermsAndConditions @close="closeTerms" />
@@ -252,20 +234,11 @@
     </v-dialog>
 
     <!-- Financial Declaration Dialog -->
-    <v-dialog
-      v-model="showFinancialDeclaration"
-      max-width="500"
-      persistent
-    >
+    <v-dialog v-model="showFinancialDeclaration" max-width="500" persistent>
       <v-card>
         <v-card-title class="text-h5 pa-4">
           Financial Declaration
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            @click="closeFinancialDeclaration"
-            class="float-right"
-          />
+          <v-btn icon="mdi-close" variant="text" @click="closeFinancialDeclaration" class="float-right" />
         </v-card-title>
         <v-card-text class="pa-4">
           <FinancialDeclaration @close="closeFinancialDeclaration" />
@@ -285,7 +258,6 @@ import FinancialDeclaration from '@/components/FinancialDeclaration.vue';
 import logoImage from '../assets/Logo1.png';
 import { countries } from 'countries-list';
 
-
 const router = useRouter();
 const store = useDemoStore();
 const showTerms = ref(false);
@@ -296,79 +268,21 @@ const isLoading = ref(false);
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 
+const today = computed(() => new Date().toISOString().split('T')[0]);
+const countryList = computed(() => Object.values(countries).map(country => country.name));
+const isUnder18 = computed(() => calculateAge(store.dob) < 18);
+const isAdult = computed(() => calculateAge(store.dob) >= 18);
 
-
-const today = computed(() => {
-  const date = new Date();
-  return date.toISOString().split('T')[0];
-});
-
-const countryList = ref(Object.values(countries).map(country => country.name));
-
-const isUnder18 = computed(() => {
-  if (!store.dob) return false;
-
-  const birthDate = new Date(store.dob);
+const calculateAge = (dob) => {
+  if (!dob) return 0;
+  const birthDate = new Date(dob);
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-
-  return age < 18;
-});
-
-const isAdult = computed(() => {
-  if (!store.dob) return false;
-
-  const birthDate = new Date(store.dob);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  return age >= 18;
-});
-
-const openTerms = () => {
-  showTerms.value = true;
-};
-
-const closeTerms = () => {
-  showTerms.value = false;
-  store.termsViewed = true;
-  checkAgreementStatus();
-};
-
-const openFinancialDeclaration = () => {
-  showFinancialDeclaration.value = true;
-};
-
-const closeFinancialDeclaration = () => {
-  showFinancialDeclaration.value = false;
-  store.financialAgreementViewed = true;
-  checkAgreementStatus();
-};
-
-const checkAgreementStatus = () => {
-  if (store.termsViewed && store.financialAgreementViewed) {
-    store.setAgreementStatus(true);
-  }
-};
-
-const handleTermsClick = (event) => {
-  event.preventDefault();
-  openTerms();
-};
-
-const handleFinancialClick = (event) => {
-  event.preventDefault();
-  openFinancialDeclaration();
+  return age;
 };
 
 const validateDateOfBirth = () => {
@@ -383,27 +297,23 @@ const validateDateOfBirth = () => {
     dobError.value = 'Date of birth cannot be in the future';
     return false;
   }
-  
-  // Set marital status to "Single" if under 18
-  if (!isAdult.value) {
-    store.maritalStatus = 'Single';
-  }
-  
   return true;
 };
 
-const calculateAge = (dob) => {
-  const birthDate = new Date(dob);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDifference = today.getMonth() - birthDate.getMonth();
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
+const openTerms = () => (showTerms.value = true);
+const closeTerms = () => {
+  showTerms.value = false;
+  store.termsViewed = true;
 };
 
-const submitForm = async () => {
+const openFinancialDeclaration = () => (showFinancialDeclaration.value = true);
+const closeFinancialDeclaration = () => {
+  showFinancialDeclaration.value = false;
+  store.financialAgreementViewed = true;
+};
+
+const handleSubmit = async () => {
+  if (!validateForm()) return;
   isLoading.value = true;
   formError.value = '';
 
@@ -420,49 +330,34 @@ const submitForm = async () => {
       dob: store.dob,
       nationality: store.nationality,
       is_existing_customer: store.isExistingCustomer || false,
-      agreed_to_tc_fa: store.agreed_to_tc_fa
+      agreed_to_tc_fa: store.termsViewed && store.financialAgreementViewed,
+      marital_status: isAdult.value ? store.maritalStatus : 'Single',
     };
 
-    // Conditionally add marital status for adults
-    if (isAdult.value && store.maritalStatus) {
-      signupData.marital_status = store.maritalStatus;
-    }
-
-    // Debug log the request data
-    console.log('Sending signup data:', signupData);
-
-    // Replace the direct URL usage with environment variable
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     const response = await axios.post(`${baseURL}/signups/`, signupData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (response.data) {
-      console.log('Signup successful:', response.data);
-
-      store.$patch((state) => {
-        state.signupId = response.data.id;
-        state.firstName = response.data.first_name;
-        state.lastName = response.data.last_name;
-        state.otherName = response.data.middle_name;
-        state.email = response.data.email;
-        state.mobileNumber = response.data.mobile;
-        state.gender = response.data.gender;
-        state.dob = response.data.dob;
-        state.maritalStatus = response.data.marital_status;
-        state.nationality = response.data.nationality;
-        state.isExistingCustomer = response.data.is_existing_customer;
+      store.$patch({
+        signupId: response.data.id,
+        firstName: response.data.first_name,
+        lastName: response.data.last_name,
+        otherName: response.data.middle_name,
+        email: response.data.email,
+        mobileNumber: response.data.mobile,
+        gender: response.data.gender,
+        dob: response.data.dob,
+        maritalStatus: response.data.marital_status,
+        nationality: response.data.nationality,
+        isExistingCustomer: response.data.is_existing_customer,
       });
 
       router.push('/email-verification');
     }
   } catch (error) {
     console.error('Error submitting signup info:', error);
-    if (error.response?.data) {
-      console.log('Detailed error:', error.response.data);
-    }
     formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
@@ -471,48 +366,26 @@ const submitForm = async () => {
 
 const validateForm = () => {
   formError.value = '';
+  const requiredFields = [
+    { value: store.firstName, message: 'First name is required' },
+    { value: store.lastName, message: 'Last name is required' },
+    { value: store.email, message: 'Valid email is required', validate: v => /.+@.+\..+/.test(v) },
+    { value: store.mobileNumber, message: 'Mobile number is required', validate: v => /^\d{7,15}$/.test(v) },
+    { value: store.password, message: 'Password is required' },
+    { value: store.confirmPassword, message: 'Passwords must match', validate: v => v === store.password },
+    { value: store.gender, message: 'Gender is required' },
+    { value: store.dob, message: 'Date of birth is required' },
+    { value: store.nationality, message: 'Nationality is required' },
+  ];
 
-  // Add explicit nationality validation
-  if (!store.nationality) {
-    formError.value = 'Nationality is required';
-    return false;
-  }
-
-  if (!store.firstName?.trim()) {
-    formError.value = 'First name is required';
-    return false;
-  }
-  if (!store.lastName?.trim()) {
-    formError.value = 'Last name is required';
-    return false;
-  }
-  if (!store.email?.trim() || !/.+@.+\..+/.test(store.email)) {
-    formError.value = 'Valid email is required';
-    return false;
-  }
-  if (!store.mobileNumber?.trim()) {
-    formError.value = 'Mobile number is required';
-    return false;
-  }
-  if (!store.password?.trim()) {
-    formError.value = 'Password is required';
-    return false;
-  }
-  if (store.password !== store.confirmPassword) {
-    formError.value = 'Passwords must match';
-    return false;
-  }
-  if (!store.gender?.trim()) {
-    formError.value = 'Gender is required';
-    return false;
-  }
-  if (!store.dob) {
-    formError.value = 'Date of birth is required';
-    return false;
+  for (const field of requiredFields) {
+    if (!field.value || (field.validate && !field.validate(field.value))) {
+      formError.value = field.message;
+      return false;
+    }
   }
 
-  // Only validate marital status for adults
-  if (isAdult.value && !store.maritalStatus?.trim()) {
+  if (isAdult.value && !store.maritalStatus) {
     formError.value = 'Marital status is required for adults';
     return false;
   }
@@ -520,22 +393,13 @@ const validateForm = () => {
   return true;
 };
 
-const handleSubmit = async () => {
-  console.log('Form submission initiated. Current nationality:', store.nationality);
-
-  if (validateForm()) {
-    await submitForm();
-  }
-};
-
-const navigateToPrevious = () => {
-  router.push('/getting-ready');
-};
+const navigateToPrevious = () => router.push('/getting-ready');
 
 onMounted(() => {
   console.log('Component mounted. Current nationality:', store.nationality);
 });
 </script>
+
 <style scoped>
 .form-section {
   background: linear-gradient(to bottom, #ffffff, #f8f9fa);
@@ -546,19 +410,6 @@ onMounted(() => {
 .form-container {
   max-width: 100%;
   padding: 2rem 1rem;
-}
-
-/* Mobile specific styles */
-@media (max-width: 600px) {
-  .form-section {
-    height: auto;
-    min-height: 100vh;
-  }
-
-  .form-container {
-    padding: 1rem;
-    height: auto;
-  }
 }
 
 :deep(.v-field) {
@@ -583,5 +434,17 @@ onMounted(() => {
 
 .float-right {
   margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .form-section {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .form-container {
+    padding: 1rem;
+    height: auto;
+  }
 }
 </style>

@@ -98,48 +98,33 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
-    if (!accountNumber.value) {
-      formError.value = 'Please enter your account number';
-      isLoading.value = false;
-      return;
-    }
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/account-numbers/`, {
+      signup_id: store.signupId,
+      account_number: accountNumber.value,
+      // ... any other account fields
+    });
 
-    // Get the base URL dynamically
-    const baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? 'http://localhost:8000' 
-      : `http://127.0.0.1:8000`;
-
-    try {
-      const response = await axios.post(`${baseURL}/credit-union-accounts/verify`, {
-        account_number: accountNumber.value
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.data) {
-        // Update store with account number
-        store.$patch((state) => {
-          state.accountNumber = accountNumber.value;
-        });
-
-        // Navigate to next page
-        router.push('/due-diligence');
-      }
-    } catch (apiError) {
-      console.error('API error:', apiError);
-      if (apiError.response?.data?.detail) {
-        formError.value = apiError.response.data.detail;
-      } else {
-        formError.value = 'Failed to verify account number. Please try again.';
-      }
+    if (response.data) {
+      console.log('Account number submitted successfully:', response.data);
+      router.push('/success'); // or your next route
     }
   } catch (error) {
     console.error('Error submitting account number:', error);
-    formError.value = 'An error occurred while submitting your account number';
+    formError.value = error.response?.data?.detail || 'Failed to submit account number';
   } finally {
     isLoading.value = false;
+  }
+};
+
+const verifyAccountNumber = async () => {
+  try {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.get(`${baseURL}/account-numbers/verify/${store.signupId}/`);
+    // ... rest of verification logic
+  } catch (error) {
+    console.error('Error verifying account number:', error);
+    formError.value = error.response?.data?.detail || 'Failed to verify account number';
   }
 };
 
