@@ -33,7 +33,7 @@
                 <v-card class="mb-6" variant="outlined">
                   <v-card-text>
                     <v-text-field
-                      v-model="bankName"
+                      v-model="formData.bank_name"
                       label="Bank Name"
                       placeholder="Enter bank name"
                       variant="outlined"
@@ -42,7 +42,7 @@
                     />
 
                     <v-text-field
-                      v-model="bankAddressLine1"
+                      v-model="formData.address_line_1"
                       label="Bank Address Line 1"
                       placeholder="Enter bank address"
                       variant="outlined"
@@ -51,7 +51,7 @@
                     />
 
                     <v-text-field
-                      v-model="bankAddressLine2"
+                      v-model="formData.address_line_2"
                       label="Bank Address Line 2"
                       placeholder="Enter additional address details (optional)"
                       variant="outlined"
@@ -59,7 +59,7 @@
                     />
 
                     <v-text-field
-                      v-model="bankCity"
+                      v-model="formData.city"
                       label="City"
                       placeholder="Enter city"
                       variant="outlined"
@@ -68,7 +68,7 @@
                     />
 
                     <v-text-field
-                      v-model="bankCountry"
+                      v-model="formData.country"
                       label="Country"
                       placeholder="Enter country"
                       variant="outlined"
@@ -77,7 +77,7 @@
                     />
 
                     <v-text-field
-                      v-model="bankAccountNumber"
+                      v-model="formData.account_number"
                       label="Account Number"
                       placeholder="Enter account number"
                       variant="outlined"
@@ -86,11 +86,20 @@
                     />
 
                     <v-text-field
-                      v-model="bankTelephoneNumber"
+                      v-model="formData.phone"
                       label="Bank Telephone Number"
                       placeholder="Enter bank telephone number"
                       variant="outlined"
                       prepend-inner-icon="mdi-phone"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.swift_code"
+                      label="SWIFT Code"
+                      placeholder="Enter SWIFT code"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-bank"
                       required
                     />
 
@@ -154,135 +163,186 @@ const store = useDemoStore();
 const isLoading = ref(false);
 const formError = ref('');
 
-// Form data
-const bankName = ref('');
-const bankAddressLine1 = ref('');
-const bankAddressLine2 = ref('');
-const bankCity = ref('');
-const bankCountry = ref('');
-const bankAccountNumber = ref('');
-const bankTelephoneNumber = ref('');
+const formData = ref({
+  signup_id: null,
+  bank_name: '',
+  address_line_1: '',
+  address_line_2: '',
+  city: '',
+  country: '',
+  account_number: '',
+  phone: '',
+  swift_code: ''
+});
 
-const submitBankInfo = async () => {
-  try {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/foreign-bank-information/`, bankData);
-    // ... rest of the code
-  } catch (error) {
-    // ... error handling
+const errors = ref({});
+
+// Add validation for signup_id
+const validateSignupId = () => {
+  if (!store.signupId) {
+    formError.value = 'Invalid session. Please start the signup process again.';
+    return false;
   }
+  return true;
 };
 
-const submitForm = async () => {
+const validateForm = () => {
+  errors.value = {};
+  let isValid = true;
+
+  // Validate signup_id first
+  if (!validateSignupId()) {
+    return false;
+  }
+
+  // Bank name validation
+  if (!formData.value.bank_name?.trim()) {
+    errors.value.bank_name = 'Bank name is required';
+    isValid = false;
+  }
+
+  // Address validation
+  if (!formData.value.address_line_1?.trim()) {
+    errors.value.address_line_1 = 'Address line 1 is required';
+    isValid = false;
+  }
+
+  if (!formData.value.city?.trim()) {
+    errors.value.city = 'City is required';
+    isValid = false;
+  }
+
+  if (!formData.value.country?.trim()) {
+    errors.value.country = 'Country is required';
+    isValid = false;
+  }
+
+  // Account number validation
+  const accountNumber = formData.value.account_number?.replace(/[\s\-]/g, '');
+  if (!accountNumber || !/^[a-zA-Z0-9]{8,30}$/.test(accountNumber)) {
+    errors.value.account_number = 'Account number must be between 8 and 30 characters and contain only letters and numbers';
+    isValid = false;
+  }
+
+  // Phone validation
+  if (!formData.value.phone?.trim()) {
+    errors.value.phone = 'Phone number is required';
+    isValid = false;
+  } else if (!/^\+?1?\d{9,15}$/.test(formData.value.phone)) {
+    errors.value.phone = 'Invalid phone number format';
+    isValid = false;
+  }
+
+  // SWIFT code validation
+  if (!formData.value.swift_code?.trim()) {
+    errors.value.swift_code = 'SWIFT code is required';
+    isValid = false;
+  }
+
+  return isValid;
+};
+
+const handleSubmit = async () => {
+  if (!validateForm()) {
+    formError.value = 'Please correct the errors before submitting';
+    return;
+  }
+
   isLoading.value = true;
   formError.value = '';
 
   try {
-    // Format data to match API model
-    const foreignNationalData = {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    
+    // Clean account number before submission
+    const cleanedAccountNumber = formData.value.account_number.replace(/[\s\-]/g, '');
+    
+    // Prepare data for API submission
+    const submitData = {
       signup_id: store.signupId,
-      bank_name: bankName.value,
-      bank_address_1: bankAddressLine1.value,
-      bank_address_2: bankAddressLine2.value || null,
-      city: bankCity.value,
-      country: bankCountry.value,
-      account_number: bankAccountNumber.value,
-      bank_phone: bankTelephoneNumber.value
+      bank_name: formData.value.bank_name,
+      address_line_1: formData.value.address_line_1,
+      address_line_2: formData.value.address_line_2 || null,
+      city: formData.value.city,
+      country: formData.value.country,
+      account_number: cleanedAccountNumber,
+      phone: formData.value.phone,
+      swift_code: formData.value.swift_code
     };
 
-    console.log('Sending foreign national bank data:', foreignNationalData);
+    console.log('Submitting foreign national data:', submitData);
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/foreign-bank-information/`, foreignNationalData);
+    const response = await axios.post(`${baseURL}/foreign-nationals/`, submitData);
 
     if (response.data) {
-      console.log('Foreign national bank info submitted:', response.data);
+      console.log('Foreign national data submitted successfully:', response.data);
       
-      // Store the data
+      // Store the data in the store
       store.$patch({
-        bankName: bankName.value,
-        bankAddressLine1: bankAddressLine1.value,
-        bankAddressLine2: bankAddressLine2.value,
-        bankCity: bankCity.value,
-        bankCountry: bankCountry.value,
-        bankAccountNumber: bankAccountNumber.value,
-        bankTelephoneNumber: bankTelephoneNumber.value
+        foreignNationalInfo: {
+          bankName: formData.value.bank_name,
+          addressLine1: formData.value.address_line_1,
+          addressLine2: formData.value.address_line_2,
+          city: formData.value.city,
+          country: formData.value.country,
+          accountNumber: cleanedAccountNumber,
+          phone: formData.value.phone,
+          swiftCode: formData.value.swift_code,
+          signupId: store.signupId
+        }
       });
 
+      // Navigate to next page
       router.push('/employment-information');
     }
   } catch (error) {
     console.error('Error submitting foreign national bank info:', error);
     if (error.response?.data) {
-      console.log('Detailed error:', error.response.data);
+      console.error('Error response data:', error.response.data);
+      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    } else {
+      formError.value = 'An error occurred while submitting your information';
     }
-    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
   } finally {
     isLoading.value = false;
   }
 };
 
-const validateForm = () => {
-  formError.value = '';
-
-  if (!store.signupId) {
-    formError.value = 'Invalid session. Please start the signup process again.';
-    return false;
-  }
-
-  if (!bankName.value?.trim()) {
-    formError.value = 'Bank name is required';
-    return false;
-  }
-
-  if (!bankAddressLine1.value?.trim()) {
-    formError.value = 'Bank address is required';
-    return false;
-  }
-
-  if (!bankCity.value?.trim()) {
-    formError.value = 'City is required';
-    return false;
-  }
-
-  if (!bankCountry.value?.trim()) {
-    formError.value = 'Country is required';
-    return false;
-  }
-
-  if (!bankAccountNumber.value?.trim()) {
-    formError.value = 'Account number is required';
-    return false;
-  }
-
-  if (!bankTelephoneNumber.value?.trim()) {
-    formError.value = 'Bank telephone number is required';
-    return false;
-  }
-
-  return true;
-};
-
-const handleSubmit = async () => {
-  if (validateForm()) {
-    await submitForm();
-  }
-};
-
 const navigateToPrevious = () => {
-  router.push('/identification-information');
+  // Save current state before navigating
+  store.$patch({
+    foreignNationalInfo: {
+      bankName: formData.value.bank_name,
+      addressLine1: formData.value.address_line_1,
+      addressLine2: formData.value.address_line_2,
+      city: formData.value.city,
+      country: formData.value.country,
+      accountNumber: formData.value.account_number,
+      phone: formData.value.phone,
+      swiftCode: formData.value.swift_code,
+      signupId: store.signupId
+    }
+  });
+  router.push('/power-of-attorney');
 };
 
-// Initialize component with stored data if it exists
+// Initialize component with existing data if available
 onMounted(() => {
-  if (store.bankName) {
-    bankName.value = store.bankName;
-    bankAddressLine1.value = store.bankAddressLine1;
-    bankAddressLine2.value = store.bankAddressLine2;
-    bankCity.value = store.bankCity;
-    bankCountry.value = store.bankCountry;
-    bankAccountNumber.value = store.bankAccountNumber;
-    bankTelephoneNumber.value = store.bankTelephoneNumber;
+  // Set signup_id from store
+  formData.value.signup_id = store.signupId;
+  
+  if (store.foreignNationalInfo) {
+    formData.value = {
+      ...formData.value,
+      bank_name: store.foreignNationalInfo.bankName || '',
+      address_line_1: store.foreignNationalInfo.addressLine1 || '',
+      address_line_2: store.foreignNationalInfo.addressLine2 || '',
+      city: store.foreignNationalInfo.city || '',
+      country: store.foreignNationalInfo.country || '',
+      account_number: store.foreignNationalInfo.accountNumber || '',
+      phone: store.foreignNationalInfo.phone || '',
+      swift_code: store.foreignNationalInfo.swiftCode || ''
+    };
   }
 });
 </script>

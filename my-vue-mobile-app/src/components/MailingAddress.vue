@@ -39,18 +39,18 @@
                     />
 
                     <v-text-field
-                      v-model="formData.addressLine1"
+                      v-model="formData.address_line_1"
                       label="Address Line 1"
                       placeholder="Enter mailing address"
                       variant="outlined"
                       prepend-inner-icon="mdi-map-marker"
-                      :error-messages="errors.addressLine1"
+                      :error-messages="errors.address_line_1"
                       :disabled="formData.sameAsResidential"
                       :required="!formData.sameAsResidential"
                     />
 
                     <v-text-field
-                      v-model="formData.addressLine2"
+                      v-model="formData.address_line_2"
                       label="Address Line 2"
                       placeholder="Apartment, suite, etc."
                       variant="outlined"
@@ -78,6 +78,21 @@
                       :error-messages="errors.country"
                       :disabled="formData.sameAsResidential"
                       :required="!formData.sameAsResidential"
+                    />
+
+                    <v-file-input
+                      v-model="formData.proof_of_address_files"
+                      label="Proof of Address"
+                      placeholder="Upload proof of address document"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-file-upload"
+                      accept=".pdf,.jpg,.png"
+                      :disabled="formData.sameAsResidential"
+                      :required="!formData.sameAsResidential"
+                      @change="handleFileUpload"
+                      multiple
+                      show-size
+                      counter
                     />
                   </v-card-text>
                 </v-card>
@@ -132,92 +147,146 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
+import axios from 'axios';
 import { countries } from 'countries-list';
 import logoImage from '../assets/Logo1.png';
-import axios from 'axios';
+
 
 const router = useRouter();
 const store = useDemoStore();
+const formError = ref('');
+const isLoading = ref(false);
 
-// Form data refs
 const formData = ref({
-  addressLine1: '',
-  addressLine2: '',
+  address_line_1: '',
+  address_line_2: '',
   city: '',
   country: '',
-  sameAsResidential: false
+  sameAsResidential: false,
+  address_type: 'mailing',
+  dwelling_status: null,
+  proof_of_address_files: null
 });
 
 const errors = ref({});
-const formError = ref('');
-const isLoading = ref(false);
 const countryList = ref(Object.values(countries).map(country => country.name));
 
-// Methods
-const validateForm = () => {
-  errors.value = {};
-  let isValid = true;
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  isLoading.value = true;
+  formError.value = '';
+  
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-  if (!formData.value.sameAsResidential) {
-    if (!formData.value.addressLine1) {
-      errors.value.addressLine1 = 'Address Line 1 is required';
-      isValid = false;
+  try {
+    if (formData.value.sameAsResidential) {
+      // If same as residential, just store the flag and navigate
+      store.$patch({
+        mailingAddressInfo: {
+          sameAsResidential: true,
+          dwellingStatus: null,
+          proofOfAddressFiles: null
+        }
+      });
+      router.push('/foreign-national-bank-information');
+      return;
     }
-    if (!formData.value.city) {
-      errors.value.city = 'City is required';
-      isValid = false;
+
+    // Validate required fields
+    if (!formData.value.address_line_1 || !formData.value.city || 
+        !formData.value.country || !formData.value.proof_of_address_files) {
+      formError.value = 'Please fill in all required fields and upload proof of address';
+      isLoading.value = false;
+      return;
     }
-    if (!formData.value.country) {
-      errors.value.country = 'Country is required';
-      isValid = false;
+
+    // Create FormData for submission
+    const addressFormData = new FormData();
+    addressFormData.append('signup_id', store.signupId);
+    addressFormData.append('address_line_1', formData.value.address_line_1);
+    addressFormData.append('address_line_2', formData.value.address_line_2 || '');
+    addressFormData.append('city', formData.value.city);
+    addressFormData.append('country', formData.value.country);
+    addressFormData.append('address_type', 'mailing');
+    addressFormData.append('dwelling_status', 'null');
+    
+    // Handle file upload
+    if (formData.value.proof_of_address_files instanceof File) {
+      addressFormData.append('proof_of_address_files', formData.value.proof_of_address_files);
+    } else if (Array.isArray(formData.value.proof_of_address_files)) {
+      formData.value.proof_of_address_files.forEach(file => {
+        if (file instanceof File) {
+          addressFormData.append('proof_of_address_files', file);
+        }
+      });
     }
+
+    // Debug log the form data
+    console.log('Signup ID:', store.signupId);
+    console.log('Address FormData:');
+    for (let pair of addressFormData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+
+    // Make API call
+    const response = await axios.post(`${baseURL}/addresses/`, addressFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Address submitted successfully:', response.data);
+
+    // Store the data
+    store.$patch({
+      mailingAddressInfo: {
+        addressLine1: formData.value.address_line_1,
+        addressLine2: formData.value.address_line_2,
+        city: formData.value.city,
+        country: formData.value.country,
+        sameAsResidential: false,
+        dwellingStatus: null,
+        proofOfAddressFiles: formData.value.proof_of_address_files
+      }
+    });
+
+    // Navigate to next page
+    router.push('/foreign-national-bank-information');
+  } catch (error) {
+    console.error('Error submitting mailing address:', error);
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    } else {
+      formError.value = 'An error occurred while submitting your information';
+    }
+  } finally {
+    isLoading.value = false;
   }
-
-  return isValid;
 };
 
 const useResidentialAddress = () => {
   if (formData.value.sameAsResidential) {
-    formData.value.addressLine1 = store.residentialAddressLine1 || '';
-    formData.value.addressLine2 = store.residentialAddressLine2 || '';
-    formData.value.city = store.residentialCity || '';
-    formData.value.country = store.residentialCountry || '';
+    formData.value.address_line_1 = store.residentialAddressInfo?.addressLine1 || '';
+    formData.value.address_line_2 = store.residentialAddressInfo?.addressLine2 || '';
+    formData.value.city = store.residentialAddressInfo?.city || '';
+    formData.value.country = store.residentialAddressInfo?.country || '';
+    formData.value.dwelling_status = null;
+    formData.value.proof_of_address_files = null;
   } else {
-    formData.value.addressLine1 = '';
-    formData.value.addressLine2 = '';
+    formData.value.address_line_1 = '';
+    formData.value.address_line_2 = '';
     formData.value.city = '';
     formData.value.country = '';
+    formData.value.dwelling_status = null;
+    formData.value.proof_of_address_files = null;
   }
 };
 
-const handleSubmit = async () => {
-  if (!validateForm()) return;
-
-  isLoading.value = true;
-  formError.value = '';
-
-  try {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/mailing-addresses/`, {
-      addressLine1: formData.value.addressLine1,
-      addressLine2: formData.value.addressLine2,
-      city: formData.value.city,
-      country: formData.value.country,
-      sameAsResidential: formData.value.sameAsResidential
-    });
-
-    // Update store with form data
-    store.$patch((state) => {
-      Object.assign(state, formData.value);
-    });
-
-    // Navigate to the next page
-    router.push('/foreign-national-bank-information');
-  } catch (error) {
-    console.error('Error submitting mailing address:', error);
-    formError.value = 'An error occurred while submitting your information';
-  } finally {
-    isLoading.value = false;
+const handleFileUpload = (event) => {
+  const file = event?.target?.files?.[0] || event;
+  if (file instanceof File) {
+    formData.value.proof_of_address_files = file;
   }
 };
 
@@ -225,14 +294,17 @@ const navigateToPrevious = () => {
   router.go(-1);
 };
 
-// Initialize component
 onMounted(() => {
-  if (store) {
-    formData.value.addressLine1 = store.addressLine1 || '';
-    formData.value.addressLine2 = store.addressLine2 || '';
-    formData.value.city = store.city || '';
-    formData.value.country = store.country || '';
-    formData.value.sameAsResidential = store.sameAsResidential || false;
+  if (store.mailingAddressInfo) {
+    formData.value = {
+      address_line_1: store.mailingAddressInfo.addressLine1 || '',
+      address_line_2: store.mailingAddressInfo.addressLine2 || '',
+      city: store.mailingAddressInfo.city || '',
+      country: store.mailingAddressInfo.country || '',
+      sameAsResidential: store.mailingAddressInfo.sameAsResidential || false,
+      dwelling_status: null,
+      proof_of_address_files: store.mailingAddressInfo.proofOfAddressFiles || null
+    };
   }
 });
 </script>

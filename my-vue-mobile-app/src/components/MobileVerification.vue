@@ -167,7 +167,7 @@ const verifyCode = async () => {
 
     if (response.data) {
       console.log('Verification successful:', response.data);
-      router.push('/id-information');
+      router.push('/mobile-verification-successful');
     }
   } catch (error) {
     console.error('Error verifying code:', error);

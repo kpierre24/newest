@@ -192,18 +192,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
-import { useDateValidation } from '@/composables/useDateValidation';
-import FormInput from '@/props/FormInput.vue';
-import FileUpload from '@/props/FileUpload.vue';
 import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
-const { minDate, validateExpiryDate } = useDateValidation();
+
 
 const formData = ref({
   firstIdType: '',
@@ -213,7 +210,9 @@ const formData = ref({
   secondIdType: '',
   secondIdNumber: '',
   secondExpiryDate: '',
-  secondIdDocument: null
+  secondIdDocument: null,
+  signup_id: null,
+  holder_type: '',
 });
 
 const formError = ref('');
@@ -222,73 +221,116 @@ const firstExpiryDateError = ref('');
 const secondExpiryDateError = ref('');
 
 // Computed properties
+const minDate = computed(() => new Date().toISOString().split('T')[0]);
 const maxExpiryDate = computed(() => {
   const date = new Date();
   date.setFullYear(date.getFullYear() + 10);
   return date.toISOString().split('T')[0];
 });
+const defaultBirthCertificateExpiry = computed(() => '9999-12-31');
 
 // Computed property for second ID type options
+const idTypes = [
+  'National ID',
+  'Passport',
+  "Driver's License",
+  'Birth Certificate'
+];
+
+// Add computed property for second ID type options
 const secondIdTypeOptions = computed(() => {
   if (formData.value.firstIdType === 'National ID') {
-    return ["Driver's Permit", 'Birthpaper', 'Passport'];
+    return ["Driver's License", 'Birth Certificate', 'Passport'];
   }
-  return ['National ID', "Driver's Permit", 'Birthpaper', 'Passport'];
+  return idTypes.filter(type => type !== formData.value.firstIdType);
 });
 
-// Methods
-const validateFirstExpiryDate = () => {
-  if (formData.value.firstIdType === 'Birth Certificate') {
-    firstExpiryDateError.value = '';
-    return true;
-  }
+// Add validateFirstExpiryDate and validateSecondExpiryDate methods
+const validateFirstExpiryDate = () => validateExpiryDate('first');
+const validateSecondExpiryDate = () => validateExpiryDate('second');
 
-  if (!formData.value.firstExpiryDate) {
-    firstExpiryDateError.value = 'Expiry date is required';
-    return false;
-  }
-
-  if (!validateExpiryDate(formData.value.firstExpiryDate)) {
-    firstExpiryDateError.value = 'Expiry date must be today or in the future';
-    return false;
-  }
-
-  firstExpiryDateError.value = '';
-  return true;
-};
-
-const validateSecondExpiryDate = () => {
-  if (formData.value.secondIdType === 'Birth Certificate') {
-    secondExpiryDateError.value = '';
-    return true;
-  }
-
-  if (!formData.value.secondExpiryDate) {
-    secondExpiryDateError.value = 'Expiry date is required';
-    return false;
-  }
-
-  if (!validateExpiryDate(formData.value.secondExpiryDate)) {
-    secondExpiryDateError.value = 'Expiry date must be today or in the future';
-    return false;
-  }
-
-  secondExpiryDateError.value = '';
-  return true;
-};
-
-const handleFileUpload = (file, idType) => {
-  if (file && file.length > 0) {
-    if (idType === 'first') {
-      formData.value.firstIdDocument = file[0];
-    } else {
-      formData.value.secondIdDocument = file[0];
+const handleIdTypeChange = (type) => {
+  if (type === 'first') {
+    if (formData.value.firstIdType === 'Birth Certificate') {
+      formData.value.firstExpiryDate = defaultBirthCertificateExpiry.value;
+      firstExpiryDateError.value = '';
     }
+  } else {
+    if (formData.value.secondIdType === 'Birth Certificate') {
+      formData.value.secondExpiryDate = defaultBirthCertificateExpiry.value;
+      secondExpiryDateError.value = '';
+    }
+  }
+};
+
+
+// Methods
+const validateExpiryDate = (type) => {
+  if (formData.value[`${type}IdType`] === 'Birth Certificate') {
+    formData.value[`${type}ExpiryDate`] = defaultBirthCertificateExpiry.value;
+    if (type === 'first') {
+      firstExpiryDateError.value = '';
+    } else {
+      secondExpiryDateError.value = '';
+    }
+    return true;
+  }
+  
+  const expiry = new Date(formData.value[`${type}ExpiryDate`]);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  expiry.setHours(0, 0, 0, 0);
+
+  if (!formData.value[`${type}ExpiryDate`]) {
+    if (type === 'first') {
+      firstExpiryDateError.value = 'Expiry date is required';
+    } else {
+      secondExpiryDateError.value = 'Expiry date is required';
+    }
+    return false;
+  }
+
+  if (expiry <= today) {
+    if (type === 'first') {
+      firstExpiryDateError.value = 'Expiry date must be in the future';
+    } else {
+      secondExpiryDateError.value = 'Expiry date must be in the future';
+    }
+    return false;
+  }
+
+  if (type === 'first') {
+    firstExpiryDateError.value = '';
+  } else {
+    secondExpiryDateError.value = '';
+  }
+  return true;
+};
+
+const handleFileUpload = (event, type) => {
+  const file = event?.target?.files?.[0] || event;
+  if (file instanceof File) {
+    formData.value[`${type}IdDocument`] = file;
   }
 };
 
 const navigateToPrevious = () => {
   router.go(-1);
+};
+
+const saveToStore = () => {
+  store.$patch({
+    idInfo: {
+      firstIdType: formData.value.firstIdType,
+      firstIdNumber: formData.value.firstIdNumber,
+      firstExpiryDate: formData.value.firstExpiryDate,
+      secondIdType: formData.value.secondIdType,
+      secondIdNumber: formData.value.secondIdNumber,
+      secondExpiryDate: formData.value.secondExpiryDate,
+      holder_type: calculateHolderType(),
+
+    },
+  });
 };
 
 const submitIDInformation = async () => {
@@ -314,32 +356,46 @@ const submitIDInformation = async () => {
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     const holderType = calculateHolderType();
 
-    // Format expiry dates properly
-    const formatExpiryDate = (date) => {
-      if (!date) return new Date().toISOString();
-      return new Date(date).toISOString();
+    
+    const formatDate = (dateString) => {
+      if (!dateString) return null;
+      const date = new Date(dateString);
+      date.setHours(0, 0, 0, 0);
+      return date.toISOString().split('T')[0];
     };
 
     // Create FormData for first ID (National ID - Primary ID)
     const firstIdFormData = new FormData();
-    firstIdFormData.append('signup_id', formData.value.signupId);
+    firstIdFormData.append('signup_id', formData.value.signup_id);
     firstIdFormData.append('id_type', formData.value.firstIdType);
     firstIdFormData.append('holder_type', holderType);
     firstIdFormData.append('id_number', formData.value.firstIdNumber);
-    firstIdFormData.append('id_expiry_date', '2025-03-22');
+    firstIdFormData.append('id_expiry_date', formData.value.firstExpiryDate);
     firstIdFormData.append('is_primary_id', 'true');
-    firstIdFormData.append('id_files', formData.value.firstIdDocument);
+    
+    // Handle file upload for first ID
+    if (formData.value.firstIdDocument instanceof File) {
+      firstIdFormData.append('id_files', formData.value.firstIdDocument);
+    } else if (Array.isArray(formData.value.firstIdDocument) && formData.value.firstIdDocument.length > 0) {
+      firstIdFormData.append('id_files', formData.value.firstIdDocument[0]);
+    }
 
     // Create FormData for second ID
     const secondIdFormData = new FormData();
-    secondIdFormData.append('signup_id', formData.value.signupId);
+    secondIdFormData.append('signup_id', formData.value.signup_id);
     secondIdFormData.append('id_type', formData.value.secondIdType);
     secondIdFormData.append('holder_type', holderType);
     secondIdFormData.append('id_number', formData.value.secondIdNumber);
-    secondIdFormData.append('id_expiry_date', formatExpiryDate(formData.value.secondExpiryDate));
+    secondIdFormData.append('id_expiry_date', formData.value.secondExpiryDate);
     secondIdFormData.append('is_primary_id', 'false');
-    secondIdFormData.append('id_files', formData.value.secondIdDocument);
- 
+    
+    // Handle file upload for second ID
+    if (formData.value.secondIdDocument instanceof File) {
+      secondIdFormData.append('id_files', formData.value.secondIdDocument);
+    } else if (Array.isArray(formData.value.secondIdDocument) && formData.value.secondIdDocument.length > 0) {
+      secondIdFormData.append('id_files', formData.value.secondIdDocument[0]);
+    }
+
     for (let pair of firstIdFormData.entries()) {
       console.log(`${pair[0]}: ${pair[1]}`);
     }
@@ -348,31 +404,48 @@ const submitIDInformation = async () => {
       console.log(`${pair[0]}: ${pair[1]}`);
     }
     
-    // Submit both IDs
-    await Promise.all([
-      axios.post(`${baseURL}/identifications/`, firstIdFormData, {
+    // Submit first ID
+    try {
+      const firstResponse = await axios.post(`${baseURL}/identifications/`, firstIdFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      }),
-      axios.post(`${baseURL}/identifications/`, secondIdFormData, {
+      });
+      console.log('First ID Response:', firstResponse.data);
+    } catch (firstError) {
+      console.error('Error submitting first ID:', firstError.response?.data || firstError.message);
+      throw firstError;
+    }
+
+    // Submit second ID
+    try {
+      const secondResponse = await axios.post(`${baseURL}/identifications/`, secondIdFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      })
-    ]);
+      });
+      console.log('Second ID Response:', secondResponse.data);
+    } catch (secondError) {
+      console.error('Error submitting second ID:', secondError.response?.data || secondError.message);
+      throw secondError;
+    }
 
     // Save to store
-    store.$patch({
-      idInfo: {
-        firstIdType: formData.value.firstIdType,
-        firstIdNumber: formData.value.firstIdNumber,
-        firstExpiryDate: formData.value.firstExpiryDate,
-        secondIdType: formData.value.secondIdType,
-        secondIdNumber: formData.value.secondIdNumber,
-        secondExpiryDate: formData.value.secondExpiryDate
-      }
-    });
+    const saveToStore = () => {
+      store.$patch({
+        idInfo: {
+          firstIdType: formData.value.firstIdType,
+          firstIdNumber: formData.value.firstIdNumber,
+          firstExpiryDate: formData.value.firstExpiryDate,
+          secondIdType: formData.value.secondIdType,
+          secondIdNumber: formData.value.secondIdNumber,
+          secondExpiryDate: formData.value.secondExpiryDate,
+          holder_type: holderType
+        }
+      });
+    };
+
+    saveToStore();
 
     // Navigate based on customer type
     if (store.isExistingCustomer) {
@@ -407,13 +480,20 @@ const calculateHolderType = () => {
   return age >= 18 ? 'self' : 'guardian';
 };
 
-// ID types that match the backend schema
-const idTypes = [
-  'National ID',
-  'Passport',
-  "Drivers License",
-  'Birth Certificate'
-];
+// Add this after the other onMounted hooks
+onMounted(() => {
+  // Set signup_id from store
+  formData.value.signup_id = store.signupId;
+  
+  // Log for debugging
+  console.log('IDInformation mounted - signup_id:', store.signupId);
+  
+  // If no signup_id, redirect to basic info
+  if (!store.signupId) {
+    console.error('No signup_id found in store');
+    router.push('/basic-info');
+  }
+});
 </script>
 
 <style scoped>

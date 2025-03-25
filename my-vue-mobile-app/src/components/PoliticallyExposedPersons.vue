@@ -124,7 +124,7 @@
                         chips
                         closable-chips
                         item-title="title"
-                        item-value="value"
+                      
                         :return-object="false"
                         :menu-props="{ closeOnContentClick: true }"
                         required
@@ -320,10 +320,8 @@ const handleSubmit = async () => {
     }
 
     if (formData.value.isPEP === true) {
-      if (!formData.value.jobTitle || 
-          !formData.value.domestic_foreign_roles.length || 
-          !formData.value.immediate_family_members.length) {
-        formError.value = 'Please fill in all required PEP details';
+      if (!formData.value.jobTitle) {
+        formError.value = 'Please enter your job title';
         return;
       }
     }

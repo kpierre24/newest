@@ -81,7 +81,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
@@ -98,39 +98,61 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
+    // Validate account number
+    if (!accountNumber.value) {
+      formError.value = 'Account number is required';
+      isLoading.value = false;
+      return;
+    }
+
     const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/account-numbers/`, {
-      signup_id: store.signupId,
+    
+    // First verify the account number
+    const verifyResponse = await axios.post(`${baseURL}/credit-union-accounts/verify`, {
       account_number: accountNumber.value,
-      // ... any other account fields
+      signup_id: store.signupId
     });
 
-    if (response.data) {
-      console.log('Account number submitted successfully:', response.data);
-      router.push('/success'); // or your next route
+    if (verifyResponse.data) {
+      // If verification successful, save to store
+      store.$patch({
+        accountNumber: accountNumber.value,
+        creditUnionAccount: {
+          account_number: accountNumber.value,
+          signup_id: store.signupId
+        }
+      });
+
+      // Submit the account data to create/update the record
+      const submitResponse = await axios.post(`${baseURL}/credit-union-accounts/`, {
+        account_number: accountNumber.value,
+        signup_id: store.signupId,
+        branch: store.branchInfo.branchName || 'Default Branch' // Add branch info if available
+      });
+
+      if (submitResponse.data) {
+        console.log('Account information saved successfully:', submitResponse.data);
+        router.push('/due-diligence');
+      }
     }
   } catch (error) {
-    console.error('Error submitting account number:', error);
-    formError.value = error.response?.data?.detail || 'Failed to submit account number';
+    console.error('Error processing account number:', error);
+    formError.value = error.response?.data?.detail || 'Failed to process account number';
   } finally {
     isLoading.value = false;
-  }
-};
-
-const verifyAccountNumber = async () => {
-  try {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.get(`${baseURL}/account-numbers/verify/${store.signupId}/`);
-    // ... rest of verification logic
-  } catch (error) {
-    console.error('Error verifying account number:', error);
-    formError.value = error.response?.data?.detail || 'Failed to verify account number';
   }
 };
 
 const navigateToPrevious = () => {
   router.push('/id-information');
 };
+
+// Add onMounted to load existing data if available
+onMounted(() => {
+  if (store.accountNumber) {
+    accountNumber.value = store.accountNumber;
+  }
+});
 </script>
 
 <style scoped>

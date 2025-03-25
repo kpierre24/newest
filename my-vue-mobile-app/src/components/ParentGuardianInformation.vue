@@ -105,13 +105,16 @@
                     />
 
                     <v-file-input
-                      v-model="formData.RelationshipDocument"
+                      v-model="formData.guardian_files"
                       label="Relationship Document"
                       placeholder="Upload document"
                       variant="outlined"
                       prepend-inner-icon="mdi-file-upload"
                       accept=".pdf,.jpg,.png"
                       @change="handleFileUpload"
+                      multiple
+                      show-size
+                      counter
                     />
                   </v-card-text>
                 </v-card>
@@ -182,7 +185,8 @@ const formData = ref({
   workplace: '',
   email: '',
   mobile: '',
-  relationship_to_child: ''
+  relationship_to_child: '',
+  guardian_files: null
 });
 
 const relationshipOptions = [
@@ -193,8 +197,11 @@ const relationshipOptions = [
   'Unrelated Guardian'
 ];
 
-const handleFileUpload = (file) => {
-  formData.value.RelationshipDocument = file;
+const handleFileUpload = (event) => {
+  const file = event?.target?.files?.[0] || event;
+  if (file instanceof File) {
+    formData.value[`guardian_files`] = file;
+  }
 };
 
 const submitForm = async () => {
@@ -227,26 +234,55 @@ const submitForm = async () => {
       return;
     }
 
+    // Validate file upload
+    if (!formData.value.guardian_files) {
+      formError.value = 'Please upload a relationship document';
+      isLoading.value = false;
+      return;
+    }
+
     const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-    // Prepare the request data with explicit signup_id
-    const guardianData = {
-      signup_id: store.signupId,
-      first_name: formData.value.first_name,
-      last_name: formData.value.last_name,
-      middle_name: formData.value.middle_name,
-      occupation: formData.value.occupation,
-      workplace: formData.value.workplace,
-      email: formData.value.email,
-      mobile: formData.value.mobile,
-      relationship_to_child: formData.value.relationship_to_child
-    };
+    // Create FormData object
+    const submitFormData = new FormData();
+    
+    // Append all form fields
+    submitFormData.append('signup_id', store.signupId);
+    submitFormData.append('first_name', formData.value.first_name);
+    submitFormData.append('last_name', formData.value.last_name);
+    submitFormData.append('middle_name', formData.value.middle_name);
+    submitFormData.append('occupation', formData.value.occupation);
+    submitFormData.append('workplace', formData.value.workplace);
+    submitFormData.append('email', formData.value.email);
+    submitFormData.append('mobile', formData.value.mobile);
+    submitFormData.append('relationship_to_child', formData.value.relationship_to_child);
 
-    console.log('Submitting guardian data:', guardianData); // Debug log
+    // Handle file upload
+    if (formData.value.guardian_files instanceof File) {
+      submitFormData.append('guardian_files', formData.value.guardian_files);
+    } else if (Array.isArray(formData.value.guardian_files)) {
+      formData.value.guardian_files.forEach(file => {
+        if (file instanceof File) {
+          submitFormData.append('guardian_files', file);
+        }
+      });
+    }
 
-    // Make the API call
-    const response = await axios.post(`${baseURL}/guardian-information/`, guardianData);
+    // Debug log
+    console.log('Submitting guardian data:');
+    for (let pair of submitFormData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
 
+    // Make the API call with FormData
+    const response = await axios.post(`${baseURL}/guardians/`, submitFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Guardian data submitted successfully:', response.data);
+   
     // Store the data
     store.$patch({
       guardianInfo: {
@@ -257,12 +293,13 @@ const submitForm = async () => {
         workplace: formData.value.workplace,
         email: formData.value.email,
         mobile: formData.value.mobile,
-        relationshipToChild: formData.value.relationship_to_child
+        relationshipToChild: formData.value.relationship_to_child,
+        guardianFiles: formData.value.guardian_files
       }
     });
 
     // Navigate to next page
-    router.push('/address');
+    router.push('/id-information');
   } catch (error) {
     console.error('Error submitting guardian information:', error);
     if (error.response) {
@@ -278,9 +315,7 @@ const submitForm = async () => {
   }
 };
 
-const navigateToPrevious = () => {
-  router.push('/child-id-information');
-};
+const navigateToPrevious = () => router.push('/child-id-information');
 
 // Initialize component with existing data if available
 onMounted(() => {
@@ -293,7 +328,8 @@ onMounted(() => {
       workplace: store.guardianInfo.workplace || '',
       email: store.guardianInfo.email || '',
       mobile: store.guardianInfo.mobile || '',
-      relationship_to_child: store.guardianInfo.relationshipToChild || ''
+      relationship_to_child: store.guardianInfo.relationshipToChild || '',
+      guardian_files: store.guardianInfo.guardianFiles || null
     };
   }
 });

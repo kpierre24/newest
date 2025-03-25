@@ -165,10 +165,9 @@ const submitForm = async () => {
 
     console.log('Sending membership data:', membershipData);
 
-    const response = await axios.post('http://127.0.0.1:8000/membership-declarations/', membershipData, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const response = await axios.post(`${baseURL}/membership-declarations/`, membershipData, {
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (response.data) {

@@ -65,17 +65,6 @@
         />
       </v-col>
     </v-row>
-
-    <!-- Powered By Section -->
-    <div class="powered-by-section">
-      <span class="text-body-2 text-medium-emphasis">powered by</span>
-      <v-img
-        src="@/assets/logo.png"
-        alt="Cathedral Credit Union"
-        class="cathedral-logo"
-        height="24"
-      />
-    </div>
   </v-container>
 </template>
 

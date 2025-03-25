@@ -136,7 +136,7 @@ export const useDemoStore = defineStore({
       email: '',
       mobile: '',
       relationshipToChild: '',
-      relationshipDocument: null,
+      guardian_files: null,
     },
 
     // Membership Information
@@ -169,6 +169,14 @@ export const useDemoStore = defineStore({
     accessToken: null,
     mobileNumber: null,
     isAuthenticated: false,
+    mailingAddressInfo: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      country: '',
+      dwellingStatus: '',
+      sameAsResidential: false
+    },
   }),
 
   actions: {
