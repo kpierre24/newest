@@ -15,7 +15,7 @@
                   height="120"
                 />
                 
-                <h1 class="text-h1 font-weight-bold mb-2">Employment Information</h1>
+                <h1 class="text-h1 font-weight-bold mb-2">Employment/Source of Funds Information</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Please provide your employment details</p>
               </div>
 
@@ -106,12 +106,12 @@
 
                     <v-file-input
                       v-model="formData.proofOfEmploymentFile"
-                      label="Proof of Employment"
+                      label="Proof of Employment/Source of funds"
                       accept=".pdf,.jpg,.png"
-                      placeholder="Upload proof of employment"
+                      placeholder="Upload proof of employment/source of funds"
                       variant="outlined"
                       prepend-icon="mdi-upload"
-                      :rules="[v => !!v || 'Proof of employment is required']"
+                      :rules="[v => !!v || 'Proof of employment/source of funds is required']"
                       @change="handleFileUpload"
                       required
                     >

@@ -15,7 +15,6 @@
                   width="120"
                   height="120"
                 />
-                />
                 <h1 class="text-h1 font-weight-bold text-primary mb-2">Account Number</h1>
                 <p class="text-subtitle-1 text-medium-emphasis">Please enter your account number</p>
               </div>
@@ -38,7 +37,11 @@
                   variant="outlined"
                   prepend-inner-icon="mdi-pound"
                   required
-                />
+                >
+                  <template v-slot:hint>
+                    For testing, use account number: 1234567890
+                  </template>
+                </v-text-field>
 
                 <v-row class="mt-6">
                   <v-col cols="12" sm="6">
@@ -98,7 +101,7 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
-    // Validate account number
+    // Basic validation - just check if field is empty
     if (!accountNumber.value) {
       formError.value = 'Account number is required';
       isLoading.value = false;
@@ -107,37 +110,47 @@ const submitForm = async () => {
 
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     
-    // First verify the account number
+    // Verify the account number with the API
     const verifyResponse = await axios.post(`${baseURL}/credit-union-accounts/verify`, {
       account_number: accountNumber.value,
-      signup_id: store.signupId
+      signup_id: store.signupId || 'test' // fallback for testing
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
     });
 
-    if (verifyResponse.data) {
-      // If verification successful, save to store
-      store.$patch({
-        accountNumber: accountNumber.value,
-        creditUnionAccount: {
-          account_number: accountNumber.value,
-          signup_id: store.signupId
-        }
-      });
-
-      // Submit the account data to create/update the record
-      const submitResponse = await axios.post(`${baseURL}/credit-union-accounts/`, {
+    // If verification successful (API returns 200)
+    store.$patch({
+      accountNumber: accountNumber.value,
+      creditUnionAccount: {
         account_number: accountNumber.value,
-        signup_id: store.signupId,
-        branch: store.branchInfo.branchName || 'Default Branch' // Add branch info if available
-      });
-
-      if (submitResponse.data) {
-        console.log('Account information saved successfully:', submitResponse.data);
-        router.push('/due-diligence');
+        signup_id: store.signupId || 'test'
       }
-    }
+    });
+
+    // Proceed to next screen
+    router.push('/due-diligence');
+
   } catch (error) {
     console.error('Error processing account number:', error);
-    formError.value = error.response?.data?.detail || 'Failed to process account number';
+    
+    // Handle different error cases
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      if (error.response.status === 400) {
+        formError.value = error.response.data.detail || 'Invalid account number';
+      } else {
+        formError.value = 'Server error. Please try again later.';
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      formError.value = 'Network error. Please check your connection.';
+    } else {
+      // Something happened in setting up the request
+      formError.value = 'An unexpected error occurred.';
+    }
   } finally {
     isLoading.value = false;
   }

@@ -257,6 +257,8 @@ import TermsAndConditions from '@/components/TermsAndConditions.vue';
 import FinancialDeclaration from '@/components/FinancialDeclaration.vue';
 import logoImage from '../assets/Logo1.png';
 import { countries } from 'countries-list';
+import { handleError, errorTypes } from '@/utils/errorHandler';
+import { AppError } from '@/utils/errorHandler';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -359,40 +361,64 @@ const handleSubmit = async () => {
       router.push('/email-verification');
     }
   } catch (error) {
-    console.error('Error submitting signup info:', error);
-    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
+    const handledError = handleError(error);
+    console.error('Signup Error:', handledError);
+
+    switch (handledError.type) {
+      case errorTypes.VALIDATION_ERROR:
+        formError.value = 'Please check your information and try again';
+        break;
+      case errorTypes.NETWORK_ERROR:
+        formError.value = 'Unable to connect to the server. Please check your internet connection';
+        break;
+      case errorTypes.AUTH_ERROR:
+        formError.value = 'Authentication error. Please try again';
+        break;
+      default:
+        formError.value = handledError.message;
+    }
+
+    // Optional: Track errors in your analytics system
+    if (import.meta.env.VITE_ENABLE_ERROR_TRACKING === 'true') {
+      // Add your error tracking logic here
+      console.log('Error tracked:', handledError);
+    }
   } finally {
     isLoading.value = false;
   }
 };
 
 const validateForm = () => {
-  formError.value = '';
-  const requiredFields = [
-    { value: store.firstName, message: 'First name is required' },
-    { value: store.lastName, message: 'Last name is required' },
-    { value: store.email, message: 'Valid email is required', validate: v => /.+@.+\..+/.test(v) },
-    { value: store.mobileNumber, message: 'Mobile number is required', validate: v => /^\d{7,15}$/.test(v) },
-    { value: store.password, message: 'Password is required' },
-    { value: store.confirmPassword, message: 'Passwords must match', validate: v => v === store.password },
-    { value: store.gender, message: 'Gender is required' },
-    { value: store.dob, message: 'Date of birth is required' },
-    { value: store.nationality, message: 'Nationality is required' },
-  ];
+  try {
+    formError.value = '';
+    const requiredFields = [
+      { value: store.firstName, message: 'First name is required' },
+      { value: store.lastName, message: 'Last name is required' },
+      { value: store.email, message: 'Valid email is required', validate: v => /.+@.+\..+/.test(v) },
+      { value: store.mobileNumber, message: 'Mobile number is required', validate: v => /^\d{7,15}$/.test(v) },
+      { value: store.password, message: 'Password is required' },
+      { value: store.confirmPassword, message: 'Passwords must match', validate: v => v === store.password },
+      { value: store.gender, message: 'Gender is required' },
+      { value: store.dob, message: 'Date of birth is required' },
+      { value: store.nationality, message: 'Nationality is required' },
+    ];
 
-  for (const field of requiredFields) {
-    if (!field.value || (field.validate && !field.validate(field.value))) {
-      formError.value = field.message;
-      return false;
+    for (const field of requiredFields) {
+      if (!field.value || (field.validate && !field.validate(field.value))) {
+        throw new AppError(field.message, errorTypes.VALIDATION_ERROR, 400);
+      }
     }
-  }
 
-  if (isAdult.value && !store.maritalStatus) {
-    formError.value = 'Marital status is required for adults';
+    if (isAdult.value && !store.maritalStatus) {
+      throw new AppError('Marital status is required for adults', errorTypes.VALIDATION_ERROR, 400);
+    }
+
+    return true;
+  } catch (error) {
+    const handledError = handleError(error);
+    formError.value = handledError.message;
     return false;
   }
-
-  return true;
 };
 
 const navigateToPrevious = () => router.push('/getting-ready');

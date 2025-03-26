@@ -176,8 +176,6 @@ const handleSubmit = async (event) => {
   isLoading.value = true;
   formError.value = '';
   
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-
   try {
     if (formData.value.sameAsResidential) {
       // If same as residential, just store the flag and navigate
@@ -188,7 +186,9 @@ const handleSubmit = async (event) => {
           proofOfAddressFiles: null
         }
       });
-      router.push('/foreign-national-bank-information');
+      
+      // Check nationality for navigation
+      navigateBasedOnNationality();
       return;
     }
 
@@ -199,6 +199,8 @@ const handleSubmit = async (event) => {
       isLoading.value = false;
       return;
     }
+
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     // Create FormData for submission
     const addressFormData = new FormData();
@@ -221,13 +223,6 @@ const handleSubmit = async (event) => {
       });
     }
 
-    // Debug log the form data
-    console.log('Signup ID:', store.signupId);
-    console.log('Address FormData:');
-    for (let pair of addressFormData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
     // Make API call
     const response = await axios.post(`${baseURL}/addresses/`, addressFormData, {
       headers: {
@@ -235,31 +230,27 @@ const handleSubmit = async (event) => {
       },
     });
 
-    console.log('Address submitted successfully:', response.data);
+    if (response.data) {
+      // Store the data
+      store.$patch({
+        mailingAddressInfo: {
+          addressLine1: formData.value.address_line_1,
+          addressLine2: formData.value.address_line_2,
+          city: formData.value.city,
+          country: formData.value.country,
+          sameAsResidential: false,
+          dwellingStatus: null,
+          proofOfAddressFiles: formData.value.proof_of_address_files
+        }
+      });
 
-    // Store the data
-    store.$patch({
-      mailingAddressInfo: {
-        addressLine1: formData.value.address_line_1,
-        addressLine2: formData.value.address_line_2,
-        city: formData.value.city,
-        country: formData.value.country,
-        sameAsResidential: false,
-        dwellingStatus: null,
-        proofOfAddressFiles: formData.value.proof_of_address_files
-      }
-    });
-
-    // Navigate to next page
-    router.push('/foreign-national-bank-information');
-  } catch (error) {
-    console.error('Error submitting mailing address:', error);
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
-    } else {
-      formError.value = 'An error occurred while submitting your information';
+      // Navigate based on nationality
+      navigateBasedOnNationality();
     }
+  } catch (error) {
+    const handledError = handleError(error);
+    console.error('Error submitting mailing address:', handledError);
+    formError.value = handledError.message;
   } finally {
     isLoading.value = false;
   }
@@ -292,6 +283,16 @@ const handleFileUpload = (event) => {
 
 const navigateToPrevious = () => {
   router.go(-1);
+};
+
+// Add new function to handle conditional navigation
+const navigateBasedOnNationality = () => {
+  // Check if nationality is Trinidad and Tobago
+  if (store.nationality === 'Trinidad and Tobago') {
+    router.push('/employment-information');
+  } else {
+    router.push('/foreign-national-bank-information');
+  }
 };
 
 onMounted(() => {
