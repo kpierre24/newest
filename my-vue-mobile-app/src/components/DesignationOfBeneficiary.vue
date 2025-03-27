@@ -430,14 +430,11 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.error('Error submitting beneficiary:', error);
-    if (error.response) {
-      formError.value = Array.isArray(error.response.data) 
-        ? error.response.data.map(err => err.msg).join(', ')
-        : error.response.data.detail || errorMessages.submission.server;
-    } else if (error.request) {
-      formError.value = errorMessages.network.connection;
+    
+    if (error.response && error.response.status !== 200) {
+      formError.value = error.response.data.detail || 'An error occurred';
     } else {
-      formError.value = errorMessages.submission.general;
+      formError.value = 'An unexpected error occurred';
     }
   } finally {
     isLoading.value = false;

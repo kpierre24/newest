@@ -248,9 +248,12 @@ const handleSubmit = async (event) => {
       navigateBasedOnNationality();
     }
   } catch (error) {
-    const handledError = handleError(error);
-    console.error('Error submitting mailing address:', handledError);
-    formError.value = handledError.message;
+    console.error('Error submitting mailing address:', error);
+    if (error.response && error.response.status !== 200) {
+      formError.value = error.response.data.detail || 'An error occurred';
+    } else {
+      formError.value = 'An unexpected error occurred';
+    }
   } finally {
     isLoading.value = false;
   }

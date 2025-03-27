@@ -330,24 +330,12 @@ const submitChildIDInformation = async () => {
       throw new AppError(errorMessages.submission.general, errorTypes.API_ERROR);
     }
   } catch (error) {
-    const handledError = handleError(error);
-    console.error('Error submitting child ID information:', handledError);
+    console.error('Error submitting child ID information:', error);
     
-    switch (handledError.type) {
-      case errorTypes.VALIDATION_ERROR:
-        formError.value = errorMessages.submission.validation;
-        break;
-      case errorTypes.FILE_ERROR:
-        formError.value = errorMessages.file.uploadFailed;
-        break;
-      case errorTypes.NETWORK_ERROR:
-        formError.value = errorMessages.network.connection;
-        break;
-      case errorTypes.API_ERROR:
-        formError.value = errorMessages.submission.server;
-        break;
-      default:
-        formError.value = errorMessages.submission.general;
+    if (error.response && error.response.status !== 200) {
+      formError.value = error.response.data.detail || 'An error occurred';
+    } else {
+      formError.value = 'An unexpected error occurred';
     }
   } finally {
     isLoading.value = false;

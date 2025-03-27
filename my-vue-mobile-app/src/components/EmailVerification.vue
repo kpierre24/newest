@@ -143,9 +143,13 @@ const requestVerificationCode = async () => {
       console.log('Verification code sent successfully');
     }
   } catch (error) {
-    const handledError = handleError(error);
-    console.error('Error sending verification code:', handledError);
-    errorMessage.value = handledError.message;
+    console.error('Error sending verification code:', error);
+    
+    if (error.response && error.response.status !== 200) {
+      errorMessage.value = error.response.data.detail || 'An error occurred';
+    } else {
+      errorMessage.value = 'An unexpected error occurred';
+    }
   } finally {
     isResending.value = false;
   }
@@ -186,21 +190,12 @@ const verifyCode = async () => {
       await router.push({ name: 'EmailVerSuccessful' });
     }
   } catch (error) {
-    const handledError = handleError(error);
-    console.error('Verification error:', handledError);
+    console.error('Verification error:', error);
     
-    switch (handledError.type) {
-      case errorTypes.VALIDATION_ERROR:
-        errorMessage.value = handledError.message;
-        break;
-      case errorTypes.AUTH_ERROR:
-        errorMessage.value = errorMessages.auth.verificationFailed;
-        break;
-      case errorTypes.NETWORK_ERROR:
-        errorMessage.value = errorMessages.network.connection;
-        break;
-      default:
-        errorMessage.value = errorMessages.submission.general;
+    if (error.response && error.response.status !== 200) {
+      errorMessage.value = error.response.data.detail || 'An error occurred';
+    } else {
+      errorMessage.value = 'An unexpected error occurred';
     }
   } finally {
     isLoading.value = false;

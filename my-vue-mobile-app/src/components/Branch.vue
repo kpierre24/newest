@@ -163,13 +163,11 @@ const handleSubmit = async () => {
     router.push('/success');
   } catch (error) {
     console.error('Error submitting branch information:', error);
-    if (error.response) {
-      console.error('Response data:', error.response.data);
-      errorMessage.value = error.response.data.detail || 'An error occurred. Please try again later.';
-    } else if (error.request) {
-      errorMessage.value = 'Network error. Please check your connection.';
+    
+    if (error.response && error.response.status !== 200) {
+      errorMessage.value = error.response.data.detail || 'An error occurred';
     } else {
-      errorMessage.value = 'An unexpected error occurred.';
+      errorMessage.value = 'An unexpected error occurred';
     }
   } finally {
     isLoading.value = false;

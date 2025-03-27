@@ -196,9 +196,13 @@ const handleSubmit = async (event) => {
 
     router.push('/mailing-address');
   } catch (error) {
-    const handledError = handleError(error);
-    console.error('Error submitting address:', handledError);
-    formError.value = handledError.message;
+    console.error('Error submitting address:', error);
+    
+    if (error.response && error.response.status !== 200) {
+      formError.value = error.response.data.detail || 'An error occurred';
+    } else {
+      formError.value = 'An unexpected error occurred';
+    }
   } finally {
     isLoading.value = false;
   }

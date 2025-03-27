@@ -92,7 +92,7 @@
       <v-col cols="12" md="6" class="brand-section d-none d-md-flex">
         <div class="brand-overlay"></div>
         <v-img
-          :src="frontImage"
+          
           alt="Cathedral Engage"
           class="brand-img"
           contain
@@ -107,7 +107,6 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
-import frontImage from '@/assets/BG Pic.png';
 import logoImage from '@/assets/Logo1.png';
 
 const router = useRouter();

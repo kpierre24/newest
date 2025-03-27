@@ -456,11 +456,10 @@ const submitIDInformation = async () => {
     }
   } catch (error) {
     console.error('Error submitting ID information:', error);
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+    if (error.response && error.response.status !== 200) {
+      formError.value = error.response.data.detail || 'An error occurred';
     } else {
-      formError.value = 'An error occurred while submitting your information';
+      formError.value = 'An unexpected error occurred';
     }
   } finally {
     isLoading.value = false;

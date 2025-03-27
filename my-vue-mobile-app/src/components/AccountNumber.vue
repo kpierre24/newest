@@ -136,20 +136,10 @@ const submitForm = async () => {
   } catch (error) {
     console.error('Error processing account number:', error);
     
-    // Handle different error cases
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      if (error.response.status === 400) {
-        formError.value = error.response.data.detail || 'Invalid account number';
-      } else {
-        formError.value = 'Server error. Please try again later.';
-      }
-    } else if (error.request) {
-      // The request was made but no response was received
-      formError.value = 'Network error. Please check your connection.';
+    if (error.response && error.response.status !== 200) {
+      formError.value = error.response.data.detail || 'An error occurred';
     } else {
-      // Something happened in setting up the request
-      formError.value = 'An unexpected error occurred.';
+      formError.value = 'An unexpected error occurred';
     }
   } finally {
     isLoading.value = false;

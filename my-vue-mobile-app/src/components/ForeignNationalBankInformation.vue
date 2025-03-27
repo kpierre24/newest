@@ -296,13 +296,10 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.error('Error submitting foreign national bank info:', error);
-    if (error.response?.data) {
-      console.error('Error response data:', error.response.data);
-      formError.value = error.response.data.detail || errorMessages.submission.server;
-    } else if (error.request) {
-      formError.value = errorMessages.network.connection;
+    if (error.response && error.response.status !== 200) {
+      formError.value = error.response.data.detail || 'An error occurred';
     } else {
-      formError.value = errorMessages.submission.general;
+      formError.value = 'An unexpected error occurred';
     }
   } finally {
     isLoading.value = false;

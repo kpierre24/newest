@@ -138,7 +138,11 @@ const requestVerificationCode = async () => {
     }
   } catch (error) {
     console.error('Error sending verification code:', error);
-    errorMessage.value = error.response?.data?.detail || 'Failed to send verification code';
+    if (error.response && error.response.status !== 200) {
+      errorMessage.value = error.response.data.detail || 'An error occurred';
+    } else {
+      errorMessage.value = 'An unexpected error occurred';
+    }
   } finally {
     isResending.value = false;
   }
@@ -171,7 +175,11 @@ const verifyCode = async () => {
     }
   } catch (error) {
     console.error('Error verifying code:', error);
-    errorMessage.value = error.response?.data?.detail || 'Invalid verification code';
+    if (error.response && error.response.status !== 200) {
+      errorMessage.value = error.response.data.detail || 'An error occurred';
+    } else {
+      errorMessage.value = 'An unexpected error occurred';
+    }
   } finally {
     isLoading.value = false;
   }
