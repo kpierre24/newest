@@ -157,6 +157,8 @@ import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import logoImage from '@/assets/Logo1.png';
+import { errorMessages } from '@/utils/errorMessages';
+import { handleError, AppError, errorTypes } from '@/utils/errorHandler';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -187,55 +189,52 @@ const validateSignupId = () => {
 };
 
 const validateForm = () => {
-  errors.value = {};
   let isValid = true;
-
-  // Validate signup_id first
-  if (!validateSignupId()) {
-    return false;
-  }
+  errors.value = {};
 
   // Bank name validation
   if (!formData.value.bank_name?.trim()) {
-    errors.value.bank_name = 'Bank name is required';
+    errors.value.bank_name = errorMessages.validation.required('Bank name');
     isValid = false;
   }
 
   // Address validation
   if (!formData.value.address_line_1?.trim()) {
-    errors.value.address_line_1 = 'Address line 1 is required';
+    errors.value.address_line_1 = errorMessages.validation.required('Address');
     isValid = false;
   }
 
+  // City validation
   if (!formData.value.city?.trim()) {
-    errors.value.city = 'City is required';
+    errors.value.city = errorMessages.validation.required('City');
     isValid = false;
   }
 
+  // Country validation
   if (!formData.value.country?.trim()) {
-    errors.value.country = 'Country is required';
+    errors.value.country = errorMessages.validation.required('Country');
     isValid = false;
   }
 
   // Account number validation
   const accountNumber = formData.value.account_number?.replace(/[\s\-]/g, '');
   if (!accountNumber || !/^[a-zA-Z0-9]{8,30}$/.test(accountNumber)) {
-    errors.value.account_number = 'Account number must be between 8 and 30 characters and contain only letters and numbers';
+    errors.value.account_number = errorMessages.validation.accountNumber;
     isValid = false;
   }
 
   // Phone validation
   if (!formData.value.phone?.trim()) {
-    errors.value.phone = 'Phone number is required';
+    errors.value.phone = errorMessages.validation.required('Phone number');
     isValid = false;
   } else if (!/^\+?1?\d{9,15}$/.test(formData.value.phone)) {
-    errors.value.phone = 'Invalid phone number format';
+    errors.value.phone = errorMessages.validation.phone;
     isValid = false;
   }
 
   // SWIFT code validation
   if (!formData.value.swift_code?.trim()) {
-    errors.value.swift_code = 'SWIFT code is required';
+    errors.value.swift_code = errorMessages.validation.required('SWIFT code');
     isValid = false;
   }
 
@@ -244,7 +243,7 @@ const validateForm = () => {
 
 const handleSubmit = async () => {
   if (!validateForm()) {
-    formError.value = 'Please correct the errors before submitting';
+    formError.value = errorMessages.submission.validation;
     return;
   }
 
@@ -299,9 +298,11 @@ const handleSubmit = async () => {
     console.error('Error submitting foreign national bank info:', error);
     if (error.response?.data) {
       console.error('Error response data:', error.response.data);
-      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
+      formError.value = error.response.data.detail || errorMessages.submission.server;
+    } else if (error.request) {
+      formError.value = errorMessages.network.connection;
     } else {
-      formError.value = 'An error occurred while submitting your information';
+      formError.value = errorMessages.submission.general;
     }
   } finally {
     isLoading.value = false;

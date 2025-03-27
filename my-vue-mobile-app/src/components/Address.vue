@@ -128,12 +128,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import { countries } from 'countries-list';
 import logoImage from '@/assets/Logo1.png';
+import { handleError, AppError, errorTypes } from '@/utils/errorHandler';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -150,7 +151,7 @@ const formData = ref({
 });
 
 const countryList = ref(Object.values(countries).map(country => country.name));
-const dwellingStatusOptions = ref(['Rented', 'Owned',  'Living with family']);
+const dwellingStatusOptions = ref(['Rented', 'Owned', 'Living with family']);
 
 const handleSubmit = async (event) => {
   event.preventDefault();
@@ -159,14 +160,13 @@ const handleSubmit = async (event) => {
 
   try {
     if (!validateForm()) {
-      isLoading.value = false;
       return;
     }
 
     const baseURL = import.meta.env.VITE_API_BASE_URL;
-
-    // Create FormData for the address submission
     const addressFormData = new FormData();
+    
+    // Append form data
     addressFormData.append('signup_id', store.signupId);
     addressFormData.append('address_line_1', formData.value.addressLine1);
     addressFormData.append('address_line_2', formData.value.addressLine2 || '');
@@ -176,14 +176,12 @@ const handleSubmit = async (event) => {
     addressFormData.append('address_type', 'physical');
     addressFormData.append('proof_of_address_files', formData.value.proofOfAddress);
 
-    // Submit address data
     const response = await axios.post(`${baseURL}/addresses/`, addressFormData, {
       headers: {
-        'Content-Type': 'multipart/formdata',
+        'Content-Type': 'multipart/form-data',
       },
+      timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '5000')
     });
-
-    console.log('Address submission response:', response.data);
 
     // Store the address data
     store.$patch({
@@ -196,43 +194,38 @@ const handleSubmit = async (event) => {
       }
     });
 
-    // Navigate to next page
     router.push('/mailing-address');
   } catch (error) {
-    console.error('Error submitting address:', error);
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
-    } else {
-      formError.value = 'An error occurred while submitting your information';
-    }
+    const handledError = handleError(error);
+    console.error('Error submitting address:', handledError);
+    formError.value = handledError.message;
   } finally {
     isLoading.value = false;
   }
 };
 
 const validateForm = () => {
-  if (!formData.value.addressLine1) {
-    formError.value = 'Address Line 1 is required';
+  try {
+    const requiredFields = [
+      { field: 'addressLine1', message: 'Address Line 1 is required' },
+      { field: 'city', message: 'City is required' },
+      { field: 'country', message: 'Country is required' },
+      { field: 'dwellingStatus', message: 'Dwelling Status is required' },
+      { field: 'proofOfAddress', message: 'Proof of Address is required' }
+    ];
+
+    for (const { field, message } of requiredFields) {
+      if (!formData.value[field]) {
+        throw new AppError(message, errorTypes.VALIDATION_ERROR);
+      }
+    }
+
+    return true;
+  } catch (error) {
+    const handledError = handleError(error);
+    formError.value = handledError.message;
     return false;
   }
-  if (!formData.value.city) {
-    formError.value = 'City is required';
-    return false;
-  }
-  if (!formData.value.country) {
-    formError.value = 'Country is required';
-    return false;
-  }
-  if (!formData.value.dwellingStatus) {
-    formError.value = 'Dwelling Status is required';
-    return false;
-  }
-  if (!formData.value.proofOfAddress) {
-    formError.value = 'Proof of Address is required';
-    return false;
-  }
-  return true;
 };
 
 const handleFileUpload = (event) => {
@@ -243,8 +236,28 @@ const handleFileUpload = (event) => {
 };
 
 const navigateToPrevious = () => {
+  // Save current state before navigating
+  store.$patch({
+    addressInfo: {
+      addressLine1: formData.value.addressLine1,
+      addressLine2: formData.value.addressLine2,
+      city: formData.value.city,
+      country: formData.value.country,
+      dwellingStatus: formData.value.dwellingStatus
+    }
+  });
   router.push('/parent-guardian-information');
 };
+
+// Initialize component with stored data
+onMounted(() => {
+  if (store.addressInfo) {
+    formData.value = {
+      ...formData.value,
+      ...store.addressInfo
+    };
+  }
+});
 </script>
 
 <style scoped>

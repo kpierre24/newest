@@ -171,6 +171,7 @@ import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import logoImage from '@/assets/Logo1.png';
+import { errorMessages } from '@/utils/errorMessages';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -214,7 +215,7 @@ const submitForm = async () => {
         !formData.value.middle_name || !formData.value.occupation || 
         !formData.value.workplace || !formData.value.email || 
         !formData.value.mobile || !formData.value.relationship_to_child) {
-      formError.value = 'Please fill in all required fields';
+      formError.value = errorMessages.guardian.requiredFields;
       isLoading.value = false;
       return;
     }
@@ -222,60 +223,50 @@ const submitForm = async () => {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.value.email)) {
-      formError.value = 'Please enter a valid email address';
+      formError.value = errorMessages.validation.email;
       isLoading.value = false;
       return;
     }
 
-    // Validate signup_id exists
-    if (!store.signupId) {
-      formError.value = 'Invalid session. Please start over.';
+    // Validate phone number
+    if (!/^\+?1?\d{9,15}$/.test(formData.value.mobile)) {
+      formError.value = errorMessages.validation.phone;
       isLoading.value = false;
       return;
     }
 
-    // Validate file upload
+    // Validate relationship
+    if (!formData.value.relationship_to_child) {
+      formError.value = errorMessages.guardian.relationship;
+      isLoading.value = false;
+      return;
+    }
+
+    // Validate file upload if required
     if (!formData.value.guardian_files) {
-      formError.value = 'Please upload a relationship document';
+      formError.value = errorMessages.guardian.document;
       isLoading.value = false;
       return;
     }
 
     const baseURL = import.meta.env.VITE_API_BASE_URL;
-
-    // Create FormData object
-    const submitFormData = new FormData();
     
-    // Append all form fields
-    submitFormData.append('signup_id', store.signupId);
-    submitFormData.append('first_name', formData.value.first_name);
-    submitFormData.append('last_name', formData.value.last_name);
-    submitFormData.append('middle_name', formData.value.middle_name);
-    submitFormData.append('occupation', formData.value.occupation);
-    submitFormData.append('workplace', formData.value.workplace);
-    submitFormData.append('email', formData.value.email);
-    submitFormData.append('mobile', formData.value.mobile);
-    submitFormData.append('relationship_to_child', formData.value.relationship_to_child);
+    // Create FormData for file upload
+    const formDataToSubmit = new FormData();
+    formDataToSubmit.append('signup_id', store.signupId);
+    formDataToSubmit.append('first_name', formData.value.first_name);
+    formDataToSubmit.append('last_name', formData.value.last_name);
+    formDataToSubmit.append('middle_name', formData.value.middle_name);
+    formDataToSubmit.append('occupation', formData.value.occupation);
+    formDataToSubmit.append('workplace', formData.value.workplace);
+    formDataToSubmit.append('email', formData.value.email);
+    formDataToSubmit.append('mobile', formData.value.mobile);
+    formDataToSubmit.append('relationship_to_child', formData.value.relationship_to_child);
+    formDataToSubmit.append('guardian_files', formData.value.guardian_files);
 
-    // Handle file upload
-    if (formData.value.guardian_files instanceof File) {
-      submitFormData.append('guardian_files', formData.value.guardian_files);
-    } else if (Array.isArray(formData.value.guardian_files)) {
-      formData.value.guardian_files.forEach(file => {
-        if (file instanceof File) {
-          submitFormData.append('guardian_files', file);
-        }
-      });
-    }
+    console.log('Submitting guardian data:', Object.fromEntries(formDataToSubmit));
 
-    // Debug log
-    console.log('Submitting guardian data:');
-    for (let pair of submitFormData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
-    // Make the API call with FormData
-    const response = await axios.post(`${baseURL}/guardians/`, submitFormData, {
+    const response = await axios.post(`${baseURL}/guardians/`, formDataToSubmit, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -306,9 +297,11 @@ const submitForm = async () => {
       console.error('Error response data:', error.response.data);
       formError.value = Array.isArray(error.response.data) 
         ? error.response.data.map(err => err.msg).join(', ')
-        : error.response.data.detail || 'An error occurred while submitting your information';
+        : error.response.data.detail || errorMessages.submission.server;
+    } else if (error.request) {
+      formError.value = errorMessages.network.connection;
     } else {
-      formError.value = 'An error occurred while submitting your information';
+      formError.value = errorMessages.submission.general;
     }
   } finally {
     isLoading.value = false;

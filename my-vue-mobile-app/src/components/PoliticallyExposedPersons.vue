@@ -261,6 +261,7 @@ import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import logoImage from '@/assets/Logo1.png';
+import { errorMessages } from '@/utils/errorMessages';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -315,13 +316,13 @@ const handleSubmit = async () => {
   try {
     // Basic validation
     if (formData.value.isPEP === null) {
-      formError.value = 'Please indicate if you are a politically exposed person';
+      formError.value = errorMessages.pep.statusRequired;
       return;
     }
 
     if (formData.value.isPEP === true) {
       if (!formData.value.jobTitle) {
-        formError.value = 'Please enter your job title';
+        formError.value = errorMessages.pep.jobTitleRequired;
         return;
       }
     }
@@ -351,7 +352,13 @@ const handleSubmit = async () => {
 
   } catch (error) {
     console.error('Error submitting PEP information:', error);
-    formError.value = error.response?.data?.detail || 'An error occurred while submitting your information';
+    if (error.response?.data) {
+      formError.value = error.response.data.detail || errorMessages.submission.server;
+    } else if (error.request) {
+      formError.value = errorMessages.network.connection;
+    } else {
+      formError.value = errorMessages.submission.general;
+    }
   } finally {
     isLoading.value = false;
   }

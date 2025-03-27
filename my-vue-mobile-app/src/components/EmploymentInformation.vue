@@ -19,7 +19,7 @@
                 <p class="text-subtitle-1 text-medium-emphasis">Please provide your employment details</p>
               </div>
 
-              <v-form @submit.prevent="handleSubmit">
+              <v-form @submit.prevent="submitForm">
                 <v-alert
                   v-if="formError"
                   type="error"
@@ -32,7 +32,7 @@
                 <v-card class="mb-6" variant="outlined">
                   <v-card-text>
                     <v-text-field
-                      v-model="formData.employerName"
+                      v-model="formData.employer_name"
                       label="Employer Name"
                       placeholder="Enter employer name"
                       variant="outlined"
@@ -42,7 +42,25 @@
                     />
 
                     <v-text-field
-                      v-model="formData.employerAddressLine1"
+                      v-model="formData.occupation"
+                      label="Occupation"
+                      placeholder="Enter your occupation"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-briefcase"
+                      :rules="[v => !!v || 'Occupation is required']"
+                      required
+                    />
+                  <v-text-field
+                    v-model=formData.work_phone
+                    label="Work Phone Number"
+                    placeholder="Enter work phone number"
+                    variant="outlined"
+                    prepend-inner-icon="mdi-phone"
+                    :rules="[v => !!v || 'Work phone number is required']"
+                    required
+                  />
+                    <v-text-field
+                      v-model="formData.address_line_1"
                       label="Address Line 1"
                       placeholder="Enter address line 1"
                       variant="outlined"
@@ -52,7 +70,15 @@
                     />
 
                     <v-text-field
-                      v-model="formData.employerCity"
+                      v-model="formData.address_line_2"
+                      label="Address Line 2"
+                      placeholder="Enter address line 2 (optional)"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-map-marker"
+                    />
+
+                    <v-text-field
+                      v-model="formData.city"
                       label="City"
                       placeholder="Enter city"
                       variant="outlined"
@@ -62,7 +88,7 @@
                     />
 
                     <v-select
-                      v-model="formData.employerCountry"
+                      v-model="formData.country"
                       label="Country"
                       :items="countryList"
                       placeholder="Select country"
@@ -72,18 +98,8 @@
                       required
                     />
 
-                    <v-text-field
-                      v-model="formData.workNumber"
-                      label="Work Number"
-                      placeholder="Enter work number"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-phone"
-                      :rules="[v => !!v || 'Work number is required']"
-                      required
-                    />
-
                     <v-select
-                      v-model="formData.employmentStatus"
+                      v-model="formData.employment_status"
                       label="Employment Status"
                       :items="['Employed', 'Self-Employed', 'Unemployed', 'Student', 'Retired']"
                       placeholder="Select employment status"
@@ -94,25 +110,29 @@
                     />
 
                     <v-select
-                      v-model="formData.employmentType"
+                      v-model="formData.employment_type"
                       label="Employment Type"
                       :items="['Full-Time', 'Part-Time', 'Contract', 'Temporary']"
                       placeholder="Select employment type"
                       variant="outlined"
                       prepend-inner-icon="mdi-account-tie"
-                      :rules="[v => !!v || 'Employment type is required']"
+                      :rules="[v => formData.employment_status === 'Unemployed' || !!v || 'Employment type is required']"
+                      :disabled="formData.employment_status === 'Unemployed'"
                       required
                     />
 
                     <v-file-input
-                      v-model="formData.proofOfEmploymentFile"
+                      v-model="formData.proof_of_employment_files"
                       label="Proof of Employment/Source of funds"
                       accept=".pdf,.jpg,.png"
                       placeholder="Upload proof of employment/source of funds"
                       variant="outlined"
                       prepend-icon="mdi-upload"
-                      :rules="[v => !!v || 'Proof of employment/source of funds is required']"
+                      :rules="[v => formData.employment_status === 'Unemployed' || !!v || 'Proof of employment/source of funds is required']"
                       @change="handleFileUpload"
+                      multiple
+                      show-size
+                      counter
                       required
                     >
                       <template v-slot:selection="{ fileNames }">
@@ -183,87 +203,157 @@ import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import { countries } from 'countries-list';
 import logoImage from '@/assets/Logo1.png';
+import { errorMessages } from '@/utils/errorMessages';
+import { handleError, AppError, errorTypes } from '@/utils/errorHandler';
+
+
 const router = useRouter();
 const store = useDemoStore();
-
-// Form data
-const formData = ref({
-  employerName: '',
-  employerAddressLine1: '',
-  employerCity: '',
-  employerCountry: '',
-  workNumber: '',
-  employmentStatus: '',
-  employmentType: '',
-  proofOfEmploymentFile: null
-});
-
-// UI state
 const isLoading = ref(false);
 const formError = ref('');
 const countryList = ref(Object.values(countries).map(country => country.name));
 
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3000' 
-    : `http://${window.location.hostname}:3000`;
-};
+const formData = ref({
+  signup_id: null,
+  employer_name: '',
+  occupation: '',
+  work_phone: '',
+  address_line_1: '',
+  address_line_2: '',
+  city: '',
+  country: '',
+  employment_status: '',
+  employment_type: '',
+  proof_of_employment_files: []
+});
 
+// UI state
 const handleFileUpload = (event) => {
-  if (event && event.target && event.target.files && event.target.files.length > 0) {
-    formData.value.proofOfEmploymentFile = event.target.files[0];
+  const files = event?.target?.files || event;
+  if (Array.isArray(files)) {
+    formData.value.proof_of_employment_files = files;
+  } else if (files instanceof File) {
+    formData.value.proof_of_employment_files = [files];
   }
 };
 
-const handleSubmit = async () => {
+const submitForm = async () => {
   isLoading.value = true;
   formError.value = '';
 
   try {
     // Validate required fields
-    if (!formData.value.employerName || !formData.value.employerAddressLine1 || 
-        !formData.value.employerCity || !formData.value.employerCountry || 
-        !formData.value.workNumber || !formData.value.employmentStatus || 
-        !formData.value.employmentType || !formData.value.proofOfEmploymentFile) {
-      formError.value = 'Please fill in all required fields';
+    if (!formData.value.employer_name || !formData.value.occupation || 
+        !formData.value.address_line_1 || !formData.value.city || 
+        !formData.value.country || !formData.value.employment_status) {
+      formError.value = errorMessages.employment.requiredFields;
+      isLoading.value = false;
       return;
     }
 
-    // Create FormData for file upload
-    const apiFormData = new FormData();
-    Object.keys(formData.value).forEach(key => {
-      apiFormData.append(key, formData.value[key]);
+    // Validate employment status
+    const validEmploymentStatuses = ['employed', 'self-employed', 'unemployed', 'student', 'retired'];
+    if (!validEmploymentStatuses.includes(formData.value.employment_status.toLowerCase())) {
+      formError.value = 'Invalid employment status';
+      isLoading.value = false;
+      return;
+    }
+
+    // Validate employment type if not unemployed
+    if (formData.value.employment_status.toLowerCase() !== 'unemployed') {
+      const validEmploymentTypes = ['full-time', 'part-time', 'contract', 'temporary'];
+      if (!formData.value.employment_type || !validEmploymentTypes.includes(formData.value.employment_type.toLowerCase())) {
+        formError.value = 'Invalid employment type';
+        isLoading.value = false;
+        return;
+      }
+
+      // Validate files for non-unemployed status
+      if (!formData.value.proof_of_employment_files.length) {
+        formError.value = 'Proof of employment files are required';
+        isLoading.value = false;
+        return;
+      }
+
+      // Validate file types and sizes
+      const maxFileSize = 10 * 1024 * 1024; // 10MB
+      const allowedTypes = ['image/', 'application/pdf'];
+      
+      for (const file of formData.value.proof_of_employment_files) {
+        if (file.size > maxFileSize) {
+          formError.value = 'Each file must be less than 10MB';
+          isLoading.value = false;
+          return;
+        }
+        
+        if (!allowedTypes.some(type => file.type.startsWith(type))) {
+          formError.value = 'File must be an image or PDF document';
+          isLoading.value = false;
+          return;
+        }
+      }
+    }
+
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+    const formDataToSubmit = new FormData();
+    formDataToSubmit.append('signup_id', store.signupId);
+    formDataToSubmit.append('employer_name', formData.value.employer_name);
+    formDataToSubmit.append('occupation', formData.value.occupation);
+    formDataToSubmit.append('work_phone', formData.value.work_phone);
+    formDataToSubmit.append('address_line_1', formData.value.address_line_1);
+    formDataToSubmit.append('address_line_2', formData.value.address_line_2 || '');
+    formDataToSubmit.append('city', formData.value.city);
+    formDataToSubmit.append('country', formData.value.country);
+    formDataToSubmit.append('employment_status', formData.value.employment_status.toLowerCase());
+    formDataToSubmit.append('employment_type', formData.value.employment_status.toLowerCase() === 'unemployed' ? null : formData.value.employment_type.toLowerCase());
+    
+    // Append files if not unemployed
+    if (formData.value.employment_status.toLowerCase() !== 'unemployed') {
+      formData.value.proof_of_employment_files.forEach(file => {
+        formDataToSubmit.append('proof_of_employment_files', file);
+      });
+    }
+
+    console.log('Submitting employment information:', Object.fromEntries(formDataToSubmit));
+
+    const response = await axios.post(`${baseURL}/employments/`, formDataToSubmit, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
     });
 
-    // Save to store (excluding file)
+    console.log('Employment information submitted successfully:', response.data);
+
+    // Save to store (excluding files)
     store.$patch((state) => {
       state.employmentInfo = {
-        employerName: formData.value.employerName,
-        employerAddressLine1: formData.value.employerAddressLine1,
-        employerCity: formData.value.employerCity,
-        employerCountry: formData.value.employerCountry,
-        workNumber: formData.value.workNumber,
-        employmentStatus: formData.value.employmentStatus,
-        employmentType: formData.value.employmentType
+        employer_name: formData.value.employer_name,
+        occupation: formData.value.occupation,
+        work_phone: formData.value.work_phone,
+        address_line_1: formData.value.address_line_1,
+        address_line_2: formData.value.address_line_2,
+        city: formData.value.city,
+        country: formData.value.country,
+        employment_status: formData.value.employment_status,
+        employment_type: formData.value.employment_type,
+        proof_of_employment_files: formData.value.proof_of_employment_files
       };
     });
-
-    console.log('Submitting employment information:', formData.value);
-
-    // Make API call
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/employment-information/`, apiFormData, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    console.log('API Response:', response.data);
 
     router.push('/designation-of-beneficiary');
   } catch (error) {
     console.error('Error submitting employment information:', error);
-    formError.value = 'An error occurred while submitting your information. Please try again.';
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = Array.isArray(error.response.data) 
+        ? error.response.data.map(err => err.msg).join(', ')
+        : error.response.data.detail || errorMessages.submission.server;
+    } else if (error.request) {
+      formError.value = errorMessages.network.connection;
+    } else {
+      formError.value = errorMessages.submission.general;
+    }
   } finally {
     isLoading.value = false;
   }
@@ -273,13 +363,16 @@ const navigateToPrevious = () => {
   // Save current state before navigating
   store.$patch((state) => {
     state.employmentInfo = {
-      employerName: formData.value.employerName,
-      employerAddressLine1: formData.value.employerAddressLine1,
-      employerCity: formData.value.employerCity,
-      employerCountry: formData.value.employerCountry,
-      workNumber: formData.value.workNumber,
-      employmentStatus: formData.value.employmentStatus,
-      employmentType: formData.value.employmentType
+      employer_name: formData.value.employer_name,
+      work_phone: formData.value.work_phone,
+      occupation: formData.value.occupation,
+      address_line_1: formData.value.address_line_1,
+      address_line_2: formData.value.address_line_2,
+      city: formData.value.city,
+      country: formData.value.country,
+      employment_status: formData.value.employment_status,
+      employment_type: formData.value.employment_type,
+      proof_of_employment_files: formData.value.proof_of_employment_files
     };
   });
   router.go(-1);
@@ -290,8 +383,17 @@ onMounted(() => {
   console.log('Initializing component with store data:', store.employmentInfo);
   if (store.employmentInfo) {
     formData.value = {
-      ...formData.value,
-      ...store.employmentInfo
+      signup_id: store.signupId,
+      employer_name: store.employmentInfo.employer_name,
+      work_phone: store.employmentInfo.work_phone,
+      occupation: store.employmentInfo.occupation,
+      address_line_1: store.employmentInfo.address_line_1,
+      address_line_2: store.employmentInfo.address_line_2,
+      city: store.employmentInfo.city,
+      country: store.employmentInfo.country,
+      employment_status: store.employmentInfo.employment_status,
+      employment_type: store.employmentInfo.employment_type,
+      proof_of_employment_files: store.employmentInfo.proof_of_employment_files
     };
   }
 });

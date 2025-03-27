@@ -107,24 +107,7 @@ export const useDemoStore = defineStore({
     },
 
     // Beneficiary Information
-    beneficiaryInfo: {
-      firstName: '',
-      lastName: '',
-      otherName: '',
-      email: '',
-      phone: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      country: '',
-      dob: '',
-      gender: '',
-      relationship: '',
-      idType: '',
-      idNumber: '',
-      idExpiry: '',
-      percentage: '',
-    },
+    beneficiaryInfo: [],
 
     // Guardian Information
     guardianInfo: {

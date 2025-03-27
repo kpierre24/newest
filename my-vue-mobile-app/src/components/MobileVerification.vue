@@ -50,7 +50,7 @@
                       <v-col cols="12" sm="6">
                         <v-btn
                           block
-                          color="secondary"
+                          color="primary"
                           size="large"
                           variant="elevated"
                           @click="navigateToPrevious"
@@ -61,7 +61,7 @@
                       <v-col cols="12" sm="6">
                         <v-btn
                           block
-                          color="primary"
+                          color="secondary"
                           size="large"
                           type="submit"
                           :loading="isLoading"
@@ -74,7 +74,7 @@
 
                     <v-btn
                       block
-                      color="secondary"
+                      color="primary"
                       class="mt-4"
                       @click="requestVerificationCode"
                       :disabled="countdown > 0 || resendCount >= maxResendAttempts"

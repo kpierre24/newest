@@ -259,6 +259,7 @@ import logoImage from '../assets/Logo1.png';
 import { countries } from 'countries-list';
 import { handleError, errorTypes } from '@/utils/errorHandler';
 import { AppError } from '@/utils/errorHandler';
+import { errorMessages } from '@/utils/errorMessages';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -366,23 +367,19 @@ const handleSubmit = async () => {
 
     switch (handledError.type) {
       case errorTypes.VALIDATION_ERROR:
-        formError.value = 'Please check your information and try again';
+        formError.value = errorMessages.submission.validation;
         break;
       case errorTypes.NETWORK_ERROR:
-        formError.value = 'Unable to connect to the server. Please check your internet connection';
+        formError.value = errorMessages.network.connection;
         break;
       case errorTypes.AUTH_ERROR:
-        formError.value = 'Authentication error. Please try again';
+        formError.value = errorMessages.auth.unauthorized;
         break;
       default:
-        formError.value = handledError.message;
+        formError.value = errorMessages.submission.general;
     }
 
-    // Optional: Track errors in your analytics system
-    if (import.meta.env.VITE_ENABLE_ERROR_TRACKING === 'true') {
-      // Add your error tracking logic here
-      console.log('Error tracked:', handledError);
-    }
+   
   } finally {
     isLoading.value = false;
   }
@@ -392,15 +389,15 @@ const validateForm = () => {
   try {
     formError.value = '';
     const requiredFields = [
-      { value: store.firstName, message: 'First name is required' },
-      { value: store.lastName, message: 'Last name is required' },
-      { value: store.email, message: 'Valid email is required', validate: v => /.+@.+\..+/.test(v) },
-      { value: store.mobileNumber, message: 'Mobile number is required', validate: v => /^\d{7,15}$/.test(v) },
-      { value: store.password, message: 'Password is required' },
-      { value: store.confirmPassword, message: 'Passwords must match', validate: v => v === store.password },
-      { value: store.gender, message: 'Gender is required' },
-      { value: store.dob, message: 'Date of birth is required' },
-      { value: store.nationality, message: 'Nationality is required' },
+      { value: store.firstName, message: errorMessages.validation.required('First name') },
+      { value: store.lastName, message: errorMessages.validation.required('Last name') },
+      { value: store.email, message: errorMessages.validation.required('Email'), validate: v => /.+@.+\..+/.test(v) },
+      { value: store.mobileNumber, message: errorMessages.validation.required('Mobile number'), validate: v => /^\d{7,15}$/.test(v) },
+      { value: store.password, message: errorMessages.validation.required('Password') },
+      { value: store.confirmPassword, message: errorMessages.validation.required('Password confirmation'), validate: v => v === store.password },
+      { value: store.gender, message: errorMessages.validation.required('Gender') },
+      { value: store.dob, message: errorMessages.validation.required('Date of birth') },
+      { value: store.nationality, message: errorMessages.validation.required('Nationality') },
     ];
 
     for (const field of requiredFields) {
@@ -410,7 +407,15 @@ const validateForm = () => {
     }
 
     if (isAdult.value && !store.maritalStatus) {
-      throw new AppError('Marital status is required for adults', errorTypes.VALIDATION_ERROR, 400);
+      throw new AppError(errorMessages.validation.required('Marital status'), errorTypes.VALIDATION_ERROR, 400);
+    }
+
+    if (isUnder18.value && !store.schoolName) {
+      throw new AppError(errorMessages.validation.required('School name'), errorTypes.VALIDATION_ERROR, 400);
+    }
+
+    if (!store.termsViewed || !store.financialAgreementViewed) {
+      throw new AppError('Please agree to the Terms and Conditions and Financial Declaration', errorTypes.VALIDATION_ERROR, 400);
     }
 
     return true;

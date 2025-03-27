@@ -80,6 +80,7 @@
                       :loading="isLoading"
                     >
                       {{ isLoading ? 'Verifying...' : 'Verify' }}
+                      
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -103,11 +104,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
 import logoImage from '@/assets/Logo1.png';
+import { errorMessages } from '@/utils/errorMessages';
+import { handleError, AppError, errorTypes } from '@/utils/errorHandler';
 
 const router = useRouter();
 const store = useDemoStore();
@@ -115,6 +118,8 @@ const verificationCode = ref('');
 const errorMessage = ref('');
 const isLoading = ref(false);
 const isResending = ref(false);
+const countdown = ref(0);
+let countdownInterval;
 
 // Function to request a new verification code
 const requestVerificationCode = async () => {
@@ -122,6 +127,10 @@ const requestVerificationCode = async () => {
   errorMessage.value = '';
   
   try {
+    if (!store.signupId) {
+      throw new AppError(errorMessages.validation.signupId, errorTypes.VALIDATION_ERROR);
+    }
+
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     const response = await axios.post(`${baseURL}/device-verifications/send/`, {
       identifier_type: 'email',
@@ -130,11 +139,13 @@ const requestVerificationCode = async () => {
     });
     
     if (response.data) {
+      startCountdown();
       console.log('Verification code sent successfully');
     }
   } catch (error) {
-    console.error('Error sending verification code:', error);
-    errorMessage.value = error.response?.data?.detail || 'Failed to send verification code';
+    const handledError = handleError(error);
+    console.error('Error sending verification code:', handledError);
+    errorMessage.value = handledError.message;
   } finally {
     isResending.value = false;
   }
@@ -146,12 +157,13 @@ const verifyCode = async () => {
   errorMessage.value = '';
 
   try {
-    console.log('Sending verification code:', {
-      signup_id: store.signupId,
-      identifier_type: 'email',
-      operation: 'signup',
-      code: verificationCode.value
-    });
+    if (!verificationCode.value) {
+      throw new AppError(errorMessages.validation.required('Verification code'), errorTypes.VALIDATION_ERROR);
+    }
+
+    if (verificationCode.value.length !== 6 || !/^\d+$/.test(verificationCode.value)) {
+      throw new AppError('Please enter a valid 6-digit code', errorTypes.VALIDATION_ERROR);
+    }
 
     const baseURL = import.meta.env.VITE_API_BASE_URL;
     const response = await axios.post(`${baseURL}/device-verifications/verify/`, {
@@ -174,8 +186,22 @@ const verifyCode = async () => {
       await router.push({ name: 'EmailVerSuccessful' });
     }
   } catch (error) {
-    console.error('Verification error:', error);
-    errorMessage.value = error.response?.data?.detail || 'Invalid verification code';
+    const handledError = handleError(error);
+    console.error('Verification error:', handledError);
+    
+    switch (handledError.type) {
+      case errorTypes.VALIDATION_ERROR:
+        errorMessage.value = handledError.message;
+        break;
+      case errorTypes.AUTH_ERROR:
+        errorMessage.value = errorMessages.auth.verificationFailed;
+        break;
+      case errorTypes.NETWORK_ERROR:
+        errorMessage.value = errorMessages.network.connection;
+        break;
+      default:
+        errorMessage.value = errorMessages.submission.general;
+    }
   } finally {
     isLoading.value = false;
   }
@@ -198,6 +224,20 @@ const handleSubmit = async () => {
   await verifyCode();
 };
 
+const startCountdown = () => {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+  countdown.value = 60;
+  countdownInterval = setInterval(() => {
+    if (countdown.value > 0) {
+      countdown.value--;
+    } else {
+      clearInterval(countdownInterval);
+    }
+  }, 1000);
+};
+
 // Request verification code when component mounts
 onMounted(async () => {
   if (!store.signupId || !store.email) {
@@ -205,6 +245,13 @@ onMounted(async () => {
     return;
   }
   await requestVerificationCode();
+});
+
+// Clean up interval when component is unmounted
+onUnmounted(() => {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
 });
 </script>
 

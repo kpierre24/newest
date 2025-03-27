@@ -184,10 +184,16 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useDemoStore } from '@/store/demoStore';
+import { handleError, AppError, errorTypes } from '@/utils/errorHandler';
+import { errorMessages } from '@/utils/errorMessages';
 import logoImage from '../assets/Logo1.png';
 
 const router = useRouter();
 const store = useDemoStore();
+const isLoading = ref(false);
+const formError = ref('');
+const firstExpiryDateError = ref('');
+const secondExpiryDateError = ref('');
 
 // Form data
 const formData = ref({
@@ -200,13 +206,8 @@ const formData = ref({
   secondExpiryDate: '',
   secondIdDocument: null,
   signup_id: store.signupId,
-  holder_type: 'child', 
+  holder_type: 'child'
 });
-
-const formError = ref('');
-const isLoading = ref(false);
-const firstExpiryDateError = ref('');
-const secondExpiryDateError = ref('');
 
 // Computed properties
 const minDate = computed(() => new Date().toISOString().split('T')[0]);
@@ -216,78 +217,187 @@ const maxExpiryDate = computed(() => {
   return date.toISOString().split('T')[0];
 });
 const defaultBirthCertificateExpiry = computed(() => '9999-12-31');
-console.log(formData.value);
 
 // ID types
 const idTypes = ['Birth Certificate', 'Passport', 'National ID'];
 
-// Methods
 const handleIdTypeChange = (type) => {
-  if (type === 'first') {
-    if (formData.value.firstIdType === 'Birth Certificate') {
-      formData.value.firstExpiryDate = defaultBirthCertificateExpiry.value;
-      firstExpiryDateError.value = '';
-    }
-  } else {
-    if (formData.value.secondIdType === 'Birth Certificate') {
-      formData.value.secondExpiryDate = defaultBirthCertificateExpiry.value;
-      secondExpiryDateError.value = '';
-    }
+  const idType = type === 'first' ? 'firstIdType' : 'secondIdType';
+  const expiryDate = type === 'first' ? 'firstExpiryDate' : 'secondExpiryDate';
+  const errorRef = type === 'first' ? firstExpiryDateError : secondExpiryDateError;
+
+  if (formData.value[idType] === 'Birth Certificate') {
+    formData.value[expiryDate] = defaultBirthCertificateExpiry.value;
+    errorRef.value = '';
   }
 };
 
 const validateExpiryDate = (type) => {
-  if (formData.value[`${type}IdType`] === 'Birth Certificate') {
-    formData.value[`${type}ExpiryDate`] = defaultBirthCertificateExpiry.value;
-    if (type === 'first') {
-      firstExpiryDateError.value = '';
-    } else {
-      secondExpiryDateError.value = '';
+  try {
+    const idType = `${type}IdType`;
+    const expiryDate = `${type}ExpiryDate`;
+    const errorRef = type === 'first' ? firstExpiryDateError : secondExpiryDateError;
+
+    if (formData.value[idType] === 'Birth Certificate') {
+      formData.value[expiryDate] = defaultBirthCertificateExpiry.value;
+      errorRef.value = '';
+      return true;
     }
+
+    if (!formData.value[expiryDate]) {
+      throw new AppError(errorMessages.validation.required('Expiry date'), errorTypes.VALIDATION_ERROR);
+    }
+
+    const expiry = new Date(formData.value[expiryDate]);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+
+    if (expiry <= today) {
+      throw new AppError('Expiry date must be in the future', errorTypes.VALIDATION_ERROR);
+    }
+
+    errorRef.value = '';
     return true;
-  }
-
-  const expiry = new Date(formData.value[`${type}ExpiryDate`]);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  expiry.setHours(0, 0, 0, 0);
-
-  if (!formData.value[`${type}ExpiryDate`]) {
+  } catch (error) {
+    const handledError = handleError(error);
     if (type === 'first') {
-      firstExpiryDateError.value = 'Expiry date is required';
+      firstExpiryDateError.value = handledError.message;
     } else {
-      secondExpiryDateError.value = 'Expiry date is required';
+      secondExpiryDateError.value = handledError.message;
     }
     return false;
   }
-
-  if (expiry <= today) {
-    if (type === 'first') {
-      firstExpiryDateError.value = 'Expiry date must be in the future';
-    } else {
-      secondExpiryDateError.value = 'Expiry date must be in the future';
-    }
-    return false;
-  }
-
-  if (type === 'first') {
-    firstExpiryDateError.value = '';
-  } else {
-    secondExpiryDateError.value = '';
-  }
-  return true;
 };
 
 const handleFileUpload = (event, type) => {
-  const file = event?.target?.files?.[0] || event;
-  if (file instanceof File) {
+  try {
+    const file = event?.target?.files?.[0] || event;
+    if (!(file instanceof File)) {
+      throw new AppError(errorMessages.file.invalidFormat, errorTypes.FILE_ERROR);
+    }
+
+    const maxSize = parseInt(import.meta.env.VITE_MAX_FILE_SIZE);
+    if (file.size > maxSize) {
+      throw new AppError(errorMessages.file.sizeLimit(maxSize), errorTypes.FILE_ERROR);
+    }
+
+    const allowedTypes = import.meta.env.VITE_ALLOWED_FILE_TYPES.split(',');
+    if (!allowedTypes.includes(file.type)) {
+      throw new AppError(errorMessages.file.invalidFormat, errorTypes.FILE_ERROR);
+    }
+
     formData.value[`${type}IdDocument`] = file;
+  } catch (error) {
+    const handledError = handleError(error);
+    formError.value = handledError.message;
   }
 };
 
-const navigateToPrevious = () => {
-  saveToStore();
-  router.go(-1);
+// Add formatDate function
+const formatDate = (dateString) => {
+  if (!dateString) return null;
+  const date = new Date(dateString);
+  date.setHours(0, 0, 0, 0);
+  return date.toISOString().split('T')[0];
+};
+
+const submitChildIDInformation = async () => {
+  isLoading.value = true;
+  formError.value = '';
+
+  try {
+    // Validate form data
+    validateForm();
+
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+    // Submit first ID
+    const firstIdFormData = createIdFormData('first', true);
+    const secondIdFormData = createIdFormData('second', false);
+
+    try {
+      const [firstResponse, secondResponse] = await Promise.all([
+        submitId(firstIdFormData),
+        submitId(secondIdFormData)
+      ]);
+
+      // Save to store
+      saveToStore();
+
+      router.push('/parent-guardian-information');
+    } catch (error) {
+      throw new AppError(errorMessages.submission.general, errorTypes.API_ERROR);
+    }
+  } catch (error) {
+    const handledError = handleError(error);
+    console.error('Error submitting child ID information:', handledError);
+    
+    switch (handledError.type) {
+      case errorTypes.VALIDATION_ERROR:
+        formError.value = errorMessages.submission.validation;
+        break;
+      case errorTypes.FILE_ERROR:
+        formError.value = errorMessages.file.uploadFailed;
+        break;
+      case errorTypes.NETWORK_ERROR:
+        formError.value = errorMessages.network.connection;
+        break;
+      case errorTypes.API_ERROR:
+        formError.value = errorMessages.submission.server;
+        break;
+      default:
+        formError.value = errorMessages.submission.general;
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const createIdFormData = (type, isPrimary) => {
+  const formDataObj = new FormData();
+  formDataObj.append('signup_id', store.signupId);
+  formDataObj.append('id_type', formData.value[`${type}IdType`]);
+  formDataObj.append('holder_type', 'child');
+  formDataObj.append('id_number', formData.value[`${type}IdNumber`]);
+  formDataObj.append('id_expiry_date', formatDate(formData.value[`${type}ExpiryDate`]));
+  formDataObj.append('is_primary_id', isPrimary.toString());
+  
+  const idDocument = formData.value[`${type}IdDocument`];
+  if (idDocument instanceof File) {
+    formDataObj.append('id_files', idDocument);
+  }
+  
+  return formDataObj;
+};
+
+const submitId = async (formDataObj) => {
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
+  return axios.post(`${baseURL}/identifications/`, formDataObj, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: parseInt(import.meta.env.VITE_API_TIMEOUT)
+  });
+};
+
+const validateForm = () => {
+  const requiredFields = [
+    { field: 'firstIdType', message: errorMessages.validation.required('First ID type') },
+    { field: 'firstIdNumber', message: errorMessages.validation.required('First ID number') },
+    { field: 'firstIdDocument', message: errorMessages.validation.required('First ID document') },
+    { field: 'secondIdType', message: errorMessages.validation.required('Second ID type') },
+    { field: 'secondIdNumber', message: errorMessages.validation.required('Second ID number') },
+    { field: 'secondIdDocument', message: errorMessages.validation.required('Second ID document') }
+  ];
+
+  for (const { field, message } of requiredFields) {
+    if (!formData.value[field]) {
+      throw new AppError(message, errorTypes.VALIDATION_ERROR);
+    }
+  }
+
+  if (!validateExpiryDate('first') || !validateExpiryDate('second')) {
+    throw new AppError(errorMessages.validation.required('Valid expiry dates'), errorTypes.VALIDATION_ERROR);
+  }
 };
 
 const saveToStore = () => {
@@ -299,141 +409,19 @@ const saveToStore = () => {
       secondIdType: formData.value.secondIdType,
       secondIdNumber: formData.value.secondIdNumber,
       secondExpiryDate: formData.value.secondExpiryDate,
-      holder_type: 'child',
-
-    },
+      holder_type: 'child'
+    }
   });
 };
 
-const submitChildIDInformation = async () => {
-  isLoading.value = true;
-  formError.value = '';
-
-  try {
-    // Validate required fields
-    if (!formData.value.firstIdType || !formData.value.firstIdNumber || !formData.value.firstIdDocument ||
-        !formData.value.secondIdType || !formData.value.secondIdNumber || !formData.value.secondIdDocument) {
-      formError.value = 'Please fill in all required fields';
-      isLoading.value = false;
-      return;
-    }
-
-    // Validate expiry dates
-    if (!validateExpiryDate('first') || !validateExpiryDate('second')) {
-      formError.value = 'Please check the expiry dates';
-      isLoading.value = false;
-      return;
-    }
-
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-
-    // Format date to ISO string and handle timezone
-    const formatDate = (dateString) => {
-      if (!dateString) return null;
-      const date = new Date(dateString);
-      date.setHours(0, 0, 0, 0);
-      return date.toISOString().split('T')[0];
-    };
-
-    // Create FormData for first ID
-    const firstIdFormData = new FormData();
-    firstIdFormData.append('signup_id', store.signupId);
-    firstIdFormData.append('id_type', formData.value.firstIdType);
-    firstIdFormData.append('holder_type', 'child');
-    firstIdFormData.append('id_number', formData.value.firstIdNumber);
-    firstIdFormData.append('id_expiry_date', formatDate(formData.value.firstExpiryDate));
-    firstIdFormData.append('is_primary_id', 'true');
-    
-    // Handle file upload for first ID
-    if (formData.value.firstIdDocument instanceof File) {
-      firstIdFormData.append('id_files', formData.value.firstIdDocument);
-    } else if (Array.isArray(formData.value.firstIdDocument) && formData.value.firstIdDocument.length > 0) {
-      firstIdFormData.append('id_files', formData.value.firstIdDocument[0]);
-    }
-
-    // Create FormData for second ID
-    const secondIdFormData = new FormData();
-    secondIdFormData.append('signup_id', store.signupId);
-    secondIdFormData.append('id_type', formData.value.secondIdType);
-    secondIdFormData.append('holder_type', 'child');
-    secondIdFormData.append('id_number', formData.value.secondIdNumber);
-    secondIdFormData.append('id_expiry_date', formatDate(formData.value.secondExpiryDate));
-    secondIdFormData.append('is_primary_id', 'false');
-    
-    // Handle file upload for second ID
-    if (formData.value.secondIdDocument instanceof File) {
-      secondIdFormData.append('id_files', formData.value.secondIdDocument);
-    } else if (Array.isArray(formData.value.secondIdDocument) && formData.value.secondIdDocument.length > 0) {
-      secondIdFormData.append('id_files', formData.value.secondIdDocument[0]);
-    }
-
-    
-    
-    for (let pair of firstIdFormData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-    
-    for (let pair of secondIdFormData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
-    // Submit first ID
-    try {
-      const firstResponse = await axios.post(`${baseURL}/identifications/`, firstIdFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log('First ID Response:', firstResponse.data);
-    } catch (firstError) {
-      console.error('Error submitting first ID:', firstError.response?.data || firstError.message);
-      throw firstError;
-    }
-
-    // Submit second ID
-    try {
-      const secondResponse = await axios.post(`${baseURL}/identifications/`, secondIdFormData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log('Second ID Response:', secondResponse.data);
-    } catch (secondError) {
-      console.error('Error submitting second ID:', secondError.response?.data || secondError.message);
-      throw secondError;
-    }
-
-    // Save to store
-    store.$patch({
-      childIdInfo: {
-        firstIdType: formData.value.firstIdType,
-        firstIdNumber: formData.value.firstIdNumber,
-        firstExpiryDate: formData.value.firstExpiryDate,
-        secondIdType: formData.value.secondIdType,
-        secondIdNumber: formData.value.secondIdNumber,
-        secondExpiryDate: formData.value.secondExpiryDate,
-        holder_type: 'child',
-      },
-    });
-
-    router.push('/parent-guardian-information');
-  } catch (error) {
-    console.error('Error submitting child ID information:', error);
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      formError.value = error.response.data.detail || 'An error occurred while submitting your information';
-    } else {
-      formError.value = 'An error occurred while submitting your information';
-    }
-  } finally {
-    isLoading.value = false;
-  }
+const navigateToPrevious = () => {
+  saveToStore();
+  router.go(-1);
 };
 
-// Initialize component
 onMounted(() => {
   if (store.childIdInfo) {
-    formData.value = { ...store.childIdInfo };
+    formData.value = { ...formData.value, ...store.childIdInfo };
   }
 });
 </script>

@@ -52,7 +52,8 @@ const routes = [
   { path: '/email-verification-successful', name: 'EmailVerSuccessful', component: EmailVerSuccessful },
   { path: '/mobile-verification-successful', name: 'MobileVerSuccessful', component: MobileVerSuccessful },
   { path: '/verify-mobile', name: 'VerifyMobile', component: VerifyMobile, meta: { requiresInitialAuth: true } },
-  { path: '/dashboard', name: 'Dashboard', component: () => import('@/components/Dashboard.vue'), meta: { requiresAuth: true } }
+  { path: '/dashboard', name: 'Dashboard', component: () => import('@/components/Dashboard.vue'), meta: { requiresAuth: true } },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/components/NotFound.vue') }
 ];
 
 const router = createRouter({

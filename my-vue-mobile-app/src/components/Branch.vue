@@ -116,52 +116,61 @@ const bestContactTime = ref('');
 const errorMessage = ref('');
 const isLoading = ref(false);
 
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:3000' 
-    : `http://${window.location.hostname}:3000`;
-};
+const baseURL = import.meta.env.VITE_API_BASE_URL;
+    
+  
 
 const handleSubmit = async () => {
-  const formData = {
-    selectedBranch: selectedBranch.value,
-    preferredContactMethod: preferredContactMethod.value,
-    bestContactTime: bestContactTime.value,
-  };
-
-  if (!formData.selectedBranch || !formData.preferredContactMethod || !formData.bestContactTime) {
+  if (!selectedBranch.value || !preferredContactMethod.value || !bestContactTime.value) {
     errorMessage.value = 'Please fill all required fields.';
     return;
   }
 
-  store.setBranchInfo(formData);
-  console.log('Branch info saved to store:', formData);
+  // Prepare data for API (only branch information)
+  const apiData = {
+    signup_id: store.signupId,
+    home_branch: selectedBranch.value,
+    branch_code: selectedBranch.value === 'Port of Spain' ? 'POS' : 'TOB',
+    branch_location: selectedBranch.value
+  };
+
+  // Prepare data for store (all form values)
+  const storeData = {
+    branch_name: selectedBranch.value,
+    branch_code: selectedBranch.value === 'Port of Spain' ? 'POS' : 'TOB',
+    branch_location: selectedBranch.value,
+    preferred_contact_method: preferredContactMethod.value,
+    best_contact_time: bestContactTime.value
+  };
 
   try {
     isLoading.value = true;
     const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/branch`, formData, {
+    
+    // Send only branch information to API
+    const response = await axios.put(`${baseURL}/signups/home-branch`, apiData, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
+    
     console.log('Branch information submitted:', response.data);
+    
+    // Save all form data to store
+    store.setBranchInfo(storeData);
+    console.log('Branch info saved to store:', storeData);
+    
     router.push('/success');
   } catch (error) {
     console.error('Error submitting branch information:', error);
-    errorMessage.value = 'An error occurred. Please try again later.';
-    
     if (error.response) {
       console.error('Response data:', error.response.data);
-      console.error('Response status:', error.response.status);
-      console.error('Response headers:', error.response.headers);
+      errorMessage.value = error.response.data.detail || 'An error occurred. Please try again later.';
     } else if (error.request) {
-      console.error('Request:', error.request);
+      errorMessage.value = 'Network error. Please check your connection.';
     } else {
-      console.error('Error message:', error.message);
+      errorMessage.value = 'An unexpected error occurred.';
     }
-    
-    router.push('/success');
   } finally {
     isLoading.value = false;
   }

@@ -35,7 +35,7 @@
                   <v-card-text class="pa-4">
                     <h3 class="text-h6 mb-3">Power of Attorney Information</h3>
                     <v-text-field
-                      v-model="formData.powerOfAttorneyFirstName"
+                      v-model="formData.first_name"
                       label="First Name"
                       placeholder="Power of Attorney First Name"
                       variant="outlined"
@@ -47,7 +47,19 @@
                     />
 
                     <v-text-field
-                      v-model="formData.powerOfAttorneyLastName"
+                      v-model="formData.middle_name"
+                      label="Middle Name"
+                      placeholder="Power of Attorney Middle Name"
+                      variant="outlined"
+                      density="comfortable"
+                      prepend-inner-icon="mdi-account"
+                      :rules="[v => !!v || 'Middle name is required']"
+                      required
+                      class="mb-3"
+                    />
+
+                    <v-text-field
+                      v-model="formData.last_name"
                       label="Last Name"
                       placeholder="Power of Attorney Last Name"
                       variant="outlined"
@@ -58,8 +70,32 @@
                       class="mb-3"
                     />
 
+                    <v-select
+                      v-model="formData.gender"
+                      label="Gender"
+                      :items="['Male', 'Female']"
+                      variant="outlined"
+                      density="comfortable"
+                      prepend-inner-icon="mdi-gender-male-female"
+                      :rules="[v => !!v || 'Gender is required']"
+                      required
+                      class="mb-3"
+                    />
+
+                    <v-select
+                      v-model="formData.relationship_to_principal"
+                      label="Relationship to Principal"
+                      :items="relationshipOptions"
+                      variant="outlined"
+                      density="comfortable"
+                      prepend-inner-icon="mdi-account-group"
+                      :rules="[v => !!v || 'Relationship to principal is required']"
+                      required
+                      class="mb-3"
+                    />
+
                     <v-text-field
-                      v-model="formData.powerOfAttorneyDob"
+                      v-model="formData.dob"
                       label="Date of Birth"
                       type="date"
                       variant="outlined"
@@ -73,7 +109,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.powerOfAttorneyEmail"
+                      v-model="formData.email"
                       label="Email"
                       type="email"
                       placeholder="Power of Attorney Email"
@@ -86,7 +122,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.powerOfAttorneyPhone"
+                      v-model="formData.phone"
                       label="Phone Number"
                       type="tel"
                       placeholder="Power of Attorney Phone Number"
@@ -104,7 +140,7 @@
                   <v-card-text class="pa-4">
                     <h3 class="text-h6 mb-3">Power of Attorney Address</h3>
                     <v-text-field
-                      v-model="formData.powerOfAttorneyAddressLine1"
+                      v-model="formData.address_line_1"
                       label="Address Line 1"
                       placeholder="Street address"
                       variant="outlined"
@@ -116,7 +152,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.powerOfAttorneyAddressLine2"
+                      v-model="formData.address_line_2"
                       label="Address Line 2"
                       placeholder="Apt, Suite, Unit, etc. (optional)"
                       variant="outlined"
@@ -126,7 +162,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.powerOfAttorneyCity"
+                      v-model="formData.city"
                       label="City"
                       placeholder="City"
                       variant="outlined"
@@ -138,7 +174,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.powerOfAttorneyCountry"
+                      v-model="formData.country"
                       label="Country"
                       placeholder="Country"
                       variant="outlined"
@@ -155,7 +191,7 @@
                   <v-card-text class="pa-4">
                     <h3 class="text-h6 mb-3">Power of Attorney Identification</h3>
                     <v-select
-                      v-model="formData.powerOfAttorneyIdType"
+                      v-model="formData.id_type"
                       label="Type of ID"
                       :items="idTypes"
                       variant="outlined"
@@ -167,7 +203,7 @@
                     />
 
                     <v-text-field
-                      v-model="formData.powerOfAttorneyIdNumber"
+                      v-model="formData.id_number"
                       label="ID Number"
                       placeholder="Enter ID number"
                       variant="outlined"
@@ -177,22 +213,6 @@
                       required
                       class="mb-3"
                     />
-
-                    <v-file-input
-                      v-model="formData.powerOfAttorneyIdDocument"
-                      label="Upload ID Document"
-                      placeholder="Upload ID"
-                      variant="outlined"
-                      density="comfortable"
-                      prepend-inner-icon="mdi-upload"
-                      accept=".pdf,.jpg,.png"
-                      :rules="[v => !!v || 'ID document is required']"
-                      @change="handleIdUpload"
-                      required
-                      truncate-length="25"
-                      hint="Please upload a clear copy of the ID"
-                      persistent-hint
-                    />
                   </v-card-text>
                 </v-card>
 
@@ -201,7 +221,23 @@
                   <v-card-text class="pa-4">
                     <h3 class="text-h6 mb-3">Document Upload</h3>
                     <v-file-input
-                      v-model="formData.poaDocument"
+                      v-model="formData.id_document"
+                      label="Upload ID Document"
+                      placeholder="Upload ID"
+                      variant="outlined"
+                      density="comfortable"
+                      prepend-inner-icon="mdi-upload"
+                      accept=".pdf,.jpg,.png"
+                      :rules="[v => !!v || 'ID document is required']"
+                      @change="handleFileUpload"
+                      required
+                      truncate-length="25"
+                      hint="Please upload a clear copy of the ID"
+                      persistent-hint
+                    />
+
+                    <v-file-input
+                      v-model="formData.power_of_attorney_document"
                       label="Power of Attorney Document"
                       placeholder="Upload Document"
                       variant="outlined"
@@ -291,19 +327,23 @@ const maxDate = computed(() => {
 });
 
 const formData = ref({
-  powerOfAttorneyFirstName: '',
-  powerOfAttorneyLastName: '',
-  powerOfAttorneyEmail: '',
-  powerOfAttorneyPhone: '',
-  powerOfAttorneyDob: '',
-  powerOfAttorneyAddressLine1: '',
-  powerOfAttorneyAddressLine2: '',
-  powerOfAttorneyCity: '',
-  powerOfAttorneyCountry: '',
-  powerOfAttorneyIdType: '',
-  powerOfAttorneyIdNumber: '',
-  powerOfAttorneyIdDocument: null,
-  poaDocument: null
+  signup_id: null,
+  first_name: '',
+  last_name: '',
+  middle_name: '',
+  address_line_1: '',
+  address_line_2: '',
+  city: '',
+  country: '',
+  dob: '',
+  gender: '',
+  relationship_to_principal: '',
+  email: '',
+  phone: '',
+  id_number: '',
+  id_type: '',
+  id_document: null,
+  power_of_attorney_document: null
 });
 
 const formError = ref('');
@@ -316,12 +356,24 @@ const idTypes = [
   'Other Government ID'
 ];
 
-const handleFileUpload = (file) => {
-  formData.value.poaDocument = file;
-};
+const relationshipOptions = [
+  'Spouse',
+  'Child',
+  'Parent',
+  'Sibling',
+  'Friend',
+  'Other'
+];
 
-const handleIdUpload = (file) => {
-  formData.value.powerOfAttorneyIdDocument = file;
+const handleFileUpload = (event) => {
+  const files = event?.target?.files || event;
+  if (Array.isArray(files)) {
+    // Handle multiple files if needed
+    console.log('Multiple files uploaded:', files);
+  } else if (files instanceof File) {
+    // Single file upload
+    console.log('Single file uploaded:', files);
+  }
 };
 
 const submitForm = async () => {
@@ -329,49 +381,215 @@ const submitForm = async () => {
   formError.value = '';
 
   try {
-    if (!formData.value.powerOfAttorneyFirstName || !formData.value.powerOfAttorneyLastName || 
-        !formData.value.powerOfAttorneyEmail || !formData.value.powerOfAttorneyPhone) {
-      formError.value = 'Please fill in all required fields';
+    // Debug log to see what's in the form data
+    console.log('Form data before validation:', formData.value);
+
+    // Validate required fields
+    const requiredFields = {
+      first_name: 'First name',
+      last_name: 'Last name',
+      middle_name: 'Middle name',
+      address_line_1: 'Address line 1',
+      city: 'City',
+      country: 'Country',
+      dob: 'Date of birth',
+      gender: 'Gender',
+      relationship_to_principal: 'Relationship to principal',
+      email: 'Email',
+      phone: 'Phone number',
+      id_number: 'ID number',
+      id_type: 'ID type',
+      id_document: 'ID document',
+      power_of_attorney_document: 'Power of Attorney document'
+    };
+
+    const missingFields = [];
+    for (const [field, label] of Object.entries(requiredFields)) {
+      if (!formData.value[field]) {
+        missingFields.push(label);
+      }
+    }
+
+    if (missingFields.length > 0) {
+      formError.value = `Please fill in the following required fields: ${missingFields.join(', ')}`;
+      console.log('Missing fields:', missingFields);
       isLoading.value = false;
       return;
     }
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/power-of-attorney/`, formData.value);
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.value.email)) {
+      formError.value = 'Please enter a valid email address';
+      isLoading.value = false;
+      return;
+    }
 
-    const storeData = { ...formData.value };
-    delete storeData.poaDocument;
-    delete storeData.powerOfAttorneyIdDocument;
+    // Validate phone number
+    if (!/^\+?1?\d{9,15}$/.test(formData.value.phone.replace(/[\s\-]/g, ''))) {
+      formError.value = 'Please enter a valid phone number';
+      isLoading.value = false;
+      return;
+    }
+
+    // Validate file sizes
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = ['image/', 'application/pdf'];
+    
+    // Check ID document
+    if (formData.value.id_document instanceof File) {
+      if (formData.value.id_document.size > maxFileSize) {
+        formError.value = 'ID document must be less than 10MB';
+        isLoading.value = false;
+        return;
+      }
+      if (!allowedTypes.some(type => formData.value.id_document.type.startsWith(type))) {
+        formError.value = 'ID document must be an image or PDF';
+        isLoading.value = false;
+        return;
+      }
+    }
+
+    // Check Power of Attorney document
+    if (formData.value.power_of_attorney_document instanceof File) {
+      if (formData.value.power_of_attorney_document.size > maxFileSize) {
+        formError.value = 'Power of Attorney document must be less than 10MB';
+        isLoading.value = false;
+        return;
+      }
+      if (!allowedTypes.some(type => formData.value.power_of_attorney_document.type.startsWith(type))) {
+        formError.value = 'Power of Attorney document must be an image or PDF';
+        isLoading.value = false;
+        return;
+      }
+    }
+
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    
+    // Create FormData for submission
+    const formDataToSubmit = new FormData();
+    formDataToSubmit.append('signup_id', store.signupId);
+    formDataToSubmit.append('first_name', formData.value.first_name);
+    formDataToSubmit.append('last_name', formData.value.last_name);
+    formDataToSubmit.append('middle_name', formData.value.middle_name);
+    formDataToSubmit.append('address_line_1', formData.value.address_line_1);
+    formDataToSubmit.append('address_line_2', formData.value.address_line_2 || '');
+    formDataToSubmit.append('city', formData.value.city);
+    formDataToSubmit.append('country', formData.value.country);
+    formDataToSubmit.append('dob', formData.value.dob);
+    formDataToSubmit.append('gender', formData.value.gender.toLowerCase());
+    formDataToSubmit.append('relationship_to_principal', formData.value.relationship_to_principal);
+    formDataToSubmit.append('email', formData.value.email);
+    formDataToSubmit.append('phone', formData.value.phone.replace(/[\s\-]/g, ''));
+    formDataToSubmit.append('id_number', formData.value.id_number);
+    formDataToSubmit.append('id_type', formData.value.id_type);
+    
+    // Append files separately
+    if (formData.value.id_document instanceof File) {
+      formDataToSubmit.append('power_of_attorney_files', formData.value.id_document);
+    }
+    if (formData.value.power_of_attorney_document instanceof File) {
+      formDataToSubmit.append('power_of_attorney_files', formData.value.power_of_attorney_document);
+    }
+
+    console.log('Submitting power of attorney data:', Object.fromEntries(formDataToSubmit));
+
+    const response = await axios.post(`${baseURL}/power-of-attorneys/`, formDataToSubmit, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Power of attorney data submitted successfully:', response.data);
+
+    // Save to store
     store.$patch((state) => {
-      Object.assign(state, storeData);
+      state.poaInfo = {
+        first_name: formData.value.first_name,
+        last_name: formData.value.last_name,
+        middle_name: formData.value.middle_name,
+        address_line_1: formData.value.address_line_1,
+        address_line_2: formData.value.address_line_2,
+        city: formData.value.city,
+        country: formData.value.country,
+        dob: formData.value.dob,
+        gender: formData.value.gender,
+        relationship_to_principal: formData.value.relationship_to_principal,
+        email: formData.value.email,
+        phone: formData.value.phone,
+        id_number: formData.value.id_number,
+        id_type: formData.value.id_type,
+        id_document: formData.value.power_of_attorney_files,
+        power_of_attorney_document: formData.value.power_of_attorney_files
+      };
     });
 
     router.push('/branch');
   } catch (error) {
     console.error('Error submitting power of attorney information:', error);
-    formError.value = 'An error occurred while submitting your information';
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      formError.value = Array.isArray(error.response.data) 
+        ? error.response.data.map(err => err.msg).join(', ')
+        : error.response.data.detail || errorMessages.submission.server;
+    } else if (error.request) {
+      formError.value = errorMessages.network.connection;
+    } else {
+      formError.value = errorMessages.submission.general;
+    }
   } finally {
     isLoading.value = false;
   }
 };
 
 const navigateToPrevious = () => {
-  router.push('/branch');
+  // Save current state before navigating
+  store.$patch((state) => {
+    state.poaInfo = {
+      first_name: formData.value.first_name,
+      last_name: formData.value.last_name,
+      middle_name: formData.value.middle_name,
+      address_line_1: formData.value.address_line_1,
+      address_line_2: formData.value.address_line_2,
+      city: formData.value.city,
+      country: formData.value.country,
+      dob: formData.value.dob,
+      gender: formData.value.gender,
+      relationship_to_principal: formData.value.relationship_to_principal,
+      email: formData.value.email,
+      phone: formData.value.phone,
+      id_number: formData.value.id_number,
+      id_type: formData.value.id_type,
+      id_document: formData.value.power_of_attorney_files,
+      power_of_attorney_document: formData.value.power_of_attorney_files
+    };
+  });
+  router.go(-1);
 };
 
+// Initialize component with stored data
 onMounted(() => {
-  if (store) {
-    formData.value.powerOfAttorneyFirstName = store.powerOfAttorneyFirstName || '';
-    formData.value.powerOfAttorneyLastName = store.powerOfAttorneyLastName || '';
-    formData.value.powerOfAttorneyEmail = store.powerOfAttorneyEmail || '';
-    formData.value.powerOfAttorneyPhone = store.powerOfAttorneyPhone || '';
-    formData.value.powerOfAttorneyDob = store.powerOfAttorneyDob || '';
-    formData.value.powerOfAttorneyAddressLine1 = store.powerOfAttorneyAddressLine1 || '';
-    formData.value.powerOfAttorneyAddressLine2 = store.powerOfAttorneyAddressLine2 || '';
-    formData.value.powerOfAttorneyCity = store.powerOfAttorneyCity || '';
-    formData.value.powerOfAttorneyCountry = store.powerOfAttorneyCountry || '';
-    formData.value.powerOfAttorneyIdType = store.powerOfAttorneyIdType || '';
-    formData.value.powerOfAttorneyIdNumber = store.powerOfAttorneyIdNumber || '';
+  console.log('Initializing component with store data:', store.poaInfo);
+  if (store.poaInfo) {
+    formData.value = {
+      signup_id: store.signupId,
+      first_name: store.poaInfo.first_name,
+      last_name: store.poaInfo.last_name,
+      middle_name: store.poaInfo.middle_name,
+      address_line_1: store.poaInfo.address_line_1,
+      address_line_2: store.poaInfo.address_line_2,
+      city: store.poaInfo.city,
+      country: store.poaInfo.country,
+      dob: store.poaInfo.dob,
+      gender: store.poaInfo.gender,
+      relationship_to_principal: store.poaInfo.relationship_to_principal,
+      email: store.poaInfo.email,
+      phone: store.poaInfo.phone,
+      id_number: store.poaInfo.id_number,
+      id_type: store.poaInfo.id_type,
+      id_document: store.poaInfo.power_of_attorney_files,
+      power_of_attorney_document: store.poaInfo.power_of_attorney_files
+    };
   }
 });
 </script>

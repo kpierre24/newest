@@ -57,70 +57,67 @@
                     <v-text-field
                       v-model="formData.first_name"
                       label="First Name"
-                      :rules="[v => !!v || 'First name is required']"
-                      placeholder="Beneficiary First Name"
+                      placeholder="Enter first name"
                       variant="outlined"
                       prepend-inner-icon="mdi-account"
+                      :rules="[v => !!v || 'First name is required']"
                       required
                     />
 
                     <v-text-field
                       v-model="formData.last_name"
                       label="Last Name"
-                      :rules="[v => !!v || 'Last name is required']"
-                      placeholder="Beneficiary Last Name"
+                      placeholder="Enter last name"
                       variant="outlined"
                       prepend-inner-icon="mdi-account"
+                      :rules="[v => !!v || 'Last name is required']"
                       required
                     />
 
                     <v-text-field
                       v-model="formData.middle_name"
                       label="Middle Name"
-                      :rules="[v => !!v || 'Middle name is required']"
-                      placeholder="Beneficiary Middle Name"
+                      placeholder="Enter middle name (optional)"
                       variant="outlined"
                       prepend-inner-icon="mdi-account"
-                      required
                     />
 
                     <v-text-field
                       v-model="formData.address_line_1"
                       label="Address Line 1"
-                      :rules="[v => !!v || 'Address line 1 is required']"
-                      placeholder="Beneficiary Address Line 1"
+                      placeholder="Enter address line 1"
                       variant="outlined"
                       prepend-inner-icon="mdi-map-marker"
+                      :rules="[v => !!v || 'Address line 1 is required']"
                       required
                     />
 
                     <v-text-field
                       v-model="formData.address_line_2"
                       label="Address Line 2"
-                      :rules="[v => !!v || 'Address line 2 is required']"
-                      placeholder="Beneficiary Address Line 2"
+                      placeholder="Enter address line 2 (optional)"
                       variant="outlined"
                       prepend-inner-icon="mdi-map-marker"
-                      required
                     />
 
                     <v-text-field
                       v-model="formData.city"
                       label="City"
-                      :rules="[v => !!v || 'City is required']"
-                      placeholder="Beneficiary City"
+                      placeholder="Enter city"
                       variant="outlined"
                       prepend-inner-icon="mdi-city"
+                      :rules="[v => !!v || 'City is required']"
                       required
                     />
 
-                    <v-text-field
+                    <v-select
                       v-model="formData.country"
                       label="Country"
-                      :rules="[v => !!v || 'Country is required']"
-                      placeholder="Beneficiary Country"
+                      :items="countryList"
+                      placeholder="Select country"
                       variant="outlined"
                       prepend-inner-icon="mdi-earth"
+                      :rules="[v => !!v || 'Country is required']"
                       required
                     />
 
@@ -128,12 +125,9 @@
                       v-model="formData.dob"
                       label="Date of Birth"
                       type="date"
-                      :rules="[
-                        v => !!v || 'Date of birth is required',
-                        v => new Date(v) > new Date() || 'Date of birth must not be in the future'
-                      ]"
                       variant="outlined"
                       prepend-inner-icon="mdi-calendar"
+                      :rules="[v => !!v || 'Date of birth is required']"
                       required
                     />
 
@@ -141,55 +135,61 @@
                       v-model="formData.gender"
                       label="Gender"
                       :items="['Male', 'Female']"
-                      :rules="[v => !!v || 'Gender is required']"
+                      placeholder="Select gender"
                       variant="outlined"
                       prepend-inner-icon="mdi-gender-male-female"
+                      :rules="[v => !!v || 'Gender is required']"
+                      required
+                    />
+
+                    <v-text-field
+                      v-model="formData.relationship_to_beneficiary"
+                      label="Relationship to Beneficiary"
+                      placeholder="Enter relationship"
+                      variant="outlined"
+                      prepend-inner-icon="mdi-account-group"
+                      :rules="[v => !!v || 'Relationship is required']"
                       required
                     />
 
                     <v-text-field
                       v-model="formData.id_number"
                       label="ID Number"
-                      :rules="[v => !!v || 'ID number is required']"
                       placeholder="Enter ID number"
                       variant="outlined"
-                      prepend-inner-icon="mdi-identifier"
+                      prepend-inner-icon="mdi-card-account-details"
+                      :rules="[
+                        v => !!v || 'ID number is required',
+                        v => /^[a-zA-Z0-9]{8,30}$/.test(v.replace(/[\s\-]/g, '')) || 'ID number must be between 8 and 30 characters and contain only letters and numbers'
+                      ]"
                       required
                     />
 
                     <v-select
                       v-model="formData.id_type"
-                      label="Type of ID"
+                      label="ID Type"
                       :items="['Passport', 'National ID', 'Drivers License']"
-                      :rules="[v => !!v || 'ID type is required']"
+                      placeholder="Select ID type"
                       variant="outlined"
                       prepend-inner-icon="mdi-card-account-details"
+                      :rules="[v => !!v || 'ID type is required']"
                       required
                     />
 
                     <v-text-field
                       v-model="formData.percent_of_beneficiary_interest"
-                      label="Percentage"
+                      label="Percentage of Beneficiary Interest"
                       type="number"
-                      :rules="[
-                        v => !!v || 'Percentage is required',
-                        v => (v >= 0 && v <= 100) || 'Percentage must be between 0 and 100'
-                      ]"
-                      placeholder="Percentage (0-100)"
-                      variant="outlined"
-                      prepend-inner-icon="mdi-percent"
                       min="0"
                       max="100"
-                      required
-                    />
-
-                    <v-select
-                      v-model="formData.relationship_to_beneficiary"
-                      label="Relationship"
-                      :items="['Parent', 'Spouse', 'Child', 'Sibling', 'Other']"
-                      :rules="[v => !!v || 'Relationship is required']"
+                      step="0.01"
+                      placeholder="Enter percentage"
                       variant="outlined"
-                      prepend-inner-icon="mdi-account-group"
+                      prepend-inner-icon="mdi-percent"
+                      :rules="[
+                        v => !!v || 'Percentage is required',
+                        v => v >= 0 && v <= 100 || 'Percentage must be between 0 and 100'
+                      ]"
                       required
                     />
                   </v-card-text>
@@ -207,6 +207,16 @@
                       prepend-icon="mdi-plus"
                     >
                       Add Another Beneficiary
+                    </v-btn>
+                    <v-btn
+                      v-else
+                      color="primary"
+                      variant="text"
+                      @click="handleSubmit"
+                      class="text-none"
+                      prepend-icon="mdi-plus"
+                    >
+                      Add Beneficiary
                     </v-btn>
                     <v-btn
                       color="grey-darken-1"
@@ -240,7 +250,7 @@
                       size="large"
                       type="submit"
                       :loading="isLoading"
-                      @click="handleSubmitAndNext"
+                      :disabled="isLoading"
                     >
                       {{ isLoading ? 'Processing...' : 'Next' }}
                     </v-btn>
@@ -270,15 +280,20 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useDemoStore } from '@/store/demoStore';
 import axios from 'axios';
-import logoImage from '../assets/Logo1.png';
+import { countries } from 'countries-list';
+import logoImage from '@/assets/Logo1.png';
+import { errorMessages } from '@/utils/errorMessages';
+
 
 const router = useRouter();
 const store = useDemoStore();
-const isLoading = ref(false);
 const formError = ref('');
+const isLoading = ref(false);
+const countryList = ref(Object.values(countries).map(country => country.name));
 const beneficiaries = ref([]);
 
 const formData = ref({
+  signup_id: null,
   first_name: '',
   last_name: '',
   middle_name: '',
@@ -294,11 +309,7 @@ const formData = ref({
   percent_of_beneficiary_interest: 0
 });
 
-const getBaseURL = () => {
-  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? 'http://localhost:8000' 
-    : `http://127.0.0.1:8000`;
-};
+
 
 const handleFileUpload = (event) => {
   if (event && event.target && event.target.files && event.target.files.length > 0) {
@@ -313,86 +324,121 @@ const saveToStore = () => {
   });
 };
 
-const submitForm = async () => {
+const validateBeneficiary = (beneficiary) => {
+  const errors = [];
+
+  // Required fields validation
+  const requiredFields = {
+    first_name: 'First name',
+    last_name: 'Last name',
+    address_line_1: 'Address line 1',
+    city: 'City',
+    country: 'Country',
+    dob: 'Date of birth',
+    gender: 'Gender',
+    relationship_to_beneficiary: 'Relationship',
+    id_number: 'ID number',
+    id_type: 'ID type',
+    percent_of_beneficiary_interest: 'Percentage'
+  };
+
+  for (const [field, label] of Object.entries(requiredFields)) {
+    if (!beneficiary[field]) {
+      errors.push(`${label} is required`);
+    }
+  }
+
+  // ID number validation
+  if (beneficiary.id_number) {
+    const cleanedId = beneficiary.id_number.replace(/[\s\-]/g, '');
+    if (!/^[a-zA-Z0-9]{8,30}$/.test(cleanedId)) {
+      errors.push('ID number must be between 8 and 30 characters and contain only letters and numbers');
+    }
+  }
+
+  // Gender validation
+  if (beneficiary.gender && !['male', 'female'].includes(beneficiary.gender.toLowerCase())) {
+    errors.push('Gender must be either Male or Female');
+  }
+
+  // ID type validation
+  if (beneficiary.id_type && !['Passport', 'National ID', 'Drivers License'].includes(beneficiary.id_type)) {
+    errors.push('ID type must be either Passport, National ID, or Drivers License');
+  }
+
+  // Percentage validation
+  if (beneficiary.percent_of_beneficiary_interest) {
+    const percentage = parseFloat(beneficiary.percent_of_beneficiary_interest);
+    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+      errors.push('Percentage must be between 0 and 100');
+    }
+  }
+
+  return errors;
+};
+
+const handleSubmit = async () => {
   isLoading.value = true;
   formError.value = '';
 
   try {
-    // Validate total percentage doesn't exceed 100%
-    const totalPercentage = beneficiaries.value.reduce(
-      (sum, b) => sum + parseFloat(b.percent_of_beneficiary_interest),
-      parseFloat(formData.value.percent_of_beneficiary_interest)
-    );
+    // Validate current beneficiary
+    const validationErrors = validateBeneficiary(formData.value);
+    if (validationErrors.length > 0) {
+      formError.value = validationErrors.join(', ');
+      isLoading.value = false;
+      return;
+    }
 
+    // Validate total percentage
+    const totalPercentage = beneficiaries.value.reduce((sum, b) => sum + parseFloat(b.percent_of_beneficiary_interest), 0) + 
+                           parseFloat(formData.value.percent_of_beneficiary_interest);
     if (totalPercentage > 100) {
-      formError.value = 'Total beneficiary percentage cannot exceed 100%';
+      formError.value = 'Total percentage of beneficiaries cannot exceed 100%';
       isLoading.value = false;
-      return false;
+      return;
     }
 
-    // Validate required fields
-    if (!formData.value.first_name || !formData.value.last_name || 
-        !formData.value.address_line_1 || !formData.value.city ||
-        !formData.value.country || !formData.value.dob || 
-        !formData.value.gender || !formData.value.relationship_to_beneficiary ||
-        !formData.value.id_number || !formData.value.id_type || 
-        !formData.value.percent_of_beneficiary_interest) {
-      formError.value = 'Please fill in all required fields';
-      isLoading.value = false;
-      return false;
-    }
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
-    // Validate percentage is between 0 and 100
-    const percentage = parseFloat(formData.value.percent_of_beneficiary_interest);
-    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-      formError.value = 'Percentage must be between 0 and 100';
-      return false;
-    }
-
-    // Validate gender
-    if (!['male', 'female'].includes(formData.value.gender.toLowerCase())) {
-      formError.value = 'Gender must be either Male or Female';
-      return false;
-    }
-
-    // Validate ID type
-    if (!['Passport', 'National ID', 'Drivers License'].includes(formData.value.id_type)) {
-      formError.value = 'ID type must be either Passport, National ID, or Drivers License';
-      return false;
-    }
-
-    // Save to store
-    saveToStore();
-
-    // Add to beneficiaries array
-    beneficiaries.value.push({ ...formData.value });
+    // Prepare data for API
+    const beneficiaryData = {
+      ...formData.value,
+      signup_id: store.signupId,
+      dob: new Date(formData.value.dob).toISOString().split('T')[0], // Format date as YYYY-MM-DD
+      gender: formData.value.gender.toLowerCase(),
+      percent_of_beneficiary_interest: parseFloat(formData.value.percent_of_beneficiary_interest)
+    };
 
     // Make API call
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
-    const response = await axios.post(`${baseURL}/beneficiaries/`, {
-      ...formData.value,
-      signup_id: store.signupId
-    });
+    const response = await axios.post(`${baseURL}/beneficiaries/`, beneficiaryData);
 
     if (response.data) {
-      console.log('Beneficiary created successfully:', response.data);
-      // Clear form for potential next beneficiary
+      // Add to beneficiaries list
+      beneficiaries.value.push(response.data);
+
+      // Store in Pinia store
+      store.$patch((state) => {
+        if (!state.beneficiaryInfo) {
+          state.beneficiaryInfo = [];
+        }
+        state.beneficiaryInfo.push(response.data);
+      });
+
+      // Reset form
       resetForm();
-      
-      // If this was the first beneficiary, show "Add Another" option
-      if (beneficiaries.value.length === 1) {
-        // The form will stay visible for adding another beneficiary
-      }
-      return true;
     }
   } catch (error) {
-    console.error('Error submitting beneficiary information:', error);
-    if (error.response?.data?.detail) {
-      formError.value = error.response.data.detail;
+    console.error('Error submitting beneficiary:', error);
+    if (error.response) {
+      formError.value = Array.isArray(error.response.data) 
+        ? error.response.data.map(err => err.msg).join(', ')
+        : error.response.data.detail || errorMessages.submission.server;
+    } else if (error.request) {
+      formError.value = errorMessages.network.connection;
     } else {
-      formError.value = 'An error occurred while submitting your information';
+      formError.value = errorMessages.submission.general;
     }
-    return false;
   } finally {
     isLoading.value = false;
   }
@@ -400,6 +446,7 @@ const submitForm = async () => {
 
 const resetForm = () => {
   formData.value = {
+    signup_id: store.signupId,
     first_name: '',
     last_name: '',
     middle_name: '',
@@ -416,9 +463,14 @@ const resetForm = () => {
   };
 };
 
-const removeBeneficiary = async (index) => {
-  // Here you might want to add an API call to remove the beneficiary from the backend
+const removeBeneficiary = (index) => {
   beneficiaries.value.splice(index, 1);
+  // Update store
+  store.$patch((state) => {
+    if (state.beneficiaryInfo) {
+      state.beneficiaryInfo.splice(index, 1);
+    }
+  });
 };
 
 const addAnotherBeneficiary = async () => {
@@ -428,19 +480,18 @@ const addAnotherBeneficiary = async () => {
   );
 
   if (currentTotal >= 100) {
-    formError.value = 'Total beneficiary percentage has reached 100%. Cannot add more beneficiaries.';
+    formError.value = errorMessages.beneficiary.noMoreBeneficiaries;
     return;
   }
 
   const remainingPercentage = 100 - currentTotal;
   if (parseFloat(formData.value.percent_of_beneficiary_interest) > remainingPercentage) {
-    formError.value = `Maximum remaining percentage available is ${remainingPercentage}%`;
+    formError.value = errorMessages.beneficiary.exceedsRemainingPercentage(remainingPercentage);
     return;
   }
 
-  const success = await submitForm();
+  const success = await handleSubmit();
   if (success) {
-    // Form is already reset in submitForm
     formError.value = '';
   }
 };
@@ -455,40 +506,48 @@ const navigateToPrevious = () => {
 };
 
 const handleSubmitAndNext = async () => {
-  const currentTotal = beneficiaries.value.reduce(
-    (sum, b) => sum + parseFloat(b.percent_of_beneficiary_interest),
-    0
-  );
-
-  // If there's data in the form, try to submit it first
-  if (formData.value.first_name || formData.value.last_name) {
-    const success = await submitForm();
-    if (!success) return; // Stop if submission failed
-  }
-
-  // Validate total percentage before proceeding
-  if (currentTotal === 0) {
-    // No beneficiaries added, confirm with user
-    if (confirm('No beneficiaries added. Do you want to proceed without adding beneficiaries?')) {
-      router.push('/power-of-attorney');
+  if (beneficiaries.value.length === 0) {
+    // If no beneficiaries, try to add the current form data
+    const validationErrors = validateBeneficiary(formData.value);
+    if (validationErrors.length > 0) {
+      formError.value = validationErrors.join(', ');
+      return;
     }
-  } else if (currentTotal < 100) {
-    // Warn user about incomplete percentage
-    if (confirm(`Total beneficiary percentage is ${currentTotal}%. Do you want to proceed anyway?`)) {
+
+    try {
+      await handleSubmit();
       router.push('/power-of-attorney');
+    } catch (error) {
+      console.error('Error in handleSubmitAndNext:', error);
     }
   } else {
-    // All good, proceed to next page
+    // If there are already beneficiaries, just navigate
     router.push('/power-of-attorney');
   }
 };
 
-// Initialize component with stored data
+// Initialize component with existing data if available
 onMounted(() => {
-  if (store.beneficiary) {
+  // Set signup_id from store
+  formData.value.signup_id = store.signupId;
+  
+  // Initialize with store data if available
+  if (store.beneficiaryInfo && typeof store.beneficiaryInfo === 'object') {
     formData.value = {
       ...formData.value,
-      ...store.beneficiary
+      first_name: store.beneficiaryInfo.firstName || '',
+      last_name: store.beneficiaryInfo.lastName || '',
+      middle_name: store.beneficiaryInfo.otherName || '',
+      address_line_1: store.beneficiaryInfo.addressLine1 || '',
+      address_line_2: store.beneficiaryInfo.addressLine2 || '',
+      city: store.beneficiaryInfo.city || '',
+      country: store.beneficiaryInfo.country || '',
+      dob: store.beneficiaryInfo.dob || '',
+      gender: store.beneficiaryInfo.gender || '',
+      relationship_to_beneficiary: store.beneficiaryInfo.relationship || '',
+      id_number: store.beneficiaryInfo.idNumber || '',
+      id_type: store.beneficiaryInfo.idType || '',
+      percent_of_beneficiary_interest: store.beneficiaryInfo.percentage || 0
     };
   }
 });
